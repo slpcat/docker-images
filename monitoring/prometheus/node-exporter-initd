@@ -1,0 +1,80 @@
+#!/bin/bash
+#
+#
+# node-exporter          node-exporter shipper
+#
+# chkconfig: 2345 98 03
+# description: Starts and stops a single node-exporter instance on this system
+#
+
+### BEGIN INIT INFO
+# Provides:          node-exporter
+# Required-Start:    $local_fs $network $syslog
+# Required-Stop:     $local_fs $network $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: node_exporter is the monitor of host system for prometheus.
+# Description:       Prometheus exporter for hardware and OS metrics exposed by *NIX kernels, written in Go with pluggable metric collectors.
+#                    https://github.com/prometheus/node_exporter
+### END INIT INFO
+
+#Source function library.
+. /etc/init.d/functions
+
+#Default variables
+prog_name="node_exporter"
+config_file="/etc/${prog_name}/${prog_name}.conf"
+prog_path="/usr/local/bin/${prog_name}"
+data_path="/var/lib/${prog_name}/data"
+pidfile="/var/run/${prog_name}.pid"
+prog_logs="/var/log/${prog_name}.log"
+options="--log.level=info --path.rootfs=/"
+#DESC="Prometheus Server"
+
+#Check if requirements are met
+[ -x "${prog_path}" ] || exit 1
+
+RETVAL=0
+
+start(){
+  action $"Starting $DESC..." su -s /bin/sh -c "nohup $prog_path $options >> $prog_logs 2>&1 &" 2> /dev/null
+  RETVAL=$?
+  PID=$(pidof ${prog_path})
+  [ ! -z "${PID}" ] && echo ${PID} > ${pidfile}
+  echo
+  [ $RETVAL -eq 0 ] && touch /var/lock/subsys/$prog_name
+  return $RETVAL
+}
+
+stop(){
+  echo -n $"Shutting down $prog_name: "
+  killproc -p ${pidfile}
+  RETVAL=$?
+  echo
+  [ $RETVAL -eq 0 ] && rm -f /var/lock/subsys/$prog_name
+  return $RETVAL
+}
+
+restart() {
+  stop
+  start
+}
+
+case "$1" in
+  start)
+    start
+    ;;
+  stop)
+    stop
+    ;;
+  restart)
+    restart
+    ;;
+  status)
+    status $prog_path
+    RETVAL=$?
+    ;;
+  *)
+    echo $"Usage: $0 {start|stop|restart|status}"
+    RETVAL=1
+esac

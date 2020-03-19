@@ -1,0 +1,62 @@
+# Default values for acs-dl-distributed-training.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+worker:
+  number: 2
+  gpuCount: 1
+
+## Tensorflow server image version
+## if gpuCount>0, the default image is registry.cn-hangzhou.aliyuncs.com/tensorflow-samples/tf-mnist-k8s:gpu in the regions of China except Hongkong,
+## registry.us-east-1.aliyuncs.com/tensorflow-samples/tf-mnist-k8s:gpu for other regions including Hongkong.
+## if gpuCount=0, the default image is registry.cn-hangzhou.aliyuncs.com/tensorflow-samples/tf-mnist-k8s:cpu in the regions of China except Hongkong,
+## registry.us-east-1.aliyuncs.com/tensorflow-samples/tf-mnist-k8s:cpu for other regions including Hongkong.
+## You can also bring up your own docker image.
+  image: registry.cn-hangzhou.aliyuncs.com/tensorflow-samples/tf-mnist-k8s:gpu
+  imagePullPolicy: IfNotPresent
+  port: 8000
+  # if you'd like to choose the cusomtized docker image, 
+  #image: ""
+
+ps:
+  number: 2
+## the default image is registry.cn-hangzhou.aliyuncs.com/tensorflow-samples/tf-mnist-k8s:cpu in the regions of China except Hongkong,
+## registry.us-east-1.aliyuncs.com/tensorflow-samples/tf-mnist-k8s:cpu for other regions including Hongkong.
+## You can also bring up your own docker image.
+  image: registry.cn-hangzhou.aliyuncs.com/tensorflow-samples/tf-mnist-k8s:cpu
+  imagePullPolicy: IfNotPresent
+  port: 9000
+   # if you'd like to choose the cusomtized docker image, 
+  #image: ""
+
+# optimize for training
+hyperparams:
+  epochs: 100
+  batchsize: 20
+  learningrate: 0.001
+
+
+
+tensorboard:
+## the default image is registry.cn-hangzhou.aliyuncs.com/tensorflow-samples/tensorboard:1.1.0 in the regions of China except Hongkong,
+## registry.us-east-1.aliyuncs.com/tensorflow-samples/tensorboard:1.1.0 for other regions including Hongkong.
+## You can also bring up your own docker image.
+  image: registry.cn-hangzhou.aliyuncs.com/tensorflow-samples/tensorboard:1.1.0
+## Kubernetes configuration
+## support NodePort, LoadBalancer
+##
+  serviceType: LoadBalancer
+
+mountPath: /data
+
+persistence:
+## The request and label to select the persistent volume
+   pvc:
+      storage: 5Gi
+      matchLabels: {}
+
+
+
+
+
+
+

@@ -1,0 +1,99 @@
+创建 Kubernetes cluster
+
+在阿里云上创建一个Kubernetes cluster，用系统默认的设置就行，但要保证你有Admin权限。如果你用已有的 cluster，请确认Kubernetes的版本是1.10以上。
+
+安装 Knative
+
+这个过程分为两步：
+
+安装Istio:
+Knative的Istio有一些自己定义的资源，所以不要用Istio网站的缺省安装。但是Knative现有指南未更新，还是0.8,有些旧。我所用的是1.0:
+
+  `curl https://raw.githubusercontent.com/knative/serving/master/third_party/istio-1.0.0/istio.yaml`
+  
+这个安装需要一点时间，但是是必须的。因为Knative依赖Istio来联接Serverless，而不是直接通过Kubernetes。等到所有的安装完成后，我们要开启Istio 自动injection：
+
+kubectl label namespace default istio-injection=enabled
+
+安装 Knative组件：
+
+  执行下面的命令：
+kubectl apply -f https://github.com/knative/serving/releases/download/v0.1.1/release.yaml
+  安装后等待一会并确认：
+kubectl get pods -n knative-serving -w
+kubectl get pods -n knative-build -w
+细心的同学会发现这里只安装了两部分：Build 和 Serving，那么Eventing呢？是需要单独安装的。
+
+
+kubectl apply -f https://storage.googleapis.com/knative-releases/eventing/latest/release.yaml
+
+同样的，运行这个命令来确认：
+
+kubectl get pods -n knative-eventing -w
+
+Build
+
+Build是目前Knative项目中内容最丰富的部分。因为Pivotal拿出了压箱宝build packs加入Knative。而Google之前多年做app engine，也在这方面累计了很多经验。
+
+在实现上，Build是一个Kubernetes Custom Resource Definition (CRD)。如同其它的Kubernetes CRD，定义的方式是通过YAML，调用的方式是API。用户可以选择不同的build template，比如Google的kaniko，Pivotal的build pack等。在本文中，我们选择kaniko build。
+
+先安装Kaniko Build Template:
+kubectl apply -f https://raw.githubusercontent.com/knative/build-templates/master/kaniko/kaniko.yaml
+
+Kaniko build template和Docker build template最大的不同在于用户不需要本地安装Docker engine, Kaniko把代码搬到云上生成Image。源代码可以在远程的服务器上，还要指定相应的Dockerfile。
+
+但是，这样做有个问题：Kaniko怎么访问用户的docker account呢？因此，我们需要创建一个secret，把用户的docker username和password存在里面。然后，还需要一个service account来绑定这个secret。
+vim secret.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: docker-user-pass
+  annotations:
+    build.knative.dev/docker-0: https://index.docker.io/v1/
+type: kubernetes.io/basic-auth
+stringData: 
+  username: <docker username in plain text>
+  password: <docker password in plain text>
+
+把这里的username和password换成你自己的帐号信息，然后保存。
+kubectl apply -f secret.yaml
+vim service-account.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: build-bot
+secrets:
+  - name: docker-user-pass
+
+保存后执行：
+kubectl apply -f service-account.yaml
+
+然后我们创建Kubernetes manifest vim build.yaml：
+apiVersion: build.knative.dev/v1alpha1
+kind: Build
+metadata:
+  name: docker-build
+spec:
+  serviceAccountName: build-bot #service account created above
+  source:
+    git:
+      revision: master
+      url: "https://github.com/szihai/hello-go.git"
+  steps:
+    -
+      args:
+        - "--dockerfile=/workspace/Dockerfile"
+        - "--destination=docker.io/xxx/helloworld-go"
+      image: "gcr.io/kaniko-project/executor:v0.1.0"
+      name: build-and-push
+本文所用的sample app是从Knative repo 上fork的。（例子）
+
+在这里，我们指定了template用Kaniko。然后可以看到我们引用了前面的ServiceAccount 来访问secret。用这个之前把里面的destination换成你自己的docker id，保存后用kubectl apply -f build.yaml 来执行。
+
+那么，如何知道远程的Kaniko到底做好了没有呢？Kubernetes 会为kind: Build 创建一个job。用kubectl get pods 找到一个 docker-build-xxxx 的pod。然后运行：kubectl -n default logs docker-build-xxxx -c build-step-build-and-push 来观察build的情况。
+
+我们也可以直接查看Kubetnetes build objects: kubectl describe builds。要找的信息是：
+
+
+https://blog.csdn.net/xuciyisheng/article/details/83058264
+

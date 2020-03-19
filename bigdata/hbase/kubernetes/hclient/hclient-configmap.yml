@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: hclient-configmap
+  namespace: default
+data:
+  hclient.hbase: |-
+    status 'simple'
+    exit

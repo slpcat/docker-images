@@ -1,0 +1,20 @@
+apiVersion: extensions/v1beta1
+kind: PodSecurityPolicy
+metadata:
+  name: permissive
+  annotations:
+    security.alpha.kubernetes.io/sysctls: 'net.*,kernel.msg*'
+spec:
+  seLinux:
+    rule: RunAsAny
+  supplementalGroups:
+    rule: RunAsAny
+  runAsUser:
+    rule: RunAsAny
+  fsGroup:
+    rule: RunAsAny
+  hostPorts:
+  - min: 1024
+    max: 65535
+  volumes:
+  - '*'

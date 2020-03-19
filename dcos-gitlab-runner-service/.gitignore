@@ -1,0 +1,4 @@
+# WebStorm stuff
+.idea/
+
+*.log

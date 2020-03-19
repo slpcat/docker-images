@@ -1,0 +1,26 @@
+version: '3'
+volumes:
+  db:
+  backups:
+
+services:
+  db:
+    image: mysql:5.7
+    environment:
+     - MYSQL_DATABASE=test
+     - MYSQL_USER=test
+     - MYSQL_PASSWORD=test
+     - MYSQL_ROOT_PASSWORD=test 
+    volumes:
+     - db:/var/lib/mysql
+
+  backup:
+    image: gcavalcante8808/mydumper
+    environment:
+     - DB_HOST=db
+     - DB_NAME=test
+     - DB_PASSWORD=test
+     - DB_USER=root
+    volumes:
+     - backups:/backups
+

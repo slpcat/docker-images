@@ -1,0 +1,35 @@
+Flume各种采集日志方式与输出目录
+
+1.从网络端口采集数据输出到控制台
+bin/flume-ng agent -c conf -f myconf/socket-console.conf -n a1 -Dflume.root.logger=INFO,console
+
+2.从网络端采集数据输出到文件
+bin/flume-ng agent -c conf -f myconf/netcat-disk.conf -n a1 -Dflume.root.logger=INFO,console
+
+3.从本地目录写入到HDFS
+bin/flume-ng agent -c conf -f myconf/directory-hdfs.conf -n a1 -Dflume.root.logger=INFO,console
+
+4.Flume监控一个文件实时写到Kafka
+bin/flume-ng agent -c conf -f myconf/exec-kafka.conf -n a1 -Dflume.root.logger=INFO,console
+
+5.从阿里云日志服务SLS采集输出到kafka
+https://github.com/aliyun/aliyun-log-flume
+./flume-ng agent --name sls-flume-kafka --conf conf/conffile --conf-file conf/conffile/sls-flume.conf -Dflume.root.logger=INFO,console
+
+6.使用Flume消费Kafka数据到HDFS
+flume-ng agent -n agent -f $FLUME_HOME/conf/kafka2hdfs.conf &
+
+7.Kafka如何通过Flume传输数据到HBase
+  创建HBase表
+  进入到HBase集群，执行表创建命令，如下所示：
+
+  hbase(main):002:0> create 'flume_data','info'
+  启动Flume Agent
+  接着，启动Flume Agent实例，命令如下所示：
+
+  # 在Linux后台执行命令
+  flume-ng agent -n agent -f $FLUME_HOME/conf/kafka2hbase.conf &
+
+插件支持阿里云sls日志 输入和输出
+flume-clickhouse-sink
+

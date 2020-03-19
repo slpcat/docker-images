@@ -1,0 +1,7 @@
+_output/
+debug
+.vscode/
+.DS_Store
+.idea/
+.history/
+*.a

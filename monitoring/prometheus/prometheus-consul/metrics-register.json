@@ -1,0 +1,15 @@
+{
+  "ID": "cadvisor", //服务id
+  "Name": "prometheus-cadvisor", //服务名
+  "Tags": [              //服务的tag，自定义，可以根据这个tag来区分同一个服务名的服务
+    "prometheus-target",
+    "v1"
+  ],
+  "Address": "127.0.0.1",//服务注册到consul的IP，服务发现，发现的就是这个IP
+  "Port": 8000,          //服务注册consul的PORT，发现的就是这个PORT
+  "EnableTagOverride": false,
+  "Check": {             //健康检查部分
+    "DeregisterCriticalServiceAfter": "90m",
+    "HTTP": "http://localhost:8080/metrics", //指定健康检查的URL，调用后只要返回20X，consul都认为是健康的
+    "Interval": "10s"   //健康检查间隔时间，每隔10s，调用一次上面的URL
+  }

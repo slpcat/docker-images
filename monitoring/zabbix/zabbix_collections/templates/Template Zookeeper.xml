@@ -1,0 +1,331 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbix_export>
+    <version>4.4</version>
+    <date>2019-11-07T08:36:21Z</date>
+    <groups>
+        <group>
+            <name>ES生产组</name>
+        </group>
+    </groups>
+    <templates>
+        <template>
+            <template>Template  Zookeeper</template>
+            <name>Template  Zookeeper</name>
+            <groups>
+                <group>
+                    <name>ES生产组</name>
+                </group>
+            </groups>
+            <applications>
+                <application>
+                    <name>Zookeeper</name>
+                </application>
+            </applications>
+            <items>
+                <item>
+                    <name>zookeeper pid</name>
+                    <key>zookeeper.status[alive]</key>
+                    <delay>30</delay>
+                    <applications>
+                        <application>
+                            <name>Zookeeper</name>
+                        </application>
+                    </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{last()}=0</expression>
+                            <name>zookeeper is not running</name>
+                            <priority>HIGH</priority>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>zookeeper FreePhysicalMemorySize</name>
+                    <key>zookeeper.status[FreePhysicalMemorySize]</key>
+                    <delay>30</delay>
+                    <value_type>FLOAT</value_type>
+                    <units>GB</units>
+                    <applications>
+                        <application>
+                            <name>Zookeeper</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>zookeeper ProcessCpuLoad</name>
+                    <key>zookeeper.status[ProcessCpuLoad]</key>
+                    <delay>30</delay>
+                    <value_type>FLOAT</value_type>
+                    <units>%</units>
+                    <applications>
+                        <application>
+                            <name>Zookeeper</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>zookeeper SystemCpuLoad</name>
+                    <key>zookeeper.status[SystemCpuLoad]</key>
+                    <delay>30</delay>
+                    <value_type>FLOAT</value_type>
+                    <units>%</units>
+                    <applications>
+                        <application>
+                            <name>Zookeeper</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>zookeeper approximate data size</name>
+                    <key>zookeeper.status[zk_approximate_data_size]</key>
+                    <delay>30</delay>
+                    <applications>
+                        <application>
+                            <name>Zookeeper</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>zookeeper average latency</name>
+                    <key>zookeeper.status[zk_avg_latency]</key>
+                    <delay>30</delay>
+                    <applications>
+                        <application>
+                            <name>Zookeeper</name>
+                        </application>
+                    </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{last()}&gt;10</expression>
+                            <name>large average latency</name>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>zookeeper ephemerals count</name>
+                    <key>zookeeper.status[zk_ephemerals_count]</key>
+                    <delay>30</delay>
+                    <applications>
+                        <application>
+                            <name>Zookeeper</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>zookeeper leader's followers</name>
+                    <key>zookeeper.status[zk_followers]</key>
+                    <delay>30</delay>
+                    <applications>
+                        <application>
+                            <name>Zookeeper</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>zookeeper max file descriptor count</name>
+                    <key>zookeeper.status[zk_max_file_descriptor_count]</key>
+                    <delay>30</delay>
+                    <applications>
+                        <application>
+                            <name>Zookeeper</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>zookeeper max latency</name>
+                    <key>zookeeper.status[zk_max_latency]</key>
+                    <delay>30</delay>
+                    <applications>
+                        <application>
+                            <name>Zookeeper</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>zookeeper alive connections</name>
+                    <key>zookeeper.status[zk_num_alive_connections]</key>
+                    <delay>30</delay>
+                    <applications>
+                        <application>
+                            <name>Zookeeper</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>zookeeper opened file descriptor count</name>
+                    <key>zookeeper.status[zk_open_file_descriptor_count]</key>
+                    <delay>30</delay>
+                    <applications>
+                        <application>
+                            <name>Zookeeper</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>zookeeper outstanding requests</name>
+                    <key>zookeeper.status[zk_outstanding_requests]</key>
+                    <delay>30</delay>
+                    <applications>
+                        <application>
+                            <name>Zookeeper</name>
+                        </application>
+                    </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{last()}&gt;10</expression>
+                            <name>big outstanding requests number</name>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>zookeeper packages received</name>
+                    <key>zookeeper.status[zk_packets_received]</key>
+                    <delay>30</delay>
+                    <description>收包数量</description>
+                    <applications>
+                        <application>
+                            <name>Zookeeper</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>zookeeper packages sent</name>
+                    <key>zookeeper.status[zk_packets_sent]</key>
+                    <delay>30</delay>
+                    <description>发包数据量</description>
+                    <applications>
+                        <application>
+                            <name>Zookeeper</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>zookeeper leader's pending syncs</name>
+                    <key>zookeeper.status[zk_pending_syncs]</key>
+                    <delay>30</delay>
+                    <applications>
+                        <application>
+                            <name>Zookeeper</name>
+                        </application>
+                    </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{last()}&gt;10</expression>
+                            <name>big pending syncs</name>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>zookeeper response checking</name>
+                    <key>zookeeper.status[zk_server_ruok]</key>
+                    <delay>30</delay>
+                    <trends>0</trends>
+                    <value_type>CHAR</value_type>
+                    <applications>
+                        <application>
+                            <name>Zookeeper</name>
+                        </application>
+                    </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{str(imok)}&lt;&gt;1</expression>
+                            <name>zookeeper is abnormal</name>
+                            <priority>HIGH</priority>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>zookeeper state role</name>
+                    <key>zookeeper.status[zk_server_state]</key>
+                    <delay>30</delay>
+                    <trends>0</trends>
+                    <value_type>CHAR</value_type>
+                    <applications>
+                        <application>
+                            <name>Zookeeper</name>
+                        </application>
+                    </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{abschange()}&gt;0</expression>
+                            <name>zookeeper state role has been changed</name>
+                            <priority>INFO</priority>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>zookeeper leader's synced followers</name>
+                    <key>zookeeper.status[zk_synced_followers]</key>
+                    <delay>30</delay>
+                    <applications>
+                        <application>
+                            <name>Zookeeper</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>zookeeper watches count</name>
+                    <key>zookeeper.status[zk_watch_count]</key>
+                    <delay>30</delay>
+                    <applications>
+                        <application>
+                            <name>Zookeeper</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>zookeeper znodes count</name>
+                    <key>zookeeper.status[zk_znode_count]</key>
+                    <delay>30</delay>
+                    <applications>
+                        <application>
+                            <name>Zookeeper</name>
+                        </application>
+                    </applications>
+                </item>
+            </items>
+            <macros>
+                <macro>
+                    <macro>{$JMX_PASS}</macro>
+                    <value>bXq94pfqaiBD8KFfAG0j</value>
+                </macro>
+                <macro>
+                    <macro>{$JMX_USER}</macro>
+                    <value>monitor</value>
+                </macro>
+            </macros>
+        </template>
+    </templates>
+    <triggers>
+        <trigger>
+            <expression>{Template  Zookeeper:zookeeper.status[zk_open_file_descriptor_count].last()} &gt; {Template  Zookeeper:zookeeper.status[zk_max_file_descriptor_count].last()}*0.85</expression>
+            <name>large file descriptor used</name>
+        </trigger>
+    </triggers>
+    <graphs>
+        <graph>
+            <name>ZooKeeper Alive Connections</name>
+            <graph_items>
+                <graph_item>
+                    <color>1A7C11</color>
+                    <item>
+                        <host>Template  Zookeeper</host>
+                        <key>zookeeper.status[zk_num_alive_connections]</key>
+                    </item>
+                </graph_item>
+            </graph_items>
+        </graph>
+        <graph>
+            <name>ZooKeeper Latency</name>
+            <graph_items>
+                <graph_item>
+                    <color>1A7C11</color>
+                    <item>
+                        <host>Template  Zookeeper</host>
+                        <key>zookeeper.status[zk_avg_latency]</key>
+                    </item>
+                </graph_item>
+            </graph_items>
+        </graph>
+    </graphs>
+</zabbix_export>

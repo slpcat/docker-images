@@ -1,0 +1,85 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "master-fullname" . }}
+  labels:
+    heritage: {{ .Release.Service | quote }}
+    release: {{ .Release.Name | quote }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    component: "{{ .Release.Name }}-{{ .Values.Master.Component }}"
+spec:
+  ports:
+    - port: {{ .Values.Master.ServicePort }}
+      targetPort: {{ .Values.Master.ContainerPort }}
+  selector:
+    component: "{{ .Release.Name }}-{{ .Values.Master.Component }}"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "webui-fullname" . }}
+  labels:
+    heritage: {{ .Release.Service | quote }}
+    release: {{ .Release.Name | quote }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    component: "{{ .Release.Name }}-{{ .Values.Master.Component }}"
+spec:
+  ports:
+    - port: {{ .Values.WebUi.ServicePort }}
+      targetPort: {{ .Values.WebUi.ContainerPort }}
+  selector:
+    component: "{{ .Release.Name }}-{{ .Values.Master.Component }}"
+  type: {{ .Values.Master.ServiceType }}
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: {{ template "master-fullname" . }}
+  labels:
+    heritage: {{ .Release.Service | quote }}
+    release: {{ .Release.Name | quote }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    component: "{{ .Release.Name }}-{{ .Values.Master.Component }}"
+spec:
+  replicas: {{ default 1 .Values.Master.Replicas }}
+  strategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      component: "{{ .Release.Name }}-{{ .Values.Master.Component }}"
+  template:
+    metadata:
+      labels:
+        heritage: {{ .Release.Service | quote }}
+        release: {{ .Release.Name | quote }}
+        chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+        component: "{{ .Release.Name }}-{{ .Values.Master.Component }}"
+      annotations:
+        #disable istio sidecar injection
+        sidecar.istio.io/inject: "false"
+        #net.ipv4.tcp_syncookies=0 need kernel version 4.4 or newer
+        security.alpha.kubernetes.io/sysctls: "net.ipv4.tcp_syncookies=0,net.ipv4.ip_local_port_range=10000 65535"
+        #kernel version 4.15 needed
+        security.alpha.kubernetes.io/unsafe-sysctls: "net.core.somaxconn=65535,net.ipv4.tcp_tw_reuse=1,net.ipv4.tcp_fin_timeout=30,net.ipv4.tcp_keepalive_intvl=4,net.ipv4.tcp_keepalive_probes=3,net.ipv4.tcp_keepalive_time=120,net.ipv4.tcp_max_syn_backlog=65535,net.ipv4.tcp_rfc1337=1,net.ipv4.tcp_slow_start_after_idle=0,net.ipv4.tcp_fack=1,net.ipv4.tcp_max_tw_buckets=262144,net.ipv4.tcp_fastopen=3,net.ipv4.icmp_ratelimit=100,net.ipv4.tcp_abort_on_overflow=1,net.ipv4.tcp_adv_win_scale=2,net.ipv4.tcp_retries2=8,net.ipv4.tcp_syn_retries=3,net.ipv4.tcp_synack_retries=2,net.unix.max_dgram_qlen=512,net.ipv4.tcp_fwmark_accept=1,net.ipv4.fwmark_reflect=1,net.ipv4.tcp_no_metrics_save=1,net.netfilter.nf_conntrack_helper=1,net.netfilter.nf_conntrack_max=1048576,net.netfilter.nf_conntrack_tcp_timeout_close_wait=60,net.netfilter.nf_conntrack_tcp_timeout_established=120,net.netfilter.nf_conntrack_tcp_timeout_fin_wait=30,net.netfilter.nf_conntrack_tcp_timeout_last_ack=30,net.netfilter.nf_conntrack_tcp_timeout_time_wait=60"
+    spec:
+      containers:
+        - name: {{ template "master-fullname" . }}
+          image: "{{ .Values.Master.Image }}:{{ .Values.Master.ImageTag }}"
+          command: ["/bin/sh","-c"]
+          args: ["echo $(hostname -i) {{ template "master-fullname" . }} >> /etc/hosts; {{ .Values.Spark.Path }}/bin/spark-class org.apache.spark.deploy.master.Master"]
+          ports:
+            - containerPort: {{ .Values.Master.ContainerPort }}
+            - containerPort: {{ .Values.WebUi.ContainerPort }}
+          resources:
+            requests:
+              cpu: "{{ .Values.Master.Cpu }}"
+              memory: "{{ .Values.Master.Memory }}"
+          env:
+          - name: SPARK_DAEMON_MEMORY
+            value: {{ default "1g" .Values.Master.DaemonMemory | quote }}
+          - name: SPARK_MASTER_HOST
+            value: {{ template "master-fullname" . }}
+          - name: SPARK_MASTER_PORT
+            value: {{ .Values.Master.ServicePort | quote }}
+          - name: SPARK_MASTER_WEBUI_PORT
+            value: {{ .Values.WebUi.ContainerPort | quote }}

@@ -1,0 +1,39 @@
+{{- if .Values.watcher.install -}}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: post-install-watches-job
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "2"
+    "helm.sh/hook-delete-policy": hook-succeeded
+spec:
+  template:
+    metadata:
+      name: post-install-watches-job
+    spec:
+      restartPolicy: Never
+      serviceAccount: elk
+      serviceAccountName: elk
+      containers:
+      - name: elasticwatcher
+        image: {{ .Values.watcher.image.repository }}:{{ .Values.watcher.image.tag | default "latest" }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        command: ["/go/bin/elasticwatcher"]
+        args:
+        - "create"
+        - "-host=elasticsearch"
+        - "-port=9200"
+        - "-watches-file=/config/watches.json"
+        volumeMounts:
+          - name: watches-secret
+            mountPath: /config
+      volumes:
+        - name: watches-secret
+          secret:
+            secretName: watches-secret
+{{- if .Values.image.pullSecret }}
+      imagePullSecrets:
+        - name: {{ .Values.image.pullSecret }}
+{{- end }}
+{{- end -}}

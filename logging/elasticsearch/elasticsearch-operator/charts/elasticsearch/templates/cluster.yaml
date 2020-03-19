@@ -1,0 +1,59 @@
+apiVersion: enterprises.upmc.com/v1
+kind: ElasticsearchCluster
+metadata:
+  name: {{ .Release.Name }}-cluster
+  labels:
+    app: {{ template "elasticsearch.name" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name }}
+spec:
+{{- if .Values.kibana.enabled }}
+  kibana:
+    image: {{ .Values.kibana.image }}
+{{- end }}
+{{- if .Values.cerebro.enabled }}
+  cerebro:
+    image: {{ .Values.cerebro.image }}
+{{- end }}
+  elastic-search-image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+  client-node-replicas: {{ .Values.clientReplicas }}
+  master-node-replicas: {{ .Values.masterReplicas }}
+  data-node-replicas: {{ .Values.dataReplicas }}
+  network-host: 0.0.0.0
+{{- if .Values.zones }}
+  zones:
+{{ toYaml .Values.zones | indent 4 }}
+{{- else }}
+  zones: []
+{{- end }}
+  data-volume-size: {{ .Values.dataVolumeSize }}
+  java-options: {{ .Values.javaOpts }}
+{{- if .Values.image.pullSecret }}
+  image-pull-secrets:
+    - name: {{ .Values.image.pullSecret }}
+{{- end }}
+  snapshot:
+    scheduler-enabled: {{ .Values.snapshot.enabled }}
+    type: {{ .Values.snapshot.type }}
+    bucket-name: {{ .Values.snapshot.bucketName }}
+    cron-schedule: "{{ .Values.snapshot.schedule }}"
+    image: "{{ .Values.snapshot.image }}"
+{{- if .Values.snapshot.authentication.enabled }}
+    authentication:
+     password: {{ .Values.snapshot.authentication.password }}
+     username: {{ .Values.snapshot.authentication.username }}
+{{- end }}
+  use-ssl: {{ index .Values "use-ssl" }}
+  storage:
+{{- if .Values.storage.class }}
+    storage-class: {{ .Values.storage.class }}
+{{- else }}
+    type: {{ .Values.storage.type }}
+    storage-class-provisioner: {{ .Values.storage.classProvisioner }}
+    volume-reclaim-policy: {{ .Values.storage.reclaimPolicy }}
+{{- end }}
+{{- if .Values.statsd.enabled }}
+  statsd-host: {{ .Values.statsd.host }}
+{{- end }}
+  resources:
+{{ toYaml .Values.resources | indent 4 }}

@@ -1,0 +1,51 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    #DOC https://yq.aliyun.com/articles/626066?spm=a2c4e.11153940.blogrightarea392170.16.599e1f50mZtQFv
+    #负载均衡实例的 ID。通过 loadbalancer-id 指定您已有的 SLB，已有 listener 会被覆盖， 删除 service 时该 SLB 不会被删除。
+    #service.beta.kubernetes.io/alicloud-loadbalancer-id: slb-id 
+    #绑定已有负载均衡，并强制覆盖已有监听  
+    #service.beta.kubernetes.io/alicloud-loadbalancer-force-override-listeners: "true"
+    #通过 label 指定 SLB 后端挂哪些节点。
+    #service.beta.kubernetes.io/alicloud-loadbalancer-backend-label: abc
+    #指定SLB的规格，如性能共享型还是独占型
+    service.beta.kubernetes.io/alicloud-loadbalancer-spec: slb.s2.small
+    #地址类型:外网或者内网"internet" or "intranet"
+    service.beta.kubernetes.io/alicloud-loadbalancer-address-type: intranet
+    # 网络类型:经典或vpc "classic" or "vpc"
+    service.beta.kubernetes.io/alicloud-loadbalancer-SLBNetworkType: vpc
+    #service.beta.kubernetes.io/alicloud-loadbalancer-ProtocolPort: https:443,http:80
+    #计费方式:按流量或按带宽 "paybytraffic" or "paybybandwidth"
+    service.beta.kubernetes.io/alicloud-loadbalancer-ChargeType: paybytraffic
+    #负载均衡所在的地域
+    #service.beta.kubernetes.io/alicloud-loadbalancer-Region: cn-beijing
+    #负载均衡的带宽
+    service.beta.kubernetes.io/alicloud-loadbalancer-Bandwidth: "100"
+    #service.beta.kubernetes.io/alicloud-loadbalancer-CertID: ""
+    #service.beta.kubernetes.io/alicloud-loadbalancer-HealthCheckFlag: on
+    #service.beta.kubernetes.io/alicloud-loadbalancer-HealthCheckType:
+    #service.beta.kubernetes.io/alicloud-loadbalancer-HealthCheckURI:
+    #service.beta.kubernetes.io/alicloud-loadbalancer-HealthCheckConnectPort:
+    #service.beta.kubernetes.io/alicloud-loadbalancer-HealthyThreshold:
+    #service.beta.kubernetes.io/alicloud-loadbalancer-UnhealthyThreshold:
+    #service.beta.kubernetes.io/alicloud-loadbalancer-HealthCheckInterval:
+    #service.beta.kubernetes.io/alicloud-loadbalancer-HealthCheckConnectTimeout:
+    #service.beta.kubernetes.io/alicloud-loadbalancer-HealthCheckTimeout:
+  labels:
+    app: example-web
+  name: example-web
+  namespace: default
+spec:
+  #Cluster 所有节点作为SLB后端，Local 仅添加Pod所在的节点作为SLB的后端
+  #externalTrafficPolicy: Local 
+  #session sticky
+  sessionAffinity: None
+  ports:
+  - name: web
+    port: 80
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: example-web
+  type: LoadBalancer

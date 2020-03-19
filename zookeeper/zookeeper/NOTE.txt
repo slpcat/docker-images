@@ -1,0 +1,10 @@
+Packet len9896612 is out of range!
+加jvm启动参数  -Djute.maxbuffer=41943040
+
+docker run -d --restart=always --net=host --hostname=zookeeper-0 \
+        -e ZK_REPLICAS=1        -e ZK_MAX_CLIENT_CNXNS=4000 \
+        -e ZK_SNAP_RETAIN_COUNT=0        -e ZK_PURGE_INTERVAL=8h \
+        -e ZK_CLIENT_PORT=2181        -e ZK_SERVER_PORT=2888 \
+        -e ZK_ELECTION_PORT=3888 \
+        -v /data/zookeeper-data:/var/lib/zookeeper \
+        slpcat/zookeeper:v3.4.14-alpine sh -c "zkGenConfig.sh && zkServer.sh start-foreground"

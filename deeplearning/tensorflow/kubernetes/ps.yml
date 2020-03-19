@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: tensorflow-ps-rc
+spec:
+  replicas: 2
+  selector:
+    name: tensorflow-ps
+  template:
+    metadata:
+      labels:
+        name: tensorflow-ps
+        role: ps
+    spec:
+      containers:
+        - name: ps
+          image: gcr.io/tensorflow/tensorflow:latest
+          ports:
+           - containerPort: 2222

@@ -1,0 +1,158 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  annotations:
+    fabric8.io/git-commit: 2656e3679d0034bb63c83e429f17135b30ed7d71
+    fabric8.io/iconUrl: img/icons/spring-boot.svg
+    fabric8.io/git-branch: release-v1.0.28
+    maven.fabric8.io/app-catalog: "true"
+  labels:
+    provider: fabric8
+    project: turbine-server
+    version: 1.0.28
+    expose: "true"
+    group: io.fabric8.kubeflix
+    kind: catalog
+  name: catalog-turbine-server
+data:
+  catalog-turbine-server.yml: |
+    ---
+    apiVersion: "v1"
+    kind: "Template"
+    metadata:
+      annotations:
+        fabric8.io/git-commit: "2656e3679d0034bb63c83e429f17135b30ed7d71"
+        fabric8.io/iconUrl: "img/icons/spring-boot.svg"
+        fabric8.io/git-branch: "release-v1.0.28"
+      finalizers: []
+      labels:
+        provider: "fabric8"
+        project: "turbine-server"
+        version: "1.0.28"
+        expose: "true"
+        group: "io.fabric8.kubeflix"
+      name: "turbine-server"
+      ownerReferences: []
+    labels: {}
+    objects:
+    - apiVersion: "v1"
+      kind: "ServiceAccount"
+      metadata:
+        annotations: {}
+        finalizers: []
+        labels:
+          provider: "fabric8"
+          project: "turbine-server"
+          version: "1.0.28"
+          group: "io.fabric8.kubeflix"
+        name: "turbine"
+        ownerReferences: []
+      imagePullSecrets: []
+      secrets: []
+    - apiVersion: "v1"
+      kind: "Service"
+      metadata:
+        annotations:
+          servicepath: "/turbine.stream"
+          fabric8.io/iconUrl: "img/icons/spring-boot.svg"
+          fabric8.io/git-commit: "2656e3679d0034bb63c83e429f17135b30ed7d71"
+          fabric8.io/git-branch: "release-v1.0.28"
+        finalizers: []
+        labels:
+          project: "turbine-server"
+          provider: "fabric8"
+          version: "1.0.28"
+          group: "io.fabric8.kubeflix"
+          expose: "true"
+        name: "turbine-server"
+        ownerReferences: []
+      spec:
+        deprecatedPublicIPs: []
+        externalIPs: []
+        loadBalancerSourceRanges: []
+        ports:
+        - name: "http"
+          port: 80
+          protocol: "TCP"
+          targetPort: 8080
+        selector:
+          project: "turbine-server"
+          provider: "fabric8"
+          group: "io.fabric8.kubeflix"
+        type: "LoadBalancer"
+    - apiVersion: "extensions/v1beta1"
+      kind: "Deployment"
+      metadata:
+        annotations:
+          fabric8.io/iconUrl: "img/icons/spring-boot.svg"
+          fabric8.io/git-commit: "2656e3679d0034bb63c83e429f17135b30ed7d71"
+          fabric8.io/metrics-path: "dashboard/file/kubernetes-pods.json/?var-project=turbine-server&var-version=1.0.28"
+          fabric8.io/git-branch: "release-v1.0.28"
+        finalizers: []
+        labels:
+          project: "turbine-server"
+          provider: "fabric8"
+          version: "1.0.28"
+          group: "io.fabric8.kubeflix"
+        name: "turbine-server"
+        ownerReferences: []
+      spec:
+        replicas: 1
+        selector:
+          matchExpressions: []
+          matchLabels:
+            project: "turbine-server"
+            provider: "fabric8"
+            group: "io.fabric8.kubeflix"
+        template:
+          metadata:
+            annotations:
+              fabric8.io/iconUrl: "img/icons/spring-boot.svg"
+              fabric8.io/git-commit: "2656e3679d0034bb63c83e429f17135b30ed7d71"
+              fabric8.io/metrics-path: "dashboard/file/kubernetes-pods.json/?var-project=turbine-server&var-version=1.0.28"
+              fabric8.io/git-branch: "release-v1.0.28"
+            finalizers: []
+            labels:
+              project: "turbine-server"
+              provider: "fabric8"
+              version: "1.0.28"
+              group: "io.fabric8.kubeflix"
+            ownerReferences: []
+          spec:
+            containers:
+            - args: []
+              command: []
+              env:
+              - name: "KUBERNETES_NAMESPACE"
+                valueFrom:
+                  fieldRef:
+                    fieldPath: "metadata.namespace"
+              image: "fabric8/turbine-server:1.0.28"
+              imagePullPolicy: "IfNotPresent"
+              livenessProbe:
+                httpGet:
+                  httpHeaders: []
+                  path: "/health"
+                  port: 8080
+                initialDelaySeconds: 180
+              name: "turbine-server"
+              ports:
+              - containerPort: 8080
+                name: "http"
+              - containerPort: 8778
+                name: "jolokia"
+              readinessProbe:
+                httpGet:
+                  httpHeaders: []
+                  path: "/health"
+                  port: 8080
+                initialDelaySeconds: 10
+              securityContext:
+                privileged: false
+              volumeMounts: []
+            imagePullSecrets: []
+            nodeSelector: {}
+            serviceAccountName: "turbine"
+            volumes: []
+    parameters: []

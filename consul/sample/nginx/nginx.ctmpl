@@ -1,0 +1,16 @@
+upstream http_backend {
+    ip_hash;
+    # nginx 为服务名称
+    {{range service "nginx"}}
+    # 服务名 服务IP:端口号
+    server {{ .Address }}:{{ .Port }};
+    # 结束
+    {{ end }}
+}
+server { 
+    listen 80;
+    server_name localhost;
+    location / {
+    proxy_pass http://http_backend;
+    }
+}

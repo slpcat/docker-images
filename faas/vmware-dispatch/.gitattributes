@@ -1,0 +1,8 @@
+* text=auto
+
+vendor/** binary
+**/gen/** -diff
+
+# for Github
+**/gen/** linguist-generated
+vendor/** linguist-vendored

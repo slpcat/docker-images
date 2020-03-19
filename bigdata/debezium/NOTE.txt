@@ -1,0 +1,10 @@
+https://github.com/debezium/debezium-examples/tree/master/tutorial
+
+docker run -d --restart=always \
+    -p 8083:8083 \
+    -e BOOTSTRAP_SERVERS=kafka:9092 \
+    -e GROUP_ID=1 \
+    -e CONFIG_STORAGE_TOPIC=my_connect_configs \
+    -e OFFSET_STORAGE_TOPIC=my_connect_offsets \
+    -e STATUS_STORAGE_TOPIC=my_connect_statuses \
+    debezium/connect:1.0

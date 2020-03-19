@@ -1,0 +1,49 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  annotations:
+    fabric8.fabric8-forge/summary: 'Fabric8 :: Forge'
+    description: 'Fabric8 :: Forge'
+    fabric8.fabric8-forge/iconUrl: https://cdn.rawgit.com/fabric8io/fabric8-forge/master/fabric8-forge/src/main/fabric8/icon.svg
+    fabric8.io/yaml-schema: |
+      type: object
+      properties:
+        jenkinsfile-library-git-repository:
+          type: string
+          description: The git clone URL for the library of Jenkinsfiles used to associate CD pipelines with projects
+            reused across projects
+          default: https://github.com/fabric8io/jenkins-workflow-library.git
+        use-external-git-address:
+          type: boolean
+          description: Whether we should use the external git URLs. Using internal tends to avoid DNS issues of kubernetes pods not seeing external host names.
+        jenkins-gogs-user:
+          type: string
+          description: The user name for Jenkins to login to Gogs
+          default: gogsadmin
+        jenkins-gogs-email:
+          type: string
+          description: The email address of the Jenkins user on Gogs
+          default: 'gogsadmin@fabric8.local'
+        jenkins-gogs-password:
+          type: string
+          description: The password for Jenkins to login to Gogs
+          default: RedHat$1
+        fabric8-default-environments:
+          type: string
+          description: The list of default environment names to actual kubernetes namespaces
+          default: Testing=${namespace}-testing,Staging=${namespace}-staging,Production=${namespace}-prod
+  labels:
+    provider: fabric8
+    project: fabric8-forge
+    version: 2.3.88
+    group: io.fabric8.forge.apps
+  name: fabric8-forge
+data:
+  fabric8-default-environments: Testing=${namespace}-testing,Staging=${namespace}-staging,Production=${namespace}-prod
+  jenkins-gogs-email: gogsadmin@fabric8.local
+  jenkins-gogs-password: RedHat$1
+  jenkins-gogs-user: gogsadmin
+  jenkinsfile-library-git-repository: https://github.com/fabric8io/fabric8-jenkinsfile-library.git
+  jenkinsfile-library-git-tag: v2.2.311
+  use-external-git-address: "false"

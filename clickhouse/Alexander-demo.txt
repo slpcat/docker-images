@@ -1,0 +1,64 @@
+按照Alexander的例子,首先需要创建一张保存传感器数据的测试表:
+CREATE TABLE sensors_data (
+    sensor_id Int32 Codec(DoubleDelta, LZ4),
+    time DateTime Codec(DoubleDelta, LZ4),
+    date ALIAS toDate(time),
+    temperature Decimal(5,2) Codec(T64, LZ4)
+) Engine = MergeTree
+PARTITION BY toYYYYMM(time)
+ORDER BY (sensor_id, time);
+ 在这张数据表的定义中，可谓是做到了极致的优化。包括：
+
+针对每一个列字段，都单独声明了它的encode编码算法和compresss压缩算法，这是ClickHouse的一个新特性。简而言之，如果是时间序列的数据，推荐使用DoubleDelta和LZ4的组合；而在数据模式不明确的情况下，可以使用T64和LZ4的组合。关于算法的这一块的介绍，以后有时间可以专门写一篇说明；
+
+date类型使用了 ALIAS 计算字段，降低了存储开销；
+
+分区Key和主键Key，很好的匹配了业务的查询条件。如此一来，在后续的查询中，就能够充分利用MergeTree的分区索引和一级索引。
+
+有了数据表之后，就可以开始模拟测试数据了，Alexander使用了numbers_mt函数，模拟了5256亿温度数据:
+
+
+INSERT INTO sensors_data (sensor_id, time, temperature) \
+WITH \
+  toDateTime(toDate('2019-01-01')) as start_time,  \
+  1000000 as num_sensors, \
+  365 as num_days, \
+  24*60 as num_minutes, \
+  num_days * num_minutes as total_minutes \
+SELECT \
+  intDiv(number, num_minutes) % num_sensors as sensor_id,  \
+  start_time + (intDiv(number, num_minutes*num_sensors) as day)*24*60*60 + (number % num_minutes as minute)*60 time,  \
+  60 + 20*sin(cityHash64(sensor_id)) \
+  + 15*sin(2*pi()/num_days*day)  \
+  + 10*sin(2*pi()/num_minutes*minute)*(1 + rand(1)%100/2000)  \
+  + if(sensor_id = 473869 and  \
+       time between '2019-08-27 13:00:00' and '2019-08-27 13:05:00', -50 + rand(2)%100, 0)  \
+  as temperature \
+FROM numbers_mt(525600000000) \
+SETTINGS max_block_size=1048576;
+ 接下来干什么呢？接下来可以去睡觉了。由于是单线程写入，我粗略计算了一下，大概只要40~50个小时，数据就能全部写进去了 ！！！
+
+在这段等待的时间，我们继续往下分析。当数据写完之后，这张 sensors_data 数据表并不能直接作为查询表使用，还需要进一步为它创建物化视图:
+
+CREATE MATERIALIZED VIEW sensors_data_daily( \
+  sensor_id Int32 Codec(DoubleDelta, LZ4), \
+  date Datetime Codec(DoubleDelta, LZ4), \
+  temp_min SimpleAggregateFunction(min, Decimal(5,2)), \
+  temp_max SimpleAggregateFunction(max, Decimal(5,2)) \
+) Engine = AggregatingMergeTree \
+PARTITION BY toYYYYMM(date) \
+ORDER BY (sensor_id, date) \
+POPULATE \
+AS  \
+SELECT sensor_id, date,  \
+   min(temperature) as temp_min, \
+   max(temperature) as temp_max \
+FROM sensors_data \
+GROUP BY sensor_id, date;
+物化视图会自动同步sensors_data的数据。
+
+ 由于使用了AggregatingMergeTree表引擎，数据在AggregatingMergeTree合并分区的过程中，会以分区目录为单位，按照 sensor_id和date预先聚合。
+ 所以，这里其实是玩了一个ClickHouse的常用技巧，那就是利用物化视图进行了预聚合的优化。使用物化视图和MergeTree组合使用，是ClickHouse的杀手锏之一。
+在这个例子中，有点类似数据立方体的意思，通过预聚合, 将聚合结果预先存在表内，在之后查询的过程中，可以从结果直接返回。与此同时，预先聚合还能有效的减少数据行，在这个例子中，最终能将视图内的数据行减少1400倍之多。
+正如ScyllaDB的文章中所说，他们的测试并不是一场 apples to apples 的比较。同样的，我想Alexander拿ClickHouse做的这场比较，也不是针尖对麦芒的。它们两者之间有着太多的不同，它们使用了不同的数据模型、不同的架构等等。
+但是通过这个案例的对比，大家可以认识到ClickHouse确实是经济和性能的完美平衡。如果你的业务也有类似的场景，使用ClickHouse将会是一种不错的选择。

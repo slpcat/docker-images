@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: krb5kdc-env
+  namespace: krb5ldap
+data:
+  REALM: "EXAMPLE.COM"
+  DOMAIN_REALM: "example.com"
+  KDC_ADDRESS: "krb5kdc.example.com"
+  KDC_PORT: 30088
+  ADMIN_PORT: 30749
+  KERB_MASTER_KEY: "admin"
+  KERB_ADMIN_USER: "admin"
+  KERB_ADMIN_PASS: "admin"
+  SEARCH_DOMAINS: "example.com"
+  NAMESERVER_IP: "172.16.0.1"
+  LDAPSERVER: "ldap.example.com"
+  BASE_DC: "dc=example,dc=com"

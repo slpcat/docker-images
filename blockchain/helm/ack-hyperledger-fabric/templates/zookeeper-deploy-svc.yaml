@@ -1,0 +1,88 @@
+{{- $zkNum := 3 -}}
+{{- $network := $.Values.fabricNetwork -}}
+{{- range $loopIndex, $zkIndex := untilStep 1 (int (add $zkNum 1)) 1 -}}
+kind: Service
+apiVersion: v1
+metadata:
+  name: {{ $network }}-zookeeper{{ $zkIndex }}
+spec:
+  selector:
+    app: {{ $network }}-zookeeper{{ $zkIndex }}
+  ports:
+    - protocol: TCP
+      port: 2181
+      name: client-port
+    - protocol: TCP
+      port: 2888
+      name: follower-port
+    - protocol: TCP
+      port: 3888
+      name: election-port
+---
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: {{ $network }}-zookeeper{{ $zkIndex }}-deployment
+  labels:
+    app: {{ $network }}-zookeeper{{ $zkIndex }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ $network }}-zookeeper{{ $zkIndex }}
+  template:
+    metadata:
+      labels:
+        app: {{ $network }}-zookeeper{{ $zkIndex }}
+    spec:
+      containers:
+        - name: {{ $network }}-zookeeper{{ $zkIndex }}
+          image: {{ $.Values.dockerImageRegistry }}/fabric-zookeeper:x86_64-{{ $.Values.hyperledgerFabricVersion }}
+          imagePullPolicy: {{ $.Values.imagePullPolicy | quote }}
+          ports:
+          - containerPort: 2181
+            name: client-port
+          - containerPort: 2888
+            name: follower-port
+          - containerPort: 3888
+            name: election-port  
+          env:
+            - name: ZOO_MY_ID
+              value: {{ $zkIndex | quote }}
+            - name: ZOO_SERVERS
+              value: "{{- range $dummy, $serverIndex := untilStep 1 (int (add $zkNum 1)) 1 -}}
+                        {{ if (eq $serverIndex $zkIndex) }}server.{{ $serverIndex }}=0.0.0.0:2888:3888{{ else }}server.{{ $serverIndex }}={{ $network }}-zookeeper{{ $serverIndex }}:2888:3888{{ end -}}
+                        {{- if (lt $serverIndex $zkNum) }} {{ end -}}
+                      {{- end -}}"
+            - name: ZOO_DATA_DIR
+              value: "/data"
+            - name: ZOO_DATA_LOG_DIR
+              value: "/data-log"
+          volumeMounts:
+            - name: data
+              mountPath: /data
+            - name: data-log
+              mountPath: /data-log
+      initContainers:
+        - name: check-fabric-init
+          image: {{ $.Values.dockerImageRegistry }}/fabric-tools:x86_64-{{ $.Values.hyperledgerFabricVersion }}
+          imagePullPolicy: {{ $.Values.imagePullPolicy | quote }}
+          command: ['sh', '-c', 'sleep 5; until ls /var/hyperledger/production/INIT-COMPLETED; do echo waiting for fabric-init; sleep 5; done; sleep 5;']
+          volumeMounts:
+            - name: fabric-network-root
+              mountPath: /var/hyperledger/production
+              readOnly: true
+      volumes:
+        - name: fabric-network-root
+          hostPath:
+            path: /data/fabric/{{ $network }}
+            # Below type field is necessary to avoid auto creation of dir if not present during init container check
+            type: Directory
+        - name: data
+          hostPath:
+            path: /data/fabric/{{ $network }}/{{ $network }}-zookeeper{{ $zkIndex }}/data
+        - name: data-log
+          hostPath:
+            path: /data/fabric/{{ $network }}/{{ $network }}-zookeeper{{ $zkIndex }}/data-log
+---
+{{- end -}}

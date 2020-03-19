@@ -1,0 +1,212 @@
+{{- $workerNum := .Values.worker.number -}}
+{{- $psNum := .Values.ps.number -}}
+{{- $gpuCount := .Values.worker.gpuCount -}}
+{{- $workerPort := .Values.worker.port -}}
+{{- $psPort := .Values.ps.port -}}
+{{- $releaseName := .Release.Name -}}
+{{- $workerImage := .Values.worker.image -}}
+{{- $psImage := .Values.ps.image -}}
+{{- $psImagePullPolicy := .Values.ps.imagePullPolicy -}}
+{{- $workerImagePullPolicy := .Values.worker.imagePullPolicy -}}
+{{- $mountPath := .Values.mountPath -}}
+{{- $tensorboardImage := .Values.tensorboard.image -}}
+{{- $lr := .Values.hyperparams.learningrate -}}
+{{- $epochs := .Values.hyperparams.epochs -}}
+{{- $batchsize := .Values.hyperparams.batchsize -}}
+{{- $tensorboardServiceType := .Values.tensorboard.serviceType -}}
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tf-cluster-spec
+data:
+  clusterspec: >
+        {
+          "worker": [
+          {{ range $i, $e := until (int $workerNum) }}
+            "worker-{{$i}}:{{ $workerPort }}",
+          {{ end }}
+              ],
+          "ps": [
+          {{ range $i, $e := until (int $psNum) }}
+            "ps-{{$i}}:{{ $psPort }}",
+          {{ end }}
+              ]
+        }
+
+
+{{- range $i, $e := until (int $workerNum) }}
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: worker-{{ $i }}
+spec:
+  clusterIP: None
+  selector:
+    app: {{ $releaseName }}
+    name: worker-{{ $i }}
+  ports:
+  - port: {{ $workerPort }}
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: worker-{{ $i }}
+  labels:
+    app: {{ $releaseName }}
+    name: worker-{{ $i }}
+spec:
+  backoffLimit: 0
+  template:
+    metadata:
+      name: worker-{{ $i }}
+      labels:
+        name: worker-{{ $i }}
+        app: {{ $releaseName }}
+    spec:
+      hostPID: true
+      restartPolicy: Never
+      containers:
+        - name: worker-{{ $i }}
+          image: {{ $workerImage }}
+          imagePullPolicy: {{ $workerImagePullPolicy }}
+          env:
+            - name: CLUSTER_CONFIG
+              valueFrom:
+                 configMapKeyRef:
+                     name: tf-cluster-spec
+                     key: clusterspec
+            - name: POD_NAME
+              value: worker-{{$i}}
+          ports:
+            - containerPort: {{ $workerPort }}
+          resources:
+          {{- if gt (int $gpuCount) 0}}        
+            requests:
+              nvidia.com/gpu: {{ $gpuCount }}
+            limits:
+              nvidia.com/gpu: {{ $gpuCount }} 
+          {{- end}}
+          command:
+            - "python"
+            - "main.py"
+          args:
+            - --logdir 
+            - /data/logs/{{ $releaseName }}-worker-ep{{ $epochs }}-lr{{ $lr }}-{{$i}}
+            - --lr
+            - {{ $lr | quote }}
+            - --epochs
+            - {{ $epochs | quote }}
+            - --batch_size
+            - {{ $batchsize | quote }}
+          volumeMounts:
+            - mountPath: {{ $mountPath }}
+              name: data
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+              claimName: {{ $releaseName }}-pvc
+{{- end}}
+
+
+{{- range $i, $e := until (int $psNum) }}
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: ps-{{ $i }}
+spec:
+  clusterIP: None
+  selector:
+    app: {{ $releaseName }}
+    name: ps-{{ $i }}
+  ports:
+  - port: {{ $psPort }}
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: ps-{{ $i }}
+  labels:
+    app: {{ $releaseName }}
+spec:
+  backoffLimit: 0
+  template:
+    metadata:
+      name: ps-{{ $i }}
+      labels:
+         app: {{ $releaseName }}
+         name: ps-{{ $i }}
+    spec:
+      hostPID: true
+      restartPolicy: Never
+      containers:
+        - name: ps-{{ $i }}
+          image: {{ $psImage }}
+          imagePullPolicy: {{ $psImagePullPolicy }}
+          env:
+            - name: CLUSTER_CONFIG
+              valueFrom:
+                 configMapKeyRef:
+                     name: tf-cluster-spec
+                     key: clusterspec
+            - name: POD_NAME
+              value: ps-{{$i}}
+          ports:
+            - containerPort: {{ $psPort }}
+          command:
+            - "python"
+            - "main.py"
+          args:
+            - --logdir 
+            - /data/logs/{{ $releaseName }}-ps-{{$i}}
+          volumeMounts:
+            - mountPath: {{ $mountPath }}
+              name: data
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+              claimName: {{ $releaseName }}-pvc
+{{end}}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: tensorboard
+  name: tensorboard
+spec:
+  ports:
+  - port: 80
+    targetPort: 6006
+  selector:
+    app: tensorboard
+  type: {{ $tensorboardServiceType }}
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: tensorboard
+  name: tensorboard
+spec:
+  template:
+    metadata:
+      labels:
+        app: tensorboard
+    spec:
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+              claimName: {{ $releaseName }}-pvc    
+      containers:
+      - name: tensorboard      
+        command: ["tensorboard", "--logdir", "/data/logs",  "--host",  "0.0.0.0"]
+        image: {{ $tensorboardImage }}
+        ports:
+        - containerPort: 6006
+        volumeMounts:
+            - mountPath: {{ $mountPath }}
+              name: data

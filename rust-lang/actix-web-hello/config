@@ -1,0 +1,12 @@
+[source.crates-io]
+replace-with = 'ustc'
+
+[source.ustc]
+registry = "git://mirrors.ustc.edu.cn/crates.io-index"
+
+[build]
+# Target musl-libc by default when running Cargo.
+target = "x86_64-unknown-linux-musl"
+
+[target.armv7-unknown-linux-musleabihf]
+linker = "arm-linux-gnueabihf-gcc"

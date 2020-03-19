@@ -1,0 +1,81 @@
+#### POD config (run one time)
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: headless-vnc
+  labels:
+    application: headless-vnc
+spec:
+  # 1 Pods should exist at all times.
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        application: headless-vnc
+    spec:
+      terminationGracePeriodSeconds: 5
+      containers:
+      - name: headless-vnc
+        image: slpcat/ubuntu-xfce-vnc
+        imagePullPolicy: Always
+        args:
+          ### make normal UI startup to connect via: oc rsh <pod-name> bash
+          #- '--tail-log'
+        ### checks that vnc server is up and running
+        env:
+          - name: VNC_COL_DEPTH
+            value: "24"
+          - name: VNC_RESOLUTION
+            value: "1280x1024"
+          - name: VNC_PW
+            value: "novncpassword"
+          - name: VNC_VIEW_ONLY
+            value: "false"
+        livenessProbe:
+          tcpSocket:
+            port: 5901
+          initialDelaySeconds: 1
+          timeoutSeconds: 1
+        ### checks if http-vnc connection is working
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 6901
+            scheme: HTTP
+          initialDelaySeconds: 1
+          timeoutSeconds: 1
+        volumeMounts:
+          - mountPath: /dev/shm
+            name: shm
+      volumes:
+      - name: shm
+        emptyDir:
+          sizeLimit: 1Gi
+          medium: Memory
+          #memory:
+          #  limit: 1GiB
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    application: headless-vnc
+  name: headless-vnc
+spec:
+  externalName: headless-vnc
+  ports:
+  - name: http-port-tcp
+    protocol: TCP
+    port: 6901
+    targetPort: 6901
+    #nodePort: 32001
+  - name: vnc-port-tcp
+    protocol: TCP
+    port: 5901
+    targetPort: 5901
+    #nodePort: 32002
+  selector:
+    application: headless-vnc
+  type: NodePort
+# Use type loadbalancer if needed
+#  type: LoadBalancer

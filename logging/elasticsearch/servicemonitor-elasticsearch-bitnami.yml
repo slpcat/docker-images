@@ -1,0 +1,22 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: elasticsearch
+  namespace: default
+  labels:
+    app: elasticsearch
+    role: metrics
+spec:
+  selector:
+    matchLabels:
+      app: elasticsearch
+      release: elasticsearch
+      role: metrics
+  jobLabel: k8s-app
+  endpoints:
+  - port: metrics
+    interval: 10s
+    path: /metrics
+  namespaceSelector:
+    matchNames:
+      - default

@@ -1,0 +1,91 @@
+apiVersion: extensions/v1beta1
+kind: DaemonSet
+metadata:
+  labels:
+    app: cloud-controller-manager
+    tier: control-plane
+  name: cloud-controller-manager
+  namespace: kube-system
+spec:
+  selector:
+    matchLabels:
+      app: cloud-controller-manager
+      tier: control-plane
+  template:
+    metadata:
+      labels:
+        app: cloud-controller-manager
+        tier: control-plane
+    spec:
+      containers:
+      - command:
+        - /cloud-controller-manager
+        - --kubeconfig=/etc/kubernetes/cloud-controller-manager.conf
+        - --address=127.0.0.1
+        - --leader-elect=true
+        - --cloud-provider=alicloud
+        - --allocate-node-cidrs=true
+        - --cluster-cidr=172.20.0.0/16
+        - --use-service-account-credentials=true
+        - --route-reconciliation-period=30s
+        - --v=5
+        image: registry-vpc.cn-beijing.aliyuncs.com/acs/cloud-controller-manager-amd64:v1.8.4-31-g229a513
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 8
+          httpGet:
+            host: 127.0.0.1
+            path: /healthz
+            port: 10252
+            scheme: HTTP
+          initialDelaySeconds: 15
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 15
+        name: cloud-controller-manager
+        resources:
+          requests:
+            cpu: 200m
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /etc/kubernetes/
+          name: k8s
+          readOnly: true
+        - mountPath: /etc/ssl/certs
+          name: certs
+        - mountPath: /etc/pki
+          name: pki
+      dnsPolicy: ClusterFirst
+      hostNetwork: true
+      nodeSelector:
+        node-role.kubernetes.io/master: ""
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      serviceAccount: cloud-controller-manager
+      serviceAccountName: cloud-controller-manager
+      terminationGracePeriodSeconds: 30
+      tolerations:
+      - effect: NoSchedule
+        key: node-role.kubernetes.io/master
+        operator: Exists
+      - effect: NoSchedule
+        key: node.cloudprovider.kubernetes.io/uninitialized
+        operator: Exists
+      volumes:
+      - hostPath:
+          path: /etc/kubernetes
+          type: ""
+        name: k8s
+      - hostPath:
+          path: /etc/ssl/certs
+          type: ""
+        name: certs
+      - hostPath:
+          path: /etc/pki
+          type: ""
+        name: pki
+  templateGeneration: 1
+  updateStrategy:
+    type: OnDelete

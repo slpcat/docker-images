@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: tensorflow-worker-rc
+spec:
+  replicas: 2
+  selector:
+    name: tensorflow-worker
+  template:
+    metadata:
+      labels:
+        name: tensorflow-worker
+        role: worker
+    spec:
+      containers:
+        - name: worker
+          image: gcr.io/tensorflow/tensorflow:latest
+          ports:
+           - containerPort: 2222

@@ -1,0 +1,45 @@
+dist: trusty
+
+sudo: required
+
+services:
+  - docker
+
+language: python
+python:
+  - "2.7"
+
+env:
+  matrix:
+    - DB=mysql:latest
+    - DB=mariadb:latest
+
+before_install:
+  - export TESTSUITE_PASSWORD=`openssl rand -base64 30`
+  - docker run --name db_server -e MYSQL_ROOT_PASSWORD=$TESTSUITE_PASSWORD -d $DB
+
+install:
+  - pip install mechanize html5lib
+
+script:
+  # Build image
+  - docker build -t phpmyadmin/phpmyadmin .
+  # Test for single database
+  - docker run --name testadmin -d --link db_server:db -p 9090:80 phpmyadmin/phpmyadmin
+  - ./testing/test-docker.sh testadmin 9090
+  # Test for single database using env
+  - docker run --name envadmin -d --link db_server:db2 -e PMA_HOST=db2 -p 6060:80 phpmyadmin/phpmyadmin
+  - ./testing/test-docker.sh envadmin 6060
+  # Test for arbitrary database
+  - docker run --name arbitraryadmin -d --link db_server:db3 -e PMA_ARBITRARY=1 -p 7070:80 phpmyadmin/phpmyadmin
+  - ./testing/test-docker.sh arbitraryadmin 7070 db3
+  # Test for arbitrary database with user config
+  - docker run --name userconfigadmin -d --link db_server:db3 -v `readlink -f ./testing/config.test.inc.php`:/etc/phpmyadmin/config.user.inc.php -p 7080:80 phpmyadmin/phpmyadmin
+  - ./testing/test-docker.sh userconfigadmin 7080 db3
+  # Test docker-compose
+  - docker-compose -f docker-compose.yml -f docker-compose.db.yml up -d
+  - ./testing/test-docker.sh phpmyadmin 8080 db_server
+  - docker-compose stop
+  # Run tests in testing container
+  - docker-compose -f docker-compose.testing.yml up -d phpmyadmin
+  - ./testing/wait-for-testing.sh

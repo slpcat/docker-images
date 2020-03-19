@@ -1,0 +1,3 @@
+https://www.presslabs.com/code/mysqloperator/
+环境变量
+https://dev.mysql.com/doc/mysql-installation-excerpt/5.5/en/docker-mysql-more-topics.html#docker-environment-variables

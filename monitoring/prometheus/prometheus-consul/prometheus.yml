@@ -1,0 +1,95 @@
+global:
+  scrape_interval:     15s # Set the scrape interval to every 15 seconds. Default is every 1 minute.
+  evaluation_interval: 15s # Evaluate rules every 15 seconds. The default is every 1 minute.
+  # scrape_timeout is set to the global default (10s).
+
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+  - static_configs:
+    - targets:
+       - 10.110.200.68:9093
+
+# Load rules once and periodically evaluate them according to the global 'evaluation_interval'.
+rule_files:
+  # - "first_rules.yml"
+  # - "second_rules.yml"
+
+# A scrape configuration containing exactly one endpoint to scrape:
+# Here it's Prometheus itself.
+scrape_configs:
+  # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
+  - job_name: 'prometheus'
+
+    # metrics_path defaults to '/metrics'
+    # scheme defaults to 'http'.
+
+    static_configs:
+      - targets: ['localhost:9090']
+  - job_name: 'nomad-client'
+    metrics_path: /v1/metrics
+    params: 
+      format: 
+        - prometheus
+    consul_sd_configs:
+      - server: '10.110.200.184:8500'
+        services: 
+          - nomad-client
+  - job_name: consul
+    consul_sd_configs:
+      - server: '10.110.200.40:8500'
+    relabel_configs:
+      - source_labels: [__meta_consul_tags]
+        regex: .*,prometheus,.*
+        action: keep
+      - source_labels: [__meta_consul_service]
+        target_label: job
+      - source_labels: [__meta_consul_tags]  
+        regex: .*,smartms,.*
+        target_label:  __metrics_path__  
+        replacement:   '/actuator/prometheus'
+      - source_labels: [__meta_consul_tags]  
+        regex: .*,type=([^,]+),.*
+        target_label:  type  
+        replacement:   ${1}
+      - source_labels: [__meta_consul_tags]  
+        regex: .*,env=([^,]+),.*
+        target_label:  env  
+        replacement:   ${1}
+      - source_labels: [__meta_consul_tags]  
+        regex: .*,app_id=([^,]+),.*
+        target_label:  app_id  
+        replacement:   ${1}
+  - job_name: 'consul-prometheus'
+    consul_sd_configs:
+    #consul 地址
+      - server: 'xx.xx.xx.xx:8500'
+        services: []
+    relabel_configs:
+      #只有consul的service的tag为prometheus-target 的动态发现
+      - source_labels: [__meta_consul_tags]
+        regex: .*prometheus-target.*
+        action: keep
+      - source_labels: [__meta_consul_service]
+        target_label: job
+      - source_labels: ['__metrics_path__']
+        regex:         '/metrics'
+        #暴露的metrics通过/promethues路径访问
+        target_label:  __metrics_path__
+        replacement:   '/prometheus'
+  - job_name: 'node_exporter'
+    consul_sd_configs:
+    #consul 地址
+      - server: 'xx.xx.xx.xx:8500'
+        services: ["node_exporter"]
+    relabel_configs:
+      - source_labels: [__meta_consul_service]
+        target_label: job
+  - job_name: 'cadvisor'
+    consul_sd_configs:
+    #consul 地址
+      - server: 'xx.xx.xx.xx:8500'
+        services: ["cadvisor"]
+    relabel_configs:
+      - source_labels: [__meta_consul_service]
+        target_label: job

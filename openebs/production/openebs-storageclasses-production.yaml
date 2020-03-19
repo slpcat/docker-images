@@ -1,0 +1,90 @@
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: openebs-standard
+  annotations:
+    storageclass.beta.kubernetes.io/is-default-class: "true"
+    openebs.io/cas-type: cstor
+    cas.openebs.io/config: |
+      - name: StoragePoolClaim
+        value: "cstor-disk"
+      - name: ReplicaCount
+        value: "3"
+provisioner: openebs.io/provisioner-iscsi
+#reclaimPolicy: Retain
+allowVolumeExpansion: true
+#mountOptions: ["rw", "nobarrier", "inode_readahead_blks=4096", "delalloc", "commit=600"]
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: openebs-standalone
+  annotations:
+    openebs.io/cas-type: cstor
+    cas.openebs.io/config: |
+      - name: StoragePoolClaim
+        value: "cstor-disk"
+      - name: ReplicaCount
+        value: "1"
+      #- name: TargetNodeSelector
+      #  value: |-
+      #      node: appnode
+      #- name: ReplicaNodeSelector
+      #  value: |-
+      #      node: openebs
+      #- name: TargetResourceLimits
+      #  value: |-
+      #      memory: 1Gi
+      #      cpu: 1
+      #- name: AuxResourceLimits
+      #  value: |-
+      #      memory: 0.5Gi
+      #      cpu: 50m
+      #- name: ReplicaResourceLimits
+      #  value: |-
+      #      memory: 2Gi
+provisioner: openebs.io/provisioner-iscsi
+#reclaimPolicy: Retain
+allowVolumeExpansion: true
+#mountOptions: ["rw", "nobarrier", "inode_readahead_blks=4096", "delalloc", "commit=600"]
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: openebs-mongodb
+  annotations:
+    openebs.io/cas-type: cstor
+    cas.openebs.io/config: |
+      - name: StoragePoolClaim
+        value: "cstor-disk"
+      - name: ReplicaCount
+        value: "1"
+      #- name: StoragePool
+      #  value: default
+      - name: FSType
+        value: "xfs"
+      #- name: ReplicaAntiAffinityTopoKey
+      #  value: failure-domain.beta.kubernetes.io/zone
+      #- name: TargetNodeSelector
+      #  value: |-
+      #      node: appnode
+      #- name: ReplicaNodeSelector
+      #  value: |-
+      #      node: openebs
+      #- name: TargetResourceLimits
+      #  value: |-
+      #      memory: 1Gi
+      #      cpu: 1
+      #- name: AuxResourceLimits
+      #  value: |-
+      #      memory: 0.5Gi
+      #      cpu: 50m
+      #- name: ReplicaResourceLimits
+      #  value: |-
+      #      memory: 2Gi
+provisioner: openebs.io/provisioner-iscsi
+#reclaimPolicy: Retain
+allowVolumeExpansion: true
+#mountOptions: ["rw", "noatime", "nodiratime", "inode64", "logbsize=256k"]
+---

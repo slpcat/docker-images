@@ -1,0 +1,16 @@
+appVersion: 0.1.38
+description: ElastAlert is a simple framework for alerting on anomalies, spikes, or
+  other patterns of interest from data in Elasticsearch.
+engine: gotpl
+home: https://github.com/Yelp/elastalert
+icon: https://static-www.elastic.co/assets/blteb1c97719574938d/logo-elastic-elasticsearch-lt.svg
+maintainers:
+- email: jertel@codesim.com
+  name: jertel
+- email: o.with@sportradar.com
+  name: olemarkus
+name: elastalert
+sources:
+- https://github.com/jertel/elastalert-docker
+- https://github.com/Yelp/elastalert
+version: 0.11.1

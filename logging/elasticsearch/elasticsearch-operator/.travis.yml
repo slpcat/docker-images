@@ -1,0 +1,20 @@
+language: go
+
+go:
+  - "1.10"
+
+sudo: required
+
+services:
+  - docker
+
+script:
+- make check
+- make test
+- make build
+
+deploy:
+  provider: script
+  script: hack/image_push.sh
+  on:
+    branch: master

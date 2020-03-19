@@ -1,0 +1,36 @@
+docker-gc (2:0.1.0) unstable; urgency=low
+
+  * Fixes:
+    - Only remove images that are created at least GRACE_PERIOD_SECONDS ago
+    - Do not exclude everything when excluding nothing
+    - Should mount /etc as volumes when running as a docker container
+    - Fix grep difference bug in excluding containers
+    - handling a pid so that docker-gc will run only once at a time
+    - Add support for excluding containers
+    - Calculate elapsed time in Bash
+
+ -- David Xia <dxia@spotify.com>  Mon, 05 Oct 2015 17:10:00 +0000
+
+docker-gc (0.0.4) unstable; urgency=low
+
+  * Do not automatically install cron job
+
+ -- Ryan Culbertson <ryan@spotify.com>  Mon, 06 Jul 2015 17:10:00 +0000
+
+docker-gc (0.0.3) unstable; urgency=low
+
+  * Tolerate things not existing
+
+ -- Drew Csillag <drewc@spotify.com>  Wed, 15 Oct 2014 20:20:20 +0000
+
+docker-gc (0.0.2) unstable; urgency=low
+
+  * Allow for GC to ignore certain images
+
+ -- Drew Csillag <drewc@spotify.com>  Tue, 14 Oct 2014 20:20:20 +0000
+
+docker-gc (0.0.1) unstable; urgency=low
+
+  * Initial release.
+
+ -- Daniel Norberg <dano@spotify.com>  Sun, 22 Jun 2014 20:20:20 +0000

@@ -1,0 +1,104 @@
+redash和superset(荐),metabase等大数据可视化平台对Clickhouse 有很好的支持
+可视化的连接工具DBeaver https://dbeaver.jkiss.org/download/
+
+docker run -d --name clickhouse-server --ulimit nofile=262144:262144 -p 9000:9000 -p 8123:8123 -v /data/clickhouse-conf/config.xml:/etc/clickhouse-server/config.xml -v /data/clickhouse-data:/var/lib/clickhouse yandex/clickhouse-server 
+
+docker run -it --rm --link some-clickhouse-server:clickhouse-server yandex/clickhouse-client --host clickhouse-server
+
+https://clickhouse.yandex/docs/en/operations/tips/#zookeeper
+
+
+为了更好地优化clickhouse的性能，需要对clickhouse集群进行监控。网上很多监控方案都是clickhouse + grafana + prometheus，因此打算使用此方案。
+
+要想使用prometheus就得先安装exporter，clickhouse有第三方提供的clickhouse_exporter，也有容器版本，并且提供了grafana的dashboard版本： https://grafana.net/dashboards/882。由于我们在集群中使用了代理CHproxy，但CHproxy也同时实现了exporter的功能，并且提供了更多的特性以及grafana dashboard模板https://github.com/Vertamedia/chproxy/blob/master/chproxy_overview.json，所以我们也就直接使用。
+
+ClickHouse用户名密码设置
+Config概览
+配置文件：user.xml
+核心配置3部分
+profile配置，最大内存、负载方式等（没有特别关注，可见官方文档）
+配额设置，单个用户最大能用的资源多少（没有特别关注，可见官方文档）
+用户设置，包括用户名和密码
+密码有2种，一种是明文，一种是写sha256sum的Hash值
+官方不建议直接写明文密码
+我们的config文件
+<?xml version="1.0"?>
+<yandex>
+    <profiles>
+        <default>
+            <max_memory_usage>10000000000</max_memory_usage>
+            <use_uncompressed_cache>0</use_uncompressed_cache>
+            <load_balancing>random</load_balancing>
+        </default>
+
+        <readonly>
+            <max_memory_usage>10000000000</max_memory_usage>
+            <use_uncompressed_cache>0</use_uncompressed_cache>
+            <load_balancing>random</load_balancing>
+            <readonly>1</readonly>
+        </readonly>
+
+    </profiles>
+
+    <quotas>
+        <!-- Name of quota. -->
+        <default>
+            <interval>
+                <duration>3600</duration>
+                <queries>0</queries>
+                <errors>0</errors>
+                <result_rows>0</result_rows>
+                <read_rows>0</read_rows>
+                <execution_time>0</execution_time>
+            </interval>
+        </default>
+    </quotas>
+
+    <users>
+        <default>
+            <password_sha256_hex>967f3bf355dddfabfca1c9f5cab39352b2ec1cd0b05f9e1e6b8f629705fe7d6e</password_sha256_hex>
+            <networks incl="networks" replace="replace">
+                <ip>::/0</ip>
+            </networks>
+            <profile>default</profile>
+            <quota>default</quota>
+        </default>
+
+        <ck>
+            <password_sha256_hex>967f3bf355dddfabfca1c9f5cab39352b2ec1cd0b05f9e1e6b8f629705fe7d6e</password_sha256_hex>
+            <networks incl="networks" replace="replace">
+                <ip>::/0</ip>
+            </networks>
+            <profile>readonly</profile>
+            <quota>default</quota>
+        </ck>
+    </users>
+</yandex>
+配置解读
+下图定义了两组设置，名字不同
+
+第二组增加了readonly选项
+
+如何生成密码
+PASSWORD=$(base64 < /dev/urandom | head -c8);
+echo "$PASSWORD"; echo -n "$PASSWORD" | sha256sum | tr -d '-'
+
+6lYaUiFi
+967f3bf355dddfabfca1c9f5cab39352b2ec1cd0b05f9e1e6b8f629705fe7d6e
+权限验证
+默认用户登陆（可以不用指定用户名）
+
+root@10.xxxx:/data1/clickhouse  # clickhouse-client -h 127.0.0.1 -d demo -m -u default --password 6lYaUiFi
+ClickHouse client version 1.1.54289.
+Connecting to database gaopeng4 at 127.0.0.1:9000 as user default.
+Connected to ClickHouse server version 1.1.54289.
+
+:) create database test1 ;       
+
+CREATE DATABASE test1
+
+Ok.
+
+0 rows in set. Elapsed: 0.002 sec. 
+
+

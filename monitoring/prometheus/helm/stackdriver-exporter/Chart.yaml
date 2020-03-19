@@ -1,0 +1,15 @@
+apiVersion: v1
+appVersion: 0.5.1
+description: Stackdriver exporter for Prometheus
+home: https://www.stackdriver.com/
+keywords:
+- metrics
+- stackdriver
+- monitoring
+maintainers:
+- email: apenney@gmail.com
+  name: apenney
+name: stackdriver-exporter
+sources:
+- https://github.com/frodenas/stackdriver_exporter/releases
+version: 0.0.4

@@ -1,0 +1,18 @@
+kind: Service
+apiVersion: v1
+metadata:
+name: mongo
+spec:
+ports:
+– port: 27017
+targetPort: 49763
+—
+kind: Endpoints
+apiVersion: v1
+metadata:
+name: mongo
+subsets:
+– addresses:
+– ip: 35.188.8.12
+ports:
+– port: 49763

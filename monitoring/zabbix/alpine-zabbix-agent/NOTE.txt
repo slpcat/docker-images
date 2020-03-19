@@ -1,0 +1,3 @@
+zabbix-agent + docker module
+https://github.com/zabbix/zabbix-docker/blob/4.2/agent/alpine/Dockerfile
+https://github.com/monitoringartist/zabbix-docker-monitoring/tree/master

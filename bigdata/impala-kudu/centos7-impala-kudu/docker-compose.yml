@@ -1,0 +1,21 @@
+version: '3'
+services:
+  impala:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: parrotstream/impala-kudu:latest
+    networks:
+    - parrot
+    ports:
+    - 21000:21000
+    - 21050:21050
+    - 25000:25000
+    - 25010:25010
+    - 25020:25020
+networks:
+  default:
+    external:
+      name: parrot
+  parrot:
+    driver: bridge

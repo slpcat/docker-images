@@ -1,0 +1,153 @@
+# This file and its contents are licensed under the Apache License 2.0.
+# Please see the included NOTICE for copyright information and LICENSE for a copy of the license.
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ template "timescaledb.accessname" . }}
+  labels:
+    app: {{ template "timescaledb.fullname" . }}
+    chart: {{ template "timescaledb.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  serviceName: {{ template "timescaledb.accessname" . }}
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ template "timescaledb.fullname" . }}
+      release: {{ .Release.Name }}
+      timescaleNodeType: access
+  template:
+    metadata:
+      name: {{ template "timescaledb.accessname" . }}
+      labels:
+        app: {{ template "timescaledb.fullname" . }}
+        release: {{ .Release.Name }}
+        timescaleNodeType: access
+    spec:
+      serviceAccountName: {{ template "timescaledb.serviceAccountName" . }}
+      securityContext:
+        # The postgres user inside the TimescaleDB image has uid=1000.
+        # This configuration ensures the permissions of the mounts are suitable
+        fsGroup: 1000
+      initContainers:
+      - name: initdb
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        env:
+        - name: POSTGRESQL_CUSTOM_PARAMETERS
+          value: |
+            {{- range $key, $value := .Values.postgresql.parameters }}
+            {{ printf "%s = '%s'" $key ($value | toString) }}
+            {{- end }}
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ template "timescaledb.accessname" . }}
+              key: password-superuser
+        - name: POSTGRES_PASSWORD_DATA_NODE
+          valueFrom:
+            secretKeyRef:
+              name: {{ template "timescaledb.dataname" . }}
+              key: password-superuser
+          {{- if .Values.env }}
+{{ .Values.env | default list | toYaml | indent 8 }}
+          {{- end }}
+        command:
+          - sh
+          - '-c'
+          # By calling the original entrypoint with the first argument being postgres
+          # we ensure we do everything that is required to init a PostgreSQL instance.
+          # By supplying --version however, we ensure the instance isn't started, but merely
+          # a version number is displayed, allowing us to do some more initialization
+          - |
+            set -e
+            install -o postgres -g postgres -m 0700 -d "${PGDATA}"
+            /docker-entrypoint.sh postgres --version
+            grep -qxF "include 'postgresql_helm_customizations.conf'" "${PGDATA}/postgresql.conf" \
+                || echo "include 'postgresql_helm_customizations.conf'" >> "${PGDATA}/postgresql.conf"
+            echo "Writing custom PostgreSQL Parameters to ${PGDATA}/postgresql_helm_customizations.conf"
+            echo "cluster_name = '$(hostname)'" > "${PGDATA}/postgresql_helm_customizations.conf"
+            echo "${POSTGRESQL_CUSTOM_PARAMETERS}" | sort >> "${PGDATA}/postgresql_helm_customizations.conf"
+            echo "*:*:*:postgres:${POSTGRES_PASSWORD_DATA_NODE}" > "${PGDATA}/../.pgpass"
+            chown postgres:postgres "${PGDATA}/../.pgpass" "${PGDATA}/postgresql_helm_customizations.conf"
+            chmod 0600 "${PGDATA}/../.pgpass"
+        volumeMounts:
+        - name: storage-volume
+          mountPath: "{{ .Values.persistentVolume.mountPath }}"
+          subPath: "{{ .Values.persistentVolume.subPath }}"
+      containers:
+      - name: timescaledb
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        # We start postgres with a fully cleared environment
+        command:
+          - sh
+          - '-c'
+          - exec env -i PGDATA="${PGDATA}" PATH="${PATH}" /docker-entrypoint.sh postgres
+        env:
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+          {{- if .Values.env }}
+{{ .Values.env | default list | toYaml | indent 8 }}
+          {{- end }}
+        ports:
+        - containerPort: 5432
+        volumeMounts:
+        - name: storage-volume
+          mountPath: "{{ .Values.persistentVolume.mountPath }}"
+          subPath: "{{ .Values.persistentVolume.subPath }}"
+        resources:
+{{ toYaml .Values.resources | indent 10 }}
+    {{- with .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- if .Values.schedulerName }}
+      schedulerName: {{ .Values.schedulerName }}
+    {{- end }}
+    {{- if .Values.affinity }}
+      affinity:
+{{ .Values.affinity | toYaml | indent 8 }}
+    {{- else if .Values.affinityTemplate }}
+      affinity:
+{{ tpl .Values.affinityTemplate . | indent 8 }}
+    {{- end }}
+      {{- if not .Values.persistentVolume.enabled }}
+      - name: storage-volume
+        emptyDir: {}
+      {{- end }}
+  {{- if .Values.persistentVolume.enabled }}
+  volumeClaimTemplates:
+    - metadata:
+        name: storage-volume
+        annotations:
+        {{- if .Values.persistentVolume.annotations }}
+{{ toYaml .Values.persistentVolume.annotations | indent 8 }}
+        {{- end }}
+        labels:
+          app: {{ template "timescaledb.fullname" . }}
+          release: {{ .Release.Name }}
+          heritage: {{ .Release.Service }}
+      spec:
+        accessModes:
+{{ toYaml .Values.persistentVolume.accessModes | indent 8 }}
+        resources:
+          requests:
+            storage: "{{ .Values.persistentVolume.size }}"
+      {{- if .Values.persistentVolume.storageClass }}
+      {{- if (eq "-" .Values.persistentVolume.storageClass) }}
+        storageClassName: ""
+      {{- else }}
+        storageClassName: "{{ .Values.persistentVolume.storageClass }}"
+      {{- end }}
+      {{- end }}
+  {{- end }}

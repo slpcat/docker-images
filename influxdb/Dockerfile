@@ -1,0 +1,57 @@
+# upstream https://github.com/influxdata/influxdata-docker
+FROM alpine:3.6
+
+MAINTAINER 若虚 <slpcat@qq.com>
+
+# Container variables
+ENV \
+    TERM="xterm" \
+    LANG="en_US.UTF-8" \ 
+    LANGUAGE="en_US.UTF-8" \
+    LC_ALL="en_US.UTF-8" \
+    TIMEZONE="Asia/Shanghai"
+
+# Set timezone and locales
+RUN set -ex \
+    && apk update \
+    && apk upgrade \
+    && apk add tzdata \
+    && echo "${TIMEZONE}" > /etc/TZ \
+    && ln -sf /usr/share/zoneinfo/${TIMEZONE} /etc/localtime \
+    && apk add ca-certificates apache2-utils \
+    && rm -f /var/cache/apk/*.tar.gz
+
+RUN echo 'hosts: files dns' >> /etc/nsswitch.conf
+RUN apk add --no-cache tzdata bash
+
+ENV INFLUXDB_VERSION 1.3.7
+RUN set -ex && \
+    apk add --no-cache --virtual .build-deps wget gnupg tar ca-certificates && \
+    update-ca-certificates && \
+    for key in \
+        05CE15085FC09D18E99EFB22684A14CF2582E0C5 ; \
+    do \
+        gpg --keyserver ha.pool.sks-keyservers.net --recv-keys "$key" || \
+        gpg --keyserver pgp.mit.edu --recv-keys "$key" || \
+        gpg --keyserver keyserver.pgp.com --recv-keys "$key" ; \
+    done && \
+    wget -q https://dl.influxdata.com/influxdb/releases/influxdb-${INFLUXDB_VERSION}-static_linux_amd64.tar.gz.asc && \
+    wget -q https://dl.influxdata.com/influxdb/releases/influxdb-${INFLUXDB_VERSION}-static_linux_amd64.tar.gz && \
+    gpg --batch --verify influxdb-${INFLUXDB_VERSION}-static_linux_amd64.tar.gz.asc influxdb-${INFLUXDB_VERSION}-static_linux_amd64.tar.gz && \
+    mkdir -p /usr/src && \
+    tar -C /usr/src -xzf influxdb-${INFLUXDB_VERSION}-static_linux_amd64.tar.gz && \
+    rm -f /usr/src/influxdb-*/influxdb.conf && \
+    chmod +x /usr/src/influxdb-*/* && \
+    cp -a /usr/src/influxdb-*/* /usr/bin/ && \
+    rm -rf *.tar.gz* /usr/src /root/.gnupg && \
+    apk del .build-deps
+COPY influxdb.conf /etc/influxdb/influxdb.conf
+
+EXPOSE 8086
+
+VOLUME /var/lib/influxdb
+
+COPY entrypoint.sh /entrypoint.sh
+COPY init-influxdb.sh /init-influxdb.sh
+ENTRYPOINT ["/entrypoint.sh"]
+CMD ["influxd"]

@@ -1,0 +1,28 @@
+sudo: required
+services: docker
+language: bash
+env:
+    global:
+      - QEMU_VER=v2.9.1
+      - DOCKER_REPO=maartje/k8s-openresty-ingress
+    matrix:
+      - ARCH=amd64 GOARCH=amd64 GOARM=6 QQEMU_ARCH=x86_64
+      - ARCH=armhf GOARCH=arm   GOARM=6 QEMU_ARCH=arm
+      - ARCH=arm64 GOARCH=arm64 GOARM=6 QEMU_ARCH=aarch64
+
+before_install:
+  - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+  - sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+  - sudo apt-get update
+  - sudo apt-get -y install docker-ce
+  - sudo apt-get -y install qemu-user-static
+  - docker run --rm --privileged multiarch/qemu-user-static:register
+
+script:
+  - docker build -t $DOCKER_REPO:$ARCH-$TRAVIS_COMMIT --build-arg ARCH="$ARCH" --build-arg GOARCH="$GOARCH" --build-arg GOARM="$GOARM" ./
+
+after_success:
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  - if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then docker push $DOCKER_REPO:$ARCH-$TRAVIS_COMMIT; fi
+  - if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then docker tag $DOCKER_REPO:$ARCH-$TRAVIS_COMMIT $DOCKER_REPO:$ARCH-latest; docker push $DOCKER_REPO:$ARCH-latest; fi
+  - if [ "$TRAVIS_TAG" != "" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then docker tag $DOCKER_REPO:$ARCH-$TRAVIS_COMMIT $DOCKER_REPO:$ARCH-$TRAVIS_TAG; docker push $DOCKER_REPO:$ARCH-$TRAVIS_TAG; fi

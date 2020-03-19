@@ -1,0 +1,10 @@
+apiVersion: configuration.konghq.com/v1
+kind: KongPlugin
+metadata:
+  name: http-svc-consumer-ratelimiting
+consumerRef: consumer-team-x
+config:
+  hour: 1000
+  limit_by: ip
+  second: 100
+plugin: rate-limiting

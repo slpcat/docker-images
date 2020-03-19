@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: d-bp1j17ifxfasvts3tf40 #TODO: put pv name of cloud disk here
+spec:
+  capacity:
+    storage: 20Gi #TODO: put the exact size of cloud disk here
+  accessModes:
+    - ReadWriteOnce
+  flexVolume:
+    driver: "alicloud/disk"
+    fsType: "ext4"
+    options:
+      volumeId: "d-bp1j17ifxfasvts3tf40" #TODO: put id of cloud disk

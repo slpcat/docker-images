@@ -1,0 +1,8 @@
+[package]
+name = "actix-web-hello"
+version = "0.1.0"
+authors = ["slpcat <slpcat@qq.com>"]
+edition = "2018"
+
+[dependencies]
+actix-web = "1.0"

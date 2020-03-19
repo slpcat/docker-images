@@ -1,0 +1,10 @@
+apiGateway:
+  host: api.dispatch.local
+dispatch:
+  host: dispatch.local
+  port: 443
+  faas: FAAS
+  eventTransport: EVENT_TRANSPORT
+  image:
+    host: DOCKER_REGISTRY_HOST
+    tag: IMAGE_TAG

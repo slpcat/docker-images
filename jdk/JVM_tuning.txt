@@ -1,0 +1,209 @@
+################################################################
+## Expert settings
+################################################################
+##
+## All settings below this section are considered
+## expert settings. Don't tamper with them unless
+## you understand what you are doing
+##
+################################################################
+
+## GC configuration
+-XX:+UseConcMarkSweepGC
+-XX:CMSInitiatingOccupancyFraction=75
+-XX:+UseCMSInitiatingOccupancyOnly
+
+## G1GC Configuration
+# NOTE: G1GC is only supported on JDK version 10 or later.
+# To use G1GC uncomment the lines below.
+# 10-:-XX:-UseConcMarkSweepGC
+# 10-:-XX:-UseCMSInitiatingOccupancyOnly
+# 10-:-XX:+UseG1GC
+# 10-:-XX:InitiatingHeapOccupancyPercent=75
+
+## DNS cache policy
+# cache ttl in seconds for positive DNS lookups noting that this overrides the
+# JDK security property networkaddress.cache.ttl; set to -1 to cache forever
+-Des.networkaddress.cache.ttl=60
+# cache ttl in seconds for negative DNS lookups noting that this overrides the
+# JDK security property networkaddress.cache.negative ttl; set to -1 to cache
+# forever
+-Des.networkaddress.cache.negative.ttl=10
+
+## optimizations
+
+# pre-touch memory pages used by the JVM during initialization
+-XX:+AlwaysPreTouch
+
+## basic
+
+# explicitly set the stack size
+-Xss1m
+
+# set to headless, just in case
+-Djava.awt.headless=true
+
+# ensure UTF-8 encoding by default (e.g. filenames)
+-Dfile.encoding=UTF-8
+
+# use our provided JNA always versus the system one
+-Djna.nosys=true
+
+# turn off a JDK optimization that throws away stack traces for common
+# exceptions because stack traces are important for debugging
+-XX:-OmitStackTraceInFastThrow
+
+# flags to configure Netty
+-Dio.netty.noUnsafe=true
+-Dio.netty.noKeySetOptimization=true
+-Dio.netty.recycler.maxCapacityPerThread=0
+
+# log4j 2
+-Dlog4j.shutdownHookEnabled=false
+-Dlog4j2.disable.jmx=true
+
+-Djava.io.tmpdir=${ES_TMPDIR}
+
+## heap dumps
+
+# generate a heap dump when an allocation from the Java heap fails
+# heap dumps are created in the working directory of the JVM
+-XX:+HeapDumpOnOutOfMemoryError
+
+# specify an alternative path for heap dumps; ensure the directory exists and
+# has sufficient space
+-XX:HeapDumpPath=data
+
+# specify an alternative path for JVM fatal error logs
+-XX:ErrorFile=logs/hs_err_pid%p.log
+
+## JDK 8 GC logging
+
+8:-XX:+PrintGCDetails
+8:-XX:+PrintGCDateStamps
+8:-XX:+PrintTenuringDistribution
+8:-XX:+PrintGCApplicationStoppedTime
+8:-Xloggc:logs/gc.log
+8:-XX:+UseGCLogFileRotation
+8:-XX:NumberOfGCLogFiles=32
+8:-XX:GCLogFileSize=64m
+
+# JDK 9+ GC logging
+9-:-Xlog:gc*,gc+age=trace,safepoint:file=logs/gc.log:utctime,pid,tags:filecount=32,filesize=64m
+# due to internationalization enhancements in JDK 9 Elasticsearch need to set the provider to COMPAT otherwise
+# time/date parsing will break in an incompatible way for some date patterns and locals
+9-:-Djava.locale.providers=COMPAT
+
+# temporary workaround for C2 bug with JDK 10 on hardware with AVX-512
+10-:-XX:UseAVX=2
+
+
+JAVA_OPTS：设置JVM相关运行参数的变量，用于Java运行时选项start、stop或run命令执行
+CATALINA_OPTS：设置Tomcat相关运行参数的变量，用于Java运行时选项start、run命令执行
+
+JVM内存划分分为新生代(Young Generation)、老年代(Old Generation)、永久代(Permanent Generation)
+堆内存(Heap) = 新生代 + 老年代，非堆内存 = 永久代
+
+增加处理器时增加内存，因为分配能够并行进行，而垃圾收集不是并行的
+
+${JAVA_HOME}/bin/catalina.sh：
+CATALINA_OPTS="
+-server
+-Xms6000M
+-Xmx6000M
+-Xss512k
+-XX:NewSize=2250M
+-XX:MaxNewSize=2250M
+-XX:+AggressiveOpts
+-XX:+UseBiasedLocking
+-XX:+DisableExplicitGC
+-XX:+UseParNewGC
+-XX:+UseConcMarkSweepGC
+-XX:MaxTenuringThreshold=15
+-XX:+CMSParallelRemarkEnabled
+-XX:LargePageSizeInBytes=128M
+-XX:+UseFastAccessorMethods
+-XX:+UseCMSInitiatingOccupancyOnly
+-Duser.timezone=Asia/Shanghai
+-Djava.awt.headless=true"
+
+-server：启动速度慢，运行时性能和内存管理效率高
+
+-client：启动速度快，运行时性能和内存管理效率不高
+
+-Xms：指定Java初始化堆大小，-Xms与-Xmx设成一样的值，避免JVM反复重新申请内存，默认值为物理内存的1/64，空余堆内存小于40%时，
+JVM增大堆直到-Xmx的最大限制
+
+-Xmx：指定Java最大堆大小，最大值设置为可用内存的最大值的80%，空余堆内存大于70%时JVM减少堆直到-Xms的最小限制
+
+-Xss：指定每个Java线程堆栈大小，每个线程堆栈大小为1M，线程大小不建议超过1M
+
+-XX:NewSize：指定新生代内存大小
+
+-XX:MaxNewSize：指定最大新生代内存大小
+
+-XX:+AggressiveOpts：指定每当JDK版本升级时，JVM都会使用最新加入的优化技术
+
+-XX:+UseBiasedLocking：指定优化线程锁对线程处理自动进行最优调配
+
+-XX:+DisableExplicitGC：指定程序代码中不允许显示调用System.gc()
+
+-XX:+UseConcMarkSweepGC：指定老年代为并发收集(CMS GC)，CMS GC在GC次数增多的情况下，每次GC的响应时间很短(几毫秒)
+
+-XX:+UseParNewGC：指定新生代采用多线程并行回收
+
+-XX:MaxTenuringThreshold：指定垃圾最大年龄，设置为0新生代对象不经过Survivor区，直接进入老年代，对于老年代比较多的应用
+(需要大量常驻内存的应用)可以提高效率。设置为一个较大值新生代对象会在Survivor区进行多次复制，可以增加对象在新生代的存活
+时间，增加在新生代即被回收的概率，减少Full GC的频率。该参数只有在串行GC时才有效
+
+-XX:+CMSParallelRemarkEnabled：指定使用UseParNewGC的情况下，尽量减少Mark的时间
+
+-XX:LargePageSizeInBytes：指定Java Heap的分页页面大小，内存页的大小不可设置过大，会影响Perm的大小
+
+-XX:+UseFastAccessorMethods：指定使用Get、Set方法转成本地代码，原始类型的快速优化
+
+-XX:+UseCMSInitiatingOccupancyOnly：指定在Oldgeneration在使用了初始化的比例后Concurrent Collector启动收集
+
+-Duser.timezone=Asia/Shanghai：指定用户所在时区
+
+-Djava.awt.headless=true：兼容Linux/Unix下图形报表显示输出
+
+-Xmn：指定新生代内存大小，增大新生代后将会减小老年代大小，对系统性能影响较大，Sun官方推荐配置为整个堆的3/8
+
+-XX:CMSInitiatingOccupancyFraction：当堆满之后，并行收集器开始进行垃圾收集，与Xmn关联使用
+
+-XX:+CMSIncrementalMode：指定开启CMS收集器增量模式，增量模式经常暂停CMS过程，对应用程序线程作出完全的让步
+
+-XX:+UseSerialGC：指定使用串行收集器，老年代使用串行收集
+
+-XX:+UseParallelGC：指定使用并行收集器，新生代使用并行收集
+
+-XX:+UseParallelOldGC：指定老年代垃圾收集方式为并行收集
+
+-XX:ConcGCThreads：指定并发CMS过程运行时的线程数，如果未设置，JVM会根据并行收集器中的-XX:ParallelGCThreads参数的值来
+计算出默认的并行CMS线程数
+
+-XX:ParallelGCThreads：指定并行收集器的线程数，建议配置与CPU数目相等
+
+-XX:OldSize：指定老年代内存大小
+
+Java设置字符集编码：
+-Djavax.servlet.request.encoding=UTF-8
+-Djavax.servlet.response.encoding=UTF-8
+-Dfile.encoding=UTF-8
+-Duser.country=CN
+-Duser.language=zh
+
+Java常见内存溢出：
+(1)java.lang.OutOfMemoryError: Java Heap Space —- JVM Heap(堆)溢出
+原因：JVM中如果98%的时间是用于GC，且可用的Heap Size不足2%的时候会抛出此异常信息
+解决方案：手动设置JVM Heap(堆)的大小
+
+(2)java.lang.OutOfMemoryError: PermGen Space —- PermGen Space(永久代)溢出
+作用：主要是被JVM存放Class和Meta信息的，Class在被Load的时候被放入PermGen Space区域
+原因：GC不会在主程序运行期对PermGen Space进行清理，应用载入很多CLASS就可能出现PermGen Space溢出
+解决方案：手动设置MaxPermSize大小
+
+(3)java.lang.StackOverflowError —- 栈溢出
+原因：调用构造函数层太多，导致栈区溢出
+解决方案：修改程序

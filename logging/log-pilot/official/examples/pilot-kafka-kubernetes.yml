@@ -1,0 +1,56 @@
+apiVersion: extensions/v1beta1
+kind: DaemonSet
+metadata:
+  name: log-pilot
+  labels:
+    k8s-app: log-pilot
+spec:
+  updateStrategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        k8s-app: log-pilot
+    spec:
+      tolerations:
+      - key: node-role.kubernetes.io/master
+        effect: NoSchedule
+      containers:
+      - name: log-pilot
+        image: registry.cn-hangzhou.aliyuncs.com/acs/log-pilot:0.9.5-fluentd
+        env:
+          - name: "LOGGING_OUTPUT"
+            value: "kafka"
+          - name: "KAFKA_BROKERS"
+            value: "kafka1:9092,kafka2:9092" #changeme
+          - name: "NODE_NAME"
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.nodeName
+        volumeMounts:
+        - name: sock
+          mountPath: /var/run/docker.sock
+        - name: root
+          mountPath: /host
+          readOnly: true
+        - name: pos
+          mountPath: /pilot/pos
+        - name: localtime
+          mountPath: /etc/localtime
+        securityContext:
+          capabilities:
+            add:
+            - SYS_ADMIN
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - name: sock
+        hostPath:
+          path: /var/run/docker.sock
+      - name: root
+        hostPath:
+          path: /
+      - name: pos
+        emptyDir: {}
+      - name: localtime
+        hostPath:
+          path: /etc/localtime

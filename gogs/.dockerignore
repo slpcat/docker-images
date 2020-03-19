@@ -1,0 +1,17 @@
+.git
+.git/**
+packager
+packager/**
+scripts
+scripts/**
+.github/
+.github/**
+config.codekit
+.dockerignore
+*.yml
+*.md
+.bra.toml
+.editorconfig
+.gitignore
+Dockerfile*
+gogs

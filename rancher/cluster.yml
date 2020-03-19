@@ -1,0 +1,202 @@
+nodes:
+- address: 18.191.190.205
+  internal_address: 172.31.24.213
+  user: ubuntu
+  role: [ "controlplane", "etcd", "worker" ]
+- address: 18.191.190.203
+  internal_address: 172.31.24.203
+  user: ubuntu
+  role: [ "controlplane", "etcd", "worker" ]
+- address: 18.191.190.10
+  internal_address: 172.31.24.244
+  user: ubuntu
+  role: [ "controlplane", "etcd", "worker" ]
+
+system_images:
+    kubernetes: rancher/hyperkube:v1.10.3-rancher2
+    etcd: rancher/coreos-etcd:v3.1.12
+    alpine: rancher/rke-tools:v0.1.9
+    nginx_proxy: rancher/rke-tools:v0.1.9
+    cert_downloader: rancher/rke-tools:v0.1.9
+    kubernetes_services_sidecar: rancher/rke-tools:v0.1.9
+    kubedns: rancher/k8s-dns-kube-dns-amd64:1.14.8
+    dnsmasq: rancher/k8s-dns-dnsmasq-nanny-amd64:1.14.8
+    kubedns_sidecar: rancher/k8s-dns-sidecar-amd64:1.14.8
+    kubedns_autoscaler: rancher/cluster-proportional-autoscaler-amd64:1.0.0
+    pod_infra_container: rancher/pause-amd64:3.1
+
+services:
+  kubelet:
+    # Base domain for the cluster
+    cluster_domain: cluster.local
+    # IP address for the DNS service endpoint
+    cluster_dns_server: 10.43.0.10
+    extra_args:
+      allowed-unsafe-sysctls: "net.*"
+      streaming-connection-idle-timeout: "1800s"
+      protect-kernel-defaults: "true"
+      make-iptables-util-chains: "true"
+      event-qps: "0"
+  kube-api:
+    pod_security_policy: true
+    # IP range for any services created on Kubernetes
+    # This must match the service_cluster_ip_range in kube-controller
+    service_cluster_ip_range: 10.43.0.0/16
+    extra_args:
+      anonymous-auth: "false"
+      profiling: "false"
+      repair-malformed-updates: "false"
+      service-account-lookup: "true"
+      enable-admission-plugins: "ServiceAccount,NamespaceLifecycle,LimitRanger,PersistentVolumeLabel,DefaultStorageClass,ResourceQuota,DefaultTolerationSeconds,AlwaysPullImages,DenyEscalatingExec,NodeRestriction,EventRateLimit,PodSecurityPolicy"
+      experimental-encryption-provider-config: /etc/kubernetes/encryption.yaml
+      admission-control-config-file: "/etc/kubernetes/admission.yaml"
+      audit-log-path: "/var/log/kube-audit/audit-log.json"
+      audit-log-maxage: "5"
+      audit-log-maxbackup: "5"
+      audit-log-maxsize: "100"
+      audit-log-format: "json"
+      audit-policy-file: /etc/kubernetes/audit.yaml
+    extra_binds:
+      - "/var/log/kube-audit:/var/log/kube-audit"
+  scheduler:
+    extra_args:
+      profiling: "false"
+      address: "127.0.0.1"
+  kube-controller:
+    # CIDR pool used to assign IP addresses to pods in the cluster
+    cluster_cidr: 10.42.0.0/16
+    # IP range for any services created on Kubernetes
+    # This must match the service_cluster_ip_range in kube-api
+    service_cluster_ip_range: 10.43.0.0/16
+    extra_args:
+      profiling: "false"
+      address: "127.0.0.1"
+      terminated-pod-gc-threshold: "1000"
+  kubeproxy:
+    extra_args:
+      proxy-mode: ipvs
+addons: |
+  apiVersion: rbac.authorization.k8s.io/v1
+  kind: Role
+  metadata:
+    name: default-psp-role
+    namespace: ingress-nginx
+  rules:
+  - apiGroups:
+    - extensions
+    resourceNames:
+    - default-psp
+    resources:
+    - podsecuritypolicies
+    verbs:
+    - use
+  ---
+  apiVersion: rbac.authorization.k8s.io/v1
+  kind: RoleBinding
+  metadata:
+    name: default-psp-rolebinding
+    namespace: ingress-nginx
+  roleRef:
+    apiGroup: rbac.authorization.k8s.io
+    kind: Role
+    name: default-psp-role
+  subjects:
+  - apiGroup: rbac.authorization.k8s.io
+    kind: Group
+    name: system:serviceaccounts
+  - apiGroup: rbac.authorization.k8s.io
+    kind: Group
+    name: system:authenticated
+  ---
+  apiVersion: v1
+  kind: Namespace
+  metadata:
+    name: cattle-system
+  ---
+  apiVersion: rbac.authorization.k8s.io/v1
+  kind: Role
+  metadata:
+    name: default-psp-role
+    namespace: cattle-system
+  rules:
+  - apiGroups:
+    - extensions
+    resourceNames:
+    - default-psp
+    resources:
+    - podsecuritypolicies
+    verbs:
+    - use
+  ---
+  apiVersion: rbac.authorization.k8s.io/v1
+  kind: RoleBinding
+  metadata:
+    name: default-psp-rolebinding
+    namespace: cattle-system
+  roleRef:
+    apiGroup: rbac.authorization.k8s.io
+    kind: Role
+    name: default-psp-role
+  subjects:
+  - apiGroup: rbac.authorization.k8s.io
+    kind: Group
+    name: system:serviceaccounts
+  - apiGroup: rbac.authorization.k8s.io
+    kind: Group
+    name: system:authenticated
+  ---
+  apiVersion: extensions/v1beta1
+  kind: PodSecurityPolicy
+  metadata:
+    name: restricted
+  spec:
+    requiredDropCapabilities:
+    - NET_RAW
+    privileged: false
+    allowPrivilegeEscalation: false
+    defaultAllowPrivilegeEscalation: false
+    fsGroup:
+      rule: RunAsAny
+    runAsUser:
+      rule: MustRunAsNonRoot
+    seLinux:
+      rule: RunAsAny
+    supplementalGroups:
+      rule: RunAsAny
+    volumes:
+    - emptyDir
+    - secret
+    - persistentVolumeClaim
+    - downwardAPI
+    - configMap
+    - projected
+  ---
+  apiVersion: rbac.authorization.k8s.io/v1
+  kind: ClusterRole
+  metadata:
+    name: psp:restricted
+  rules:
+  - apiGroups:
+    - extensions
+    resourceNames:
+    - restricted
+    resources:
+    - podsecuritypolicies
+    verbs:
+    - use
+  ---
+  apiVersion: rbac.authorization.k8s.io/v1
+  kind: ClusterRoleBinding
+  metadata:
+    name: psp:restricted
+  roleRef:
+    apiGroup: rbac.authorization.k8s.io
+    kind: ClusterRole
+    name: psp:restricted
+  subjects:
+  - apiGroup: rbac.authorization.k8s.io
+    kind: Group
+    name: system:serviceaccounts
+  - apiGroup: rbac.authorization.k8s.io
+    kind: Group
+    name: system:authenticated

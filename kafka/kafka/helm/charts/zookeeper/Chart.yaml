@@ -1,0 +1,14 @@
+description: Centralized service for maintaining configuration information, naming,
+  providing distributed synchronization, and providing group services.
+home: https://zookeeper.apache.org/
+icon: https://zookeeper.apache.org/images/zookeeper_small.gif
+maintainers:
+- email: lachlan@deis.com
+  name: Lachlan Evenson
+- email: owensk@google.com
+  name: Kenneth Owens
+name: zookeeper
+sources:
+- https://github.com/apache/zookeeper
+- https://github.com/kubernetes/contrib/tree/master/statefulset/zookeeper
+version: 0.3.1

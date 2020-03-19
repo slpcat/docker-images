@@ -1,0 +1,1 @@
+*k8s1.9后heapster已经被社区废弃。社区将使用metrics-server进行基础的集群性能监控，并使用prometheus来支持更细致的指标监控

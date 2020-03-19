@@ -1,0 +1,94 @@
+https://github.com/facebook/mysql-5.6/wiki/my.cnf-tuning
+
+Percona-Server-rocksdb
+
+ps-admin --enable-rocksdb -u root -p密码
+
+[mysqld]
+skip-host-cache
+skip-name-resolve
+back_log            = 1000
+max_connections     = 1000
+max_connect_errors  = 2000
+
+rocksdb
+
+default-tmp-storage-engine=MyISAM
+sync_binlog = 0
+default-storage-engine=rocksdb
+binlog_format=ROW
+binlog_cache_size   = 16M
+collation-server=latin1_bin
+transaction-isolation=READ-COMMITTED
+
+rocksdb_max_open_files=-1
+rocksdb_max_background_jobs=8
+rocksdb_max_total_wal_size=1G
+rocksdb_block_size=16384
+rocksdb_block_cache_size=2G
+rocksdb_table_cache_numshardbits=6
+rocksdb_write_disable_wal=ON
+rocksdb_flush_log_at_trx_commit=0
+rocksdb_db_write_buffer_size=104857600
+rocksdb_enable_write_thread_adaptive_yield=ON
+
+
+# rate limiter
+rocksdb_bytes_per_sync=0
+rocksdb_wal_bytes_per_sync=0
+rocksdb_rate_limiter_bytes_per_sec=104857600 #100MB/s. Increase if you're running on higher spec machines
+
+# triggering compaction if there are many sequential deletes
+rocksdb_compaction_sequential_deletes_count_sd=1
+rocksdb_compaction_sequential_deletes=199999
+rocksdb_compaction_sequential_deletes_window=200000
+
+rocksdb_force_flush_memtable_now=OFF
+
+rocksdb_default_cf_options=write_buffer_size=128m;target_file_size_base=32m;max_bytes_for_level_base=512m;level0_file_num_compaction_trigger=4;level0_slowdown_writes_trigger=10;level0_stop_writes_trigger=15;max_write_buffer_number=4;compression_per_level=kLZ4Compression;bottommost_compression=kZSTD;compression_opts=-14:1:0;block_based_table_factory={cache_index_and_filter_blocks=1;filter_policy=bloomfilter:10:false;whole_key_filtering=1};level_compaction_dynamic_level_bytes=true;optimize_filters_for_hits=true;compaction_pri=kMinOverlappingRatio
+rocksdb_max_subcompactions=4
+
+rocksdb_compaction_readahead_size=16m
+
+rocksdb_use_direct_reads=OFF
+
+rocksdb_use_fsync=OFF
+rocksdb_use_direct_io_for_flush_and_compaction=OFF
+
+innodb_write_io_threads = 8
+innodb_read_io_threads = 16
+#innodb_force_recovery=1
+#innodb_thread_concurrency = 0
+innodb_flush_log_at_trx_commit = 0
+#innodb_fast_shutdown
+#innodb_log_buffer_size = 128M
+#innodb_log_file_size = 512M
+innodb_log_files_in_group = 2
+#innodb_log_group_home_dir = /var/lib/mysql/data
+innodb_max_dirty_pages_pct = 60
+innodb_max_dirty_pages_pct_lwm = 40
+innodb_flush_method     = nosync
+innodb_flush_neighbors  = 1
+innodb_adaptive_flushing=1
+#innodb_adaptive_flushing_method = "estimate"
+innodb_adaptive_hash_index = 1
+innodb_lock_wait_timeout = 60
+innodb_io_capacity      = 8000
+#innodb_file_format     = barracuda
+#innodb_file_format_max = barracuda
+#innodb_commit_concurrency = 1
+#innodb_page_size       = 8k
+#innodb_checksums       = 0
+innodb_doublewrite      = 0
+innodb_use_native_aio   = 1
+innodb_stats_persistent = 1
+innodb_purge_threads    = 1
+innodb_sync_spin_loops  = 100
+innodb_spin_wait_delay  = 30
+#innodb-read-ahead-threshold = both
+#innodb_stats_update_need_lock = 0
+#innodb_stats_auto_update = 0
+innodb_old_blocks_time  = 1000
+innodb_old_blocks_pct   = 60
+innodb_open_files       = 4096
+#innodb_locks_unsafe_for_binlog = 0

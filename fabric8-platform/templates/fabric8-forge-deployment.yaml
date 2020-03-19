@@ -1,0 +1,112 @@
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    fabric8.io/iconUrl: https://cdn.rawgit.com/fabric8io/fabric8-forge/master/fabric8-forge/src/main/fabric8/icon.svg
+    fabric8.io/git-commit: bad661f3285ecbcd6b7a9373e194bda075d832eb
+    fabric8.io/git-branch: release-v2.3.88
+    fabric8.io/metrics-path: dashboard/file/camel-routes.json/?var-project=fabric8-forge&var-version=2.3.88
+  labels:
+    provider: fabric8
+    project: fabric8-forge
+    version: 2.3.88
+    group: io.fabric8.forge.apps
+  name: fabric8-forge
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      provider: fabric8
+      project: fabric8-forge
+      group: io.fabric8.forge.apps
+  template:
+    metadata:
+      annotations:
+        fabric8.io/iconUrl: https://cdn.rawgit.com/fabric8io/fabric8-forge/master/fabric8-forge/src/main/fabric8/icon.svg
+        fabric8.io/git-commit: bad661f3285ecbcd6b7a9373e194bda075d832eb
+        fabric8.io/git-branch: release-v2.3.88
+        fabric8.io/metrics-path: dashboard/file/camel-routes.json/?var-project=fabric8-forge&var-version=2.3.88
+      labels:
+        provider: fabric8
+        project: fabric8-forge
+        version: 2.3.88
+        group: io.fabric8.forge.apps
+    spec:
+      containers:
+      - env:
+        - name: FABRIC8_DEFAULT_ENVIRONMENTS
+          valueFrom:
+            configMapKeyRef:
+              key: fabric8-default-environments
+              name: fabric8-forge
+        - name: JENKINSFILE_LIBRARY_GIT_REPOSITORY
+          valueFrom:
+            configMapKeyRef:
+              key: jenkinsfile-library-git-repository
+              name: fabric8-forge
+        - name: JENKINSFILE_LIBRARY_GIT_TAG
+          valueFrom:
+            configMapKeyRef:
+              key: jenkinsfile-library-git-tag
+              name: fabric8-forge
+        - name: USE_EXTERNAL_GIT_ADDRESS
+          valueFrom:
+            configMapKeyRef:
+              key: use-external-git-address
+              name: fabric8-forge
+        - name: KUBERNETES_TRUST_CERTIFICATES
+          value: "true"
+        - name: SKIP_TLS_VERIFY
+          value: "true"
+        - name: JENKINS_GOGS_PASSWORD
+          valueFrom:
+            configMapKeyRef:
+              key: jenkins-gogs-password
+              name: fabric8-forge
+        - name: JENKINS_GOGS_USER
+          valueFrom:
+            configMapKeyRef:
+              key: jenkins-gogs-user
+              name: fabric8-forge
+        - name: FABRIC8_ARCHETYPES_VERSION
+          value: 2.2.195
+        - name: JAVA_OPTIONS
+          value: -Dorg.apache.maven.log_transfer=true -Dorg.apache.cxf.logging.enabled=false
+        - name: JENKINS_GOGS_EMAIL
+          valueFrom:
+            configMapKeyRef:
+              key: jenkins-gogs-email
+              name: fabric8-forge
+        - name: KUBERNETES_MASTER
+          value: https://kubernetes.default.svc
+        - name: KUBERNETES_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        image: fabric8/fabric8-forge:2.3.88
+        imagePullPolicy: IfNotPresent
+        name: fabric8-forge
+        ports:
+        - containerPort: 8080
+          name: http
+          protocol: TCP
+        - containerPort: 8778
+          name: jolokia
+          protocol: TCP
+        readinessProbe:
+          httpGet:
+            path: /_ping
+            port: 8080
+          initialDelaySeconds: 30
+          timeoutSeconds: 10
+        resources:
+          limits:
+            cpu: "0"
+            memory: "0"
+          requests:
+            cpu: "0"
+            memory: "0"
+        securityContext:
+          privileged: false
+      serviceAccountName: fabric8

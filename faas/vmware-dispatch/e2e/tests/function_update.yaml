@@ -1,0 +1,10 @@
+image: python3
+kind: Function
+name: python-hello-no-schema
+sourcePath: update-source
+handler: hello.handle
+schema: {}
+secrets: 
+tags:
+- key: update
+  value: tags

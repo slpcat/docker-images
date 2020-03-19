@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-nginx
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        run: my-nginx
+    annotations:
+      security.alpha.kubernetes.io/sysctls: kernel.shm_rmid_forced=1
+      security.alpha.kubernetes.io/unsafe-sysctls: net.ipv4.route.min_pmtu=1000,kernel.msgmax=1 2 3
+    spec:
+      containers:
+      - name: my-nginx
+        image: library/nginx:1.9
+        ports:
+        - containerPort: 80
+      volumeMounts:
+      - name: config-volume
+        mountPath: /etc/config
+      volumes:
+        - name: config-volume
+          configMap:
+            name: special-config

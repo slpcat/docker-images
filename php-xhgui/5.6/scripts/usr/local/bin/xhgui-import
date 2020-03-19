@@ -1,0 +1,28 @@
+#!/usr/bin/env sh
+
+xhgui_import_item() {
+    echo "importing $1"
+    php /phpapp/external/import.php -f $1
+    echo "removing $1"
+    rm $1
+}
+
+xhgui_import() {
+    files=$(ls -1tr /xhprof/*.xhprof 2>/dev/null)
+    count=$(echo $files | wc -l)
+    if [ $count -gt 0 ]; then
+        for file in $files; do
+            xhgui_import_item $file
+        done
+    fi
+}
+
+xhgui_import_run() {
+    while true; do
+        xhgui_import
+        sleep 1
+    done
+}
+
+xhgui_import_run
+

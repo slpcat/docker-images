@@ -1,0 +1,198 @@
+REVISION: 7
+CHART: ldap-0.1.3
+USER-SUPPLIED VALUES:
+{}
+
+COMPUTED VALUES:
+adminImage:
+  pullPolicy: IfNotPresent
+  repository: osixia/phpldapadmin
+  tag: 0.7.1
+affinity: {}
+app:
+  port: 389
+appAdmin:
+  port: 80
+image:
+  pullPolicy: IfNotPresent
+  repository: osixia/openldap
+  tag: 1.2.1
+ingress:
+  annotations: {}
+  enabled: false
+  hosts:
+  - chart-example.local
+  path: /
+  tls: []
+nodeSelector: {}
+persistence:
+  accessMode: ReadWriteOnce
+  enabled: true
+  size: 20Gi
+  subPath: ldap
+replicaCount: 1
+resources:
+  limits:
+    cpu: 200m
+    memory: 256Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+service:
+  type: LoadBalancer
+tolerations: []
+
+HOOKS:
+MANIFEST:
+
+---
+# Source: ldap/templates/pvc.yaml
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: ldap
+  labels:
+    app: ldap
+    chart: "ldap-0.1.3"
+    release: "ldap"
+    heritage: "Tiller"
+spec:
+  persistentVolumeReclaimPolicy: Retain
+  accessModes:
+    - "ReadWriteOnce"
+  resources:
+    requests:
+      storage: "20Gi"
+---
+# Source: ldap/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    service.beta.kubernetes.io/alicloud-loadbalancer-address-type: intranet
+  name: ldap
+  labels:
+    app: ldap
+    chart: ldap-0.1.3
+    release: ldap
+    heritage: Tiller
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 389
+      targetPort: 389
+      protocol: TCP
+      name: ldap-service
+    - port: 80 
+      targetPort: 80 
+      protocol: TCP
+      name: ldap-admin
+  selector:
+    app: ldap
+    release: ldap
+---
+# Source: ldap/templates/deployment.yaml
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: ldap
+  labels:
+    app: ldap
+    chart: ldap-0.1.3
+    release: ldap
+    heritage: Tiller
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ldap
+      release: ldap
+  template:
+    metadata:
+      labels:
+        app: ldap
+        release: ldap
+      annotations:
+        #disable istio sidecar injection
+        sidecar.istio.io/inject: "false"
+        #net.ipv4.tcp_syncookies=0 need kernel version 4.4 or newer
+        security.alpha.kubernetes.io/sysctls: "net.ipv4.tcp_syncookies=0,net.ipv4.ip_local_port_range=10000 65535"
+        #kernel version >= 4.15 needed
+        security.alpha.kubernetes.io/unsafe-sysctls: "net.core.somaxconn=65535,net.ipv4.ip_unprivileged_port_start=0,net.ipv4.tcp_tw_reuse=1,net.ipv4.tcp_fin_timeout=30,net.ipv4.tcp_keepalive_intvl=10,net.ipv4.tcp_keepalive_probes=2,net.ipv4.tcp_keepalive_time=120,net.ipv4.tcp_ecn=1,net.ipv4.tcp_max_syn_backlog=65535,net.ipv4.tcp_rfc1337=1,net.ipv4.tcp_slow_start_after_idle=0,net.ipv4.tcp_fack=1,net.ipv4.tcp_max_tw_buckets=262144,net.ipv4.tcp_fastopen=3,net.ipv4.icmp_ratelimit=100,net.ipv4.tcp_abort_on_overflow=1,net.ipv4.tcp_adv_win_scale=2,net.ipv4.tcp_retries2=8,net.ipv4.tcp_syn_retries=3,net.ipv4.tcp_synack_retries=2,net.unix.max_dgram_qlen=512,net.ipv4.tcp_fwmark_accept=1,net.ipv4.fwmark_reflect=1,net.ipv4.tcp_no_metrics_save=1,net.netfilter.nf_conntrack_helper=1,net.netfilter.nf_conntrack_max=1048576,net.netfilter.nf_conntrack_tcp_timeout_close_wait=60,net.netfilter.nf_conntrack_tcp_timeout_established=120,net.netfilter.nf_conntrack_tcp_timeout_fin_wait=30,net.netfilter.nf_conntrack_tcp_timeout_last_ack=30,net.netfilter.nf_conntrack_tcp_timeout_time_wait=60"
+    spec:
+      containers:
+        - name: ldap
+          image: "osixia/openldap:1.2.1"
+          imagePullPolicy: IfNotPresent
+          env:
+          - name: LDAP_DOMAIN
+            value: "ldap.example.com"
+          - name: LDAP_ADMIN_PASSWORD
+            value: "admin"
+          ports:
+            - name: app
+              containerPort: 389
+              protocol: TCP
+          livenessProbe:
+            tcpSocket:
+              port: 389
+            initialDelaySeconds: 10
+            timeoutSeconds: 3
+            periodSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            tcpSocket:
+              port: 389
+            initialDelaySeconds: 10
+            timeoutSeconds: 3
+            periodSeconds: 5
+          resources:
+          volumeMounts:
+          - name: data
+            mountPath: /var/lib/ldap
+            subPath: database
+          - name: data
+            mountPath: /etc/ldap/slapd.d
+            subPath: config
+        - name: ldap-admin
+          image: "osixia/phpldapadmin:0.7.1"
+          imagePullPolicy: IfNotPresent
+          env:
+          - name: PHPLDAPADMIN_LDAP_HOSTS
+            value: "127.0.0.1"
+          - name: PHPLDAPADMIN_HTTPS
+            value: "false"
+          ports:
+            - name: app-admin
+              containerPort: 80
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            # This pod takes a very long time to start up. Be cautious when
+            # lowering this value to avoid Pod death during startup.
+            initialDelaySeconds: 10
+            timeoutSeconds: 3
+            periodSeconds: 10
+            failureThreshold: 10
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 10
+            timeoutSeconds: 3
+            periodSeconds: 10
+            failureThreshold: 3
+          resources:
+            limits:
+              cpu: 200m
+              memory: 256Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: ldap

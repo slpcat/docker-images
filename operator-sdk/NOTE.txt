@@ -1,0 +1,2 @@
+https://www.cnblogs.com/ericnie/p/10416146.html
+https://feisky.gitbooks.io/kubernetes/apps/operator.html

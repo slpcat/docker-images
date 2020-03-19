@@ -1,0 +1,82 @@
+{{- $orgNum := int $.Values.orgNum -}}
+{{- range $loopIndex, $caIndex := untilStep 1 (int (add $orgNum 1)) 1 }}
+{{- $caFullName := (printf "%s-ca%d" $.Values.fabricNetwork $caIndex) -}}
+kind: Service
+apiVersion: v1
+metadata:
+  name: {{ $caFullName }}
+spec:
+  type: NodePort
+  selector:
+    app: {{ $caFullName }}
+  ports:
+    - protocol: TCP
+      port: 7054
+      nodePort: {{ index $.Values.caExternalPortList $loopIndex }}
+      name: ca-port
+---
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: {{ $caFullName }}-deployment
+  labels:
+    app: {{ $caFullName }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ $caFullName }}
+  template:
+    metadata:
+      labels:
+        app: {{ $caFullName }}
+    spec:
+      containers:
+        - name: {{ $caFullName }}
+          image: {{ $.Values.dockerImageRegistry }}/fabric-ca:x86_64-{{ $.Values.hyperledgerFabricVersion }}
+          imagePullPolicy: {{ $.Values.imagePullPolicy | quote }}
+          workingDir: /var/hyperledger/production
+          ports:
+          - containerPort: 7054
+            name: ca-port
+          command: ['sh', '-c', 'fabric-ca-server start -b admin:adminpw -d']
+          env:
+            - name: GODEBUG
+              value: "netdns=go"
+            - name: FABRIC_CA_HOME
+              value: "/var/hyperledger/production"
+            - name: FABRIC_CA_SERVER_CA_NAME
+              value: {{ $caFullName | quote }}
+            - name: FABRIC_CA_SERVER_CA_CERTFILE
+              value: "/var/hyperledger/production/config/ca.{{ include "orgName" . }}{{ $caIndex }}.{{ $.Values.peerDomain }}-cert.pem"
+            - name: FABRIC_CA_SERVER_CA_KEYFILE
+              value: "/var/hyperledger/production/config/private-key"
+            - name: FABRIC_CA_SERVER_TLS_ENABLED
+              value: "true"
+            - name: FABRIC_CA_SERVER_TLS_CERTFILE
+              value: "/var/hyperledger/production/config/ca.{{ include "orgName" . }}{{ $caIndex }}.{{ $.Values.peerDomain }}-cert.pem"
+            - name: FABRIC_CA_SERVER_TLS_KEYFILE
+              value: "/var/hyperledger/production/config/private-key"
+          volumeMounts:
+            - name: data
+              mountPath: /var/hyperledger/production
+      initContainers:
+        - name: check-fabric-init
+          image: {{ $.Values.dockerImageRegistry }}/fabric-tools:x86_64-{{ $.Values.hyperledgerFabricVersion }}
+          imagePullPolicy: {{ $.Values.imagePullPolicy | quote }}
+          command: ['sh', '-c', 'sleep 5; until ls /var/hyperledger/production/INIT-COMPLETED; do echo waiting for fabric-init; sleep 5; done; sleep 5;']
+          volumeMounts:
+            - name: fabric-network-root
+              mountPath: /var/hyperledger/production
+              readOnly: true
+      volumes:
+        - name: fabric-network-root
+          hostPath:
+            path: /data/fabric/{{ $.Values.fabricNetwork }}
+            # Below type field is necessary to avoid auto creation of dir if not present during init container check
+            type: Directory
+        - name: data
+          hostPath:
+            path: /data/fabric/{{ $.Values.fabricNetwork }}/{{ $caFullName }}
+---
+{{- end }}

@@ -1,0 +1,23 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: nfs-pvc1
+spec:
+  accessModes:
+   - ReadWriteMany
+  resources:
+    requests:
+       storage: 1Gi #TODO: specify the appropriate size to match pv in pool of nfs
+
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: ceph-rbd-pvc1
+spec:
+  accessModes:
+   - ReadWriteOnce
+  resources:
+    requests:
+       storage: 10Gi  #TODO: specify the appropriate size to match pv in pool of ceph rbd
+  storageClassName: general

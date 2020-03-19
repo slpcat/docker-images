@@ -1,0 +1,8 @@
+docker run -d --restart=always -p 8080:8080 \
+  -e KAFKA_BROKER_LIST="kafka:9092" \
+  -e KAFKA_TOPIC=prometheus_metrics \
+  -e KAFKA_COMPRESSION=lz4 \
+  -e KAFKA_BATCH_NUM_MESSAGES=10000 \
+  -e PORT=8080 \
+  -e LOG_LEVEL=info \
+  telefonica/prometheus-kafka-adapter:1.4.0

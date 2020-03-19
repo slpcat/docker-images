@@ -1,0 +1,29 @@
+version: '2'
+
+services:
+  mariadb:
+    image: mariadb:latest
+    container_name: phpmyadmin_testing_mariadb
+    environment:
+      - MYSQL_ROOT_PASSWORD=test123
+
+  mysql:
+    image: mysql:latest
+    container_name: phpmyadmin_testing_mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=test123
+
+  phpmyadmin:
+    build:
+      context: testing/
+    container_name: phpmyadmin_testing
+    volumes:
+      - /sessions
+    ports:
+      - 8090:80
+    environment:
+      - PMA_ARBITRARY=1
+      - TESTSUITE_PASSWORD=test123
+    depends_on:
+      - mariadb
+      - mysql

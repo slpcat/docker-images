@@ -1,0 +1,51 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: custom-metrics-kafka-exporter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      custom: metrics
+  template:
+    metadata:
+      labels:
+        custom: metrics
+    spec:
+      hostNetwork: true
+      containers:
+      - name: kafka-exporter
+        image: danielqsj/kafka-exporter
+        command:
+        - kafka_exporter
+        - "--kafka.server=my-kafka-broker-1:9092"
+        - "--kafka.server=my-kafka-broker-2:9092"
+        ports:
+          - name: http-metrics
+            containerPort: 9308
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 9308
+          initialDelaySeconds: 5
+          timeoutSeconds: 5
+      - name: prometheus-to-sd
+        image: gcr.io/google-containers/prometheus-to-sd:v0.3.2
+        ports:
+          - name: profiler
+            containerPort: 6060
+        command:
+          - /monitor
+          - --stackdriver-prefix=custom.googleapis.com
+          - --source=kafka-exporter:http://localhost:9308?whitelisted=kafka_brokers,kafka_topic_partitions,kafka_consumergroup_current_offset_sum,kafka_consumergroup_lag_sum
+          - --pod-id=$(POD_NAME)
+          - --namespace-id=$(POD_NAMESPACE)
+        env:
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace

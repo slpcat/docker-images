@@ -1,0 +1,51 @@
+deb http://ftp2.cn.debian.org/debian jessie main contrib non-free
+deb-src http://ftp2.cn.debian.org/debian jessie main contrib non-free
+
+deb http://ftp2.cn.debian.org/debian jessie-updates main contrib non-free
+deb-src http://ftp2.cn.debian.org/debian jessie-updates main contrib non-free
+
+deb http://ftp2.cn.debian.org/debian-security jessie/updates main contrib non-free
+deb-src http://ftp2.cn.debian.org/debian-security jessie/updates main contrib non-free
+
+deb http://ftp2.cn.debian.org/debian jessie-backports main contrib non-free
+deb-src http://ftp2.cn.debian.org/debian jessie-backports main contrib non-free
+
+#deb http://nginx.org/packages/debian/ jessie nginx
+#deb-src http://nginx.org/packages/debian/ jessie nginx
+
+#deb http://packages.dotdeb.org jessie all
+#deb-src http://packages.dotdeb.org jessie all
+
+#deb http://packages.dotdeb.org jessie-nginx-http2 all
+#deb-src http://packages.dotdeb.org jessie-nginx-http2 all
+
+#deb https://packages.sury.org/php/ jessie main
+
+# MariaDB 10.1 repository list - created 2016-12-05 06:07 UTC
+# http://downloads.mariadb.org/mariadb/repositories/
+#deb [arch=amd64,i386] http://mirrors.tuna.tsinghua.edu.cn/mariadb/repo/10.1/debian jessie main
+#deb-src http://mirrors.tuna.tsinghua.edu.cn/mariadb/repo/10.1/debian jessie main
+
+#Java 8
+#deb http://ppa.launchpad.net/webupd8team/java/ubuntu trusty main
+#deb-src http://ppa.launchpad.net/webupd8team/java/ubuntu trusty main
+
+#Elasticsearch
+#deb https://artifacts.elastic.co/packages/5.x/apt stable main
+
+#deb http://repo.zabbix.com/zabbix/3.2/debian/ jessie main
+
+#deb https://apt.dockerproject.org/repo debian-jessie main
+
+#deb https://pkg.jenkins.io/debian binary/
+
+#deb http://http.kali.org/kali kali-rolling main non-free contrib
+
+#bcc-tools
+#deb [trusted=yes] https://repo.iovisor.org/apt/xenial xenial-nightly main
+
+#sysdig
+#deb http://download.draios.com/stable/deb stable-$(ARCH)/
+
+# repository that may contain newer fai packages for jessie
+#deb [trusted=yes] http://fai-project.org/download jessie koeln

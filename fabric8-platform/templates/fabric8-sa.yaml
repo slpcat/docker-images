@@ -1,0 +1,10 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    provider: fabric8
+    project: fabric8-console
+    version: 2.2.199
+    group: io.fabric8.platform.console
+  name: fabric8

@@ -1,0 +1,38 @@
+插件
+熔断request-termination插件
+
+该插件用来定义指定请求或服务不进行上层服务,而直接返回指定的内容.用来为指定的请求或指定的服务进行熔断.
+限流rate-limiting插件
+
+IP黑白名单ip-restriction限制插件
+
+IP限制插件，是一个非常简单的插件，可以设置黑名单IP，白名单IP这个很简单
+
+ACL授权插件
+
+该插件相当于授权插件，授权必须建立在认证的基础上，认证和授权是相互独立的。
+
+链路跟踪Zipkin插件
+
+Zipkin 是一款开源的分布式实时数据追踪系统。其主要功能是聚集来自各个异构系统的实时监控数据，用来追踪微服务架构下的系统延时问题。应用系统需要向 Zipkin 报告数据。Kong的Zipkin插件作为zipkin-client就是组装好Zipkin需要的数据包，往Zipkin-server发送数据。
+目前在Kong的 free plugins中，比较常用的有这么三个：Syslog、File-Log以及Http-Log，下面对这三种插件逐一分析一下。
+Syslog
+
+顾名思义，这个插件是把Kong中记录的日志给打印到系统日志中，开启插件之后只需要指定需要使用的API，无需做多余的配置，即可在/var/log/message中发现对应的日志信息，d 但是系统日志鱼龙混杂，如果需要用到ELK等日志分析工具时，需要做一次数据清洗工作。
+File-Log
+
+与Syslog一样，File-log的配置也很方便，只需要配置日志路劲就行，开启插件之后，会在对应的对应产生一个logFile。Syslog中提到需要做一些日志清洗工作，但是换成了File-log乍一看好像解决了之前的痛点，实则不然，官方建议这个插件不适合在生产环境中使用，会带来一些性能上的开销，影响正常业务。
+Http-Log
+
+http-log是我比较推荐的，它的原理是设置一个log-server地址，然后Kong会把日志通过post请求发送到设置的log-server，然后通过log-server把日志给沉淀下来，相比之前两种插件，这一种只要启一个log-server就好了，出于性能考虑，我用Rust实现了一个log-server，有兴趣可以参考看一下。
+
+prometheus可视化
+
+kong自带的prometheus插件,metrics比较少, 可以网上查一下丰富版的prometheus插件.
+https://konghq.com/blog/expose-performance-metrics-in-prometheus/
+
+比如:https://github.com/yciabaud/kong-plugin-prometheus
+
+现在用这个插件替换kong自带的插件.
+
+爬虫控制插件bot-detection

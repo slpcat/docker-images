@@ -1,0 +1,8 @@
+docker run --rm --cap-add mknod --cap-add sys_admin --device=/dev/fuse -v /root/.s3fs:/root/.s3fs -v /opt/data:/data -it slpcat/s3fs:ubuntu16.04
+docker run --rm -v /mnt/#{SRC_BUCKET}:/mnt/#{SRC_BUCKET}:shared -v /usr/share/s3fs:/usr/share/s3fs --security-opt apparmor:unconfined --device=/dev/fuse --cap-add mknod --cap-add sys_admin wuakitv/s3fs:latest s3fs #{SRC_BUCKET} /mnt/#{SRC_BUCKET} -f -o dbglevel=info -o passwd_file=/usr/share/s3fs/passwd-s3fs -o ro -o allow_other
+1.Mount propagation
+编辑Docker的 systemd service 文件。设置 MountFlags 如下：
+MountFlags=shared
+2.k8s1.12
+
+

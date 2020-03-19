@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rbd-provisioner
+  namespace: ceph
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rbd-provisioner
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: rbd-provisioner
+    spec:
+      #affinity:
+      #    anti:
+      #      type:
+      #        default: preferredDuringSchedulingIgnoredDuringExecution
+      #      topologyKey:
+      #        default: kubernetes.io/hostname
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+      containers:
+      - name: rbd-provisioner
+        # Currently outdated, hence use inofficial version
+        # built from https://github.com/kubernetes-incubator/external-storage
+        # (in ceph/rbd subdir)
+        # cf. https://github.com/kubernetes-incubator/external-storage/issues/608
+        #image: "quay.io/external_storage/rbd-provisioner:latest"
+        #image: slpcat/rbd-provisioner
+        image: slpcat/rbd-provisioner:v2.1.1-k8s1.11
+        env:
+        - name: PROVISIONER_NAME
+          value: ceph.com/rbd
+        #- name: POD_NAME
+        #  valueFrom:
+        #    fieldRef:
+        #      fieldPath: metadata.name
+        #- name: DEBUG
+        #  value: verbose
+        volumeMounts:
+        - mountPath: /etc/ceph
+          name: ceph-conf
+      serviceAccount: rbd-provisioner
+      volumes:
+      - name: ceph-conf
+        secret:
+          secretName: ceph-conf-combined
+      #imagePullSecrets:
+      #- name: regsecret

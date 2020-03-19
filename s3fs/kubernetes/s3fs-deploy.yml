@@ -1,0 +1,42 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: s3fs-deploy
+  namespace: minio
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: s3fs
+    spec:
+      containers:
+      - name: s3fs
+        image: slpcat/s3fs:ubuntu16.04
+        securityContext:
+          privileged: true
+        env:
+        - name: UID
+          value: "1000"
+        - name: GID
+          value: "1000"
+        - name: S3_URL
+          value: "http://minio:9000"
+        - name: AWS_ACCESSKEY
+          valueFrom:
+            secretKeyRef:
+              name: s3fs-secret
+              key: aws_accesskey
+        - name: AWS_SECRETKEY
+          valueFrom:
+            secretKeyRef:
+              name: s3fs-secret
+              key: aws_secretkey
+        - name: S3_REGION
+          value: us-east-1
+        - name: S3_BUCKET
+          value: bucket
+        - name: S3_KEY
+          value: /
+        - name: MOUNT_POINT
+          value: /mnt/s3

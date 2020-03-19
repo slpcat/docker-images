@@ -1,0 +1,18 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: pi
+spec:
+  #doc https://kubernetes.io/docs/concepts/workloads/controllers/jobs-run-to-completion/
+  completions: 5
+  parallelism: 2
+  activeDeadlineSeconds: 300
+  backoffLimit: 4
+  ttlSecondsAfterFinished: 7200
+  template:
+    spec:
+      containers:
+      - name: pi
+        image: perl
+        command: ["perl",  "-Mbignum=bpi", "-wle", "print bpi(5000)"]
+      restartPolicy: Never

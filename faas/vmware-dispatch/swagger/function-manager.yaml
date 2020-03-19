@@ -1,0 +1,410 @@
+swagger: '2.0'
+info:
+  description: |
+    VMware Dispatch Function Manager
+  version: 1.0.0
+  title: Function Manager
+  contact:
+    email: dispatch@vmware.com
+tags:
+- name: Store
+  description: Crud operations on functions
+- name: Runner
+  description: Execution operations on functions
+schemes:
+- http
+- https
+basePath: /v1
+parameters:
+  orgIDParam:
+    in: header
+    name: X-Dispatch-Org
+    type: string
+    required: true
+paths:
+  /function:
+    parameters:
+      - $ref: '#/parameters/orgIDParam'
+    post:
+      tags:
+      - Store
+      summary: Add a new function
+      operationId: addFunction
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: body
+        description: function object
+        required: true
+        schema:
+          $ref: './models.json#/definitions/Function'
+      responses:
+        201:
+          description: Function created
+          schema:
+            $ref: './models.json#/definitions/Function'
+        400:
+          description: Invalid input
+          schema:
+            $ref: './models.json#/definitions/Error'
+        401:
+          description: Unauthorized Request
+          schema:
+            $ref: './models.json#/definitions/Error'
+        403:
+          description: access to this resource is forbidden
+          schema:
+            $ref: './models.json#/definitions/Error'
+        409:
+          description: Already Exists
+          schema:
+            $ref: './models.json#/definitions/Error'
+        default:
+          description: Unknown error
+          schema:
+            $ref: './models.json#/definitions/Error'
+    get:
+      tags:
+      - Store
+      summary: List all existing functions
+      operationId: getFunctions
+      produces:
+      - application/json
+      parameters:
+      - in: query
+        type: string
+        name: state
+        description: Function state
+      - in: query
+        type: array
+        name: tags
+        description: Filter based on tags
+        items:
+          type: string
+        collectionFormat: 'multi'
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            type: array
+            items:
+              $ref: './models.json#/definitions/Function'
+        400:
+          description: Invalid input
+          schema:
+            $ref: './models.json#/definitions/Error'
+        401:
+          description: Unauthorized Request
+          schema:
+            $ref: './models.json#/definitions/Error'
+        403:
+          description: access to this resource is forbidden
+          schema:
+            $ref: './models.json#/definitions/Error'
+        default:
+          description: Unknown error
+          schema:
+            $ref: './models.json#/definitions/Error'
+  /function/{functionName}:
+    parameters:
+    - $ref: '#/parameters/orgIDParam'
+    - in: query
+      type: array
+      name: tags
+      description: Filter based on tags
+      items:
+        type: string
+      collectionFormat: 'multi'
+    - in: path
+      name: functionName
+      description: Name of function to work on
+      required: true
+      type: string
+      pattern: '^[\w\d\-]+$'
+    get:
+      tags:
+      - Store
+      summary: Find function by Name
+      description: Returns a single function
+      operationId: getFunction
+      produces:
+      - application/json
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            $ref: './models.json#/definitions/Function'
+        400:
+          description: Invalid Name supplied
+          schema:
+            $ref: './models.json#/definitions/Error'
+        401:
+          description: Unauthorized Request
+          schema:
+            $ref: './models.json#/definitions/Error'
+        403:
+          description: access to this resource is forbidden
+          schema:
+            $ref: './models.json#/definitions/Error'
+        404:
+          description: Function not found
+          schema:
+            $ref: './models.json#/definitions/Error'
+        default:
+          description: Unknown error
+          schema:
+            $ref: './models.json#/definitions/Error'
+    put:
+      tags:
+      - Store
+      summary: Update a function
+      operationId: updateFunction
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: body
+        description: function object
+        required: true
+        schema:
+          $ref: './models.json#/definitions/Function'
+      responses:
+        200:
+          description: Successful update
+          schema:
+            $ref: './models.json#/definitions/Function'
+        400:
+          description: Invalid input
+          schema:
+            $ref: './models.json#/definitions/Error'
+        401:
+          description: Unauthorized Request
+          schema:
+            $ref: './models.json#/definitions/Error'
+        403:
+          description: access to this resource is forbidden
+          schema:
+            $ref: './models.json#/definitions/Error'
+        404:
+          description: Function not found
+          schema:
+            $ref: './models.json#/definitions/Error'
+        default:
+          description: Unknown error
+          schema:
+            $ref: './models.json#/definitions/Error'
+    delete:
+      tags:
+      - Store
+      summary: Deletes a function
+      operationId: deleteFunction
+      produces:
+      - application/json
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            $ref: './models.json#/definitions/Function'
+        400:
+          description: Invalid Name supplied
+          schema:
+            $ref: './models.json#/definitions/Error'
+        401:
+          description: Unauthorized Request
+          schema:
+            $ref: './models.json#/definitions/Error'
+        403:
+          description: access to this resource is forbidden
+          schema:
+            $ref: './models.json#/definitions/Error'
+        404:
+          description: Function not found
+          schema:
+            $ref: './models.json#/definitions/Error'
+        default:
+          description: Unknown error
+          schema:
+            $ref: './models.json#/definitions/Error'
+  /runs:
+    parameters:
+    - $ref: '#/parameters/orgIDParam'
+    - in: query
+      type: array
+      name: tags
+      description: Filter based on tags
+      items:
+        type: string
+      collectionFormat: 'multi'
+    - in: query
+      name: functionName
+      description: Name of function to run or retreive runs for
+      type: string
+      pattern: '^[\w\d\-]+$'
+    post:
+      tags:
+      - Runner
+      summary: Run a function
+      operationId: runFunction
+      produces:
+      - application/json
+      consumes:
+      - application/json
+      parameters:
+      - in: body
+        name: body
+        schema:
+          $ref: './models.json#/definitions/Run'
+      responses:
+        200:
+          description: Successful execution (blocking call)
+          schema:
+            $ref: './models.json#/definitions/Run'
+        202:
+          description: Execution started (non-blocking call)
+          schema:
+            $ref: './models.json#/definitions/Run'
+        400:
+          description: User error
+          schema:
+            $ref: './models.json#/definitions/Error'
+        401:
+          description: Unauthorized Request
+          schema:
+            $ref: './models.json#/definitions/Error'
+        403:
+          description: access to this resource is forbidden
+          schema:
+            $ref: './models.json#/definitions/Error'
+        422:
+          description: Input object validation failed
+          schema:
+            $ref: './models.json#/definitions/Error'
+        404:
+          description: Function not found
+          schema:
+            $ref: './models.json#/definitions/Error'
+        502:
+          description: Function error occurred (blocking call)
+          schema:
+            $ref: './models.json#/definitions/Error'
+        default:
+          description: Unknown error
+          schema:
+            $ref: './models.json#/definitions/Error'
+    get:
+      tags:
+      - Runner
+      summary: Get function runs that are being executed
+      operationId: getRuns
+      produces:
+      - application/json
+      parameters:
+      - in: query
+        name: since
+        description: Retreive runs modified since given Unix time
+        type: integer
+        format: int64
+      responses:
+        200:
+          description: List of function runs
+          schema:
+            type: array
+            items:
+              $ref: './models.json#/definitions/Run'
+        400:
+          description: Invalid input
+          schema:
+            $ref: './models.json#/definitions/Error'
+        401:
+          description: Unauthorized Request
+          schema:
+            $ref: './models.json#/definitions/Error'
+        403:
+          description: access to this resource is forbidden
+          schema:
+            $ref: './models.json#/definitions/Error'
+        404:
+          description: Function not found
+          schema:
+            $ref: './models.json#/definitions/Error'
+        default:
+          description: Unknown error
+          schema:
+            $ref: './models.json#/definitions/Error'
+  /runs/{runName}:
+    parameters:
+    - $ref: '#/parameters/orgIDParam'
+    - in: path
+      name: runName
+      description: name of run to retrieve
+      required: true
+      type: string
+      format: uuid
+    - in: query
+      type: array
+      name: tags
+      description: Filter based on tags
+      items:
+        type: string
+      collectionFormat: 'multi'
+    - in: query
+      name: functionName
+      description: Name of function to retreive a run for
+      type: string
+      pattern: '^[\w\d\-]+$'
+    - in: query
+      name: since
+      description: Retreive runs modified since given Unix time
+      type: integer
+      format: int64
+    get:
+      tags:
+      - Runner
+      summary: Get function run by its name
+      operationId: getRun
+      produces:
+      - application/json
+      responses:
+        200:
+          description: Function Run
+          schema:
+            $ref: './models.json#/definitions/Run'
+        400:
+          description: Bad Request
+          schema:
+            $ref: './models.json#/definitions/Error'
+        401:
+          description: Unauthorized Request
+          schema:
+            $ref: './models.json#/definitions/Error'
+        403:
+          description: access to this resource is forbidden
+          schema:
+            $ref: './models.json#/definitions/Error'
+        404:
+          description: Function or Run not found
+          schema:
+            $ref: './models.json#/definitions/Error'
+        default:
+          description: Unknown error
+          schema:
+            $ref: './models.json#/definitions/Error'
+security:
+  - cookie: []
+  - bearer: []
+securityDefinitions:
+  cookie:
+    type: apiKey
+    description: use cookies for authentication, when the user already logged in
+    in: header
+    name: Cookie
+  bearer:
+    type: apiKey
+    name: Authorization
+    in: header
+

@@ -1,0 +1,31 @@
+rbacApiVersion: rbac.authorization.k8s.io
+namespace: local
+watchedNamespaces: local
+catalog_namespace: local
+
+olm:
+  replicaCount: 1
+  image:
+    ref: quay.io/coreos/olm:local
+    pullPolicy: IfNotPresent
+  service:
+    internalPort: 8080
+
+catalog:
+  replicaCount: 1
+  image:
+    ref: quay.io/coreos/olm:local
+    pullPolicy: IfNotPresent
+  service:
+    internalPort: 8080
+
+package:
+  replicaCount: 1
+  image:
+    ref: quay.io/coreos/olm:local
+    pullPolicy: IfNotPresent
+  service:
+    internalPort: 443
+
+catalog_sources:
+ - rh-operators

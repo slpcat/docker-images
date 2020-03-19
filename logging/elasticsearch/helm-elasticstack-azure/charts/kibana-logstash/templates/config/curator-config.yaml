@@ -1,0 +1,10 @@
+{{- if .Values.curator.install -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: curator-config-configmap
+  namespace: {{ .Release.Namespace }}
+data:
+  curator.yml: |
+{{ .Files.Get "config/curator.yml" | indent 4 }}
+{{- end -}}

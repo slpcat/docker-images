@@ -1,0 +1,47 @@
+apiVersion: extensions/v1beta1
+kind: DaemonSet
+metadata:
+  name: dockbix-agent-xxl
+  namespace: monitoring
+  labels:
+    tier: monitoring
+    app: dockbix-agent-xxl
+    version: v1
+spec:
+  template:
+    metadata:
+      labels:
+        name: dockbix
+    spec:
+      # Filter to specific nodes:
+      # nodeSelector:
+      #  app: dockbix
+      hostPID: true
+      hostIPC: true
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+      containers:
+        - resources:
+            requests:
+              cpu: 0.15
+          securityContext:
+            privileged: true
+          env:
+            - name: ZA_Server
+              value: "127.0.0.1,node01"
+            - name: ZA_ServerActive
+              value: "zabbix-server.monitoring"
+          image: monitoringartist/dockbix-agent-xxl-limited
+          name: dockbix
+          volumeMounts:
+            - name: rootfs
+              mountPath: /rootfs
+            - name: run
+              mountPath: /var/run/
+      volumes:
+        - name: rootfs
+          hostPath:
+              path: /
+        - name: run
+          hostPath:
+              path: /var/run/

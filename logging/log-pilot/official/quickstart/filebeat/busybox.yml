@@ -1,0 +1,11 @@
+busybox:
+  image: busybox
+  restart: always
+  labels:
+    aliyun.logs.busybox: stdout
+    aliyun.logs.busybox.tags: app=busybox,stage=test
+  command: >
+    sh -c 'while true; do date "+%Y-%m-%d %H:%M:%S" && sleep 1; done'
+  log_opt:
+    max-size: '1k'
+    max-file: '2'

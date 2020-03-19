@@ -1,0 +1,34 @@
+# Default values for zookeeper.
+# This is a YAML-formatted file.
+# Declare name/value pairs to be passed into your templates.
+# name: value
+servers: 3
+# minAvailable: 2
+resources:
+  requests:
+    cpu: 500m
+    memory: 1Gi
+  limits:
+    cpu: 2
+    memory: 4Gi
+#heap: "2G"
+storage: "20Gi"
+#storageClass: alicloud-disk-efficiency
+serverPort: 2888
+leaderElectionPort: 3888
+clientPort: 2181
+imagePullPolicy: "Always"
+tickTimeMs: 2000
+initTicks: 10
+syncTicks: 5
+clientCnxns: 1024
+snapRetain: 10
+purgeHours: 24
+probeInitialDelaySeconds: 15
+probeTimeoutSeconds: 5
+antiAffinity: "hard"
+logLevel: "INFO"
+security:
+  enabled: true
+  runAsUser: 1000
+  fsGroup: 1000

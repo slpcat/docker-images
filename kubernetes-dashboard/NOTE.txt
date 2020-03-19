@@ -1,0 +1,8 @@
+安装
+kubectl create -f kubernetes-dashboard.yaml
+创建用户
+kubectl create -f dashboard-adminuser.yaml
+获取token
+kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | grep admin-user | awk '{print $1}')
+证书
+https://github.com/kubernetes/dashboard/wiki/Certificate-management#public-trusted-certificate-authority

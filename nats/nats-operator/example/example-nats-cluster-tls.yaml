@@ -1,0 +1,30 @@
+apiVersion: "nats.io/v1alpha2"
+kind: "NatsCluster"
+metadata:
+  name: "nats"
+spec:
+  # Number of nodes in the cluster
+  size: 3
+
+  # Must use at least 1.1.0 in order to allow waiting for the A record
+  # from nodes in the cluster to be ready
+  version: "1.3.0"
+
+  tls:
+    # Certificates to secure the NATS client connections:
+    serverSecret: "nats-clients-tls"
+    # Name of the CA in nats-clients-tls
+    serverSecretCAFileName: "ca.pem"
+    # Name of the key in nats-clients-tls
+    serverSecretKeyFileName: "server-key.pem"
+    # Name of the certificate in nats-clients-tls
+    serverSecretCertFileName: "server.pem"
+
+    # Certificates to secure the routes.
+    routesSecret: "nats-routes-tls"
+    # Name of the CA in nats-routes-tls
+    routesSecretCAFileName: "ca.pem"
+    # Name of the key in nats-routes-tls
+    routesSecretKeyFileName: "route-key.pem"
+    # Name of the certificate in nats-routes-tls
+    routesSecretCertFileName: "route.pem"

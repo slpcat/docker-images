@@ -1,0 +1,107 @@
+---
+kind: DaemonSet
+apiVersion: apps/v1
+metadata:
+  name: ceph-osd-prepare
+  namespace: ceph
+  labels:
+    app: ceph
+    daemon: osd
+spec:
+  selector:
+    matchLabels:
+      app: ceph
+      daemon: osd
+  template:
+    metadata:
+      labels:
+        app: ceph
+        daemon: osd
+    spec:
+      #nodeName: node1
+      nodeSelector:
+        node-type: storage
+        #ceph-osd: enabled
+      volumes:
+        - name: devices
+          hostPath:
+            path: /dev
+        - name: ceph
+          emptyDir: {}
+#          hostPath:
+#            path: /opt/ceph
+        - name: ceph-conf
+          secret:
+            secretName: ceph-conf-combined
+        - name: ceph-bootstrap-osd-keyring
+          secret:
+            secretName: ceph-bootstrap-osd-keyring
+        - name: ceph-bootstrap-mds-keyring
+          secret:
+            secretName: ceph-bootstrap-mds-keyring
+        - name: ceph-bootstrap-rgw-keyring
+          secret:
+            secretName: ceph-bootstrap-rgw-keyring
+        - name: ceph-bootstrap-rbd-keyring
+          secret:
+            secretName: ceph-bootstrap-rbd-keyring
+        - name: osd-directory
+          hostPath:
+            path: /var/lib/ceph/osd
+      containers:
+        - name: osd-pod
+          #image: slpcat/ceph-daemon:mimic
+          image: slpcat/ceph-daemon:v3.1.0-mimic-centos7
+          imagePullPolicy: Always
+          lifecycle:
+            postStart:
+              exec:
+                command:
+                  - "sh"
+                  - "-c"
+                  - cp /tmp/ceph/* /etc/ceph/
+          volumeMounts:
+            - name: devices
+              mountPath: /dev
+            - name: ceph
+              mountPath: /var/lib/ceph
+            - name: ceph-conf
+              mountPath: /tmp/ceph
+            - name: ceph-bootstrap-osd-keyring
+              mountPath: /var/lib/ceph/bootstrap-osd
+            - name: ceph-bootstrap-mds-keyring
+              mountPath: /var/lib/ceph/bootstrap-mds
+            - name: ceph-bootstrap-rgw-keyring
+              mountPath: /var/lib/ceph/bootstrap-rgw
+            - name: ceph-bootstrap-rbd-keyring
+              mountPath: /var/lib/ceph/bootstrap-rbd
+            - name: osd-directory
+              mountPath: /var/lib/ceph/osd
+          securityContext:
+            privileged: true
+          env:
+            - name: CEPH_DAEMON
+              value: OSD_CEPH_DISK_PREPARE
+            - name: OSD_FORCE_ZAP
+              value: "1"
+            - name: OSD_DEVICE
+              value: /dev/vdb
+            - name: KV_TYPE
+              value: k8s
+            - name: CLUSTER
+              value: ceph
+            - name: CEPH_GET_ADMIN_KEY
+              value: "1"
+            - name: HOSTNAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            #- name: DEBUG
+            #  value: stayalive
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "1000m"
+            limits:
+              memory: "1024Mi"
+              cpu: "2000m"

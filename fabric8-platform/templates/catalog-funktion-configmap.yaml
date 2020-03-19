@@ -1,0 +1,163 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  annotations:
+    fabric8.io/git-commit: 3c109abd7d3fc307fb3fdefd117bf8148491ee0b
+    fabric8.io/iconUrl: https://funktion.fabric8.io/img/profile.png
+    fabric8.io/git-branch: release-v2.4.24
+    maven.fabric8.io/app-catalog: "true"
+  labels:
+    funktion.fabric8.io/kind: Runtime
+    provider: fabric8
+    project: funktion
+    version: target
+    group: io.fabric8.platform.apps
+    kind: catalog
+  name: catalog-funktion
+data:
+  catalog-funktion.yml: |
+    ---
+    apiVersion: "v1"
+    kind: "Template"
+    metadata:
+      annotations:
+        fabric8.io/git-commit: "3c109abd7d3fc307fb3fdefd117bf8148491ee0b"
+        fabric8.io/iconUrl: "https://funktion.fabric8.io/img/profile.png"
+        fabric8.io/git-branch: "release-v2.4.24"
+      finalizers: []
+      labels:
+        funktion.fabric8.io/kind: "Runtime"
+        provider: "fabric8"
+        project: "funktion"
+        version: "target"
+        group: "io.fabric8.platform.apps"
+      name: "funktion"
+      ownerReferences: []
+    labels: {}
+    objects:
+    - apiVersion: "v1"
+      kind: "ServiceAccount"
+      metadata:
+        annotations: {}
+        finalizers: []
+        labels:
+          provider: "fabric8"
+          project: "funktion-operator"
+          version: "2.4.24"
+          group: "io.fabric8.platform.apps"
+        name: "funktion-operator"
+        ownerReferences: []
+      imagePullSecrets: []
+      secrets: []
+    - apiVersion: "v1"
+      kind: "ConfigMap"
+      metadata:
+        annotations:
+          fabric8.io/iconUrl: "https://funktion.fabric8.io/img/profile.png"
+          funktion.fabric8.io/chromeDevTools: "true"
+        finalizers: []
+        labels:
+          funktion.fabric8.io/kind: "Runtime"
+          provider: "fabric8"
+          project: "funktion-runtimes"
+          version: "1.1.44"
+          group: "io.fabric8.funktion"
+        name: "nodejs"
+        ownerReferences: []
+      data:
+        fileExtensions: "js"
+        debugPort: "5858"
+        deployment: "metadata:\n  annotations:\n    fabric8.io/iconUrl: \"https://funktion.fabric8.io/img/profile.png\"\
+          \n  labels:\n    kind: function\n    name: hello\nspec:\n  replicas: 1\n  template:\n\
+          \    metadata:\n      labels:\n        kind: function\n        name: hello\n\
+          \    spec:\n      terminationGracePeriodSeconds: 1\n      containers:\n    \
+          \  - image: funktion/funktion-nodejs-runtime:1.0.3\n        name: connector\n\
+          \        imagePullPolicy: IfNotPresent\n        volumeMounts:\n          - name:\
+          \ source\n            readOnly: true\n            mountPath: /usr/src/app/funktion\n\
+          \        livenessProbe:\n          httpGet:\n            path: \"/healthz\"\n\
+          \            port: 8888\n          initialDelaySeconds: 30\n        readinessProbe:\n\
+          \          httpGet:\n            path: \"/healthz\"\n            port: 8888\n\
+          \          initialDelaySeconds: 2\n      volumes:\n      - name: source\n  \
+          \      configMap:\n          name: hello\n          items:\n          - key:\
+          \ source\n            path: source.js\n"
+        deploymentDebug: "metadata:\n  annotations:\n    fabric8.io/iconUrl: \"https://funktion.fabric8.io/img/profile.png\"\
+          \n  labels:\n    kind: function\n    name: hello\nspec:\n  replicas: 1\n  template:\n\
+          \    metadata:\n      labels:\n        kind: function\n        name: hello\n\
+          \    spec:\n      terminationGracePeriodSeconds: 1\n      containers:\n    \
+          \  - image: funktion/funktion-nodejs-runtime:1.0.3\n        command:\n     \
+          \   - node\n        - '--inspect'\n        - '--debug=5858'\n        - server.js\n\
+          \        - '--codepath=./funktion/source.js'\n        name: connector\n    \
+          \    imagePullPolicy: IfNotPresent\n        volumeMounts:\n          - name:\
+          \ source\n            readOnly: true\n            mountPath: /usr/src/app/funktion\n\
+          \        livenessProbe:\n          httpGet:\n            path: \"/healthz\"\n\
+          \            port: 8888\n          initialDelaySeconds: 30\n        readinessProbe:\n\
+          \          httpGet:\n            path: \"/healthz\"\n            port: 8888\n\
+          \          initialDelaySeconds: 2\n      volumes:\n      - name: source\n  \
+          \      configMap:\n          name: hello\n          items:\n          - key:\
+          \ source\n            path: source.js\n"
+        service: "metadata:\n  annotations:\n    fabric8.io/iconUrl: \"https://funktion.fabric8.io/img/profile.png\"\
+          \nspec:\n  ports:\n  - port: 80\n    targetPort: 8888\n"
+    - apiVersion: "extensions/v1beta1"
+      kind: "Deployment"
+      metadata:
+        annotations:
+          fabric8.io/git-commit: "3c109abd7d3fc307fb3fdefd117bf8148491ee0b"
+          fabric8.io/metrics-path: "dashboard/file/kubernetes-pods.json/?var-project=funktion-operator&var-version=2.4.24"
+          fabric8.io/scm-con-url: "scm:git:git@github.com:fabric8io/fabric8-platform.git/apps/funktion-operator"
+          fabric8.io/scm-url: "http://github.com/fabric8io/fabric8-platform/apps/funktion-operator"
+          fabric8.io/iconUrl: "https://cdn.rawgit.com/fabric8io/fabric8-platform/master/apps/funktion-operator/src/main/fabric8/icon.png"
+          fabric8.io/git-branch: "release-v2.4.24"
+          fabric8.io/scm-devcon-url: "scm:git:git@github.com:fabric8io/fabric8-platform.git/apps/funktion-operator"
+          fabric8.io/scm-tag: "app-console-2.0.1"
+        finalizers: []
+        labels:
+          provider: "fabric8"
+          project: "funktion-operator"
+          version: "2.4.24"
+          group: "io.fabric8.platform.apps"
+        name: "funktion-operator"
+        ownerReferences: []
+      spec:
+        replicas: 1
+        selector:
+          matchExpressions: []
+          matchLabels:
+            project: "funktion-operator"
+            provider: "fabric8"
+            group: "io.fabric8.platform.apps"
+        template:
+          metadata:
+            annotations:
+              fabric8.io/git-commit: "3c109abd7d3fc307fb3fdefd117bf8148491ee0b"
+              fabric8.io/metrics-path: "dashboard/file/kubernetes-pods.json/?var-project=funktion-operator&var-version=2.4.24"
+              fabric8.io/scm-con-url: "scm:git:git@github.com:fabric8io/fabric8-platform.git/apps/funktion-operator"
+              fabric8.io/scm-url: "http://github.com/fabric8io/fabric8-platform/apps/funktion-operator"
+              fabric8.io/iconUrl: "https://cdn.rawgit.com/fabric8io/fabric8-platform/master/apps/funktion-operator/src/main/fabric8/icon.png"
+              fabric8.io/git-branch: "release-v2.4.24"
+              fabric8.io/scm-devcon-url: "scm:git:git@github.com:fabric8io/fabric8-platform.git/apps/funktion-operator"
+              fabric8.io/scm-tag: "app-console-2.0.1"
+            finalizers: []
+            labels:
+              provider: "fabric8"
+              project: "funktion-operator"
+              version: "2.4.24"
+              group: "io.fabric8.platform.apps"
+            ownerReferences: []
+          spec:
+            containers:
+            - args: []
+              command:
+              - "/bin/operator"
+              - "operate"
+              env: []
+              image: "funktion/funktion:1.0.9"
+              imagePullPolicy: "IfNotPresent"
+              name: "funktion"
+              ports: []
+              volumeMounts: []
+            imagePullSecrets: []
+            nodeSelector: {}
+            serviceAccountName: "funktion-operator"
+            volumes: []
+    parameters: []

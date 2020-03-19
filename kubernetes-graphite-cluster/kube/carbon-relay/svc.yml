@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{APP_NAME}}
+spec:
+  selector:
+    app: {{APP_NAME}}
+  ports:
+  - port: 2003
+    name: plaintext
+    targetPort: 2003
+    protocol: TCP
+  - port: 2004
+    name: pickle
+    targetPort: 2004
+    protocol: TCP

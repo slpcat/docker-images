@@ -1,0 +1,4 @@
+ROCKETMQ_DAEMON 服务类型
+namesrv broker all
+BROKER_ROLE broker 角色
+master slave

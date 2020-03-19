@@ -1,0 +1,477 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbix_export>
+    <version>4.4</version>
+    <date>2019-12-23T05:49:47Z</date>
+    <groups>
+        <group>
+            <name>Templates/Applications</name>
+        </group>
+    </groups>
+    <templates>
+        <template>
+            <template>Template Consul Monitor by Prom</template>
+            <name>Template Consul Monitor by Prom</name>
+            <description>consul template using consul exporter.</description>
+            <groups>
+                <group>
+                    <name>Templates/Applications</name>
+                </group>
+            </groups>
+            <applications>
+                <application>
+                    <name>Consul KV</name>
+                </application>
+                <application>
+                    <name>Consul Node</name>
+                </application>
+                <application>
+                    <name>Consul Service</name>
+                </application>
+                <application>
+                    <name>Consul Status</name>
+                </application>
+                <application>
+                    <name>Monitoring agent</name>
+                </application>
+                <application>
+                    <name>Zabbix raw items</name>
+                </application>
+            </applications>
+            <items>
+                <item>
+                    <name>Number of Services</name>
+                    <type>DEPENDENT</type>
+                    <key>consul.catalog.services[consul_exporter]</key>
+                    <delay>0</delay>
+                    <history>7d</history>
+                    <value_type>FLOAT</value_type>
+                    <description>How many services are in the cluster</description>
+                    <applications>
+                        <application>
+                            <name>Consul Status</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>PROMETHEUS_PATTERN</type>
+                            <params>consul_catalog_services
+</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>consul_exporter.get</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>Number of raft leaders</name>
+                    <type>DEPENDENT</type>
+                    <key>consul.raft.leader[consul_exporter]</key>
+                    <delay>0</delay>
+                    <history>7d</history>
+                    <description>consul_raft_leader Does Raft cluster have a leader (according to this node).</description>
+                    <applications>
+                        <application>
+                            <name>Consul Status</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>PROMETHEUS_PATTERN</type>
+                            <params>node_filefd_allocated
+</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>consul_exporter.get</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>Number of raft peers (servers)</name>
+                    <type>DEPENDENT</type>
+                    <key>consul.raft.peers[consul_exporter]</key>
+                    <delay>0</delay>
+                    <history>7d</history>
+                    <value_type>FLOAT</value_type>
+                    <description>How many peers (servers) are in the Raft cluster</description>
+                    <applications>
+                        <application>
+                            <name>Consul Status</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>PROMETHEUS_PATTERN</type>
+                            <params>consul_raft_peers
+</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>consul_exporter.get</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>Number of  members are in the cluster</name>
+                    <type>DEPENDENT</type>
+                    <key>consul.serf.lan.members[consul_exporter]</key>
+                    <delay>0</delay>
+                    <history>7d</history>
+                    <value_type>FLOAT</value_type>
+                    <description>How many members are in the cluster(servers and clients)</description>
+                    <applications>
+                        <application>
+                            <name>Consul Status</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>PROMETHEUS_PATTERN</type>
+                            <params>consul_serf_lan_members
+</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>consul_exporter.get</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>Consul status</name>
+                    <type>DEPENDENT</type>
+                    <key>consul.up[consul_exporter]</key>
+                    <delay>0</delay>
+                    <history>2w</history>
+                    <trends>0</trends>
+                    <value_type>CHAR</value_type>
+                    <description>consul agent status&#13;
+consul_up Was the last query of Consul successful.</description>
+                    <applications>
+                        <application>
+                            <name>Consul Status</name>
+                        </application>
+                    </applications>
+                    <valuemap>
+                        <name>Service state</name>
+                    </valuemap>
+                    <preprocessing>
+                        <step>
+                            <type>PROMETHEUS_PATTERN</type>
+                            <params>consul_up
+</params>
+                        </step>
+                        <step>
+                            <type>DISCARD_UNCHANGED_HEARTBEAT</type>
+                            <params>1d</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>consul_exporter.get</key>
+                    </master_item>
+                </item>
+                <item>
+                    <name>Get consul_exporter metrics</name>
+                    <type>HTTP_AGENT</type>
+                    <key>consul_exporter.get</key>
+                    <history>1h</history>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <applications>
+                        <application>
+                            <name>Zabbix raw items</name>
+                        </application>
+                    </applications>
+                    <url>http://{HOST.CONN}:{$CONSUL_EXPORTER_PORT}/metrics</url>
+                    <triggers>
+                        <trigger>
+                            <expression>{nodata(30m)}=1</expression>
+                            <name>consul_exporter is not available (or no data for 30m)</name>
+                            <priority>WARNING</priority>
+                            <description>Failed to fetch system metrics from node_exporter in time.</description>
+                            <manual_close>YES</manual_close>
+                        </trigger>
+                    </triggers>
+                </item>
+            </items>
+            <discovery_rules>
+                <discovery_rule>
+                    <name>CONSUL: Node discovery</name>
+                    <type>DEPENDENT</type>
+                    <key>consul.node.discovery[consul_exporter]</key>
+                    <delay>0</delay>
+                    <filter>
+                        <evaltype>AND</evaltype>
+                    </filter>
+                    <lifetime>1d</lifetime>
+                    <item_prototypes>
+                        <item_prototype>
+                            <name>Node {#NODENAME}: status</name>
+                            <type>DEPENDENT</type>
+                            <key>consul.node.status[consul_exporter,&quot;{#NODENAME}&quot;]</key>
+                            <delay>0</delay>
+                            <trends>0</trends>
+                            <value_type>CHAR</value_type>
+                            <applications>
+                                <application>
+                                    <name>Consul Node</name>
+                                </application>
+                            </applications>
+                            <valuemap>
+                                <name>Service state</name>
+                            </valuemap>
+                            <preprocessing>
+                                <step>
+                                    <type>PROMETHEUS_PATTERN</type>
+                                    <params>{__name__=~&quot;^consul_health_node_status&quot;,node=&quot;{#NODENAME}&quot;,status=&quot;passing&quot;}
+</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>consul_exporter.get</key>
+                            </master_item>
+                        </item_prototype>
+                    </item_prototypes>
+                    <master_item>
+                        <key>consul_exporter.get</key>
+                    </master_item>
+                    <lld_macro_paths>
+                        <lld_macro_path>
+                            <lld_macro>{#HELP}</lld_macro>
+                            <path>$.help</path>
+                        </lld_macro_path>
+                        <lld_macro_path>
+                            <lld_macro>{#NODENAME}</lld_macro>
+                            <path>$.labels.node</path>
+                        </lld_macro_path>
+                    </lld_macro_paths>
+                    <preprocessing>
+                        <step>
+                            <type>PROMETHEUS_TO_JSON</type>
+                            <params>{__name__=~&quot;^consul_health_node_status&quot;, node=~&quot;.+&quot;}</params>
+                        </step>
+                    </preprocessing>
+                </discovery_rule>
+                <discovery_rule>
+                    <name>CONSUL: Service discovery</name>
+                    <type>DEPENDENT</type>
+                    <key>consul.service.discovery[consul_exporter]</key>
+                    <delay>0</delay>
+                    <filter>
+                        <evaltype>AND</evaltype>
+                    </filter>
+                    <lifetime>1d</lifetime>
+                    <description>Discovery of network interfaces. Requires node_exporter v0.18 and up.</description>
+                    <item_prototypes>
+                        <item_prototype>
+                            <name>Service {#SERVICENAME}: status</name>
+                            <key>consul.service.status[consul_exporter,&quot;{#SERVICENAME}&quot;]</key>
+                            <trends>0</trends>
+                            <value_type>CHAR</value_type>
+                            <applications>
+                                <application>
+                                    <name>Consul Service</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>PROMETHEUS_PATTERN</type>
+                                    <params>consul_health_service_status{service_name=&quot;{#SERVICENAME}&quot;,status=&quot;passing&quot;}
+node</params>
+                                </step>
+                            </preprocessing>
+                        </item_prototype>
+                    </item_prototypes>
+                    <master_item>
+                        <key>consul_exporter.get</key>
+                    </master_item>
+                    <lld_macro_paths>
+                        <lld_macro_path>
+                            <lld_macro>{#HELP}</lld_macro>
+                            <path>$.help</path>
+                        </lld_macro_path>
+                        <lld_macro_path>
+                            <lld_macro>{#SERVICENAME}</lld_macro>
+                            <path>$.labels.service_name</path>
+                        </lld_macro_path>
+                    </lld_macro_paths>
+                    <preprocessing>
+                        <step>
+                            <type>PROMETHEUS_TO_JSON</type>
+                            <params>{__name__=~&quot;^consul_health_service_status&quot;, service_name=~&quot;.+&quot;}</params>
+                        </step>
+                    </preprocessing>
+                </discovery_rule>
+            </discovery_rules>
+            <macros>
+                <macro>
+                    <macro>{$CONSUL_EXPORTER_PORT}</macro>
+                    <value>9107</value>
+                    <description>TCP Port consul_exporter is listening on.</description>
+                </macro>
+                <macro>
+                    <macro>{$IF.ERRORS.WARN}</macro>
+                    <value>2</value>
+                </macro>
+                <macro>
+                    <macro>{$IF.UTIL.MAX}</macro>
+                    <value>90</value>
+                </macro>
+                <macro>
+                    <macro>{$IFCONTROL}</macro>
+                    <value>1</value>
+                </macro>
+                <macro>
+                    <macro>{$KERNEL.MAXFILES.MIN}</macro>
+                    <value>256</value>
+                </macro>
+                <macro>
+                    <macro>{$LOAD_AVG_PER_CPU.MAX.WARN}</macro>
+                    <value>1.5</value>
+                    <description>Load per CPU considered sustainable. Tune if needed.</description>
+                </macro>
+                <macro>
+                    <macro>{$MEMORY.AVAILABLE.MIN}</macro>
+                    <value>20M</value>
+                </macro>
+                <macro>
+                    <macro>{$MEMORY.UTIL.MAX}</macro>
+                    <value>90</value>
+                </macro>
+                <macro>
+                    <macro>{$NET.IF.IFALIAS.MATCHES}</macro>
+                    <value>^.*$</value>
+                </macro>
+                <macro>
+                    <macro>{$NET.IF.IFALIAS.NOT_MATCHES}</macro>
+                    <value>CHANGE_IF_NEEDED</value>
+                </macro>
+                <macro>
+                    <macro>{$NET.IF.IFNAME.MATCHES}</macro>
+                    <value>^.*$</value>
+                </macro>
+                <macro>
+                    <macro>{$NET.IF.IFNAME.NOT_MATCHES}</macro>
+                    <value>(^Software Loopback Interface|^NULL[0-9.]*$|^[Ll]o[0-9.]*$|^[Ss]ystem$|^Nu[0-9.]*$|^veth[0-9a-z]+$|docker[0-9]+|br-[a-z0-9]{12})</value>
+                    <description>Filter out loopbacks, nulls, docker veth links and docker0 bridge by default</description>
+                </macro>
+                <macro>
+                    <macro>{$NET.IF.IFOPERSTATUS.MATCHES}</macro>
+                    <value>^.*$</value>
+                </macro>
+                <macro>
+                    <macro>{$NET.IF.IFOPERSTATUS.NOT_MATCHES}</macro>
+                    <value>^7$</value>
+                    <description>Ignore notPresent(7)</description>
+                </macro>
+                <macro>
+                    <macro>{$NODE.STATUS}</macro>
+                    <value>passing</value>
+                    <description>Only passing status</description>
+                </macro>
+                <macro>
+                    <macro>{$NODE_EXPORTER_PORT}</macro>
+                    <value>9100</value>
+                    <description>TCP Port node_exporter is listening on.</description>
+                </macro>
+                <macro>
+                    <macro>{$SWAP.PFREE.MIN.WARN}</macro>
+                    <value>50</value>
+                </macro>
+                <macro>
+                    <macro>{$SYSTEM.FUZZYTIME.MAX}</macro>
+                    <value>60</value>
+                </macro>
+                <macro>
+                    <macro>{$VFS.DEV.DEVNAME.MATCHES}</macro>
+                    <value>.+</value>
+                    <description>This macro is used in block devices discovery. Can be overridden on the host or linked template level</description>
+                </macro>
+                <macro>
+                    <macro>{$VFS.DEV.DEVNAME.NOT_MATCHES}</macro>
+                    <value>^(loop[0-9]*|sd[a-z][0-9]+|nbd[0-9]+|sr[0-9]+|fd[0-9]+|dm-[0-9]+|ram[0-9]+)</value>
+                    <description>This macro is used in block devices discovery. Can be overridden on the host or linked template level</description>
+                </macro>
+                <macro>
+                    <macro>{$VFS.DEV.READ.AWAIT.WARN}</macro>
+                    <value>20</value>
+                    <description>Disk read average response time (in ms) before the trigger would fire</description>
+                </macro>
+                <macro>
+                    <macro>{$VFS.DEV.WRITE.AWAIT.WARN}</macro>
+                    <value>20</value>
+                    <description>Disk write average response time (in ms) before the trigger would fire</description>
+                </macro>
+                <macro>
+                    <macro>{$VFS.FS.FSDEVICE.MATCHES}</macro>
+                    <value>^.+$</value>
+                    <description>This macro is used in filesystems discovery. Can be overridden on the host or linked template level</description>
+                </macro>
+                <macro>
+                    <macro>{$VFS.FS.FSDEVICE.NOT_MATCHES}</macro>
+                    <value>^\s$</value>
+                    <description>This macro is used in filesystems discovery. Can be overridden on the host or linked template level</description>
+                </macro>
+                <macro>
+                    <macro>{$VFS.FS.FSNAME.MATCHES}</macro>
+                    <value>.+</value>
+                    <description>This macro is used in filesystems discovery. Can be overridden on the host or linked template level</description>
+                </macro>
+                <macro>
+                    <macro>{$VFS.FS.FSNAME.NOT_MATCHES}</macro>
+                    <value>^(/dev|/sys|/run|/proc|.+/shm$)</value>
+                    <description>This macro is used in filesystems discovery. Can be overridden on the host or linked template level</description>
+                </macro>
+                <macro>
+                    <macro>{$VFS.FS.FSTYPE.MATCHES}</macro>
+                    <value>^(btrfs|ext2|ext3|ext4|reiser|xfs|ffs|ufs|jfs|jfs2|vxfs|hfs|apfs|refs|ntfs|fat32|zfs)$</value>
+                    <description>This macro is used in filesystems discovery. Can be overridden on the host or linked template level</description>
+                </macro>
+                <macro>
+                    <macro>{$VFS.FS.FSTYPE.NOT_MATCHES}</macro>
+                    <value>^\s$</value>
+                    <description>This macro is used in filesystems discovery. Can be overridden on the host or linked template level</description>
+                </macro>
+                <macro>
+                    <macro>{$VFS.FS.INODE.PFREE.MIN.CRIT}</macro>
+                    <value>10</value>
+                </macro>
+                <macro>
+                    <macro>{$VFS.FS.INODE.PFREE.MIN.WARN}</macro>
+                    <value>20</value>
+                </macro>
+                <macro>
+                    <macro>{$VFS.FS.PUSED.MAX.CRIT}</macro>
+                    <value>90</value>
+                </macro>
+                <macro>
+                    <macro>{$VFS.FS.PUSED.MAX.WARN}</macro>
+                    <value>80</value>
+                </macro>
+            </macros>
+            <screens>
+                <screen>
+                    <name>Network interfaces</name>
+                    <hsize>1</hsize>
+                    <vsize>1</vsize>
+                </screen>
+                <screen>
+                    <name>System performance</name>
+                    <hsize>2</hsize>
+                    <vsize>7</vsize>
+                </screen>
+            </screens>
+        </template>
+    </templates>
+    <value_maps>
+        <value_map>
+            <name>Service state</name>
+            <mappings>
+                <mapping>
+                    <value>0</value>
+                    <newvalue>Down</newvalue>
+                </mapping>
+                <mapping>
+                    <value>1</value>
+                    <newvalue>Up</newvalue>
+                </mapping>
+            </mappings>
+        </value_map>
+    </value_maps>
+</zabbix_export>

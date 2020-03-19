@@ -1,0 +1,49 @@
+#------------------------------------------------------------------------------
+# Kafka:
+#------------------------------------------------------------------------------
+
+Replicas: 3
+#Image: "solsson/kafka"
+#ImageTag: "0.11.0.0"
+Image: "slpcat/kafka"
+ImageTag: "alpine"
+ImagePullPolicy: "Always"
+resources:
+  requests:
+    cpu: 500m
+    memory: 1024Mi
+  limits:
+    cpu: 4
+    memory: 8Gi
+Storage: "50Gi"
+DataDirectory: "/opt/kafka/data"
+
+#------------------------------------------------------------------------------
+# Zookeeper:
+#------------------------------------------------------------------------------
+
+zookeeper:
+  Servers: 3
+  Resources:
+    requests:
+      cpu: 500m
+      memory: 512Mi
+    limits:
+      cpu: 2
+      memory: 4Gi
+  #Heap: "1G"
+  Storage: "20Gi"
+  ServerPort: 2888
+  LeaderElectionPort: 3888
+  ClientPort: 2181
+  ImagePullPolicy: "IfNotPresent"
+  TickTimeMs: 2000
+  InitTicks: 10
+  SyncTicks: 5
+  ClientCnxns: 1024
+  SnapRetain: 3
+  PurgeHours: 1
+  ProbeInitialDelaySeconds : 15
+  ProbeTimeoutSeconds : 5
+  AntiAffinity : "hard"
+  LogLevel : "INFO"

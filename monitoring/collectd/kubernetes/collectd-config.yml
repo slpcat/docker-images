@@ -1,0 +1,85 @@
+kind: ConfigMap
+
+apiVersion: v1
+
+metadata:
+
+  name: collectd-config
+
+  namespace: default
+
+data:
+
+  node-collectd.conf: |-
+
+    FQDNLookup false
+
+    LoadPlugin syslog
+
+    <Plugin syslog>
+
+       LogLevel info
+
+    </Plugin>
+
+
+
+
+    LoadPlugin cpu
+
+    LoadPlugin memory
+
+    LoadPlugin write_graphite
+
+
+
+
+    <Plugin "cpu">
+
+      Interval 5
+
+      ReportByState false
+
+      ReportByCpu false
+
+    </Plugin>
+
+
+
+
+    <Plugin "memory">
+
+      Interval 30
+
+      ValuesAbsolute false
+
+      ValuesPercentage true
+
+    </Plugin>
+
+
+
+
+    <Plugin write_graphite>
+
+       <Node "wgnode1">
+
+          Host "10.0.90.1"
+
+          Port "2003"
+
+          Protocol "tcp"
+
+          LogSendErrors true
+
+          StoreRates true
+
+          AlwaysAppendDS false
+
+          EscapeCharacter "_"
+
+       </Node>
+
+    </Plugin>
+
+    #Last line (collectd requires ‘\n’ at the last line)

@@ -1,0 +1,53 @@
+version: "3"  
+  
+services:  
+  apollo-configservice:                                         ##容器服务名  
+    container_name: apollo-configservice                        ##容器名  
+    build: apollo-configservice/                                ##Dockerfile路径  
+    image: slpcat/apollo-configservice:v1.2.0                          ##镜像名  
+    network_mode: host                                        ##网络设置  
+    ports:  
+      - "30080:30080"  
+    volumes:  
+      - "/opt/logs/100003171:/opt/logs/100003171"    ##将/opt/logs/100003171目录挂载到宿主机的/Users/mobin/opt/logs/100003171方便在宿主机上查看日志  
+    environment:  
+      - spring_datasource_url=jdbc:mysql://xxxx:31101/ApolloConfigDB?characterEncoding=utf8  
+      - spring_datasource_username=root  
+      - spring_datasource_password=xxxx  
+  
+  apollo-adminservice:  
+    container_name: apollo-adminservice  
+    build: apollo-adminservice/  
+    image: slpcat/apollo-adminservice:v1.2.0
+    network_mode: host  
+    ports:  
+      - "30090:30090"  
+    depends_on:  
+      - apollo-configservice  
+    volumes:  
+      - "/opt/logs/100003172:/opt/logs/100003172"  
+    environment:  
+      - spring_datasource_url=jdbc:mysql://xxxx:31101/ApolloConfigDB?characterEncoding=utf8  
+      - spring_datasource_username=root  
+      - spring_datasource_password=123456  
+  
+  apollo-portal:  
+    container_name: apollo-portal  
+    build: apollo-portal/  
+    image: slpcat/apollo-portal:v1.2.0
+    network_mode: host  
+    ports:  
+      - "30070:30070"  
+    depends_on:  
+      - apollo-adminservice
+    #links:
+     # - apollo-adminservice
+     # - apollo-configservice  
+    volumes:  
+      - "/opt/logs/100003173:/opt/logs/100003173"  
+    environment:  
+      - spring_datasource_url=jdbc:mysql://xxxx:31101/ApolloPortalDB?characterEncoding=utf8  
+      - spring_datasource_username=root  
+      - spring_datasource_password=123456
+      - dev_meta=http://xxxx:30080
+

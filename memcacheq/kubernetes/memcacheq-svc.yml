@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: memcacheq-svc
+  namespace: default
+spec:
+  ports:
+  - name:  memcacheq
+    protocol: TCP
+    port: 22201
+    targetPort: 22201
+  type: NodePort
+  selector:
+    app: memcacheq

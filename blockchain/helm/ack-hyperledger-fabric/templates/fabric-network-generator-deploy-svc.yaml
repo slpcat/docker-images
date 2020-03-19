@@ -1,0 +1,64 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: fabric-network-generator-svc
+spec:
+  selector:
+    app: fabric-network-generator
+  ports:
+    - protocol: TCP
+      port: 8080
+---
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: fabric-network-generator-deployment
+  labels:
+    app: fabric-network-generator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fabric-network-generator
+  template:
+    metadata:
+      labels:
+        app: fabric-network-generator
+    spec:
+      containers:
+        - name: generator
+          image: {{ $.Values.dockerImageRegistry }}/fabric-network-generator:1.1
+          imagePullPolicy: {{ .Values.imagePullPolicy | quote }}
+          ports:
+          - containerPort: 8080
+          env:
+            - name: FABRIC_CONFIG_JSON
+              value: |-
+                {
+                  "dockerImageRegistry": {{ $.Values.dockerImageRegistry | quote }},
+                  "externalAddress": {{ $.Values.externalAddress | quote }},
+                  "fabricNetwork": {{ $.Values.fabricNetwork | quote }},
+                  "fabricChannel": {{ $.Values.fabricChannel | quote }},
+                  "ordererDomain": {{ $.Values.ordererDomain | quote }},
+                  "peerDomain": {{ $.Values.peerDomain | quote }},
+                  "ordererNum": {{ $.Values.ordererNum }},
+                  "orgNum": {{ $.Values.orgNum }},
+                  "caExternalPortList": {{ define "caPortStrList" -}}{{- range $dummy, $val := $.Values.caExternalPortList -}}{{- $val | quote -}},{{- end -}}{{- end -}}{{- $buf := (include "caPortStrList" .) -}}[{{- trimSuffix "," $buf -}}],
+                  "ordererExternalPortList": {{ define "ordererPortStrList" -}}{{- range $dummy, $val := $.Values.ordererExternalPortList -}}{{- $val | quote -}},{{- end -}}{{- end -}}{{- $buf := (include "ordererPortStrList" .) -}}[{{- trimSuffix "," $buf -}}],
+                  "peerExternalGrpcPortList": {{ define "peerGrpcPortStrList" -}}{{- range $dummy, $val := $.Values.peerExternalGrpcPortList -}}{{- $val | quote -}},{{- end -}}{{- end -}}{{- $buf := (include "peerGrpcPortStrList" .) -}}[{{- trimSuffix "," $buf -}}],
+                  "peerExternalEventPortList": {{ define "peerEventPortStrList" -}}{{- range $dummy, $val := $.Values.peerExternalEventPortList -}}{{- $val | quote -}},{{- end -}}{{- end -}}{{- $buf := (include "peerEventPortStrList" .) -}}[{{- trimSuffix "," $buf -}}]
+                }
+          volumeMounts:
+            - name: fabric-root
+              mountPath: /output/fabric
+          readinessProbe:
+            exec:
+              command:
+              - ls
+              - /output/fabric/{{ $.Values.fabricNetwork }}/GENERATION-COMPLETED
+            initialDelaySeconds: 5
+            periodSeconds: 5
+      volumes:
+        - name: fabric-root
+          hostPath:
+            path: "/data/fabric"

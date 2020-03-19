@@ -1,0 +1,8 @@
+kubectl label node <nodename> ceph-mon=enabled ceph-mgr=enabled
+kubectl label node <nodename> ceph-osd=enabled ceph-osd-device-dev-sdb=enabled ceph-osd-device-dev-sdc=enabled
+ceph-mon=enabled
+ceph-mgr=enabled
+ceph-osd=enabled
+ceph-osd-device-<name>=enabled
+ceph-rgw=enabled 
+ceph-mds=enabled

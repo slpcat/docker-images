@@ -1,0 +1,23 @@
+https://github.com/iyacontrol/prom2click
+https://github.com/iyacontrol/prom2click/blob/master/config.xml
+grafana-cli plugins install vertamedia-clickhouse-datasource
+
+
+存储规范化后的数据，参考timescaledb修改后的表结构
+CREATE DATABASE IF NOT EXISTS metrics;
+CREATE TABLE IF NOT EXISTS metrics.samples
+    (
+          date Date DEFAULT toDate(0),
+          name String,
+          labels Array(String),
+          value Float64,
+          ts DateTime,
+          updated DateTime DEFAULT now()
+    )
+    ENGINE = GraphiteMergeTree(
+          date, (name, labels, ts), 8192, 'graphite_rollup'
+    );
+
+name用于存储 key值，例如：jvm_gc_collection_seconds_count
+labels用于存储Label值，例如：gc="ParNew" 
+value用于存储value值，例如：1297.0

@@ -1,0 +1,23 @@
+
+docker run -d --restart=always -e ALLOW_ANONYMOUS_LOGIN=yes -p 2181:2181 bitnami/zookeeper:latest
+docker run -d --restart=always -e NIFI_WEB_HTTP_PORT=8080 \
+    -e NIFI_CLUSTER_IS_NODE=true -e NIFI_CLUSTER_NODE_PROTOCOL_PORT=8082 \
+    -e NIFI_ZK_CONNECT_STRING=zookeeper:2181 -e NIFI_ELECTION_MAX_WAIT="1 min" \
+apache/nifi:1.10.0-SNAPSHOT-dockermaven 
+
+docker run --name nifi \
+  -p 9090:9090 \
+  -d \
+  -e NIFI_WEB_HTTP_PORT='9090' \
+  apache/nifi:latest
+
+因此Mysql8.0连接JDBC驱动需要注意以下几点：
+
+1，驱动的类换了个名字
+Class.forName("com.mysql.cj.jdbc.Driver");
+加上useSSL=true或false 
+con = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/test?useSSL=true", "root", "123456");
+加上serverTimezone=GMT
+con = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/test?useSSL=true&serverTimezone=GMT", "root", "123456");
+
+NIFI数据库增量同步用到的组件有QueryDatabaseTable、ConvertAvroToJSON，ConvertJSONToSQL、PutSQL四个组件

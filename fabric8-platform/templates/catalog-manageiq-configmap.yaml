@@ -1,0 +1,140 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  annotations:
+    fabric8.io/git-commit: 2b9f7ce19493fe6d18392ac4f4be16f5e1a76fa3
+    fabric8.io/iconUrl: https://cdn.rawgit.com/fabric8io/fabric8-devops/master/manageiq/src/main/fabric8/icon.png
+    fabric8.io/git-branch: release-v2.2.311
+    maven.fabric8.io/app-catalog: "true"
+  labels:
+    provider: fabric8
+    project: manageiq
+    version: 2.2.311
+    expose: "true"
+    group: io.fabric8.devops.apps
+    kind: catalog
+  name: catalog-manageiq
+data:
+  catalog-manageiq.yml: |
+    ---
+    apiVersion: "v1"
+    kind: "Template"
+    metadata:
+      annotations:
+        fabric8.io/git-commit: "2b9f7ce19493fe6d18392ac4f4be16f5e1a76fa3"
+        fabric8.io/iconUrl: "https://cdn.rawgit.com/fabric8io/fabric8-devops/master/manageiq/src/main/fabric8/icon.png"
+        fabric8.io/git-branch: "release-v2.2.311"
+      finalizers: []
+      labels:
+        provider: "fabric8"
+        project: "manageiq"
+        version: "2.2.311"
+        expose: "true"
+        group: "io.fabric8.devops.apps"
+      name: "manageiq"
+      ownerReferences: []
+    labels: {}
+    objects:
+    - apiVersion: "v1"
+      kind: "Service"
+      metadata:
+        annotations:
+          fabric8.io/iconUrl: "https://cdn.rawgit.com/fabric8io/fabric8-devops/master/manageiq/src/main/fabric8/icon.png"
+          fabric8.io/app-menu: "management"
+          fabric8.io/git-commit: "2b9f7ce19493fe6d18392ac4f4be16f5e1a76fa3"
+          fabric8.io/git-branch: "release-v2.2.311"
+        finalizers: []
+        labels:
+          provider: "fabric8"
+          project: "manageiq"
+          version: "2.2.311"
+          group: "io.fabric8.devops.apps"
+          expose: "true"
+        name: "manageiq"
+        ownerReferences: []
+      spec:
+        deprecatedPublicIPs: []
+        externalIPs: []
+        loadBalancerSourceRanges: []
+        ports:
+        - port: 443
+          protocol: "TCP"
+          targetPort: 443
+        selector:
+          project: "manageiq"
+          provider: "fabric8"
+          group: "io.fabric8.devops.apps"
+    - apiVersion: "extensions/v1beta1"
+      kind: "Deployment"
+      metadata:
+        annotations:
+          fabric8.io/iconUrl: "https://cdn.rawgit.com/fabric8io/fabric8-devops/master/manageiq/src/main/fabric8/icon.png"
+          fabric8.io/git-commit: "2b9f7ce19493fe6d18392ac4f4be16f5e1a76fa3"
+          fabric8.io/git-branch: "release-v2.2.311"
+          fabric8.io/metrics-path: "dashboard/file/kubernetes-pods.json/?var-project=manageiq&var-version=2.2.311"
+        finalizers: []
+        labels:
+          provider: "fabric8"
+          project: "manageiq"
+          version: "2.2.311"
+          group: "io.fabric8.devops.apps"
+        name: "manageiq"
+        ownerReferences: []
+      spec:
+        replicas: 1
+        selector:
+          matchExpressions: []
+          matchLabels:
+            provider: "fabric8"
+            project: "manageiq"
+            group: "io.fabric8.devops.apps"
+        template:
+          metadata:
+            annotations:
+              fabric8.io/iconUrl: "https://cdn.rawgit.com/fabric8io/fabric8-devops/master/manageiq/src/main/fabric8/icon.png"
+              fabric8.io/git-commit: "2b9f7ce19493fe6d18392ac4f4be16f5e1a76fa3"
+              fabric8.io/git-branch: "release-v2.2.311"
+              fabric8.io/metrics-path: "dashboard/file/kubernetes-pods.json/?var-project=manageiq&var-version=2.2.311"
+            finalizers: []
+            labels:
+              provider: "fabric8"
+              project: "manageiq"
+              version: "2.2.311"
+              group: "io.fabric8.devops.apps"
+            ownerReferences: []
+          spec:
+            containers:
+            - args: []
+              command: []
+              env:
+              - name: "KUBERNETES_NAMESPACE"
+                valueFrom:
+                  fieldRef:
+                    fieldPath: "metadata.namespace"
+              image: "manageiq/manageiq:latest"
+              imagePullPolicy: "IfNotPresent"
+              name: "manageiq"
+              ports: []
+              readinessProbe:
+                httpGet:
+                  httpHeaders: []
+                  path: "/"
+                  port: 443
+                  scheme: "HTTPS"
+                initialDelaySeconds: 60
+                timeoutSeconds: 5
+              resources:
+                limits:
+                  cpu: "0"
+                  memory: "0"
+                requests:
+                  cpu: "0"
+                  memory: "0"
+              securityContext:
+                privileged: true
+              volumeMounts: []
+            imagePullSecrets: []
+            nodeSelector: {}
+            volumes: []
+    parameters: []

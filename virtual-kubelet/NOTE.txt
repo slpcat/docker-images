@@ -1,0 +1,2 @@
+阿里云实现
+https://github.com/virtual-kubelet/virtual-kubelet/blob/master/providers/alibabacloud/README.md

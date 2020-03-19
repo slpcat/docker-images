@@ -1,0 +1,14 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  labels:
+    fabric8.io/kind: package
+    provider: fabric8.io
+    version: 2.4.24
+    project: fabric8-platform
+    group: io.fabric8.platform.packages
+  name: fabric8-platform
+data:
+  metadata-url: http://central.maven.org/maven2/io/fabric8/platform/packages/fabric8-platform/maven-metadata.xml
+  package-url-prefix: http://central.maven.org/maven2/io/fabric8/platform/packages/fabric8-platform/%[1]s/fabric8-platform-%[1]s-

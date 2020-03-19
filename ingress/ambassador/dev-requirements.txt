@@ -1,0 +1,8 @@
+semantic_version
+gitpython
+docopt
+awscli
+pytest
+pytest-cov
+dpath
+git+https://github.com/datawire/kat.git@master

@@ -1,0 +1,220 @@
+https://www.zabbix.com/cn/integrations/prometheus
+https://www.zabbix.com/cn/integrations/kubernetes
+
+https://github.com/czhujer/prom2zabbix
+
+Docker/Kubernetes/Mesos/Marathon/Chronos/LXC/LXD/Swarm container monitoring - Docker image, Zabbix template and C module
+https://github.com/monitoringartist/zabbix-docker-monitoring
+Kubernetes Zabbix/Grafana cluster (bare metal, Google Computer Engine - GCE, Google Container Engine - GKE) 
+https://github.com/monitoringartist/kubernetes-zabbix
+This is a standalone agent which subscribe to Kubernetes REST API event watch and send them to Zabbix 
+https://github.com/cloudawan/zabbix_agent
+
+Overview of Monitoring Artist (dockerized) monitoring ecosystem:
+
+1.Dockbix XXL - Zabbix server/proxy/UI/snmpd/java gateway with additional extensions
+2.Dockbix agent XXL - Zabbix agent with Docker (Kubernetes/Mesos/Chronos/Marathon) monitoring module
+3.Zabbix templates - tiny Docker image for simple template deployment of selected Zabbix monitoring templates
+4.Zabbix extension - all templates - storage image for Dockbix XXL with 200+ community templates
+5.Kubernetized Zabbix - containerized Zabbix cluster based on Kubernetes
+6.Grafana XXL - dockerized Grafana with all community plugins
+7.Grafana dashboards - Grafana dashboard collection for AWS and Zabbix
+8.Monitoring Analytics - graphic analytic tool for Zabbix data from data scientists
+9.Docker killer - Docker image for Docker stress and Docker orchestration testing
+
+定制镜像
+Dockbix agent XXL
+
+目录kubernetes
+
+采集端agent部署建议
+zabbix-agent 直接在宿主机运行
+node-exporter 直接在宿主机运行
+其他容器化
+
+性能优化建议
+zabbix_server端监控主机数量过多的时候，Zabbix会出现严重的性能问题，主要表现如下： 
+1. 被监控端主机过多时，web操作很卡，容易出现502，以及数据库等方面的问题。
+2. 容易造成图层断裂。
+3. 开启的进程（poller）太多，即使减少item数量，以后加入一定量的机器也会有问题
+
+所以下面主要往以下几个优化方向考虑： 
+1. 通过增加代理的方式来进行收集数据 尽可能降低zabbix-server工作量，分担给zabbix-proxy
+2. 通过zabbix_agent主动往server/proxy端去发送数据
+3. 数据库采用timescaledb
+4. 历史数据存es集群或者订阅到kafka然后进入数据仓库
+
+zabbix模版
+https://github.com/monitoringartist/zabbix-community-repos
+
+grafana dashboard
+https://github.com/alexanderzobnin/grafana-zabbix
+https://alexanderzobnin.github.io/grafana-zabbix
+
+
+
+第三方函数库及工具
+Zabbix 第三方工具列表。
+Zabbix monitor Apache - 用 Zabbix 监视 Apache 的方法。
+Zabbix JMX - 利用 Zabbix，透过 JMX 对 Java 服务做监视的 Item 设定方法 (2.0以上,非第三方,需安装 zabbix_java)。
+MySQLBix 用 Zabbix 监视 MySQL 的方法。
+MySQL-Performance-Monitor - 用 Zabbix 监视 MySQL 效能的方法。
+
+zabbix-cli
+https://github.com/usit-gd/zabbix-cli
+
+zc(1). Zabbix command line tools
+https://share.zabbix.com/zabbix-tools-and-utilities/tools-and-utilities/zc-1-zabbix-command-line-tools
+
+zabbix-dump
+https://github.com/maxhq/zabbix-backup/blob/master/README.md
+
+API与工具
+
+Ruby library - for Zabbix API.
+PHP library - for Zabbix API.
+Python library - for Zabbix API.
+Perl library - for Zabbix API.
+Zabcon - 使用 zbxapi 的函式库做出来的 CLI 工具 (面向Ruby)。
+
+Android
+
+Mobbix - Android 专用的 Zabbix Client 端。
+Moobix for Zabbix
+Zabbix Triggers Widget - Android 专用的Zabbix Client 端。
+Zabbkit - Android 专用的 Zabbix Client 端。
+zCate
+https://www.qiansw.com/how-to-use-zcate-to-receive-zabbix-alarm-messages.html
+zabbix-app
+
+iOS
+
+Mozaby - iPhone 专用 Zabbix Client 端。
+Zabbkit - iPhone 专用 Zabbix Client 端。
+MobileOp - iPhone 专用 Zabbix Client 端。
+zCate
+
+Windows Phone
+
+Zabbkit - Windows Phone 专用 Zabbix Client 端。
+
+报警脚本
+
+
+docker 命令
+
+数据库
+docker run -d --restart=always --net=host --name timescaledb \
+-v /data/zabbix-db:/var/lib/postgresql/data \
+-e TIMESCALEDB_TELEMETRY=off \
+-e TS_TUNE_MEMORY=4GB -e TS_TUNE_NUM_CPUS=4 \
+-e POSTGRES_USER=zabbix -e POSTGRES_DB=zabbix \
+-e POSTGRES_PASSWORD=pg_password  timescale/timescaledb:latest-pg11
+
+数据库配置参数调优(略)
+
+服务端
+docker run -d --restart=always --net=host --name zabbix-server \
+-e ENABLE_TIMESCALEDB=true \
+-e DB_SERVER_HOST=127.0.0.1 -e POSTGRES_DB=zabbix -e POSTGRES_USER=zabbix \
+-e POSTGRES_PASSWORD=pg_password \
+-e ZBX_DEBUGLEVEL=3 -e ZBX_TIMEOUT=10 \
+-e ZBX_STARTPOLLERS=150 -e ZBX_STARTPREPROCESSORS=8 \
+-e ZBX_STARTPOLLERSUNREACHABLE=50 -e ZBX_STARTTRAPPERS=30 \
+-e ZBX_STARTPINGERS=10 -e ZBX_STARTDISCOVERERS=50 \
+-e ZBX_STARTHTTPPOLLERS=5 -e ZBX_STARTTIMERS=10 \
+-e ZBX_STARTESCALATORS=10 -e ZBX_STARTALERTERS=8 \
+-e ZBX_HOUSEKEEPINGFREQUENCY=1 -e ZBX_MAXHOUSEKEEPERDELETE=5000 \
+-e ZBX_SENDERFREQUENCY=30 -e ZBX_CACHESIZE=128M \
+-e ZBX_CACHEUPDATEFREQUENCY=60 -e ZBX_STARTDBSYNCERS=4 \
+-e ZBX_HISTORYCACHESIZE=256M -e ZBX_HISTORYINDEXCACHESIZE=32M \
+-e ZBX_TRENDCACHESIZE=16M -e ZBX_VALUECACHESIZE=64M \
+-e ZBX_TRAPPERIMEOUT=300 -e ZBX_UNREACHABLEPERIOD=45 \
+-e ZBX_UNAVAILABLEDELAY=60 -e ZBX_UNREACHABLEDELAY=15 \
+-e ZBX_LOGSLOWQUERIES=3000 \
+-v /data/zabbix-externalscripts:/usr/lib/zabbix/externalscripts \
+-v /data/zabbix-alertscripts:/usr/lib/zabbix/alertscripts \
+-v /data/zabbix-home:/var/lib/zabbix \
+slpcat/zabbix-server-pgsql:alpine-4.4.6
+
+web-ui
+docker run -d --restart=always --name zabbix-web \
+-p 10080:80 -e ZBX_SERVER_HOST=127.0.0.1 -e DB_SERVER_HOST=127.0.0.1 \
+-e POSTGRES_DB=zabbix -e POSTGRES_USER=zabbix \
+-e POSTGRES_PASSWORD=pg_password -e PHP_TZ=Asia/Shanghai \
+-e ZBX_MAXEXECUTIONTIME=600 -e ZBX_MEMORYLIMIT=256M \
+slpcat/zabbix-web-nginx-pgsql:alpine-4.4.6
+
+proxy-mysql
+docker run -d --restart=always --net=host --name=zabbix-proxy \
+-e DB_SERVER_HOST=zabbix-proxy-db -e DB_SERVER_PORT=3306 \
+-e MYSQL_DATABASE=zabbix_proxy \
+-e MYSQL_USER=zabbix -e MYSQL_PASSWORD=my_password \
+-e ZBX_SERVER_HOST=zabbix-server -e ZBX_HOSTNAME=zabbix-proxy \
+-e ZBX_PROXYMODE=0 -e ZBX_DEBUGLEVEL=3 \
+-e ZBX_TIMEOUT=10 -e ZBX_ENABLEREMOTECOMMANDS=0 \
+-e ZBX_LOGREMOTECOMMANDS=0 -e ZBX_HOSTNAMEITEM=system.hostname \
+-e ZBX_PROXYLOCALBUFFER=1 -e ZBX_PROXYOFFLINEBUFFER=24 \
+-e ZBX_PROXYHEARTBEATFREQUENCY=60 -e ZBX_CONFIGFREQUENCY=600 \
+-e ZBX_DATASENDERFREQUENCY=10 -e ZBX_STARTPOLLERS=100 \
+-e ZBX_IPMIPOLLERS=10 -e ZBX_STARTPREPROCESSORS=8 \
+-e ZBX_STARTPOLLERSUNREACHABLE=50 -e ZBX_STARTTRAPPERS=50 \
+-e ZBX_STARTPINGERS=10 -e ZBX_STARTDISCOVERERS=50 \
+-e ZBX_STARTHTTPPOLLERS=10 -e ZBX_HOUSEKEEPINGFREQUENCY=1 \
+-e ZBX_CACHESIZE=64M -e ZBX_STARTDBSYNCERS=2 \
+-e ZBX_HISTORYCACHESIZE=128M -e ZBX_HISTORYINDEXCACHESIZE=32M \
+-e ZBX_TRAPPERIMEOUT=300 -e ZBX_UNREACHABLEPERIOD=45 \
+-e ZBX_UNAVAILABLEDELAY=60 -e ZBX_UNREACHABLEDELAY=15 \
+-e ZBX_LOGSLOWQUERIES=3000 \
+slpcat/zabbix-proxy-mysql:alpine-4.4.6
+
+proxy-pgsql (未实现)
+
+docker run -d --restart=always --net=host --name=zabbix-proxy \
+-e DB_SERVER_HOST=zabbix-proxy-db -e DB_SERVER_PORT=5432 \
+-e POSTGRES_DB=zabbix_proxy \
+-e POSTGRES_USER=zabbix -e POSTGRES_PASSWORD=pg_password \
+-e ZBX_SERVER_HOST=zabbix-server -e ZBX_HOSTNAME=zabbix-proxy \
+-e ZBX_PROXYMODE=0 -e ZBX_DEBUGLEVEL=3 \
+-e ZBX_TIMEOUT=10 -e ZBX_ENABLEREMOTECOMMANDS=0 \
+-e ZBX_LOGREMOTECOMMANDS=0 -e ZBX_HOSTNAMEITEM=system.hostname \
+-e ZBX_PROXYLOCALBUFFER=1 -e ZBX_PROXYOFFLINEBUFFER=24 \
+-e ZBX_PROXYHEARTBEATFREQUENCY=60 -e ZBX_CONFIGFREQUENCY=600 \
+-e ZBX_DATASENDERFREQUENCY=10 -e ZBX_STARTPOLLERS=100 \
+-e ZBX_IPMIPOLLERS=10 -e ZBX_STARTPREPROCESSORS=8 \
+-e ZBX_STARTPOLLERSUNREACHABLE=50 -e ZBX_STARTTRAPPERS=50 \
+-e ZBX_STARTPINGERS=10 -e ZBX_STARTDISCOVERERS=50 \
+-e ZBX_STARTHTTPPOLLERS=10 -e ZBX_HOUSEKEEPINGFREQUENCY=1 \
+-e ZBX_CACHESIZE=64M -e ZBX_STARTDBSYNCERS=2 \
+-e ZBX_HISTORYCACHESIZE=128M -e ZBX_HISTORYINDEXCACHESIZE=32M \
+-e ZBX_TRAPPERIMEOUT=300 -e ZBX_UNREACHABLEPERIOD=45 \
+-e ZBX_UNAVAILABLEDELAY=60 -e ZBX_UNREACHABLEDELAY=15 \
+-e ZBX_LOGSLOWQUERIES=3000 \
+zabbix/zabbix-proxy-pgsql:alpine-4.4.0
+
+美化相关：
+
+发送报警信息
+
+操作
+
+标题 {TRIGGER.NSEVERITY} 级故障 故障描述：{TRIGGER.NAME} 产生时间：{EVENT.DATE} {EVENT.TIME}
+内容 <font color=#FF0000 size=6 face="黑体">【故障级别】『{TRIGGER.NSEVERITY} 级』</font>  
+<b>【故障时间】</b>{EVENT.DATE} 在 {EVENT.TIME}  
+<b>【故障名称】</b>{TRIGGER.NAME}  
+<b>【故障主机】</b>{HOST.NAME}  
+<b>【监控值】</b>{ITEM.VALUE1}  
+<b>【事件ID】</b>{EVENT.ID}
+
+恢复操作
+
+标题 故障级别:{{TRIGGER.NSEVERITY} 级故障 故障描述：{TRIGGER.NAME} 恢复时间：{EVENT.RECOVERY.DATE} {EVENT.RECOVERY.TIME}.SEVERITY} 恢复时间：{EVENT.RECOVERY.DATE} {EVENT.RECOVERY.TIME}<br>问题描述：{TRIGGER.NAME}
+
+内容 <font color=#00CC00 size=6 face="黑体">〖故障级别〗『{TRIGGER.NSEVERITY} 级』  </font>  
+<b>〖恢复时间〗</b>{EVENT.RECOVERY.DATE} 在 {EVENT.RECOVERY.TIME}  
+<b>〖故障名称〗</b>{TRIGGER.NAME}  
+<b>〖故障主机〗</b>{HOST.NAME}  
+<b>〖监控值〗</b>{ITEM.VALUE1}  
+<b>〖事件ID〗</b>{EVENT.ID}
+
+

@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: logstash-configmap
+  namespace: {{ .Release.Namespace }}
+data:
+  logstash.yml: |
+{{ .Files.Get "config/logstash.yml" | indent 4 }}

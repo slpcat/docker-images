@@ -1,0 +1,29 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    fabric8.io/git-commit: f7967da2069f486a3e6dbef233574eccac3e0dae
+    fabric8.io/scm-con-url: scm:git:git@github.com:fabric8io/fabric8-devops.git/keycloak
+    fabric8.io/scm-url: http://github.com/fabric8io/fabric8-devops/keycloak
+    fabric8.io/iconUrl: https://cdn.rawgit.com/fabric8io/fabric8-devops/master/keycloak/src/main/fabric8/icon.svg
+    fabric8.io/git-branch: release-v2.2.327
+    fabric8.io/scm-devcon-url: scm:git:git@github.com:fabric8io/fabric8-devops.git/keycloak
+    fabric8.io/scm-tag: fabric8-devops-2.0.1
+  labels:
+    expose: "true"
+    provider: fabric8
+    project: keycloak
+    version: 2.2.327
+    group: io.fabric8.devops.apps
+  name: keycloak
+spec:
+  ports:
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    project: keycloak
+    provider: fabric8
+    group: io.fabric8.devops.apps

@@ -1,0 +1,19 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: consul-server-exporter
+  namespace: default
+  labels:
+    k8s-app: prometheus-consul-exporter
+spec:
+  selector:
+    matchLabels:
+      k8s-app: prometheus-consul-exporter
+  jobLabel: k8s-app
+  endpoints:
+  - port: http
+    interval: 10s
+    path: /metrics
+  namespaceSelector:
+    matchNames:
+      - default

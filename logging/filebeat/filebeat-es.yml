@@ -1,0 +1,90 @@
+###################### Filebeat Configuration Example #########################
+
+# This file is an example configuration file highlighting only the most common
+# options. The filebeat.reference.yml file from the same directory contains all the
+# supported options with more comments. You can use it as a reference.
+#
+# You can find the full configuration reference here:
+# https://www.elastic.co/guide/en/beats/filebeat/index.html
+
+# For more available modules and options, please see the filebeat.reference.yml sample
+# configuration file.
+
+filebeat.inputs:
+
+# Each - is a prospector. Most options can be set at the prospector level, so
+# you can use different prospectors for various configurations.
+# Below are the prospector specific configurations.
+
+- type: log
+  paths:
+    - /logs/log1.log
+  tags: ["prog1", "log"]
+  fields:
+    log_index: 'prog1'
+  json.message_key:
+
+- type: log
+  paths:
+    - /logs/log2.log
+  tags: ["prog2", "log"]
+  fields:
+    log_index: 'prog2'
+  json.message_key:
+
+#============================= Filebeat modules ===============================
+
+filebeat.config.modules:
+  # Glob pattern for configuration loading
+  path: ${path.config}/modules.d/*.yml
+
+  # Set to true to enable config reloading
+  reload.enabled: false
+
+  # Period on which files under path should be checked for changes
+  #reload.period: 10s
+
+#==================== Elasticsearch template setting ==========================
+
+setup.template.settings:
+  index.number_of_shards: 3
+  #index.codec: best_compression
+  #_source.enabled: false
+
+setup.template.name: "trace"
+setup.template.pattern: "trace-*"
+
+setup.ilm.enabled: false
+setup.ilm.rollover_alias: "filebeat"
+setup.ilm.pattern: "{now/d}-000001"
+#================================ Outputs =====================================
+
+# Configure what output to use when sending the data collected by the beat.
+
+#-------------------------- Elasticsearch output ------------------------------
+output.elasticsearch:
+  # Array of hosts to connect to.
+  hosts: ["172.17.0.1:9200"]
+  index: "%{[fields.log_index]}-%{+yyyy.MM.dd}"
+  # Optional protocol and basic auth credentials.
+  #protocol: "https"
+  worker: 5
+  bulk_max_size: 200
+
+#================================ Logging =====================================
+
+# Sets log level. The default log level is info.
+# Available log levels are: error, warning, info, debug
+#logging.level: debug
+logging.level: INFO
+logging.to_files: true
+logging.files:
+  path: logs
+  name: filebeat
+  keepfiles: 7
+  permissions: 0644
+
+multiline.pattern: '^[[:space:]]+(at|\.{3})\b|^Caused by:'
+multiline.negate: false
+multiline.match: after
+

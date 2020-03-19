@@ -1,0 +1,17 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  annotations:
+  labels:
+    provider: fabric8
+    project: jenkins
+    version: 2.2.311
+    group: io.fabric8.devops.apps
+  name: jenkins-jobs
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi

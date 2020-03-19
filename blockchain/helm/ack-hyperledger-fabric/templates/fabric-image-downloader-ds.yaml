@@ -1,0 +1,40 @@
+apiVersion: apps/v1beta2
+kind: DaemonSet
+metadata:
+  name: fabric-image-downloader-daemonset
+  labels:
+    app: fabric-image-downloader
+spec:
+  selector:
+    matchLabels:
+      name: fabric-image-downloader
+  template:
+    metadata:
+      labels:
+        name: fabric-image-downloader
+    spec:
+      containers:
+        - name: downloader
+          image: docker
+          imagePullPolicy: {{ .Values.imagePullPolicy | quote }}
+          command: ["/bin/sh"] 
+          args: ["-c", "docker pull {{ $.Values.dockerImageRegistry }}/fabric-ccenv:x86_64-{{ $.Values.hyperledgerFabricVersion }} && docker tag {{ $.Values.dockerImageRegistry }}/fabric-ccenv:x86_64-{{ $.Values.hyperledgerFabricVersion }} hyperledger/fabric-ccenv:x86_64-{{ $.Values.hyperledgerFabricVersion }} && sleep 3600"]
+          volumeMounts:
+          - name: docker-sock
+            mountPath: /var/run/docker.sock
+          - name: config
+            mountPath: /config
+          # Use preStop during shutdown to clean up any chaincode container and image on each worker node
+          lifecycle:
+            preStop:
+              exec:
+                command: ["/bin/sh", "-c", "/config/clean-docker-containers-images.sh -a dev-{{ $.Values.fabricNetwork }}"]
+      volumes:
+      - name: docker-sock
+        hostPath:
+          path: /var/run/docker.sock
+      - name: config
+        hostPath:
+          path: /data/fabric/{{ $.Values.fabricNetwork }}/config
+          # Below type field is necessary to avoid auto creation of dir if not present
+          type: Directory

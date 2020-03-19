@@ -1,0 +1,59 @@
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    configmap.fabric8.io/update-on-change: exposecontroller
+    fabric8.io/git-commit: 2b9f7ce19493fe6d18392ac4f4be16f5e1a76fa3
+    fabric8.io/iconUrl: https://cdn.rawgit.com/fabric8io/fabric8-devops/master/exposecontroller/src/main/fabric8/icon.png
+    fabric8.io/git-branch: release-v2.2.311
+    fabric8.io/metrics-path: dashboard/file/kubernetes-pods.json/?var-project=exposecontroller&var-version=2.2.311
+  labels:
+    provider: fabric8
+    project: exposecontroller
+    version: 2.2.311
+    group: io.fabric8.devops.apps
+  name: exposecontroller
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      project: exposecontroller
+      provider: fabric8
+      group: io.fabric8.devops.apps
+  template:
+    metadata:
+      annotations:
+        fabric8.io/git-commit: 2b9f7ce19493fe6d18392ac4f4be16f5e1a76fa3
+        fabric8.io/iconUrl: https://cdn.rawgit.com/fabric8io/fabric8-devops/master/exposecontroller/src/main/fabric8/icon.png
+        configmap.fabric8.io/update-on-change: exposecontroller
+        fabric8.io/git-branch: release-v2.2.311
+        fabric8.io/metrics-path: dashboard/file/kubernetes-pods.json/?var-project=exposecontroller&var-version=2.2.311
+      labels:
+        provider: fabric8
+        project: exposecontroller
+        version: 2.2.311
+        group: io.fabric8.devops.apps
+    spec:
+      containers:
+      - env:
+        - name: KUBERNETES_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        image: fabric8/exposecontroller:2.3.2
+        livenessProbe:
+          exec:
+            command:
+            - cat
+            - /tmp/restarteveryday
+          initialDelaySeconds: 86164
+        name: exposecontroller
+        volumeMounts:
+        - mountPath: /etc/exposecontroller
+          name: config-volume
+      serviceAccountName: exposecontroller
+      volumes:
+      - configMap:
+          name: exposecontroller
+        name: config-volume

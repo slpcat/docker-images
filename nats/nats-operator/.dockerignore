@@ -1,0 +1,7 @@
+.glide/
+.idea/
+_output/
+docker
+docs
+example
+tmp/

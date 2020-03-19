@@ -1,0 +1,16 @@
+kind: HorizontalPodAutoscaler
+apiVersion: autoscaling/v2beta2
+spec:
+  scaleTargetRef:
+    kind: ReplicationController
+    name: Worker
+  minReplicas: 2
+  maxReplicas: 10
+  metrics:
+   - type: External
+     external:
+       metricName: queue_messages_ready
+       metricSelector:
+         matchLabels:
+           queue: worker_tasks
+       targetAverageValue: 30

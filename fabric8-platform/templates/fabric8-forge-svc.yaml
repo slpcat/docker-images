@@ -1,0 +1,25 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    fabric8.io/iconUrl: https://cdn.rawgit.com/fabric8io/fabric8-forge/master/fabric8-forge/src/main/fabric8/icon.svg
+    fabric8.io/git-commit: bad661f3285ecbcd6b7a9373e194bda075d832eb
+    fabric8.io/git-branch: release-v2.3.88
+  labels:
+    provider: fabric8
+    project: fabric8-forge
+    version: 2.3.88
+    group: io.fabric8.forge.apps
+    expose: "true"
+  name: fabric8-forge
+spec:
+  ports:
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    project: fabric8-forge
+    provider: fabric8
+    group: io.fabric8.forge.apps

@@ -1,0 +1,11 @@
+---
+name: "fabric8-platform"
+home: "http://fabric8.io/packages/fabric8-platform/"
+sources:
+- "http://github.com/fabric8io/fabric8-platform/packages/fabric8-platform"
+version: "2.4.24"
+description: "The Fabric8 Microservices Platform"
+maintainers:
+- name: "Fabric8 Development Team"
+  email: "fabric8@googlegroups.com"
+icon: "https://cdn.rawgit.com/fabric8io/fabric8-devops/master/gogs/src/main/fabric8/icon.png"

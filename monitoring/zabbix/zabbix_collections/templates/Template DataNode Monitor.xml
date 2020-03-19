@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbix_export>
+    <version>4.4</version>
+    <date>2019-11-07T08:42:16Z</date>
+    <groups>
+        <group>
+            <name>Templates/DataCenter</name>
+        </group>
+    </groups>
+    <templates>
+        <template>
+            <template>Template DataNode Monitor</template>
+            <name>Template DataNode Monitor</name>
+            <description>Jvm 相关数据采集</description>
+            <groups>
+                <group>
+                    <name>Templates/DataCenter</name>
+                </group>
+            </groups>
+            <applications>
+                <application>
+                    <name>DataNode ClassLoading Monitor</name>
+                </application>
+                <application>
+                    <name>DataNode GarbageCollector:PS MarkSweep</name>
+                </application>
+                <application>
+                    <name>DataNode JvmMetrics Monitor</name>
+                </application>
+                <application>
+                    <name>DataNode MemoryPool:PS Eden Space</name>
+                </application>
+                <application>
+                    <name>DataNode MemoryPool:PS Old Gen</name>
+                </application>
+            </applications>
+            <items>
+                <item>
+                    <name>DataNode $2 $3</name>
+                    <type>TRAP</type>
+                    <key>check.jmx[61006,ClassLoading,LoadedClassCount]</key>
+                    <delay>0</delay>
+                    <history>7d</history>
+                    <description>类加载</description>
+                    <applications>
+                        <application>
+                            <name>DataNode ClassLoading Monitor</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>DataNode $2 $3</name>
+                    <type>TRAP</type>
+                    <key>check.jmx[61006,ClassLoading,UnloadedClassCount]</key>
+                    <delay>0</delay>
+                    <history>7d</history>
+                    <value_type>FLOAT</value_type>
+                    <description>类加载</description>
+                    <applications>
+                        <application>
+                            <name>DataNode ClassLoading Monitor</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>$2 $3</name>
+                    <type>TRAP</type>
+                    <key>check.jmx[61006,DataNode,GcCount]</key>
+                    <delay>0</delay>
+                    <history>7d</history>
+                    <description>垃圾回收次数：单位个</description>
+                    <applications>
+                        <application>
+                            <name>DataNode JvmMetrics Monitor</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>$2 $3</name>
+                    <type>TRAP</type>
+                    <key>check.jmx[61006,DataNode,GcTimeMillis]</key>
+                    <delay>0</delay>
+                    <history>7d</history>
+                    <units>s</units>
+                    <description>垃圾回收时间：单位毫秒</description>
+                    <applications>
+                        <application>
+                            <name>DataNode JvmMetrics Monitor</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>$2 $3</name>
+                    <type>TRAP</type>
+                    <key>check.jmx[61006,DataNode,MemHeapCommittedM]</key>
+                    <delay>0</delay>
+                    <history>7d</history>
+                    <units>B</units>
+                    <description>堆内存已提交用量：单位MB</description>
+                    <applications>
+                        <application>
+                            <name>DataNode JvmMetrics Monitor</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>$2 $3</name>
+                    <type>TRAP</type>
+                    <key>check.jmx[61006,DataNode,MemHeapMaxM]</key>
+                    <delay>0</delay>
+                    <history>7d</history>
+                    <units>B</units>
+                    <description>堆内存最大用量：单位MB</description>
+                    <applications>
+                        <application>
+                            <name>DataNode JvmMetrics Monitor</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>$2 $3</name>
+                    <type>TRAP</type>
+                    <key>check.jmx[61006,DataNode,MemHeapUsedM]</key>
+                    <delay>0</delay>
+                    <history>7d</history>
+                    <units>B</units>
+                    <description>堆内存的用量：单位MB</description>
+                    <applications>
+                        <application>
+                            <name>DataNode JvmMetrics Monitor</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>$2 $3</name>
+                    <type>TRAP</type>
+                    <key>check.jmx[61006,DataNode,MemNonHeapCommittedM]</key>
+                    <delay>0</delay>
+                    <history>7d</history>
+                    <units>B</units>
+                    <description>堆外内存已提交用量：单位MB</description>
+                    <applications>
+                        <application>
+                            <name>DataNode JvmMetrics Monitor</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>$2 $3</name>
+                    <type>TRAP</type>
+                    <key>check.jmx[61006,DataNode,MemNonHeapMaxM]</key>
+                    <delay>0</delay>
+                    <history>7d</history>
+                    <units>B</units>
+                    <description>堆外内存最大用量：单位MB</description>
+                    <applications>
+                        <application>
+                            <name>DataNode JvmMetrics Monitor</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>$2 $3</name>
+                    <type>TRAP</type>
+                    <key>check.jmx[61006,DataNode,MemNonHeapUsedM]</key>
+                    <delay>0</delay>
+                    <history>7d</history>
+                    <units>B</units>
+                    <description>堆外内存用量：单位MB</description>
+                    <applications>
+                        <application>
+                            <name>DataNode JvmMetrics Monitor</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>$2 $3</name>
+                    <type>TRAP</type>
+                    <key>check.jmx[61006,DataNode,ThreadsBlocked]</key>
+                    <delay>0</delay>
+                    <history>7d</history>
+                    <description>阻塞线程个数：单位个</description>
+                    <applications>
+                        <application>
+                            <name>DataNode JvmMetrics Monitor</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>$2 $3</name>
+                    <type>TRAP</type>
+                    <key>check.jmx[61006,DataNode,ThreadsTimedWaiting]</key>
+                    <delay>0</delay>
+                    <history>7d</history>
+                    <description>超时等待线程个数： 单位个</description>
+                    <applications>
+                        <application>
+                            <name>DataNode JvmMetrics Monitor</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>$2 $3</name>
+                    <type>TRAP</type>
+                    <key>check.jmx[61006,DataNode,ThreadsWaiting]</key>
+                    <delay>0</delay>
+                    <history>7d</history>
+                    <description>等待线程个数：单位个</description>
+                    <applications>
+                        <application>
+                            <name>DataNode JvmMetrics Monitor</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>DataNode $2 $3</name>
+                    <type>TRAP</type>
+                    <key>check.jmx[61006,GarbageCollector,CollectionCount]</key>
+                    <delay>0</delay>
+                    <history>7d</history>
+                    <description>标记清除信息</description>
+                    <applications>
+                        <application>
+                            <name>DataNode GarbageCollector:PS MarkSweep</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>DataNode $2 $3</name>
+                    <type>TRAP</type>
+                    <key>check.jmx[61006,GarbageCollector,CollectionTime]</key>
+                    <delay>0</delay>
+                    <history>7d</history>
+                    <value_type>FLOAT</value_type>
+                    <units>s</units>
+                    <description>标记清除信息</description>
+                    <applications>
+                        <application>
+                            <name>DataNode GarbageCollector:PS MarkSweep</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>DataNode $4 $2 $3</name>
+                    <type>TRAP</type>
+                    <key>check.jmx[61006,MemoryPool,committed,&quot;PS Eden Space&quot;]</key>
+                    <delay>0</delay>
+                    <history>7d</history>
+                    <units>B</units>
+                    <description>Usage （年轻代堆内存池用量，单位Byte）</description>
+                    <applications>
+                        <application>
+                            <name>DataNode MemoryPool:PS Eden Space</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>DataNode $4 $2 $3</name>
+                    <type>TRAP</type>
+                    <key>check.jmx[61006,MemoryPool,committed,&quot;PS Old Gen&quot;]</key>
+                    <delay>0</delay>
+                    <history>7d</history>
+                    <units>B</units>
+                    <description>Usage（老年代堆内存池用量，单位Byte）</description>
+                    <applications>
+                        <application>
+                            <name>DataNode MemoryPool:PS Old Gen</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>DataNode $4 $2 $3</name>
+                    <type>TRAP</type>
+                    <key>check.jmx[61006,MemoryPool,max,&quot;PS Eden Space&quot;]</key>
+                    <delay>0</delay>
+                    <history>7d</history>
+                    <units>B</units>
+                    <description>Usage （年轻代堆内存池用量，单位Byte）</description>
+                    <applications>
+                        <application>
+                            <name>DataNode MemoryPool:PS Eden Space</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>DataNode $4 $2 $3</name>
+                    <type>TRAP</type>
+                    <key>check.jmx[61006,MemoryPool,max,&quot;PS Old Gen&quot;]</key>
+                    <delay>0</delay>
+                    <history>7d</history>
+                    <units>B</units>
+                    <description>Usage（老年代堆内存池用量，单位Byte）</description>
+                    <applications>
+                        <application>
+                            <name>DataNode MemoryPool:PS Old Gen</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>DataNode $4 $2 $3</name>
+                    <type>TRAP</type>
+                    <key>check.jmx[61006,MemoryPool,used,&quot;PS Eden Space&quot;]</key>
+                    <delay>0</delay>
+                    <history>7d</history>
+                    <units>B</units>
+                    <description>Usage （年轻代堆内存池用量，单位Byte）</description>
+                    <applications>
+                        <application>
+                            <name>DataNode MemoryPool:PS Eden Space</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>DataNode $4 $2 $3</name>
+                    <type>TRAP</type>
+                    <key>check.jmx[61006,MemoryPool,used,&quot;PS Old Gen&quot;]</key>
+                    <delay>0</delay>
+                    <history>7d</history>
+                    <units>B</units>
+                    <description>Usage（老年代堆内存池用量，单位Byte）</description>
+                    <applications>
+                        <application>
+                            <name>DataNode MemoryPool:PS Old Gen</name>
+                        </application>
+                    </applications>
+                </item>
+            </items>
+        </template>
+    </templates>
+</zabbix_export>

@@ -1,0 +1,26 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: kafka-operator
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: kafka-operator
+        type: operator
+    spec:
+      containers:
+      - name: operator
+        image: krallistic/kafka-operator:v0.0.2
+
+#        imagePullPolicy: Always
+      - name: kubectl
+        image: gcr.io/google_containers/hyperkube:v1.5.2
+        command:
+          - "/hyperkube"
+        args:
+          - "kubectl"
+          - "proxy"
+          - "-p"
+          - "8080"

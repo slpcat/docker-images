@@ -1,0 +1,61 @@
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: tomcat8
+  namespace: default
+spec:
+  scaleTargetRef:
+    apiVersion: extensions/v1beta1
+    kind: Deployment
+    name: tomcat8
+  minReplicas: 1
+  maxReplicas: 10
+  metrics:
+  #各种指标参数要依据压力测试结果而定
+  - type: Resource
+    resource:
+  #根据CPU占用率进行缩放
+      name: cpu
+      target:
+        averageUtilization: 50
+        type: Utilization
+  #根据内存占用率进行缩放
+  #    name: memory
+  #    target:
+  #      averageUtilization: 70
+  #      type: Utilization
+  #根据网络包速率PPS进行缩放
+  #- type: Pods
+  #  pods:
+  #    metric:
+  #      name: packets-per-second
+  #    target:
+  #      averageValue: 1k
+  #      type: Value
+  #根据HTTP请求速率RPS进行缩放
+  #- type: Object
+  #  object:
+  #    metric:
+  #      name: requests-per-second
+  #    describedObject:
+  #      apiVersion: extensions/v1beta1
+  #      kind: Ingress
+  #      name: main-route
+  #    target:
+  #      averageValue: 10k
+  #      type: Value
+  #根据HTTP GET请求速率RPS进行缩放
+  #- type: Object
+  #  object:
+  #    metric:
+  #      name: `http_requests`
+  #      selector: `verb=GET`
+  #根据自定义外部指标缩放
+  #- type: External
+  #  external:
+  #    metric:
+  #      name: queue_messages_ready
+  #      selector: "queue=worker_tasks"
+  #    target:
+  #      type: AverageValue
+  #      averageValue: 30

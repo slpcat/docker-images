@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: logstash-patterns-configmap
+  namespace: {{ .Release.Namespace }}
+data:
+  patterns: |
+{{ .Files.Get "config/logstash-patterns.cfg" | indent 4 }}

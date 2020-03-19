@@ -1,0 +1,5 @@
+We have written a lightweight tool called honeytail. Honeytail will tail your existing log files, parse the content, and send it up to Honeycomb.
+
+If you already have structured data in an existing log, this is the easiest method to get that data in to Honeycomb.
+
+https://docs.honeycomb.io/getting-data-in/integrations/honeytail/

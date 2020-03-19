@@ -1,0 +1,45 @@
+apiVersion: monitoring.coreos.com/v1
+kind: Prometheus
+metadata:
+  labels:
+    prometheus: k8s
+  name: k8s
+  namespace: monitoring
+spec:
+  alerting:
+    alertmanagers:
+    - name: alertmanager-main
+      namespace: monitoring
+      port: web
+  baseImage: prom/prometheus
+  nodeSelector:
+    beta.kubernetes.io/os: linux
+  replicas: 2
+  retention: 1w
+  resources:
+    requests:
+      cpu: 100m
+      memory: 400Mi
+    limits:
+      cpu: 4
+      memory: 8Gi
+  ruleSelector:
+    matchLabels:
+      prometheus: k8s
+      role: alert-rules
+  securityContext:
+    fsGroup: 2000
+    runAsNonRoot: true
+    runAsUser: 1000
+  serviceAccountName: prometheus-k8s
+  serviceMonitorNamespaceSelector: {}
+  serviceMonitorSelector: {}
+  version: v2.8.1
+  remoteRead:
+    - url: "http://m3coordinator.m3db.svc.cluster.local:7201/api/v1/prom/remote/read"
+      readRecent: true
+  remoteWrite:
+    - url: "http://m3coordinator.m3db.svc.cluster.local:7201/api/v1/prom/remote/write"
+      writeRelabelConfigs:
+        - targetLabel: metrics_storage
+          replacement: m3db_remote

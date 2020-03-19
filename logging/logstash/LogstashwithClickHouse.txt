@@ -1,0 +1,119 @@
+There are many cases where ClickHouse is a good or even the best solution for storing analytics data. One common example is web servers logs processing. In this article, we guide you through Nginx web server example but it is applicable to other web servers as well.
+
+We will use Logstash with ClickHouse in order to process web logs. Logstash is a commonly used tool for parsing different kinds of logs and putting them somewhere else. For example, in ClickHouse. This solution is a part of Altinity Demo Appliance
+
+Prerequisites
+Along with Logstash, we need two more things to get started. Since we are going to get logs from the files we, of course, need a tool that keeps track of files in the way we want. It means a tool should be able to handle the history of what files we already processed and by which amount. To solve this task we use Filebeat tool.
+
+Logstash works the way that all output is done by some output plugin which is in most cases not a natively implemented. Here is the list of plugins we need in order to make a proper configuration:
+
+Logstash-output-clickhouse: ClickHouse output plugin for Logstash https://github.com/mikechris/logstash-output-clickhouse.
+Logstash-filter-multiline: One more plugin we use here is the one that creates a single log record from a multiline log format.
+Logstash-filter-prune: The filter plugin that helps to control the set of attributes in the log record.
+Here is the list of commands which installed filebeat and logstash along with its plugins:
+
+wget https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-5.6.3-amd64.deb
+wget https://artifacts.elastic.co/downloads/logstash/logstash-5.6.3.deb
+wget http://repo.altinity.com/logstash-output-clickhouse-0.1.0.gem
+dpkg -i filebeat-5.6.3-amd64.deb
+dpkg -i logstash-5.6.3.deb
+./logstash-plugin install logstash-filter-prune
+./logstash-plugin install logstash-filter-multiline
+./logstash-plugin install logstash-output-clickhouse-0.1.0.gem
+Configuration Example: Nginx Logs
+Here is a pretty simple configuration for filebeat in order to get log files from a local folder:
+
+filebeat.prospectors:
+- input_type: log
+  paths:
+    - /var/nginx/logs/*.log
+  exclude_files: [".gz$"]
+output.logstash:
+  hosts: ["localhost:5044"]
+Logstash configuration consists of three sections: input, filter, and output.
+
+Input
+As it shows there is an input stream formed from a connection to filebeat service
+
+input {
+  beats {
+    port => 5044
+    host => "127.0.0.1"
+  }
+}
+Filter
+In filter section, there are a number of steps to get raw multiline log format be parsed into a log record.
+
+filter {
+      grok {
+        match => [ "message" , "%{COMBINEDAPACHELOG}+%{GREEDYDATA:extra_fields}"]
+      }
+
+      mutate {
+        convert => ["response", "integer"]
+        convert => ["bytes", "integer"]
+        convert => ["responsetime", "float"]
+        remove_field => ["@version", "host", "message", "beat", "offset", "type", "tags", "input_type", "source"]
+      }
+
+      date {
+        match => [ "timestamp" , "dd/MMM/YYYY:HH:mm:ss Z" ]
+        remove_field => [ "timestamp", "@timestamp" ]
+        target => [ "logdatetime" ]
+      }
+
+      ruby {
+        code => "tstamp = event.get('logdatetime').to_i
+                 event.set('logdatetime', Time.at(tstamp).strftime('%Y-%m-%d %H:%M:%S'))
+                 event.set('logdate', Time.at(tstamp).strftime('%Y-%m-%d'))"
+      }
+
+      useragent {
+        source => "agent"
+      }
+
+      prune {
+          interpolate => true
+          whitelist_names => ["^logdate$" ,"^logdatetime$" ,"^request$" ,"^agent$" ,"^os$" ,"^minor$" ,"^auth$" ,"^ident$" ,"^verb$" ,"^patch$" ,"^referrer$" ,"^major$" ,"^build$" ,"^response$","^bytes$","^clientip$" ,"^name$" ,"^os_name$" ,"^httpversion$" ,"^device$" ]
+        }
+}
+Output
+After logstash has parsed each record it should send it somewhere. So here is output config section that specifies ClickHouse table.
+
+output {
+    clickhouse {
+      http_hosts => ["http://localhost:8123"]
+      table => "nginx_access"
+      request_tolerance => 1
+      flush_size => 1000
+      pool_max => 1000
+    }
+}
+ClickHouse Schema
+And of course, we need ClickHouse table where all these logs will be stored. Table should have columns corresponding to filter.prune.whitelist_names list. Given configuration example above, the corresponding table can be created as follows:
+
+CREATE TABLE nginx_access (
+  logdate Date,
+  logdatetime DateTime,
+  request String,
+  agent String,
+  os String,
+  minor String,
+  auth String,
+  ident String,
+  verb String,
+  patch String,
+  referrer String,
+  major String,
+  build String,
+  response UInt32,
+  bytes UInt32,
+  clientip String,
+  name String,
+  os_name String,
+  httpversion String,
+  device String
+) Engine = MergeTree(logdate, (logdatetime, clientip, os), 8192);
+Conclusion
+In this article, we demonstrated how Logstash can be configured to send Nginx log files to ClickHouse. Filebeat is used to track log files processing. Logstash parses the raw logs data received from Filebeat and converts it into structured logs records that are being sent further to ClickHouse using dedicated Logstash output plugin. There are many ways to do customizations and improvements here. As a Logstash backend ClickHouse allows to store and analyze data more efficiently than using more common Elastic storage. With the help of Grafana dashboards, logs can be visualised for easy analysis.
+

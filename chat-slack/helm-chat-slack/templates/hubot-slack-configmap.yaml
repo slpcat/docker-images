@@ -1,0 +1,41 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  annotations:
+    fabric8.io/json-schema: |-
+      {
+        "type" : "object",
+        "properties" : {
+          "HUBOT_SLACK_GRAFANA_HOST" : {
+            "type" : "string",
+            "description" : "Host for your Grafana 2.0 install, e.g. 'http://play.grafana.org'",
+            "default" : "http://grafana.default.svc.cluster.local"
+          },
+          "HUBOT_SLACK_GRAFANA_API_KEY" : {
+            "type" : "string",
+            "description" : "API key for a particular user"
+          },
+          "HUBOT_JENKINS_URL" : {
+            "type" : "string",
+            "description" : "The URL for the Jenkins CI server",
+            "default" : "http://jenkins.default.svc.cluster.local"
+          },
+          "HUBOT_SLACK_TOKEN" : {
+            "type" : "string",
+            "description" : "The token for Hubot to login to Slack"
+          }
+        }
+      }
+  labels:
+    name: hubot-slack
+    provider: fabric8
+    project: hubot-slack
+    version: 2.2.311
+    group: io.fabric8.devops.apps
+  name: hubot-slack
+data:
+  hubot-jenkins-url: http://jenkins/
+  hubot-grafana-host: http://grafana/
+  hubot-slack-token: ""
+  hubot-grafana-api-key: ""

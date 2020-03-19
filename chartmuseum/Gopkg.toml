@@ -1,0 +1,63 @@
+[[constraint]]
+  name = "cloud.google.com/go"
+  source = "https://github.com/GoogleCloudPlatform/google-cloud-go.git"
+  version = "0.22.0"
+
+# Used by Microsoft Azure Blob storage backend
+[[constraint]]
+  name = "github.com/Azure/azure-sdk-for-go"
+  version = "14.6.0"
+
+# Used by Alibaba Cloud OSS storage backend
+[[constraint]]
+  name = "github.com/aliyun/aliyun-oss-go-sdk"
+  version = "1.8.0"
+
+# Used by Openstack Object Storage backend
+[[constraint]]
+  name = "github.com/gophercloud/gophercloud"
+  branch = "master"
+
+[[constraint]]
+  name = "github.com/aws/aws-sdk-go"
+  version = "1.13.47"
+
+[[constraint]]
+  name = "github.com/gin-gonic/gin"
+  version = "1.2.0"
+
+[[constraint]]
+  name = "github.com/prometheus/client_golang"
+  version = "0.8.0"
+
+[[constraint]]
+  name = "github.com/urfave/cli"
+  version = "1.20.0"
+
+[[constraint]]
+  name = "github.com/spf13/viper"
+  version = "1.0.2"
+
+[[constraint]]
+  name = "go.uber.org/zap"
+  version = "1.5.0"
+
+[[constraint]]
+  name = "k8s.io/helm"
+  version = "2.9.1"
+
+[prune]
+  go-tests = true
+  unused-packages = true
+
+[[constraint]]
+  branch = "master"
+  name = "github.com/gin-contrib/size"
+
+[[constraint]]
+  name = "github.com/go-redis/redis"
+  version = "6.10.2"
+
+[[constraint]]
+  name = "github.com/alicebob/miniredis"
+  version = "2.4.2"

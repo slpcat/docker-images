@@ -1,0 +1,101 @@
+kind: Function
+name: hello-py
+sourcePath: 'python3/hello.py'
+image: python3
+schema: {}
+tags:
+  - key: role
+    value: test
+---
+kind: Function
+name: http-py
+sourcePath: 'python3/http_func.py'
+image: python3
+schema: {}
+tags:
+  - key: role
+    value : test
+---
+kind: Function
+name: hello-js
+sourcePath: 'nodejs/hello.js'
+image: nodejs
+schema:
+  in:
+    properties:
+      name:
+        minLength: 1
+        pattern: "^[A-Za-z]+$"
+        type: string
+      place:
+        minLength: 1
+        pattern: "^[A-Za-z]+$"
+        type: string
+    required:
+    - name
+  out:
+    properties:
+      myField:
+        type: string
+    required:
+    - myField
+tags:
+  - key: role
+    value: test
+---
+kind: Function
+name: hello-ps1
+sourcePath: 'powershell/hello.ps1'
+image: powershell
+schema: {}
+tags:
+  - key: role
+    value:  test
+---
+kind: Secret
+name: open-sesame
+secrets:
+  password: OpenSesame
+tags:
+  - key: role
+    value: test
+---
+kind: API
+name: post-hello
+enabled: true
+function: hello-py
+methods:
+  - POST
+protocols:
+  - https
+uris:
+  - /hello
+tags:
+  - key: role
+    value : test
+---
+kind: DriverType
+name: ticker
+image: kars7e/timer:latest
+tags:
+  - key: role
+    value : test
+---
+kind: Driver
+name: ticker
+type: ticker
+config:
+  - key: seconds
+    value: 2
+tags:
+  - key: role
+    value : test
+---
+kind: Subscription
+eventType: ticker.tick
+function: hello-py
+name: ticker-sub
+tags:
+  - key: role
+    value : test
+---

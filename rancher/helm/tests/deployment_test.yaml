@@ -1,0 +1,119 @@
+suite: Test Deployment
+templates:
+- deployment.yaml
+tests:
+- it: should set --add-local=false
+  set:
+    addLocal: "false"
+  asserts:
+  - contains:
+      path: spec.template.spec.containers[0].args
+      content: "--add-local=false"
+- it: should default to --add-local=auto
+  asserts:
+  - contains:
+      path: spec.template.spec.containers[0].args
+      content: "--add-local=auto"
+- it: should add CATTLE_SYSTEM_DEFAULT_REGISTRY to env and maintain default vars
+  set:
+    systemDefaultRegistry: "registry.example.com"
+    extraEnv:
+    - name: CATTLE_TLS_MIN_VERSION
+      value: "1.0"
+  asserts:
+  - contains:
+      path: spec.template.spec.containers[0].env
+      content:
+        name: CATTLE_SYSTEM_DEFAULT_REGISTRY
+        value: "registry.example.com"
+  - contains:
+      path: spec.template.spec.containers[0].env
+      content:
+        name: CATTLE_TLS_MIN_VERSION
+        value: "1.0"
+  - contains:
+      path: spec.template.spec.containers[0].env
+      content:
+        name: CATTLE_PEER_SERVICE
+        value: RELEASE-NAME-rancher
+  - contains:
+      path: spec.template.spec.containers[0].env
+      content:
+        name: CATTLE_NAMESPACE
+        value: NAMESPACE
+- it: should Just have default env vars
+  asserts:
+  - equal:
+      path: spec.template.spec.containers[0].env
+      value:
+      - name: CATTLE_NAMESPACE
+        value: NAMESPACE
+      - name: CATTLE_PEER_SERVICE
+        value: RELEASE-NAME-rancher
+- it: should default imagePullPolicy to IfNotPresent
+  asserts:
+  - equal:
+      path: spec.template.spec.containers[0].imagePullPolicy
+      value: IfNotPresent
+- it: should override imagePullPolicy to Always
+  set:
+    rancherImagePullPolicy: Always
+  asserts:
+  - equal:
+      path: spec.template.spec.containers[0].imagePullPolicy
+      value: Always
+- it: should set busybox image as busybox
+  set:
+    auditLog:
+      level: 1
+  asserts:
+  - equal:
+      path: spec.template.spec.containers[1].image
+      value: busybox
+- it: should override busybox image
+  set:
+    auditLog:
+      level: 1
+    busyboxImage: my.private.repo:5000/rancher/busybox:1.0.1
+  asserts:
+  - equal:
+      path: spec.template.spec.containers[1].image
+      value: my.private.repo:5000/rancher/busybox:1.0.1
+- it: should not have command arg "--no-cacerts" when using private CA
+  set:
+    privateCA: "true"
+  asserts:
+  - notContains:
+      path: spec.template.spec.containers[0].args
+      content: "--no-cacerts"
+- it: should not have command arg "--no-cacerts" when using default (rancher) ingress TLS
+  set:
+    tls: "ingress"
+  asserts:
+  - notContains:
+      path: spec.template.spec.containers[0].args
+      content: "--no-cacerts"
+- it: should have command arg "--no-cacerts" when using letsEncrypt ingress TLS
+  set:
+    tls: "ingress"
+    ingress.tls.source: "letsEncrypt"
+  asserts:
+  - contains:
+      path: spec.template.spec.containers[0].args
+      content: "--no-cacerts"
+- it: should have command arg "--no-cacerts" when using external TLS
+  set:
+    tls: "external"
+  asserts:
+  - contains:
+      path: spec.template.spec.containers[0].args
+      content: "--no-cacerts"
+- it: should add CATTLE_SYSTEM_CATALOG to env
+  set:
+    useBundledSystemChart: true
+  asserts:
+  - contains:
+      path: spec.template.spec.containers[0].env
+      content:
+        name: CATTLE_SYSTEM_CATALOG
+        value: "bundled"

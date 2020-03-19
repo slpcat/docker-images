@@ -1,0 +1,6 @@
+https://github.com/prometheus/mysqld_exporter
+
+docker run -d \
+  -p 9104:9104 \
+  -e DATA_SOURCE_NAME="user:password@(my-mysql-network:3306)/" \
+  prom/mysqld-exporter

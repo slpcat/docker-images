@@ -1,0 +1,8 @@
+Loghouse-dashboard 是 loghouse 中的一个专门针对Clickhouse作为日志存储的日志展示项目，具备如下特点：
+类似于Papertrail的用户体验。
+可自定义的时间范围：从日期至今/从现在到给定时间段（最后一小时，最后一天等）/查找特定时间并显示其周围的日志。
+无限滚动旧日志条目。
+保存查询以供将来使用。
+基本权限（通过指定Kubernetes命名空间来限制为用户显示的条目）。
+将当前查询的结果导出为CSV（将支持更多格式）。
+https://github.com/flant/loghouse

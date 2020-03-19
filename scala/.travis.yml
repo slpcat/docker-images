@@ -1,0 +1,17 @@
+sudo: required
+
+services:
+  - docker
+
+env:
+  - VERSION=2.12.4
+  - VERSION=2.12.4/alpine
+  - VERSION=2.11.12
+  - VERSION=2.11.12/alpine
+  - VERSION=2.10.7
+  - VERSION=2.10.7/alpine
+
+script:
+  - docker build --tag image:test ${VERSION}
+  - bash tests/scala.sh image:test
+  - bash tests/scalac.sh image:test

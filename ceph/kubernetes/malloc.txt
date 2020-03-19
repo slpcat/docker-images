@@ -1,0 +1,4 @@
+file  /etc/default/ceph
+LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libjemalloc.so.1 
+# Increase tcmalloc cache size
+TCMALLOC_MAX_TOTAL_THREAD_CACHE_BYTES=134217728

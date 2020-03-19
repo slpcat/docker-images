@@ -1,0 +1,97 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: tomcat8-gateway
+spec:
+  selector:
+    istio: ingressgateway # use Istio default gateway implementation
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - "tomcat8.example.com"
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: tomcat8-vs
+spec:
+  gateways:
+  - tomcat8-gateway
+  hosts:
+  - "tomcat8.example.com"
+  http:
+  #故障注入，按比例注入延迟
+  #- fault:
+  #    delay:
+  #      fixedDelay: 7s
+  #      percent: 100
+  #故障注入，按比例注入http 500错误
+  #- fault:
+  #    abort:
+  #      httpStatus: 500
+  #      percent: 100
+  #匹配规则
+  - match:
+  #  - uri:
+  #      prefix: /status
+  #  - uri:
+  #      prefix: /delay
+    - uri:
+        exact: /
+    route:
+    #按端口分配流量
+    #- destination:
+    #    host: tomcat8-svc
+    #    port:
+    #      number: 8080
+    #流量镜像
+    #- destination:
+    #    host: httpbin
+    #    subset: v1
+    #  weight: 100
+    #流量镜像到目标后端主机,Host/Authority头添加-shadow后缀， 只镜像请求，响应被丢弃
+    #mirror:
+    #  host: httpbin
+    #  subset: v2
+    #流量切换,按照权重配比,用于蓝绿发布和灰度发布
+    - destination:
+        host: tomcat8-svc
+        subset: v1
+      weight: 0
+    - destination:
+        host: tomcat8-svc
+        subset: v2
+      weight: 100
+    #请求超时时长，后端响应时间大于此值，直接返回服务不可用
+    timeout: 0.5s
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: tomcat8-dr
+spec:
+  host: tomcat8-svc
+  #熔断器
+  #trafficPolicy:
+  #  connectionPool:
+  #    tcp:
+  #      maxConnections: 100
+  #    http:
+  #      http1MaxPendingRequests: 1
+  #      maxRequestsPerConnection: 5
+  #  outlierDetection:
+  #    consecutiveErrors: 1
+  #    interval: 1s
+  #    baseEjectionTime: 3m
+  #    maxEjectionPercent: 100
+  #子集根据pod标签定义
+  subsets:
+  - name: v1
+    labels:
+      version: v1
+  - name: v2
+    labels:
+      version: v2

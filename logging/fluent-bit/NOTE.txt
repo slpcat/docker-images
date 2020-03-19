@@ -1,0 +1,6 @@
+wget https://raw.githubusercontent.com/prabhatsharma/elasticsearch-using-operator/master/fluent-bit-values.yml
+
+fluent-bit-clickhouse
+https://github.com/iyacontrol/fluent-bit-clickhouse
+
+

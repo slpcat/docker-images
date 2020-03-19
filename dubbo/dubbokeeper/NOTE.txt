@@ -1,0 +1,5 @@
+docker run -d --restart=always \
+-p 8080:8080 \
+-v /data/dubbokeeper/dubbo.properties:/usr/local/tomcat/webapps/ROOT/WEB-INF/classes/dubbo.properties \
+slpcat/dubbokeeper:v1.0.1
+

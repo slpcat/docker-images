@@ -1,0 +1,152 @@
+{{- $orgNum := int $.Values.orgNum }}
+{{- $peerNum := int (mul $orgNum 2) }}
+{{- $network := $.Values.fabricNetwork -}}
+{{- $orgMspList := splitList " " ((include "orgMspList" .) | trimSuffix " ") -}}
+{{- range $loopIndex, $peerIndex := untilStep 1 (int (add $peerNum 1)) 1 -}}
+kind: Service
+apiVersion: v1
+metadata:
+  name: {{ $network }}-peer{{ $peerIndex }}
+spec:
+  type: NodePort
+  selector:
+    app: {{ $network }}-peer{{ $peerIndex }}
+  ports:
+    - protocol: TCP
+      port: 7051
+      nodePort: {{ index $.Values.peerExternalGrpcPortList $loopIndex }}
+      name: grpc-port
+    - protocol: TCP
+      port: 7053
+      nodePort: {{ index $.Values.peerExternalEventPortList $loopIndex }}
+      name: event-port
+---
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: {{ $network }}-peer{{ $peerIndex }}-deployment
+  labels:
+    app: {{ $network }}-peer{{ $peerIndex }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ $network }}-peer{{ $peerIndex }}
+  template:
+    metadata:
+      labels:
+        app: {{ $network }}-peer{{ $peerIndex }}
+    spec:
+      containers:
+        - name: {{ $network }}-couchdb{{ $peerIndex }}
+          image: {{ $.Values.dockerImageRegistry }}/fabric-couchdb:x86_64-{{ $.Values.hyperledgerFabricVersion }}
+          imagePullPolicy: {{ $.Values.imagePullPolicy | quote }}
+          ports:
+            - containerPort: 5984
+              name: couchdb-port
+          env:
+            - name: CORE_LOGGING_LEVEL
+              value: "DEBUG"
+          volumeMounts:
+            - name: couchdb-data
+              mountPath: /opt/couchdb/data
+        - name: {{ $network }}-peer{{ $peerIndex }}
+          image: {{ $.Values.dockerImageRegistry }}/fabric-peer:x86_64-{{ $.Values.hyperledgerFabricVersion }}
+          imagePullPolicy: {{ $.Values.imagePullPolicy | quote }}
+          ports:
+            - containerPort: 7051
+              name: grpc-port
+            - containerPort: 7053
+              name: event-port
+          command: ["peer"]
+          args: ["node", "start", "--peer-defaultchain=false"]
+          env:
+            - name: GODEBUG
+              value: "netdns=go"
+            - name: CORE_VM_ENDPOINT
+              value: "unix:///host/var/run/docker.sock"
+            # Tthe following setting starts chaincode containers on the same
+            # network as the peers
+            # https://docs.docker.com/compose/networking/
+            - name: CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE
+              value: "bridge"
+            - name: CORE_LOGGING_LEVEL
+              value: "DEBUG"
+            - name: CORE_NEXT
+              value: "true"
+            - name: CORE_PEER_TLS_ENABLED
+              value: "true"
+            - name: CORE_PEER_ID
+              value: "{{ $network }}-peer{{ $peerIndex }}"
+            - name: CORE_PEER_LOCALMSPID
+              value: {{ index $orgMspList (int (div $loopIndex 2)) | quote }}
+            - name: CORE_PEER_ENDORSER_ENABLED
+              value: "true"
+            - name: CORE_PEER_GOSSIP_USELEADERELECTION
+              value: "true"
+            - name: CORE_PEER_GOSSIP_ORGLEADER
+              value: "false"
+            # Unlike swarm, ADDRESSAUTODETECT must be set to true on k8s
+            - name: CORE_PEER_ADDRESSAUTODETECT
+              value: "true"
+            - name: CORE_PEER_ADDRESS
+              value: "{{ $network }}-peer{{ $peerIndex }}:7051"
+            - name: CORE_PEER_GOSSIP_EXTERNALENDPOINT
+              value: "{{ $network }}-peer{{ $peerIndex }}:7051"
+            {{ if (eq (mul 2 (int (div (int $peerIndex) 2))) (int $peerIndex)) -}}
+            # Only non-anchor peer need to set CORE_PEER_GOSSIP_BOOTSTRAP pointing to anchor peer
+            - name: CORE_PEER_GOSSIP_BOOTSTRAP
+              value: "{{ $network }}-peer{{ (sub (int $peerIndex) 1) | toString }}:7051"
+            {{ end -}}
+            # Chaincode listen address is suggested for production 
+            # - name: CORE_PEER_CHAINCODELISTENADDRESS
+            #   value: "{{ $network }}-peer{{ $peerIndex }}:7052"
+            # The following setting skips the gossip handshake since we are
+            # are not doing mutual TLS
+            - name: CORE_PEER_GOSSIP_SKIPHANDSHAKE
+              value: "true"
+            - name: CORE_PEER_PROFILE_ENABLED
+              value: "true"
+            # Re-specify the data path for peer
+            - name: CORE_PEER_FILESYSTEMPATH
+              value: "/var/hyperledger/production/"
+            - name: CORE_PEER_MSPCONFIGPATH
+              value: "/var/hyperledger/production/msp"
+            - name: CORE_PEER_TLS_CERT_FILE
+              value: "/var/hyperledger/production/tls/server.crt"
+            - name: CORE_PEER_TLS_KEY_FILE
+              value: "/var/hyperledger/production/tls/server.key"
+            - name: CORE_PEER_TLS_ROOTCERT_FILE
+              value: "/var/hyperledger/production/tls/ca.crt"
+            - name: CORE_PEER_TLS_SERVERHOSTOVERRIDE
+              value: "{{ $network }}-peer{{ $peerIndex }}"
+            - name: CORE_LEDGER_STATE_STATEDATABASE
+              value: "CouchDB"
+            # Unlike swarm, for k8s, we use localhost to access couchdb
+            - name: CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS
+              value: "localhost:5984"
+          volumeMounts:
+            - name: peer-data
+              mountPath: /var/hyperledger/production
+            - name: docker-sock
+              mountPath: /host/var/run/docker.sock
+      initContainers:
+        - name: check-orderer
+          image: {{ $.Values.dockerImageRegistry }}/fabric-tools:x86_64-{{ $.Values.hyperledgerFabricVersion }}
+          imagePullPolicy: {{ $.Values.imagePullPolicy | quote }}
+          command: ['sh', '-c']
+          args: ['{{- range $loopIndex, $ordererIndex := untilStep 1 (int (add (int $.Values.ordererNum) 1)) 1 -}}
+                    until nc -w 3 {{ $network }}-orderer{{ $ordererIndex }} 7050; do echo waiting for orderer{{ $ordererIndex }}; sleep 3; done; {{ end -}}
+                ']
+      volumes:
+        - name: couchdb-data
+          hostPath:
+            path: "/data/fabric/{{ $network }}/{{ $network }}-couchdb{{ $peerIndex }}"
+        - name: peer-data
+          hostPath:
+            path: "/data/fabric/{{ $network }}/{{ $network }}-peer{{ $peerIndex }}"
+        - name: docker-sock
+          hostPath:
+            path: /var/run/docker.sock
+---
+{{- end -}}

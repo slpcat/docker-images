@@ -1,0 +1,11 @@
+description: Fast and general-purpose cluster computing system.
+home: http://spark.apache.org
+icon: http://spark.apache.org/images/spark-logo-trademark.png
+maintainers:
+- email: zhuanghuai.lp@alibaba-inc.com
+  name: Eric Li
+name: spark
+sources:
+- http://gitlab.alibaba-inc.com/cos/application-catalog/tree/master/aliyun-stable/spark
+- https://github.com/apache/spark
+version: 0.2.2

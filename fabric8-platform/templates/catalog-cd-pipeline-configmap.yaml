@@ -1,0 +1,1221 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  annotations:
+    fabric8.io/git-commit: 2b9f7ce19493fe6d18392ac4f4be16f5e1a76fa3
+    fabric8.io/iconUrl: https://cdn.rawgit.com/fabric8io/fabric8-devops/master/gogs/src/main/fabric8/icon.png
+    fabric8.io/git-branch: release-v2.2.311
+    maven.fabric8.io/app-catalog: "true"
+  labels:
+    provider: fabric8
+    project: cd-pipeline
+    repository: gogs
+    scm: git
+    version: target
+    expose: "true"
+    group: io.fabric8.devops.apps
+    kind: catalog
+  name: catalog-cd-pipeline
+data:
+  catalog-cd-pipeline.yml: |
+    ---
+    apiVersion: "v1"
+    kind: "Template"
+    metadata:
+      annotations:
+        fabric8.io/git-commit: "2b9f7ce19493fe6d18392ac4f4be16f5e1a76fa3"
+        fabric8.io/iconUrl: "https://cdn.rawgit.com/fabric8io/fabric8-devops/master/gogs/src/main/fabric8/icon.png"
+        fabric8.io/git-branch: "release-v2.2.311"
+      finalizers: []
+      labels:
+        provider: "fabric8"
+        project: "cd-pipeline"
+        repository: "gogs"
+        scm: "git"
+        version: "target"
+        expose: "true"
+        group: "io.fabric8.devops.apps"
+      name: "cd-pipeline"
+      ownerReferences: []
+    labels: {}
+    objects:
+    - apiVersion: "v1"
+      kind: "Secret"
+      metadata:
+        annotations: {}
+        finalizers: []
+        labels:
+          provider: "fabric8"
+          group: "io.fabric8.devops.apps"
+          project: "gogs"
+          repository: "gogs"
+          scm: "git"
+          version: "2.2.311"
+        name: "default-gogs-git"
+        namespace: "user-secrets-source-admin"
+        ownerReferences: []
+      data:
+        password: "UmVkSGF0JDE="
+        username: "Z29nc2FkbWlu"
+      stringData: {}
+    - apiVersion: "v1"
+      kind: "Secret"
+      metadata:
+        annotations: {}
+        finalizers: []
+        labels:
+          provider: "fabric8"
+          project: "jenkins"
+          version: "2.2.311"
+          group: "io.fabric8.devops.apps"
+        name: "jenkins-docker-cfg"
+        ownerReferences: []
+      data:
+        config.json: ""
+      stringData: {}
+      type: "fabric8.io/jenkins-docker-cfg"
+    - apiVersion: "v1"
+      kind: "Secret"
+      metadata:
+        annotations: {}
+        finalizers: []
+        labels:
+          provider: "fabric8"
+          project: "jenkins"
+          version: "2.2.311"
+          group: "io.fabric8.devops.apps"
+        name: "jenkins-git-ssh"
+        ownerReferences: []
+      data:
+        ssh-key: ""
+        ssh-key.pub: ""
+      stringData: {}
+      type: "fabric8.io/jenkins-git-ssh"
+    - apiVersion: "v1"
+      kind: "Secret"
+      metadata:
+        annotations: {}
+        finalizers: []
+        labels:
+          provider: "fabric8"
+          project: "jenkins"
+          version: "2.2.311"
+          group: "io.fabric8.devops.apps"
+        name: "jenkins-hub-api-token"
+        ownerReferences: []
+      data:
+        hub: ""
+      stringData: {}
+      type: "fabric8.io/jenkins-hub-api-token"
+    - apiVersion: "v1"
+      kind: "Secret"
+      metadata:
+        annotations: {}
+        finalizers: []
+        labels:
+          provider: "fabric8"
+          project: "jenkins"
+          version: "2.2.311"
+          group: "io.fabric8.devops.apps"
+        name: "jenkins-master-ssh"
+        ownerReferences: []
+      data:
+        idrsa: ""
+      stringData: {}
+      type: "fabric8.io/jenkins-master-ssh"
+    - apiVersion: "v1"
+      kind: "Secret"
+      metadata:
+        annotations: {}
+        finalizers: []
+        labels:
+          provider: "fabric8"
+          project: "jenkins"
+          version: "2.2.311"
+          group: "io.fabric8.devops.apps"
+        name: "jenkins-maven-settings"
+        ownerReferences: []
+      data:
+        settings.xml: "PHNldHRpbmdzPgogIDwhLS0gc2V0cyB0aGUgbG9jYWwgbWF2ZW4gcmVwb3NpdG9yeSBvdXRzaWRlIG9mIHRoZSB+Ly5tMiBmb2xkZXIgZm9yIGVhc2llciBtb3VudGluZyBvZiBzZWNyZXRzIGFuZCByZXBvIC0tPgogIDxsb2NhbFJlcG9zaXRvcnk+JHt1c2VyLmhvbWV9Ly5tdm5yZXBvc2l0b3J5PC9sb2NhbFJlcG9zaXRvcnk+CiAgPG1pcnJvcnM+CiAgICA8bWlycm9yPgogICAgICA8aWQ+bmV4dXM8L2lkPgogICAgICA8bWlycm9yT2Y+ZXh0ZXJuYWw6KjwvbWlycm9yT2Y+CiAgICAgIDx1cmw+aHR0cDovL25leHVzL2NvbnRlbnQvZ3JvdXBzL3B1YmxpYzwvdXJsPgogICAgPC9taXJyb3I+CiAgPC9taXJyb3JzPgoKICA8IS0tIGxldHMgZGlzYWJsZSB0aGUgZG93bmxvYWQgcHJvZ3Jlc3MgaW5kaWNhdG9yIHRoYXQgZmlsbHMgdXAgbG9ncyAtLT4KICA8aW50ZXJhY3RpdmVNb2RlPmZhbHNlPC9pbnRlcmFjdGl2ZU1vZGU+CgogIDxzZXJ2ZXJzPgogICAgPHNlcnZlcj4KICAgICAgPGlkPmxvY2FsLW5leHVzPC9pZD4KICAgICAgPHVzZXJuYW1lPmFkbWluPC91c2VybmFtZT4KICAgICAgPHBhc3N3b3JkPmFkbWluMTIzPC9wYXNzd29yZD4KICAgIDwvc2VydmVyPgogICAgPHNlcnZlcj4KICAgICAgPGlkPm5leHVzPC9pZD4KICAgICAgPHVzZXJuYW1lPmFkbWluPC91c2VybmFtZT4KICAgICAgPHBhc3N3b3JkPmFkbWluMTIzPC9wYXNzd29yZD4KICAgIDwvc2VydmVyPgogICAgPHNlcnZlcj4KICAgICAgPGlkPm9zcy1zb25hdHlwZS1zdGFnaW5nPC9pZD4KICAgICAgPHVzZXJuYW1lPjwvdXNlcm5hbWU+CiAgICAgIDxwYXNzd29yZD48L3Bhc3N3b3JkPgogICAgPC9zZXJ2ZXI+CiAgPC9zZXJ2ZXJzPgoKICA8cHJvZmlsZXM+CiAgICA8cHJvZmlsZT4KICAgICAgPGlkPm5leHVzPC9pZD4KICAgICAgPHByb3BlcnRpZXM+CiAgICAgICAgPGFsdERlcGxveW1lbnRSZXBvc2l0b3J5PmxvY2FsLW5leHVzOjpkZWZhdWx0OjpodHRwOi8vbmV4dXMvY29udGVudC9yZXBvc2l0b3JpZXMvc3RhZ2luZy88L2FsdERlcGxveW1lbnRSZXBvc2l0b3J5PgogICAgICAgIDxhbHRSZWxlYXNlRGVwbG95bWVudFJlcG9zaXRvcnk+bG9jYWwtbmV4dXM6OmRlZmF1bHQ6Omh0dHA6Ly9uZXh1cy9jb250ZW50L3JlcG9zaXRvcmllcy9zdGFnaW5nLzwvYWx0UmVsZWFzZURlcGxveW1lbnRSZXBvc2l0b3J5PgogICAgICAgIDxhbHRTbmFwc2hvdERlcGxveW1lbnRSZXBvc2l0b3J5PmxvY2FsLW5leHVzOjpkZWZhdWx0OjpodHRwOi8vbmV4dXMvY29udGVudC9yZXBvc2l0b3JpZXMvc25hcHNob3RzLzwvYWx0U25hcHNob3REZXBsb3ltZW50UmVwb3NpdG9yeT4KICAgICAgPC9wcm9wZXJ0aWVzPgogICAgICA8cmVwb3NpdG9yaWVzPgogICAgICAgIDxyZXBvc2l0b3J5PgogICAgICAgICAgPGlkPmNlbnRyYWw8L2lkPgogICAgICAgICAgPHVybD5odHRwOi8vY2VudHJhbDwvdXJsPgogICAgICAgICAgPHJlbGVhc2VzPjxlbmFibGVkPnRydWU8L2VuYWJsZWQ+PC9yZWxlYXNlcz4KICAgICAgICAgIDxzbmFwc2hvdHM+PGVuYWJsZWQ+dHJ1ZTwvZW5hYmxlZD48L3NuYXBzaG90cz4KICAgICAgICA8L3JlcG9zaXRvcnk+CiAgICAgIDwvcmVwb3NpdG9yaWVzPgogICAgICA8cGx1Z2luUmVwb3NpdG9yaWVzPgogICAgICAgIDxwbHVnaW5SZXBvc2l0b3J5PgogICAgICAgICAgPGlkPmNlbnRyYWw8L2lkPgogICAgICAgICAgPHVybD5odHRwOi8vY2VudHJhbDwvdXJsPgogICAgICAgICAgPHJlbGVhc2VzPjxlbmFibGVkPnRydWU8L2VuYWJsZWQ+PC9yZWxlYXNlcz4KICAgICAgICAgIDxzbmFwc2hvdHM+PGVuYWJsZWQ+dHJ1ZTwvZW5hYmxlZD48L3NuYXBzaG90cz4KICAgICAgICA8L3BsdWdpblJlcG9zaXRvcnk+CiAgICAgIDwvcGx1Z2luUmVwb3NpdG9yaWVzPgogICAgPC9wcm9maWxlPgogICAgPHByb2ZpbGU+CiAgICAgIDxpZD5yZWxlYXNlPC9pZD4KICAgICAgPHByb3BlcnRpZXM+CiAgICAgICAgPGdwZy5leGVjdXRhYmxlPmdwZzwvZ3BnLmV4ZWN1dGFibGU+CiAgICAgICAgPGdwZy5wYXNzcGhyYXNlPm15c2VjcmV0cGFzc3BocmFzZTwvZ3BnLnBhc3NwaHJhc2U+CiAgICAgIDwvcHJvcGVydGllcz4KICAgIDwvcHJvZmlsZT4KICA8L3Byb2ZpbGVzPgogIDxhY3RpdmVQcm9maWxlcz4KICAgIDwhLS1tYWtlIHRoZSBwcm9maWxlIGFjdGl2ZSBhbGwgdGhlIHRpbWUgLS0+CiAgICA8YWN0aXZlUHJvZmlsZT5uZXh1czwvYWN0aXZlUHJvZmlsZT4KICA8L2FjdGl2ZVByb2ZpbGVzPgo8L3NldHRpbmdzPgo="
+      stringData: {}
+      type: "fabric8.io/secret-maven-settings"
+    - apiVersion: "v1"
+      kind: "Secret"
+      metadata:
+        annotations: {}
+        finalizers: []
+        labels:
+          provider: "fabric8"
+          project: "jenkins"
+          version: "2.2.311"
+          group: "io.fabric8.devops.apps"
+        name: "jenkins-release-gpg"
+        ownerReferences: []
+      data:
+        trustdb.gpg: ""
+        pubring.gpg: ""
+        gpg.conf: ""
+        secring.gpg: ""
+      stringData: {}
+      type: "fabric8.io/jenkins-release-gpg"
+    - apiVersion: "v1"
+      kind: "Secret"
+      metadata:
+        annotations: {}
+        finalizers: []
+        labels:
+          provider: "fabric8"
+          project: "jenkins"
+          version: "2.2.311"
+          group: "io.fabric8.devops.apps"
+        name: "jenkins-ssh-config"
+        ownerReferences: []
+      data:
+        config: ""
+      stringData: {}
+      type: "fabric8.io/jenkins-ssh-config"
+    - apiVersion: "v1"
+      kind: "ServiceAccount"
+      metadata:
+        annotations:
+          fabric8.io/iconUrl: "https://cdn.rawgit.com/fabric8io/fabric8-devops/master/gogs/src/main/fabric8/icon.png"
+        finalizers: []
+        labels:
+          provider: "fabric8"
+          group: "io.fabric8.devops.apps"
+          project: "gogs"
+          version: "2.2.311"
+        name: "gogs"
+        ownerReferences: []
+      imagePullSecrets: []
+      secrets: []
+    - apiVersion: "v1"
+      kind: "ServiceAccount"
+      metadata:
+        annotations:
+          fabric8.io/iconUrl: "https://cdn.rawgit.com/fabric8io/fabric8-devops/master/jenkins/src/main/fabric8/icon.svg"
+        finalizers: []
+        labels:
+          provider: "fabric8"
+          project: "jenkins"
+          version: "2.2.311"
+          group: "io.fabric8.devops.apps"
+        name: "jenkins"
+        ownerReferences: []
+      imagePullSecrets: []
+      secrets:
+      - name: "jenkins-git-ssh"
+      - name: "jenkins-master-ssh"
+      - name: "jenkins-release-gpg"
+    - apiVersion: "v1"
+      kind: "Service"
+      metadata:
+        annotations:
+          fabric8.io/iconUrl: "https://cdn.rawgit.com/fabric8io/fabric8-devops/master/fabric8-docker-registry/src/main/fabric8/icon.png"
+          fabric8.io/git-commit: "2b9f7ce19493fe6d18392ac4f4be16f5e1a76fa3"
+          fabric8.io/git-branch: "release-v2.2.311"
+        finalizers: []
+        labels:
+          provider: "fabric8"
+          project: "fabric8-docker-registry"
+          version: "2.2.311"
+          group: "io.fabric8.devops.apps"
+          expose: "true"
+        name: "fabric8-docker-registry"
+        ownerReferences: []
+      spec:
+        deprecatedPublicIPs: []
+        externalIPs: []
+        loadBalancerSourceRanges: []
+        ports:
+        - port: 80
+          protocol: "TCP"
+          targetPort: 5000
+        selector:
+          project: "fabric8-docker-registry"
+          provider: "fabric8"
+          group: "io.fabric8.devops.apps"
+    - apiVersion: "v1"
+      kind: "Service"
+      metadata:
+        annotations:
+          fabric8.io/iconUrl: "https://cdn.rawgit.com/fabric8io/fabric8-forge/master/fabric8-forge/src/main/fabric8/icon.svg"
+          fabric8.io/git-commit: "bad661f3285ecbcd6b7a9373e194bda075d832eb"
+          fabric8.io/git-branch: "release-v2.3.88"
+        finalizers: []
+        labels:
+          provider: "fabric8"
+          project: "fabric8-forge"
+          version: "2.3.88"
+          group: "io.fabric8.forge.apps"
+          expose: "true"
+        name: "fabric8-forge"
+        ownerReferences: []
+      spec:
+        deprecatedPublicIPs: []
+        externalIPs: []
+        loadBalancerSourceRanges: []
+        ports:
+        - name: "http"
+          port: 80
+          protocol: "TCP"
+          targetPort: 8080
+        selector:
+          project: "fabric8-forge"
+          provider: "fabric8"
+          group: "io.fabric8.forge.apps"
+    - apiVersion: "v1"
+      kind: "Service"
+      metadata:
+        annotations:
+          fabric8.io/app-menu: "development"
+          fabric8.io/iconUrl: "https://cdn.rawgit.com/fabric8io/fabric8-devops/master/gogs/src/main/fabric8/icon.png"
+          fabric8.io/git-commit: "2b9f7ce19493fe6d18392ac4f4be16f5e1a76fa3"
+          fabric8.io/git-branch: "release-v2.2.311"
+        finalizers: []
+        labels:
+          provider: "fabric8"
+          project: "gogs"
+          version: "2.2.311"
+          group: "io.fabric8.devops.apps"
+          expose: "true"
+        name: "gogs"
+        ownerReferences: []
+      spec:
+        deprecatedPublicIPs: []
+        externalIPs: []
+        loadBalancerSourceRanges: []
+        ports:
+        - port: 80
+          protocol: "TCP"
+          targetPort: 3000
+        selector:
+          project: "gogs"
+          provider: "fabric8"
+          group: "io.fabric8.devops.apps"
+    - apiVersion: "v1"
+      kind: "Service"
+      metadata:
+        annotations:
+          fabric8.io/iconUrl: "https://cdn.rawgit.com/fabric8io/fabric8-devops/master/gogs/src/main/fabric8/icon.png"
+          fabric8.io/git-commit: "2b9f7ce19493fe6d18392ac4f4be16f5e1a76fa3"
+          fabric8.io/git-branch: "release-v2.2.311"
+        finalizers: []
+        labels:
+          provider: "fabric8"
+          project: "gogs"
+          version: "2.2.311"
+          group: "io.fabric8.devops.apps"
+          expose: "true"
+        name: "gogs-ssh"
+        ownerReferences: []
+      spec:
+        deprecatedPublicIPs: []
+        externalIPs: []
+        loadBalancerSourceRanges: []
+        ports:
+        - port: 22
+          protocol: "TCP"
+          targetPort: 2222
+        selector:
+          project: "gogs"
+          provider: "fabric8"
+          group: "io.fabric8.devops.apps"
+    - apiVersion: "v1"
+      kind: "Service"
+      metadata:
+        annotations:
+          fabric8.io/app-menu: "development"
+          api.service.kubernetes.io/path: "/blue"
+          fabric8.io/git-commit: "2b9f7ce19493fe6d18392ac4f4be16f5e1a76fa3"
+          fabric8.io/iconUrl: "https://cdn.rawgit.com/fabric8io/fabric8-devops/master/jenkins/src/main/fabric8/icon.svg"
+          fabric8.io/git-branch: "release-v2.2.311"
+        finalizers: []
+        labels:
+          project: "jenkins"
+          provider: "fabric8"
+          expose: "true"
+          version: "2.2.311"
+          group: "io.fabric8.devops.apps"
+        name: "jenkins"
+        ownerReferences: []
+      spec:
+        deprecatedPublicIPs: []
+        externalIPs: []
+        loadBalancerSourceRanges: []
+        ports:
+        - name: "http"
+          port: 80
+          protocol: "TCP"
+          targetPort: 8080
+        selector:
+          project: "jenkins"
+          provider: "fabric8"
+          group: "io.fabric8.devops.apps"
+    - apiVersion: "v1"
+      kind: "Service"
+      metadata:
+        annotations:
+          fabric8.io/git-commit: "2b9f7ce19493fe6d18392ac4f4be16f5e1a76fa3"
+          fabric8.io/iconUrl: "https://cdn.rawgit.com/fabric8io/fabric8-devops/master/jenkins/src/main/fabric8/icon.svg"
+          fabric8.io/git-branch: "release-v2.2.311"
+        finalizers: []
+        labels:
+          project: "jenkins"
+          provider: "fabric8"
+          expose: "true"
+          version: "2.2.311"
+          group: "io.fabric8.devops.apps"
+        name: "jenkins-jnlp"
+        ownerReferences: []
+      spec:
+        deprecatedPublicIPs: []
+        externalIPs: []
+        loadBalancerSourceRanges: []
+        ports:
+        - name: "agent"
+          port: 50000
+          protocol: "TCP"
+          targetPort: 50000
+        selector:
+          project: "jenkins"
+          provider: "fabric8"
+          group: "io.fabric8.devops.apps"
+    - apiVersion: "v1"
+      kind: "Service"
+      metadata:
+        annotations:
+          fabric8.io/app-menu: "development"
+          fabric8.io/iconUrl: "https://cdn.rawgit.com/fabric8io/fabric8-devops/master/nexus/src/main/fabric8/icon.png"
+          fabric8.io/git-commit: "2b9f7ce19493fe6d18392ac4f4be16f5e1a76fa3"
+          fabric8.io/git-branch: "release-v2.2.311"
+        finalizers: []
+        labels:
+          provider: "fabric8"
+          project: "nexus"
+          version: "2.2.311"
+          group: "io.fabric8.devops.apps"
+          expose: "true"
+        name: "nexus"
+        ownerReferences: []
+      spec:
+        deprecatedPublicIPs: []
+        externalIPs: []
+        loadBalancerSourceRanges: []
+        ports:
+        - port: 80
+          protocol: "TCP"
+          targetPort: 8081
+        selector:
+          project: "nexus"
+          provider: "fabric8"
+          group: "io.fabric8.devops.apps"
+    - apiVersion: "v1"
+      kind: "PersistentVolumeClaim"
+      metadata:
+        annotations:
+        finalizers: []
+        labels:
+          provider: "fabric8"
+          project: "fabric8-docker-registry"
+          version: "2.2.311"
+          group: "io.fabric8.devops.apps"
+        name: "fabric8-docker-registry-storage"
+        ownerReferences: []
+      spec:
+        accessModes:
+        - "ReadWriteOnce"
+        resources:
+          limits: {}
+          requests:
+            storage: "5Gi"
+    - apiVersion: "v1"
+      kind: "PersistentVolumeClaim"
+      metadata:
+        annotations:
+        finalizers: []
+        labels:
+          provider: "fabric8"
+          project: "gogs"
+          version: "2.2.311"
+          group: "io.fabric8.devops.apps"
+        name: "gogs-data"
+        ownerReferences: []
+      spec:
+        accessModes:
+        - "ReadWriteOnce"
+        resources:
+          limits: {}
+          requests:
+            storage: "100Mi"
+    - apiVersion: "v1"
+      kind: "PersistentVolumeClaim"
+      metadata:
+        annotations:
+        finalizers: []
+        labels:
+          provider: "fabric8"
+          project: "jenkins"
+          version: "2.2.311"
+          group: "io.fabric8.devops.apps"
+        name: "jenkins-jobs"
+        ownerReferences: []
+      spec:
+        accessModes:
+        - "ReadWriteOnce"
+        resources:
+          limits: {}
+          requests:
+            storage: "1Gi"
+    - apiVersion: "v1"
+      kind: "PersistentVolumeClaim"
+      metadata:
+        annotations:
+        finalizers: []
+        labels:
+          provider: "fabric8"
+          project: "jenkins"
+          version: "2.2.311"
+          group: "io.fabric8.devops.apps"
+        name: "jenkins-mvn-local-repo"
+        ownerReferences: []
+      spec:
+        accessModes:
+        - "ReadWriteMany"
+        resources:
+          limits: {}
+          requests:
+            storage: "1Gi"
+    - apiVersion: "v1"
+      kind: "PersistentVolumeClaim"
+      metadata:
+        annotations:
+        finalizers: []
+        labels:
+          provider: "fabric8"
+          project: "jenkins"
+          version: "2.2.311"
+          group: "io.fabric8.devops.apps"
+        name: "jenkins-workspace"
+        ownerReferences: []
+      spec:
+        accessModes:
+        - "ReadWriteOnce"
+        resources:
+          limits: {}
+          requests:
+            storage: "1Gi"
+    - apiVersion: "v1"
+      kind: "PersistentVolumeClaim"
+      metadata:
+        annotations:
+        finalizers: []
+        labels:
+          provider: "fabric8"
+          project: "nexus"
+          version: "2.2.311"
+          group: "io.fabric8.devops.apps"
+        name: "nexus-storage"
+        ownerReferences: []
+      spec:
+        accessModes:
+        - "ReadWriteOnce"
+        resources:
+          limits: {}
+          requests:
+            storage: "100Mi"
+    - apiVersion: "v1"
+      kind: "ConfigMap"
+      metadata:
+        annotations:
+          fabric8.fabric8-forge/summary: "Fabric8 :: Forge"
+          description: "Fabric8 :: Forge"
+          fabric8.fabric8-forge/iconUrl: "https://cdn.rawgit.com/fabric8io/fabric8-forge/master/fabric8-forge/src/main/fabric8/icon.svg"
+          fabric8.io/yaml-schema: "type: object\nproperties:\n  jenkinsfile-library-git-repository:\n\
+            \    type: string\n    description: The git clone URL for the library of Jenkinsfiles\
+            \ used to associate CD pipelines with projects\n      reused across projects\n\
+            \    default: https://github.com/fabric8io/jenkins-workflow-library.git\n\
+            \  use-external-git-address:\n    type: boolean\n    description: Whether\
+            \ we should use the external git URLs. Using internal tends to avoid DNS issues\
+            \ of kubernetes pods not seeing external host names.\n  jenkins-gogs-user:\n\
+            \    type: string\n    description: The user name for Jenkins to login to\
+            \ Gogs\n    default: gogsadmin\n  jenkins-gogs-email:\n    type: string\n\
+            \    description: The email address of the Jenkins user on Gogs\n    default:\
+            \ 'gogsadmin@fabric8.local'\n  jenkins-gogs-password:\n    type: string\n\
+            \    description: The password for Jenkins to login to Gogs\n    default:\
+            \ RedHat$1\n  fabric8-default-environments:\n    type: string\n    description:\
+            \ The list of default environment names to actual kubernetes namespaces\n\
+            \    default: Testing=${namespace}-testing,Staging=${namespace}-staging,Production=${namespace}-prod\n"
+        finalizers: []
+        labels:
+          provider: "fabric8"
+          project: "fabric8-forge"
+          version: "2.3.88"
+          group: "io.fabric8.forge.apps"
+        name: "fabric8-forge"
+        ownerReferences: []
+      data:
+        fabric8-default-environments: "Testing=${namespace}-testing,Staging=${namespace}-staging,Production=${namespace}-prod"
+        jenkins-gogs-email: "gogsadmin@fabric8.local"
+        jenkins-gogs-password: "RedHat$1"
+        jenkins-gogs-user: "gogsadmin"
+        jenkinsfile-library-git-repository: "https://github.com/fabric8io/fabric8-jenkinsfile-library.git"
+        jenkinsfile-library-git-tag: "v2.2.311"
+        use-external-git-address: "false"
+    - apiVersion: "v1"
+      kind: "ConfigMap"
+      metadata:
+        annotations: {}
+        finalizers: []
+        labels:
+          provider: "fabric8"
+          project: "gogs"
+          version: "2.2.311"
+          group: "io.fabric8.devops.apps"
+        name: "fabric8-git-app-secrets"
+        namespace: "user-secrets-source-admin"
+        ownerReferences: []
+      data:
+        gogs: "default-git-gogs"
+    - apiVersion: "v1"
+      kind: "ConfigMap"
+      metadata:
+        annotations:
+          fabric8.gogs/summary: "[Gogs](http://gogs/) - A self-hosted Git service written\
+            \ in Go"
+          description: "Gogs is a self-hosted Git service written in Go.\n\nMore details\
+            \ on the <a href=\"http://gogs.io/\" target=\"gogs\">Gogs home page</a>.\n"
+          fabric8.gogs/iconUrl: "https://cdn.rawgit.com/fabric8io/fabric8-devops/master/gogs/src/main/fabric8/icon.png"
+          expose.config.fabric8.io/url-key: "gogs-server--root-url"
+          expose.config.fabric8.io/oauth-authorize-url-key: "oauth-authorize-uri"
+          fabric8.io/json-schema: "{\n  \"type\" : \"object\",\n  \"properties\" : {\n\
+            \    \"GOGS_SERVER__ROOT_URL\" : {\n      \"type\" : \"string\",\n      \"\
+            description\" : \"The root URL for the gogs server\"\n    },\n    \"DOMAIN\"\
+            \ : {\n      \"type\" : \"string\",\n      \"description\" : \"The domain\
+            \ name applications are installed on\",\n      \"default\" : \"vagrant.f8\"\
+            \n    },\n    \"ADMIN_USER_EMAIL\" : {\n      \"type\" : \"string\",\n   \
+            \   \"description\" : \"The email address of the admin user on Gogs\",\n \
+            \     \"default\" : \"gogsadmin@fabric8.local\"\n    },\n    \"ADMIN_USER_PASSWORD\"\
+            \ : {\n      \"type\" : \"string\",\n      \"description\" : \"The password\
+            \ to login to Gogs\",\n      \"default\" : \"RedHat$1\"\n    },\n    \"GOGS_SERVER__PROTOCOL\"\
+            \ : {\n      \"type\" : \"string\",\n      \"description\" : \"The protocol\
+            \ for gogs to use; either http or https\",\n      \"default\" : \"http\"\n\
+            \    },\n    \"GOGS_OAUTH_OPENSHIFT__ENABLED\" : {\n      \"type\" : \"string\"\
+            ,\n      \"default\" : \"true\"\n    },\n    \"ADMIN_USER_CREATE\" : {\n \
+            \     \"type\" : \"string\",\n      \"description\" : \"Should we create an\
+            \ admin user on startup\",\n      \"default\" : \"true\"\n    },\n    \"GOGS_OAUTH_OPENSHIFT__TOKEN_URL\"\
+            \ : {\n      \"type\" : \"string\"\n    },\n    \"GOGS_OAUTH_OPENSHIFT__SCOPES\"\
+            \ : {\n      \"type\" : \"string\"\n    },\n    \"GOGS_OAUTH_OPENSHIFT__AUTH_URL\"\
+            \ : {\n      \"type\" : \"string\"\n    },\n    \"GOGS_WEBHOOK__TASK_INTERVAL\"\
+            \ : {\n      \"type\" : \"string\",\n      \"default\" : \"true\"\n    },\n\
+            \    \"GOGS_WEBHOOK__SKIP_TLS_VERIFY\" : {\n      \"type\" : \"string\",\n\
+            \      \"default\" : \"true\"\n    },\n    \"GOGS_SERVER__DOMAIN\" : {\n \
+            \     \"type\" : \"string\",\n      \"description\" : \"The gogs server name\"\
+            ,\n      \"default\" : \"gogs.vagrant.f8\"\n    },\n    \"ADMIN_USER_NAME\"\
+            \ : {\n      \"type\" : \"string\",\n      \"description\" : \"The user name\
+            \ to login to Gogs\",\n      \"default\" : \"gogsadmin\"\n    },\n    \"GOGS_OAUTH__ENABLED\"\
+            \ : {\n      \"type\" : \"string\",\n      \"default\" : \"true\"\n    },\n\
+            \    \"GOGS_OAUTH_TWITTER__ENABLED\" : {\n      \"type\" : \"string\",\n \
+            \     \"default\" : \"false\"\n    },\n    \"KUBERNETES_ADMIN_USER\" : {\n\
+            \      \"type\" : \"string\",\n      \"description\" : \"The default Kubernetes\
+            \ admin user\",\n      \"default\" : \"admin\"\n    },\n    \"GOGS_OAUTH_OPENSHIFT__CLIENT_ID\"\
+            \ : {\n      \"type\" : \"string\",\n      \"default\" : \"gogs\"\n    }\n\
+            \  }\n}"
+        finalizers: []
+        labels:
+          provider: "fabric8"
+          project: "gogs"
+          version: "2.2.311"
+          group: "io.fabric8.devops.apps"
+        name: "gogs"
+        ownerReferences: []
+      data:
+        admin-user-create: "true"
+        admin-user-email: "gogsadmin@fabric8.local"
+        admin-user-name: "gogsadmin"
+        admin-user-password: "RedHat$1"
+        gogs-oauth--enabled: "true"
+        gogs-oauth-openshift--auth-url: ""
+        gogs-oauth-openshift--client-id: "gogs"
+        gogs-oauth-openshift--enabled: "true"
+        gogs-oauth-openshift--scopes: ""
+        gogs-oauth-openshift--token-url: ""
+        gogs-oauth-twitter--enabled: "false"
+        gogs-server--root-url: ""
+        gogs-webhook--skip-tls-verify: "true"
+        gogs-webhook--task-interval: "true"
+        kubernetes-admin-user: "admin"
+    - apiVersion: "v1"
+      kind: "ConfigMap"
+      metadata:
+        annotations:
+          fabric8.jenkins/summary: "[Jenkins](http://jenkins-ci.org/) extendable open\
+            \ source continuous integration server"
+          description: "Jenkins CI is a leading open-source continuous integration server.\
+            \ Built with Java, it provides 985 plugins to support building and testing\
+            \ virtually any project.\n\n[http://jenkins-ci.org/](http://jenkins-ci.org/)"
+          fabric8.jenkins/iconUrl: "https://cdn.rawgit.com/fabric8io/fabric8-devops/master/jenkins/src/main/fabric8/icon.svg"
+          fabric8.io/json-schema: "{\n  \"type\" : \"object\",\n  \"properties\" : {\n\
+            \    \"PIPELINE_ELASTICSEARCH_PROTOCOL\" : {\n      \"type\" : \"string\"\
+            ,\n      \"description\" : \"Protocol used to connect to elasticsearch\",\n\
+            \      \"default\" : \"http\"\n    },\n    \"JENKINS_GOGS_USER\" : {\n   \
+            \   \"type\" : \"string\",\n      \"description\" : \"The user name for Jenkins\
+            \ to login to Gogs\",\n      \"default\" : \"gogsadmin\"\n    },\n    \"JENKINS_GOGS_PASSWORD\"\
+            \ : {\n      \"type\" : \"string\",\n      \"description\" : \"The password\
+            \ for Jenkins to login to Gogs\",\n      \"default\" : \"RedHat$1\"\n    },\n\
+            \    \"PIPELINE_ELASTICSEARCH_HOST\" : {\n      \"type\" : \"string\",\n \
+            \     \"description\" : \"Elasticsearch hostname used for pipeline events\"\
+            ,\n      \"default\" : \"elasticsearch\"\n    },\n    \"JENKINS_GOGS_EMAIL\"\
+            \ : {\n      \"type\" : \"string\",\n      \"description\" : \"The email address\
+            \ of the Jenkins user on Gogs\",\n      \"default\" : \"gogsadmin@fabric8.local\"\
+            \n    }\n  }\n}"
+        finalizers: []
+        labels:
+          provider: "fabric8"
+          project: "jenkins"
+          version: "2.2.311"
+          group: "io.fabric8.devops.apps"
+        name: "jenkins"
+        ownerReferences: []
+      data:
+        jenkins-gogs-email: "gogsadmin@fabric8.local"
+        jenkins-gogs-password: "RedHat$1"
+        jenkins-gogs-user: "gogsadmin"
+        pipeline-elasticsearch-protocol: "http"
+        pipeline-elasticsearch-host: "elasticsearch"
+        project-version: "2.2.311"
+    - apiVersion: "extensions/v1beta1"
+      kind: "Deployment"
+      metadata:
+        annotations:
+          fabric8.io/iconUrl: "https://cdn.rawgit.com/fabric8io/fabric8-devops/master/fabric8-docker-registry/src/main/fabric8/icon.png"
+          fabric8.io/git-commit: "2b9f7ce19493fe6d18392ac4f4be16f5e1a76fa3"
+          fabric8.io/git-branch: "release-v2.2.311"
+          fabric8.io/metrics-path: "dashboard/file/kubernetes-pods.json/?var-project=fabric8-docker-registry&var-version=2.2.311"
+        finalizers: []
+        labels:
+          provider: "fabric8"
+          project: "fabric8-docker-registry"
+          version: "2.2.311"
+          group: "io.fabric8.devops.apps"
+        name: "fabric8-docker-registry"
+        ownerReferences: []
+      spec:
+        replicas: 1
+        selector:
+          matchExpressions: []
+          matchLabels:
+            provider: "fabric8"
+            project: "fabric8-docker-registry"
+            group: "io.fabric8.devops.apps"
+        template:
+          metadata:
+            annotations:
+              fabric8.io/iconUrl: "https://cdn.rawgit.com/fabric8io/fabric8-devops/master/fabric8-docker-registry/src/main/fabric8/icon.png"
+              fabric8.io/git-commit: "2b9f7ce19493fe6d18392ac4f4be16f5e1a76fa3"
+              fabric8.io/git-branch: "release-v2.2.311"
+              fabric8.io/metrics-path: "dashboard/file/kubernetes-pods.json/?var-project=fabric8-docker-registry&var-version=2.2.311"
+              pod.alpha.kubernetes.io/init-containers: "[{\"image\":\"busybox\",\"imagePullPolicy\"\
+                :\"IfNotPresent\",\"name\":\"init\",\"command\":[\"chmod\",\"777\",\"\
+                /var/lib/registry\"],\"volumeMounts\":[{\"mountPath\":\"/var/lib/registry\"\
+                ,\"name\":\"fabric8-docker-registry-storage\"}]}]"
+            finalizers: []
+            labels:
+              provider: "fabric8"
+              project: "fabric8-docker-registry"
+              version: "2.2.311"
+              group: "io.fabric8.devops.apps"
+            ownerReferences: []
+          spec:
+            containers:
+            - args: []
+              command: []
+              env:
+              - name: "KUBERNETES_NAMESPACE"
+                valueFrom:
+                  fieldRef:
+                    fieldPath: "metadata.namespace"
+              image: "registry:2"
+              imagePullPolicy: "IfNotPresent"
+              name: "fabric8-docker-registry"
+              ports:
+              - containerPort: 5000
+                name: "http"
+              resources:
+                limits:
+                  cpu: "0"
+                  memory: "0"
+                requests:
+                  cpu: "0"
+                  memory: "0"
+              volumeMounts:
+              - mountPath: "/var/lib/registry"
+                name: "fabric8-docker-registry-storage"
+                readOnly: false
+            imagePullSecrets: []
+            nodeSelector: {}
+            volumes:
+            - name: "fabric8-docker-registry-storage"
+              persistentVolumeClaim:
+                claimName: "fabric8-docker-registry-storage"
+    - apiVersion: "extensions/v1beta1"
+      kind: "Deployment"
+      metadata:
+        annotations:
+          fabric8.io/iconUrl: "https://cdn.rawgit.com/fabric8io/fabric8-forge/master/fabric8-forge/src/main/fabric8/icon.svg"
+          fabric8.io/git-commit: "bad661f3285ecbcd6b7a9373e194bda075d832eb"
+          fabric8.io/git-branch: "release-v2.3.88"
+          fabric8.io/metrics-path: "dashboard/file/camel-routes.json/?var-project=fabric8-forge&var-version=2.3.88"
+        finalizers: []
+        labels:
+          provider: "fabric8"
+          project: "fabric8-forge"
+          version: "2.3.88"
+          group: "io.fabric8.forge.apps"
+        name: "fabric8-forge"
+        ownerReferences: []
+      spec:
+        replicas: 1
+        selector:
+          matchExpressions: []
+          matchLabels:
+            provider: "fabric8"
+            project: "fabric8-forge"
+            group: "io.fabric8.forge.apps"
+        template:
+          metadata:
+            annotations:
+              fabric8.io/iconUrl: "https://cdn.rawgit.com/fabric8io/fabric8-forge/master/fabric8-forge/src/main/fabric8/icon.svg"
+              fabric8.io/git-commit: "bad661f3285ecbcd6b7a9373e194bda075d832eb"
+              fabric8.io/git-branch: "release-v2.3.88"
+              fabric8.io/metrics-path: "dashboard/file/camel-routes.json/?var-project=fabric8-forge&var-version=2.3.88"
+            finalizers: []
+            labels:
+              provider: "fabric8"
+              project: "fabric8-forge"
+              version: "2.3.88"
+              group: "io.fabric8.forge.apps"
+            ownerReferences: []
+          spec:
+            containers:
+            - args: []
+              command: []
+              env:
+              - name: "FABRIC8_DEFAULT_ENVIRONMENTS"
+                valueFrom:
+                  configMapKeyRef:
+                    key: "fabric8-default-environments"
+                    name: "fabric8-forge"
+              - name: "JENKINSFILE_LIBRARY_GIT_REPOSITORY"
+                valueFrom:
+                  configMapKeyRef:
+                    key: "jenkinsfile-library-git-repository"
+                    name: "fabric8-forge"
+              - name: "JENKINSFILE_LIBRARY_GIT_TAG"
+                valueFrom:
+                  configMapKeyRef:
+                    key: "jenkinsfile-library-git-tag"
+                    name: "fabric8-forge"
+              - name: "USE_EXTERNAL_GIT_ADDRESS"
+                valueFrom:
+                  configMapKeyRef:
+                    key: "use-external-git-address"
+                    name: "fabric8-forge"
+              - name: "KUBERNETES_TRUST_CERTIFICATES"
+                value: "true"
+              - name: "SKIP_TLS_VERIFY"
+                value: "true"
+              - name: "JENKINS_GOGS_PASSWORD"
+                valueFrom:
+                  configMapKeyRef:
+                    key: "jenkins-gogs-password"
+                    name: "fabric8-forge"
+              - name: "JENKINS_GOGS_USER"
+                valueFrom:
+                  configMapKeyRef:
+                    key: "jenkins-gogs-user"
+                    name: "fabric8-forge"
+              - name: "FABRIC8_ARCHETYPES_VERSION"
+                value: "2.2.195"
+              - name: "JAVA_OPTIONS"
+                value: "-Dorg.apache.maven.log_transfer=true -Dorg.apache.cxf.logging.enabled=false"
+              - name: "JENKINS_GOGS_EMAIL"
+                valueFrom:
+                  configMapKeyRef:
+                    key: "jenkins-gogs-email"
+                    name: "fabric8-forge"
+              - name: "KUBERNETES_MASTER"
+                value: "https://kubernetes.default.svc"
+              - name: "KUBERNETES_NAMESPACE"
+                valueFrom:
+                  fieldRef:
+                    fieldPath: "metadata.namespace"
+              image: "fabric8/fabric8-forge:2.3.88"
+              imagePullPolicy: "IfNotPresent"
+              name: "fabric8-forge"
+              ports:
+              - containerPort: 8080
+                name: "http"
+                protocol: "TCP"
+              - containerPort: 8778
+                name: "jolokia"
+                protocol: "TCP"
+              readinessProbe:
+                httpGet:
+                  httpHeaders: []
+                  path: "/_ping"
+                  port: 8080
+                initialDelaySeconds: 30
+                timeoutSeconds: 10
+              resources:
+                limits:
+                  cpu: "0"
+                  memory: "0"
+                requests:
+                  cpu: "0"
+                  memory: "0"
+              securityContext:
+                privileged: false
+              volumeMounts: []
+            imagePullSecrets: []
+            nodeSelector: {}
+            serviceAccountName: "fabric8"
+            volumes: []
+    - apiVersion: "extensions/v1beta1"
+      kind: "Deployment"
+      metadata:
+        annotations:
+          configmap.fabric8.io/update-on-change: "gogs"
+          fabric8.io/iconUrl: "https://cdn.rawgit.com/fabric8io/fabric8-devops/master/gogs/src/main/fabric8/icon.png"
+          fabric8.io/git-commit: "2b9f7ce19493fe6d18392ac4f4be16f5e1a76fa3"
+          fabric8.io/git-branch: "release-v2.2.311"
+          fabric8.io/metrics-path: "dashboard/file/kubernetes-pods.json/?var-project=gogs&var-version=2.2.311"
+        finalizers: []
+        labels:
+          provider: "fabric8"
+          project: "gogs"
+          version: "2.2.311"
+          group: "io.fabric8.devops.apps"
+        name: "gogs"
+        ownerReferences: []
+      spec:
+        replicas: 1
+        selector:
+          matchExpressions: []
+          matchLabels:
+            provider: "fabric8"
+            project: "gogs"
+            group: "io.fabric8.devops.apps"
+        template:
+          metadata:
+            annotations:
+              fabric8.io/iconUrl: "https://cdn.rawgit.com/fabric8io/fabric8-devops/master/gogs/src/main/fabric8/icon.png"
+              fabric8.io/git-commit: "2b9f7ce19493fe6d18392ac4f4be16f5e1a76fa3"
+              configmap.fabric8.io/update-on-change: "gogs"
+              fabric8.io/git-branch: "release-v2.2.311"
+              fabric8.io/metrics-path: "dashboard/file/kubernetes-pods.json/?var-project=gogs&var-version=2.2.311"
+              pod.alpha.kubernetes.io/init-containers: "[{\"image\":\"busybox\",\"imagePullPolicy\"\
+                :\"IfNotPresent\",\"name\":\"init\",\"command\":[\"chmod\",\"777\",\"\
+                /app/gogs/data\"],\"volumeMounts\":[{\"mountPath\":\"/app/gogs/data\"\
+                ,\"name\":\"gogs-data\"}]}]"
+            finalizers: []
+            labels:
+              provider: "fabric8"
+              project: "gogs"
+              version: "2.2.311"
+              group: "io.fabric8.devops.apps"
+            ownerReferences: []
+          spec:
+            containers:
+            - args: []
+              command: []
+              env:
+              - name: "GOGS_SERVER__ROOT_URL"
+                valueFrom:
+                  configMapKeyRef:
+                    key: "gogs-server--root-url"
+                    name: "gogs"
+              - name: "ADMIN_USER_EMAIL"
+                valueFrom:
+                  configMapKeyRef:
+                    key: "admin-user-email"
+                    name: "gogs"
+              - name: "ADMIN_USER_PASSWORD"
+                valueFrom:
+                  configMapKeyRef:
+                    key: "admin-user-password"
+                    name: "gogs"
+              - name: "ADMIN_USER_CREATE"
+                value: "true"
+              - name: "GOGS_WEBHOOK__TASK_INTERVAL"
+                value: "true"
+              - name: "GOGS_WEBHOOK__SKIP_TLS_VERIFY"
+                value: "true"
+              - name: "ADMIN_USER_NAME"
+                valueFrom:
+                  configMapKeyRef:
+                    key: "admin-user-name"
+                    name: "gogs"
+              - name: "KUBERNETES_ADMIN_USER"
+                valueFrom:
+                  configMapKeyRef:
+                    key: "kubernetes-admin-user"
+                    name: "gogs"
+              - name: "KUBERNETES_NAMESPACE"
+                valueFrom:
+                  fieldRef:
+                    fieldPath: "metadata.namespace"
+              image: "fabric8/gogs:v0.9.97"
+              imagePullPolicy: "IfNotPresent"
+              name: "gogs"
+              ports:
+              - containerPort: 2222
+                name: "ssh"
+              - containerPort: 3000
+                name: "http"
+              resources:
+                limits:
+                  cpu: "0"
+                  memory: "0"
+                requests:
+                  cpu: "0"
+                  memory: "0"
+              volumeMounts:
+              - mountPath: "/app/gogs/data"
+                name: "gogs-data"
+            imagePullSecrets: []
+            nodeSelector: {}
+            serviceAccountName: "gogs"
+            volumes:
+            - name: "gogs-data"
+              persistentVolumeClaim:
+                claimName: "gogs-data"
+    - apiVersion: "extensions/v1beta1"
+      kind: "Deployment"
+      metadata:
+        annotations:
+          fabric8.io/iconUrl: "https://cdn.rawgit.com/fabric8io/fabric8-devops/master/jenkins/src/main/fabric8/icon.svg"
+          fabric8.io/git-commit: "2b9f7ce19493fe6d18392ac4f4be16f5e1a76fa3"
+          fabric8.io/git-branch: "release-v2.2.311"
+          fabric8.io/metrics-path: "dashboard/file/kubernetes-pods.json/?var-project=jenkins&var-version=2.2.311"
+        finalizers: []
+        labels:
+          provider: "fabric8"
+          project: "jenkins"
+          version: "2.2.311"
+          group: "io.fabric8.devops.apps"
+        name: "jenkins"
+        ownerReferences: []
+      spec:
+        replicas: 1
+        selector:
+          matchExpressions: []
+          matchLabels:
+            provider: "fabric8"
+            project: "jenkins"
+            group: "io.fabric8.devops.apps"
+        template:
+          metadata:
+            annotations:
+              fabric8.io/git-commit: "2b9f7ce19493fe6d18392ac4f4be16f5e1a76fa3"
+              fabric8.io/secret-ssh-key: "jenkins-git-ssh,jenkins-master-ssh"
+              fabric8.io/secret-ssh-config: "jenkins-ssh-config"
+              fabric8.io/metrics-path: "dashboard/file/kubernetes-pods.json/?var-project=jenkins&var-version=2.2.311"
+              fabric8.io/secret-gpg-key: "jenkins-release-gpg"
+              fabric8.io/iconUrl: "https://cdn.rawgit.com/fabric8io/fabric8-devops/master/jenkins/src/main/fabric8/icon.svg"
+              fabric8.io/secret-maven-settings: "jenkins-maven-settings"
+              fabric8.io/git-branch: "release-v2.2.311"
+              fabric8.io/secret-hub-api-token: "jenkins-hub-api-token"
+              fabric8.io/secret-docker-cfg: "jenkins-docker-cfg"
+              pod.alpha.kubernetes.io/init-containers: "[{\"image\":\"busybox\",\"imagePullPolicy\"\
+                :\"IfNotPresent\",\"name\":\"init\",\"command\":[\"chmod\",\"777\",\"\
+                /var/jenkins_home/workspace\",\"/var/jenkins_home/jobs\"],\"volumeMounts\"\
+                :[{\"mountPath\":\"/var/jenkins_home/jobs\",\"name\":\"jenkins-jobs\"\
+                },{\"mountPath\":\"/var/jenkins_home/workspace\",\"name\":\"jenkins-workspace\"\
+                }]}]"
+            finalizers: []
+            labels:
+              provider: "fabric8"
+              project: "jenkins"
+              version: "2.2.311"
+              group: "io.fabric8.devops.apps"
+            ownerReferences: []
+          spec:
+            containers:
+            - args: []
+              command: []
+              env:
+              - name: "PROJECT_VERSION"
+                valueFrom:
+                  configMapKeyRef:
+                    key: "project-version"
+                    name: "jenkins"
+              - name: "PIPELINE_ELASTICSEARCH_PROTOCOL"
+                valueFrom:
+                  configMapKeyRef:
+                    key: "pipeline-elasticsearch-protocol"
+                    name: "jenkins"
+              - name: "JENKINS_GOGS_PASSWORD"
+                valueFrom:
+                  configMapKeyRef:
+                    key: "jenkins-gogs-password"
+                    name: "jenkins"
+              - name: "JENKINS_GOGS_USER"
+                valueFrom:
+                  configMapKeyRef:
+                    key: "jenkins-gogs-user"
+                    name: "jenkins"
+              - name: "JENKINS_GOGS_EMAIL"
+                valueFrom:
+                  configMapKeyRef:
+                    key: "jenkins-gogs-email"
+                    name: "jenkins"
+              - name: "PIPELINE_ELASTICSEARCH_HOST"
+                valueFrom:
+                  configMapKeyRef:
+                    key: "pipeline-elasticsearch-host"
+                    name: "jenkins"
+              - name: "KUBERNETES_NAMESPACE"
+                valueFrom:
+                  fieldRef:
+                    fieldPath: "metadata.namespace"
+              - name: "KUBERNETES_MASTER"
+                value: "https://kubernetes.default"
+              image: "fabric8/jenkins-docker:2.2.311"
+              imagePullPolicy: "IfNotPresent"
+              livenessProbe:
+                httpGet:
+                  httpHeaders: []
+                  path: "/blue/"
+                  port: 8080
+                initialDelaySeconds: 120
+                timeoutSeconds: 10
+              name: "jenkins"
+              ports:
+              - containerPort: 50000
+                name: "slave"
+              - containerPort: 8080
+                name: "http"
+              readinessProbe:
+                httpGet:
+                  httpHeaders: []
+                  path: "/blue/"
+                  port: 8080
+                initialDelaySeconds: 20
+                timeoutSeconds: 10
+              resources:
+                limits:
+                  cpu: "0"
+                  memory: "0"
+                requests:
+                  cpu: "0"
+                  memory: "0"
+              volumeMounts:
+              - mountPath: "/var/jenkins_home/jobs"
+                name: "jenkins-jobs"
+                readOnly: false
+              - mountPath: "/var/jenkins_home/workspace"
+                name: "jenkins-workspace"
+                readOnly: false
+            imagePullSecrets: []
+            nodeSelector: {}
+            serviceAccountName: "jenkins"
+            volumes:
+            - name: "jenkins-jobs"
+              persistentVolumeClaim:
+                claimName: "jenkins-jobs"
+            - name: "jenkins-workspace"
+              persistentVolumeClaim:
+                claimName: "jenkins-workspace"
+    - apiVersion: "extensions/v1beta1"
+      kind: "Deployment"
+      metadata:
+        annotations:
+          fabric8.io/iconUrl: "https://cdn.rawgit.com/fabric8io/fabric8-devops/master/nexus/src/main/fabric8/icon.png"
+          fabric8.io/git-commit: "2b9f7ce19493fe6d18392ac4f4be16f5e1a76fa3"
+          fabric8.io/git-branch: "release-v2.2.311"
+          fabric8.io/metrics-path: "dashboard/file/kubernetes-pods.json/?var-project=nexus&var-version=2.2.311"
+        finalizers: []
+        labels:
+          provider: "fabric8"
+          project: "nexus"
+          version: "2.2.311"
+          group: "io.fabric8.devops.apps"
+        name: "nexus"
+        ownerReferences: []
+      spec:
+        replicas: 1
+        selector:
+          matchExpressions: []
+          matchLabels:
+            provider: "fabric8"
+            project: "nexus"
+            group: "io.fabric8.devops.apps"
+        template:
+          metadata:
+            annotations:
+              fabric8.io/iconUrl: "https://cdn.rawgit.com/fabric8io/fabric8-devops/master/nexus/src/main/fabric8/icon.png"
+              fabric8.io/git-commit: "2b9f7ce19493fe6d18392ac4f4be16f5e1a76fa3"
+              fabric8.io/git-branch: "release-v2.2.311"
+              fabric8.io/metrics-path: "dashboard/file/kubernetes-pods.json/?var-project=nexus&var-version=2.2.311"
+              pod.alpha.kubernetes.io/init-containers: "[{\"image\":\"busybox\",\"imagePullPolicy\"\
+                :\"IfNotPresent\",\"name\":\"init\",\"command\":[\"chmod\",\"777\",\"\
+                /sonatype-work/storage\"],\"volumeMounts\":[{\"mountPath\":\"/sonatype-work/storage\"\
+                ,\"name\":\"nexus-storage\"}]}]"
+            finalizers: []
+            labels:
+              provider: "fabric8"
+              project: "nexus"
+              version: "2.2.311"
+              group: "io.fabric8.devops.apps"
+            ownerReferences: []
+          spec:
+            containers:
+            - args: []
+              command: []
+              env:
+              - name: "KUBERNETES_NAMESPACE"
+                valueFrom:
+                  fieldRef:
+                    fieldPath: "metadata.namespace"
+              image: "fabric8/nexus:2.2.311"
+              imagePullPolicy: "IfNotPresent"
+              livenessProbe:
+                failureThreshold: 3
+                httpGet:
+                  httpHeaders: []
+                  path: "/content/repositories/"
+                  port: 8081
+                initialDelaySeconds: 180
+                timeoutSeconds: 10
+              name: "nexus"
+              ports:
+              - containerPort: 8081
+                name: "http"
+              readinessProbe:
+                failureThreshold: 10
+                httpGet:
+                  httpHeaders: []
+                  path: "/content/repositories/"
+                  port: 8081
+                initialDelaySeconds: 60
+                timeoutSeconds: 10
+              resources:
+                limits:
+                  cpu: "0"
+                  memory: "0"
+                requests:
+                  cpu: "0"
+                  memory: "0"
+              volumeMounts:
+              - mountPath: "/sonatype-work/storage"
+                name: "nexus-storage"
+                readOnly: false
+            imagePullSecrets: []
+            nodeSelector: {}
+            volumes:
+            - name: "nexus-storage"
+              persistentVolumeClaim:
+                claimName: "nexus-storage"
+    parameters: []

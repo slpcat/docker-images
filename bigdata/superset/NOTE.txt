@@ -1,0 +1,16 @@
+官方项目地址
+https://github.com/apache/incubator-superset
+不推荐直接在服务器上安装，因为依赖的包很多，一方面可能少装，其次是把环境搞乱了，很难维护后续
+第三方Docker项目
+https://github.com/amancevice/superset
+
+docker run --name superset -d -p 8088:8088 amancevice/superset 
+
+docker exec -it superset superset-init
+
+安装包
+pip install sqlalchemy-clickhouse
+
+增加 SQLAlchemy 资源
+clickhouse://default:password@localhost:8123/default
+clickhouse+native://default:password@localhost:9000/default

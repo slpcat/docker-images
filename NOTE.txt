@@ -1,0 +1,3 @@
+https://github.com/deislabs/krustlet 利用 Virtual Kubelet类似的架构调度 WebAssembly 应用
+https://github.com/dmcgowan/containerd-wasm，完善了containerd的WASM shim实现。可以让containerd支持WASM container，并且可以利用Kubernetes集群管理和调度 WASM container
+

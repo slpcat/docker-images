@@ -1,0 +1,26 @@
+docker run -ti --rm -v /path/to/dir:/fluentd/etc fluentd -c /fluentd/etc/<conf> -v
+RUBY_GC_HEAP_OLDOBJECT_LIMIT_FACTOR=0.9
+<system>
+  workers 8
+</system>
+# S3
+<match ...>
+  @type s3
+  store_as gzip_command
+  <buffer ...>
+    flush_thread_count 8
+    ...
+  </buffer>
+  ...
+</match>
+
+# Treasure Data
+<match ...>
+  @type tdlog
+  use_gzip_command
+  <buffer ...>
+    flush_thread_count 8
+    ...
+  </buffer>
+  ...
+</match>

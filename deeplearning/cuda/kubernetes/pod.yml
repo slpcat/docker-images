@@ -1,0 +1,31 @@
+kind: pod
+apiVersion: v1
+metadata:
+  annotations:
+    scheduler.alpha.kubernetes.io/affinity: >
+      {
+        "nodeAffinity": {
+          "requiredDuringSchedulingIgnoredDuringExecution": {
+            "nodeSelectorTerms": [
+              {
+                "matchExpressions": [
+                  {
+                    "key": "alpha.kubernetes.io/nvidia-gpu-name",
+                    "operator": "In",
+                    "values": ["Tesla K80", "Tesla P100"]
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      }
+spec:
+  containers:
+    - image: gcr.io/tensorflow/tensorflow:latest-gpu
+      name: gpu-container-1
+      command: ["python"]
+      args: ["-u", "-c", "import tensorflow"]
+      resources:
+        limits:
+          alpha.kubernetes.io/nvidia-gpu: 2

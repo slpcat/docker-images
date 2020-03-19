@@ -1,0 +1,1 @@
+kubectl create secret docker-registry registrykey-gitlab --docker-server=gitlab.default.svc.cluster.local:5000/v2/ --docker-username='username' --docker-password='password' --docker-email='slpcat@qq.com'

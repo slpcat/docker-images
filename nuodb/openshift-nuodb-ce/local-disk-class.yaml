@@ -1,0 +1,22 @@
+---
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: local-disk
+provisioner: no-provisioning
+parameters:
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: local-disk-0
+  labels:
+    type: local
+spec:
+  storageClassName: local-disk
+  capacity:
+    storage: 100Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/local-storage/ebs/disk0"

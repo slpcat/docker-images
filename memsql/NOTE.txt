@@ -1,0 +1,8 @@
+docker run -d --name=memsql \
+  -p 3306:3306 -p 9000:9000 \
+  -e IGNORE_MIN_REQUIREMENTS=1 \
+  --sysctl net.core.somaxconn=4096 --sysctl vm.min_free_kbytes=2639550 \
+  -v /data/memsql:/memsql
+  memsql/quickstart
+
+sysctl参数根据建议修改

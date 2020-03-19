@@ -1,0 +1,12 @@
+apiVersion: v1
+appVersion: 6.2.4
+description: A Helm chart to periodically check the status of your services with heartbeat
+home: https://www.elastic.co/products/beats/heartbeat
+icon: https://www.elastic.co/jp/assets/blt75e7956191e1bd55/icon-heartbeat-bb.svg
+maintainers:
+- email: ykuoka@gmail.com
+  name: mumoshu
+name: heartbeat
+sources:
+- https://www.elastic.co/guide/en/beats/heartbeat/current/index.html
+version: 0.1.0

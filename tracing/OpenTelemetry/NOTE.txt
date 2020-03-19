@@ -1,0 +1,21 @@
+OpenTelemetry is an effort to combine all three verticals into a single set of system components and language-specific telemetry libraries. It is meant to replace both the OpenTracing project, which focused exclusively on tracing, and the OpenCensus project, which focused on tracing and metrics.
+
+OpenTelemetry will not initially support logging, though we aim to incorporate this over time.
+
+Sunsetting of the OpenCensus and OpenTracing libraries*	November 2019
+
+OpenTelemetry的终极目标了：实现Metrics、Tracing、Logging的融合及大一统，作为APM的数据采集终极解决方案。
+
+Tracing：提供了一个请求从接收到处理完成整个生命周期的跟踪路径，一次请求通常过经过N个系统，因此也被称为分布式链路追踪
+Metrics：例如cpu、请求延迟、用户访问数等Counter、Gauge、Histogram指标
+Logging：传统的日志，提供精确的系统记录
+这三者的组合可以形成大一统的APM解决方案：
+
+基于Metrics告警发现异常
+通过Tracing定位到具体的系统和方法
+根据模块的日志最终定位到错误详情和根源
+调整Metrics等设置，更精确的告警/发现问题
+
+2019年11月，OpenTracing和OpenCensus正式不再维护(ReadOnly)
+在两年时间内提供对OpenTracing和OpenCensus的协议兼容
+

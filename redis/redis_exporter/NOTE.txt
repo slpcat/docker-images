@@ -1,0 +1,2 @@
+每个redis实例都有一个redis_exporter
+docker run -d --name redis_exporter -p 9121:9121 oliver006/redis_exporter:alpine

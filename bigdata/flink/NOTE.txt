@@ -1,0 +1,11 @@
+https://ci.apache.org/projects/flink/flink-docs-stable/ops/deployment/kubernetes.html
+
+Flink session cluster on Kubernetes
+
+https://github.com/docker-flink/examples
+
+https://github.com/apache/flink-docker
+
+Flink job cluster on Kubernetes
+
+Native Kubernetes Setup

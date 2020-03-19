@@ -1,0 +1,1 @@
+See the chart [README](/deployment/monocular/README.md) to learn how to deploy and configure Monocular on your Kubernetes cluster.

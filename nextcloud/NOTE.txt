@@ -1,0 +1,26 @@
+docker run -d --restart=always \
+
+
+
+-e  UID=1000
+-e GID=1000
+-e PLOAD_MAX_SIZE=10G
+-e APC_SHM_SIZE=128M
+-e OPCACHE_MEM_SIZE=128
+-e CRON_PERIOD=15m
+-e TZ=Aisa/Shanghai
+-e ADMIN_USER=admin
+-e ADMIN_PASSWORD=123456
+-e DOMAIN=example.com
+-e DB_TYPE=mysql
+-e DB_NAME=nextcloud
+-e DB_USER=nextcloud
+-e DB_PASSWORD=123456
+-e DB_HOST=nextcloud-db:3306
+
+
+-v /nextcloud/data:/data
+-v /nextcloud/config:/config
+-v /nextcloud/apps:/apps2
+-v /nextcloud/themes:/nextcloud/themes
+ wonderfall/nextcloud

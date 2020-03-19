@@ -1,0 +1,99 @@
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: openebs-standard
+  annotations:
+    cas.openebs.io/config: |
+      - name: ReplicaCount
+        value: "3"
+provisioner: openebs.io/provisioner-iscsi
+#reclaimPolicy: Retain
+allowVolumeExpansion: true
+mountOptions: ["rw", "nobarrier", "inode_readahead_blks=4096", "delalloc", "commit=600"]
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: openebs-standalone
+  annotations:
+    cas.openebs.io/config: |
+      - name: ReplicaCount
+        value: "1"
+provisioner: openebs.io/provisioner-iscsi
+#reclaimPolicy: Retain
+allowVolumeExpansion: true
+mountOptions: ["rw", "nobarrier", "inode_readahead_blks=4096", "delalloc", "commit=600"]
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: openebs-mongodb
+  annotations:
+    cas.openebs.io/config: |
+      - name: ReplicaCount
+        value: "1"
+      - name: StoragePool
+        value: default
+      - name: FSType
+        value: "xfs"
+      #- name: ReplicaAntiAffinityTopoKey
+      #  value: failure-domain.beta.kubernetes.io/zone
+provisioner: openebs.io/provisioner-iscsi
+#reclaimPolicy: Retain
+allowVolumeExpansion: true
+mountOptions: ["rw", "noatime", "nodiratime", "inode64", "logbsize=256k"]
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: openebs-cstor-sparse
+  annotations:
+    cas.openebs.io/config: |
+      - name: StoragePoolClaim
+        value: "cstor-sparse-pool"
+      #- name: TargetResourceLimits
+      #  value: |-
+      #      memory: 1Gi
+      #      cpu: 200m
+      #- name: AuxResourceLimits
+      #  value: |-
+      #      memory: 0.5Gi
+      #      cpu: 50m
+    openebs.io/cas-type: cstor
+provisioner: openebs.io/provisioner-iscsi
+#reclaimPolicy: Retain
+allowVolumeExpansion: true
+mountOptions: ["rw", "nobarrier", "inode_readahead_blks=4096", "delalloc", "commit=600"]
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: openebs-jiva-default
+  annotations:
+    cas.openebs.io/config: |
+      - name: ReplicaCount
+        value: "3"
+      - name: StoragePool
+        value: default
+      #- name: TargetResourceLimits
+      #  value: |-
+      #      memory: 1Gi
+      #      cpu: 100m
+      #- name: AuxResourceLimits
+      #  value: |-
+      #      memory: 0.5Gi
+      #      cpu: 50m
+      #- name: ReplicaResourceLimits
+      #  value: |-
+      #      memory: 2Gi
+    openebs.io/cas-type: jiva
+provisioner: openebs.io/provisioner-iscsi
+#reclaimPolicy: Retain
+allowVolumeExpansion: true
+mountOptions:
+  - rw
+  - nobarrier
+  - inode_readahead_blks=4096
+  - delalloc
+  - commit=600

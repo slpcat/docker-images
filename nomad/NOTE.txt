@@ -1,0 +1,22 @@
+推荐方案
+适用场景:容器化应用，旧的非容器应用，kubernetes应用等多种运行环境混合部署
+
+1.服务发现 consul 统一的服务发现与注册中心
+2.集群编排 nomad 
+3.反向代理/ingress traefik 统一的外部流量入口,转发至相应的后端（raw，docker，k8s）
+
+特性简介
+
+1.支持混合云与IDC并存
+2.支持多机房/可用区
+3.可以按照部门，系统，机柜，IP等各种条件指定应用运行位置
+4.支持健康检查和自愈，支持consul服务自动发现，包括业务和监控
+5.支持自动配置API网关出口域名和路由跳转规则
+6.支持多种限流规则和熔断条件
+7.支持弹性扩容/缩容
+8.支持日志自动发现和上报
+9.支持灰度发布和自动回滚
+10.支持从artifacts下载软件包执行
+
+https://tech.trivago.com/2019/01/25/nomad-our-experiences-and-best-practices/
+https://www.jianshu.com/p/600e9ec16251

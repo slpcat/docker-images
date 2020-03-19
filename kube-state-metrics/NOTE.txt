@@ -1,0 +1,1 @@
+推荐使用prometheus-operator安装管理

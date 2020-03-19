@@ -1,0 +1,698 @@
+swagger: '2.0'
+info:
+  description: |
+    VMware Dispatch Identity Manager
+  title: Identity Manager
+  contact:
+    email: dispatch@vmware.com
+  version: 1.0.0
+tags:
+- name: authentication
+schemes:
+- http
+- https
+consumes:
+- application/json
+produces:
+- application/json
+basePath: /
+parameters:
+  orgIDParamOptional:
+    in: header
+    name: X-Dispatch-Org
+    type: string
+  orgIDParam:
+    in: header
+    name: X-Dispatch-Org
+    type: string
+    required: true
+paths:
+  /:
+    get:
+      security: []
+      summary: a placeholder root page, no authentication is required for this
+      operationId: root
+      responses:
+        200:
+          description: home page
+          schema:
+            $ref: "./models.json#/definitions/Message"
+        401:
+          description: Unauthorized Request
+          schema:
+            $ref: './models.json#/definitions/Error'
+        403:
+          description: access to this resource is forbidden
+          schema:
+            $ref: './models.json#/definitions/Error'
+        default:
+          description: error
+          schema:
+            $ref: "./models.json#/definitions/Error"
+  /home:
+    parameters:
+      - $ref: '#/parameters/orgIDParam'
+    get:
+      summary: a placeholder home page, no authorization policy is required for this
+      operationId: home
+      responses:
+        200:
+          description: home page
+          schema:
+            $ref: "./models.json#/definitions/Message"
+        401:
+          description: Unauthorized Request
+          schema:
+            $ref: './models.json#/definitions/Error'
+        403:
+          description: access to this resource is forbidden
+          schema:
+            $ref: './models.json#/definitions/Error'
+        default:
+          description: error
+          schema:
+            $ref: "./models.json#/definitions/Error"
+  /v1/version:
+    get:
+      security: []
+      summary: get version info
+      operationId: getVersion
+      responses:
+        200:
+          description: version info
+          schema:
+            $ref: "./models.json#/definitions/Version"
+        default:
+          description: error
+          schema:
+            $ref: "./models.json#/definitions/Error"
+  /v1/iam/auth:
+    parameters:
+      - $ref: '#/parameters/orgIDParamOptional'
+    get:
+      summary: handles authorization
+      operationId: auth
+      responses:
+        202:
+          description: default response if authorized
+          headers:
+            X-Dispatch-Org:
+              type: string
+          schema:
+            $ref: "./models.json#/definitions/Message"
+        401:
+          description: Unauthorized
+        403:
+          description: Forbidden
+        default:
+          description: error
+          schema:
+            $ref: "./models.json#/definitions/Error"
+  /v1/iam/policy:
+    parameters:
+      - $ref: '#/parameters/orgIDParam'
+    post:
+      tags:
+      - policy
+      summary: Add a new policy
+      operationId: addPolicy
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: body
+        description: Policy Object
+        required: true
+        schema:
+          $ref: './models.json#/definitions/Policy'
+      responses:
+        201:
+          description: created
+          schema:
+            $ref: './models.json#/definitions/Policy'
+        400:
+          description: Invalid input
+          schema:
+            $ref: './models.json#/definitions/Error'
+        401:
+          description: Unauthorized Request
+          schema:
+            $ref: './models.json#/definitions/Error'
+        403:
+          description: access to this resource is forbidden
+          schema:
+            $ref: './models.json#/definitions/Error'
+        409:
+          description: Already Exists
+          schema:
+            $ref: './models.json#/definitions/Error'
+        default:
+          description: Generic error response
+          schema:
+            $ref: './models.json#/definitions/Error'
+    get:
+      tags:
+      - policy
+      summary: List all existing policies
+      operationId: getPolicies
+      produces:
+      - application/json
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            type: array
+            items:
+              $ref: './models.json#/definitions/Policy'
+        401:
+          description: Unauthorized Request
+          schema:
+            $ref: './models.json#/definitions/Error'
+        403:
+          description: access to this resource is forbidden
+          schema:
+            $ref: './models.json#/definitions/Error'
+        default:
+          description: Unexpected Error
+          schema:
+            $ref: './models.json#/definitions/Error'
+  /v1/iam/policy/{policyName}:
+    parameters:
+    - $ref: '#/parameters/orgIDParam'
+    - in: path
+      name: policyName
+      description: Name of Policy to work on
+      required: true
+      type: string
+      pattern: '^[\w\d\-]+$'
+    get:
+      tags:
+      - policy
+      summary: Find Policy by name
+      description: get an Policy by name
+      operationId: getPolicy
+      produces:
+      - application/json
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            $ref: './models.json#/definitions/Policy'
+        400:
+          description: Invalid Name supplied
+          schema:
+            $ref: './models.json#/definitions/Error'
+        401:
+          description: Unauthorized Request
+          schema:
+            $ref: './models.json#/definitions/Error'
+        403:
+          description: access to this resource is forbidden
+          schema:
+            $ref: './models.json#/definitions/Error'
+        404:
+          description: Policy not found
+          schema:
+            $ref: './models.json#/definitions/Error'
+        default:
+          description: Unknown error
+          schema:
+            $ref: './models.json#/definitions/Error'
+    put:
+      tags:
+      - policy
+      summary: Update a Policy
+      operationId: updatePolicy
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: body
+        description: Policy object
+        required: true
+        schema:
+          $ref: './models.json#/definitions/Policy'
+      responses:
+        200:
+          description: Successful update
+          schema:
+            $ref: './models.json#/definitions/Policy'
+        400:
+          description: Invalid input
+          schema:
+            $ref: './models.json#/definitions/Error'
+        401:
+          description: Unauthorized Request
+          schema:
+            $ref: './models.json#/definitions/Error'
+        403:
+          description: access to this resource is forbidden
+          schema:
+            $ref: './models.json#/definitions/Error'
+        404:
+          description: Policy not found
+          schema:
+            $ref: './models.json#/definitions/Error'
+        default:
+          description: Unknown error
+          schema:
+            $ref: './models.json#/definitions/Error'
+    delete:
+      tags:
+      - policy
+      summary: Deletes an Policy
+      operationId: deletePolicy
+      produces:
+      - application/json
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            $ref: './models.json#/definitions/Policy'
+        400:
+          description: Invalid Name supplied
+          schema:
+            $ref: './models.json#/definitions/Error'
+        401:
+          description: Unauthorized Request
+          schema:
+            $ref: './models.json#/definitions/Error'
+        403:
+          description: access to this resource is forbidden
+          schema:
+            $ref: './models.json#/definitions/Error'
+        404:
+          description: Policy not found
+          schema:
+            $ref: './models.json#/definitions/Error'
+        default:
+          description: Unknown error
+          schema:
+            $ref: './models.json#/definitions/Error'
+  /v1/iam/organization:
+    parameters:
+      - $ref: '#/parameters/orgIDParamOptional'
+    post:
+      tags:
+      - organization
+      summary: Add a new organization
+      operationId: addOrganization
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: body
+        description: Organization Object
+        required: true
+        schema:
+          $ref: './models.json#/definitions/Organization'
+      responses:
+        201:
+          description: created
+          schema:
+            $ref: './models.json#/definitions/Organization'
+        400:
+          description: Invalid input
+          schema:
+            $ref: './models.json#/definitions/Error'
+        401:
+          description: Unauthorized Request
+          schema:
+            $ref: './models.json#/definitions/Error'
+        403:
+          description: access to this resource is forbidden
+          schema:
+            $ref: './models.json#/definitions/Error'
+        409:
+          description: Already Exists
+          schema:
+            $ref: './models.json#/definitions/Error'
+        default:
+          description: Generic error response
+          schema:
+            $ref: './models.json#/definitions/Error'
+    get:
+      tags:
+      - organization
+      summary: List all existing organizations
+      operationId: getOrganizations
+      produces:
+      - application/json
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            type: array
+            items:
+              $ref: './models.json#/definitions/Organization'
+        401:
+          description: Unauthorized Request
+          schema:
+            $ref: './models.json#/definitions/Error'
+        403:
+          description: access to this resource is forbidden
+          schema:
+            $ref: './models.json#/definitions/Error'
+        default:
+          description: Unexpected Error
+          schema:
+            $ref: './models.json#/definitions/Error'
+  /v1/iam/organization/{organizationName}:
+    parameters:
+    - $ref: '#/parameters/orgIDParam'
+    - in: path
+      name: organizationName
+      description: Name of Organization to work on
+      required: true
+      type: string
+      pattern: '^[\w\d\-]+$'
+    get:
+      tags:
+      - organization
+      summary: Find Organization by name
+      description: get an Organization by name
+      operationId: getOrganization
+      produces:
+      - application/json
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            $ref: './models.json#/definitions/Organization'
+        400:
+          description: Invalid Name supplied
+          schema:
+            $ref: './models.json#/definitions/Error'
+        401:
+          description: Unauthorized Request
+          schema:
+            $ref: './models.json#/definitions/Error'
+        403:
+          description: access to this resource is forbidden
+          schema:
+            $ref: './models.json#/definitions/Error'
+        404:
+          description: Organization not found
+          schema:
+            $ref: './models.json#/definitions/Error'
+        default:
+          description: Unknown error
+          schema:
+            $ref: './models.json#/definitions/Error'
+    put:
+      tags:
+      - organization
+      summary: Update a Organization
+      operationId: updateOrganization
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: body
+        description: Organization object
+        required: true
+        schema:
+          $ref: './models.json#/definitions/Organization'
+      responses:
+        200:
+          description: Successful update
+          schema:
+            $ref: './models.json#/definitions/Organization'
+        400:
+          description: Invalid input
+          schema:
+            $ref: './models.json#/definitions/Error'
+        401:
+          description: Unauthorized Request
+          schema:
+            $ref: './models.json#/definitions/Error'
+        403:
+          description: access to this resource is forbidden
+          schema:
+            $ref: './models.json#/definitions/Error'
+        404:
+          description: Organization not found
+          schema:
+            $ref: './models.json#/definitions/Error'
+        default:
+          description: Unknown error
+          schema:
+            $ref: './models.json#/definitions/Error'
+    delete:
+      tags:
+      - organization
+      summary: Deletes an Organization
+      operationId: deleteOrganization
+      produces:
+      - application/json
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            $ref: './models.json#/definitions/Organization'
+        400:
+          description: Invalid Name supplied
+          schema:
+            $ref: './models.json#/definitions/Error'
+        401:
+          description: Unauthorized Request
+          schema:
+            $ref: './models.json#/definitions/Error'
+        403:
+          description: access to this resource is forbidden
+          schema:
+            $ref: './models.json#/definitions/Error'
+        404:
+          description: Organization not found
+          schema:
+            $ref: './models.json#/definitions/Error'
+        default:
+          description: Unknown error
+          schema:
+            $ref: './models.json#/definitions/Error'
+  /v1/iam/serviceaccount:
+    parameters:
+      - $ref: '#/parameters/orgIDParam'
+    post:
+      tags:
+      - serviceaccount
+      summary: Add a new service account
+      operationId: addServiceAccount
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: body
+        description: Service Account Object
+        required: true
+        schema:
+          $ref: './models.json#/definitions/ServiceAccount'
+      responses:
+        201:
+          description: created
+          schema:
+            $ref: './models.json#/definitions/ServiceAccount'
+        400:
+          description: Invalid input
+          schema:
+            $ref: './models.json#/definitions/Error'
+        401:
+          description: Unauthorized Request
+          schema:
+            $ref: './models.json#/definitions/Error'
+        403:
+          description: access to this resource is forbidden
+          schema:
+            $ref: './models.json#/definitions/Error'
+        409:
+          description: Already Exists
+          schema:
+            $ref: './models.json#/definitions/Error'
+        default:
+          description: Generic error response
+          schema:
+            $ref: './models.json#/definitions/Error'
+    get:
+      tags:
+      - serviceaccount
+      summary: List all existing service accounts
+      operationId: getServiceAccounts
+      produces:
+      - application/json
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            type: array
+            items:
+              $ref: './models.json#/definitions/ServiceAccount'
+        401:
+          description: Unauthorized Request
+          schema:
+            $ref: './models.json#/definitions/Error'
+        403:
+          description: access to this resource is forbidden
+          schema:
+            $ref: './models.json#/definitions/Error'
+        default:
+          description: Unexpected Error
+          schema:
+            $ref: './models.json#/definitions/Error'
+  /v1/iam/serviceaccount/{serviceAccountName}:
+    parameters:
+    - $ref: '#/parameters/orgIDParam'
+    - in: path
+      name: serviceAccountName
+      description: Name of ServiceAccount to work on
+      required: true
+      type: string
+      pattern: '^[\w\d\-]+$'
+    get:
+      tags:
+      - serviceaccount
+      summary: Find Service Account by name
+      description: get a Service Account by name
+      operationId: getServiceAccount
+      produces:
+      - application/json
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            $ref: './models.json#/definitions/ServiceAccount'
+        400:
+          description: Invalid Name supplied
+          schema:
+            $ref: './models.json#/definitions/Error'
+        401:
+          description: Unauthorized Request
+          schema:
+            $ref: './models.json#/definitions/Error'
+        403:
+          description: access to this resource is forbidden
+          schema:
+            $ref: './models.json#/definitions/Error'
+        404:
+          description: Service Account not found
+          schema:
+            $ref: './models.json#/definitions/Error'
+        default:
+          description: Unknown error
+          schema:
+            $ref: './models.json#/definitions/Error'
+    put:
+      tags:
+      - serviceaccount
+      summary: Update a Service Account
+      operationId: updateServiceAccount
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: body
+        description: Service Account object
+        required: true
+        schema:
+          $ref: './models.json#/definitions/ServiceAccount'
+      responses:
+        200:
+          description: Successful update
+          schema:
+            $ref: './models.json#/definitions/ServiceAccount'
+        400:
+          description: Invalid input
+          schema:
+            $ref: './models.json#/definitions/Error'
+        401:
+          description: Unauthorized Request
+          schema:
+            $ref: './models.json#/definitions/Error'
+        403:
+          description: access to this resource is forbidden
+          schema:
+            $ref: './models.json#/definitions/Error'
+        404:
+          description: Service Account not found
+          schema:
+            $ref: './models.json#/definitions/Error'
+        default:
+          description: Unknown error
+          schema:
+            $ref: './models.json#/definitions/Error'
+    delete:
+      tags:
+      - serviceaccount
+      summary: Deletes an Service Account
+      operationId: deleteServiceAccount
+      produces:
+      - application/json
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            $ref: './models.json#/definitions/ServiceAccount'
+        400:
+          description: Invalid Name supplied
+          schema:
+            $ref: './models.json#/definitions/Error'
+        401:
+          description: Unauthorized Request
+          schema:
+            $ref: './models.json#/definitions/Error'
+        403:
+          description: access to this resource is forbidden
+          schema:
+            $ref: './models.json#/definitions/Error'
+        404:
+          description: Service Account not found
+          schema:
+            $ref: './models.json#/definitions/Error'
+        default:
+          description: Unknown error
+          schema:
+            $ref: './models.json#/definitions/Error'
+  /v1/iam/redirect:
+    get:
+      summary: redirect to localhost for vs-cli login (testing)
+      operationId: redirect
+      parameters:
+      - in: query
+        name: redirect
+        description: the local server url redirecting to
+        type: string
+      responses:
+        302:
+          description: redirect
+          headers:
+            Location:
+              description: redirect location
+              type: string
+        default:
+          description: error
+          schema:
+            $ref: "./models.json#/definitions/Error"
+security:
+  - cookie: []
+  - bearer: []
+securityDefinitions:
+  cookie:
+    type: apiKey
+    description: use cookies for authentication, when the user already logged in
+    in: header
+    name: Cookie
+  bearer:
+    type: apiKey
+    name: Authorization
+    in: header

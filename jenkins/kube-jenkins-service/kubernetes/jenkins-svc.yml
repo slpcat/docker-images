@@ -1,0 +1,18 @@
+kind: Service
+apiVersion: v1
+metadata:
+  labels:
+      app: jenkins
+  name: jenkins
+  namespace: ci
+spec:
+  ports:
+  - port: 8080
+    targetPort: 8080
+    name: web
+  - port: 50000
+    targetPort: 50000
+    name: agent
+  type: NodePort
+  selector:
+    app: jenkins

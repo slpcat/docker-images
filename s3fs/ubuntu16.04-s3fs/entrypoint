@@ -1,0 +1,10 @@
+#!/bin/bash
+
+echo $AWS_ACCESSKEY:$AWS_SECRETKEY > /s3credentials
+chmod 600 /s3credentials
+
+mkdir -p /tmp/cache && mkdir -p $MOUNT_POINT
+chown -R $UID:$GID /tmp/cache
+chown -R $UID:$GID $MOUNT_POINT
+
+s3fs $S3_BUCKET:$S3_KEY $MOUNT_POINT -o uid=$UID -o gid=$GID -f -o passwd_file=/s3credentials -o use_cache=/tmp/cache -o url=$S3_URL -o endpoint=$S3_REGION -o dbglevel=err -o use_path_request_style -o mp_umask=0222 -o ro,noatime -o enable_noobj_cache -o allow_other

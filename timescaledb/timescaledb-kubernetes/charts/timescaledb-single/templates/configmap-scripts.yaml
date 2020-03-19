@@ -1,0 +1,156 @@
+# This file and its contents are licensed under the Apache License 2.0.
+# Please see the included NOTICE for copyright information and LICENSE for a copy of the license.
+
+{{- /*
+This ConfigMap contains scripts, like bootstrap scripts for the backup and archive scripts for
+archive_command
+*/ -}}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "timescaledb.fullname" . }}-scripts
+  labels:
+    app: {{ template "timescaledb.fullname" . }}
+    chart: {{ template "timescaledb.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+    cluster-name: {{ template "clusterName" . }}
+data:
+  # If no backup is configured, archive_command would normally fail. A failing archive_command on a cluster
+  # is going to cause WAL to be kept around forever, meaning we'll fill up Volumes we have quite quickly.
+  #
+  # Therefore, if the backup is disabled, we always return exitcode 0 when archiving
+  pgbackrest_archive.sh: |
+    #!/bin/bash
+    PGBACKREST_BACKUP_ENABLED={{ or .Values.backup.enable .Values.backup.enabled | int }}
+
+    [ "${PGBACKREST_BACKUP_ENABLED}" == "0" ] && exit 0
+
+    exec pgbackrest --stanza=poddb archive-push $1
+  pgbackrest_archive_get.sh: |
+    #!/bin/bash
+    PGBACKREST_BACKUP_ENABLED={{ or .Values.backup.enable .Values.backup.enabled | int }}
+    [ "${PGBACKREST_BACKUP_ENABLED}" == "0" ] && exit 1
+
+    exec pgbackrest --stanza=poddb archive-get ${1} "${2}"
+  pgbackrest_bootstrap.sh: |
+    #!/bin/bash
+    set -e
+
+    function log {
+        echo "$(date '+%Y-%m-%d %H:%M:%S') - bootstrap - $1"
+    }
+
+    while ! pg_isready -q; do
+        log "Waiting for PostgreSQL to become available"
+        sleep 3
+    done
+
+    # If we are the primary, we want to create/validate the backup stanza
+    if [ "$(psql -c "SELECT pg_is_in_recovery()::text" -AtXq)" == "false" ]; then
+        pgbackrest check || {
+            log "Creating pgBackrest stanza"
+            pgbackrest --stanza=poddb stanza-create --log-level-stderr=info || exit 1
+        }
+    fi
+
+    log "Starting pgBackrest api to listen for backup requests"
+    exec python3 /scripts/pgbackrest-rest.py --stanza=poddb --loglevel=debug
+  pgbackrest_restore.sh: |
+    #!/bin/bash
+    PGBACKREST_BACKUP_ENABLED={{ or .Values.backup.enable .Values.backup.enabled | int }}
+    [ "${PGBACKREST_BACKUP_ENABLED}" == "0" ] && exit 1
+
+    PGDATA={{ include "data_directory" . | quote }}
+    WALDIR={{ include "wal_directory" . | quote }}
+
+    # A missing PGDATA points to Patroni removing a botched PGDATA, or manual
+    # intervention. In this scenario, we need to recreate the DATA and WALDIRs
+    # to keep pgBackRest happy
+    [ -d "${PGDATA}" ] || install -o postgres -g postgres -d -m 0700 "${PGDATA}"
+    [ -d "${WALDIR}" ] || install -o postgres -g postgres -d -m 0700 "${WALDIR}"
+
+    pgbackrest --stanza=poddb --force --delta --log-level-console=detail restore
+  restore_or_initdb.sh: |
+    #!/bin/bash
+
+    function log {
+      echo "$(date '+%Y-%m-%d %H:%M:%S') - restore_or_initdb - $1"
+    }
+
+    PGDATA={{ include "data_directory" . | quote }}
+    WALDIR={{ include "wal_directory" . | quote }}
+
+    # Patroni attaches --scope and --datadir to the arguments, we need to strip them off as
+    # initdb has no business with these parameters
+    initdb_args=""
+    for value in "$@"
+    do
+      [[ $value == --scope* ]] || [[ $value == --datadir* ]] || initdb_args="${initdb_args} $value"
+    done
+
+    log "Invoking initdb"
+    initdb --auth-local=peer --auth-host=md5 --pgdata="${PGDATA}" --waldir="${WALDIR}" ${initdb_args}
+    echo "include_if_exists = '{{ template "tstune_config". }}'" >> "${PGDATA}/postgresql.conf"
+
+  post_init.sh: |
+    #!/bin/bash
+    PGBACKREST_BACKUP_ENABLED={{ or .Values.backup.enable .Values.backup.enabled | int }}
+
+    function log {
+        echo "$(date '+%Y-%m-%d %H:%M:%S') - post_init - $1"
+    }
+
+    log "Creating extension TimescaleDB in template1 and postgres databases"
+    psql -d "$URL" <<__SQL__
+      \connect template1
+      -- As we're still only initializing, we cannot have synchronous_commit enabled just yet.
+      SET synchronous_commit to 'off';
+      CREATE EXTENSION timescaledb;
+
+      \connect postgres
+      SET synchronous_commit to 'off';
+      CREATE EXTENSION timescaledb;
+    __SQL__
+
+    TABLESPACES={{ $.Values.persistentVolumes.tablespaces | default dict | keys | join " " | quote }}
+    for tablespace in $TABLESPACES
+    do
+      log "Creating tablespace ${tablespace}"
+      tablespacedir="{{ include "tablespaces_dir" . }}/${tablespace}/data"
+      psql -d "$URL" --set tablespace="${tablespace}" --set directory="${tablespacedir}" --set ON_ERROR_STOP=1 <<__SQL__
+        SET synchronous_commit to 'off';
+        CREATE TABLESPACE :"tablespace" LOCATION :'directory';
+    __SQL__
+    done
+
+    if [ "${PGBACKREST_BACKUP_ENABLED}" == "1" ]; then
+      log "Waiting for pgBackRest API to become responsive"
+      while sleep 1; do
+          if [ $SECONDS -gt 10 ]; then
+              log "pgBackRest API did not respond within $SECONDS seconds, will not trigger a backup"
+              exit 0
+          fi
+          timeout 1 bash -c "echo > /dev/tcp/localhost/8081" 2>/dev/null && break
+      done
+
+      log "Triggering pgBackRest backup"
+      curl -i -X POST http://localhost:8081/backups
+    fi
+
+    # We always exit 0 this script, otherwise the database initialization fails.
+    exit 0
+  patroni_callback.sh: |
+    #!/bin/bash
+    set -e
+
+    for suffix in "$1" all
+    do
+      CALLBACK="{{ template "callbacks_dir" .}}/${suffix}"
+      if [ -f "${CALLBACK}" ]
+      then
+        "${CALLBACK}" $@
+      fi
+    done
+...

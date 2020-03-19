@@ -1,0 +1,161 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cassandra
+  namespace: kong
+  labels:
+    app: cassandra
+spec:
+  clusterIP: None
+  type: ClusterIP
+  ports:
+  - name: intra
+    port: 7000
+    targetPort: 7000
+  - name: tls
+    port: 7001
+    targetPort: 7001
+  - name: jmx
+    port: 7199
+    targetPort: 7199
+  - name: cql
+    port: 9042
+    targetPort: 9042
+  - name: thrift
+    port: 9160
+    targetPort: 9160
+  selector:
+    app: cassandra
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: cassandra
+  namespace: kong
+  labels:
+    app: cassandra
+spec:
+  selector:
+    matchLabels:
+      app: cassandra
+  serviceName: cassandra
+  replicas: 3
+  podManagementPolicy: OrderedReady
+  updateStrategy:
+    type: OnDelete
+  template:
+    metadata:
+      labels:
+        app: cassandra
+    spec:
+      containers:
+      - name: cassandra-exporter
+        image: "criteord/cassandra_exporter:2.0.2"
+        env:
+          - name: CASSANDRA_EXPORTER_CONFIG_listenPort
+            value: "5556"
+          - name: JVM_OPTS
+            value: ""
+        ports:
+          - name: metrics
+            containerPort: 5556
+            protocol: TCP
+          - name: jmx
+            containerPort: 5555
+        livenessProbe:
+          tcpSocket:
+            port: 5556
+        readinessProbe:
+          httpGet:
+            path: /metrics
+            port: 5556
+          initialDelaySeconds: 20
+          timeoutSeconds: 45
+      - name: cassandra
+        image: "cassandra:3.11"
+        imagePullPolicy: "IfNotPresent"
+        resources:
+          limits:
+            cpu: 2
+            memory: 4Gi
+          requests:
+            cpu: 2
+            memory: 4Gi
+        env:
+        - name: CASSANDRA_SEEDS
+          value: "cassandra-0.cassandra.kong.svc.cluster.local,cassandra-1.cassandra.kong.svc.cluster.local"
+        - name: MAX_HEAP_SIZE
+          value: "2048M"
+        - name: HEAP_NEWSIZE
+          value: "512M"
+        - name: CASSANDRA_ENDPOINT_SNITCH
+          value: "SimpleSnitch"
+        - name: CASSANDRA_CLUSTER_NAME
+          value: "cassandra"
+        - name: CASSANDRA_DC
+          value: "DC1"
+        - name: CASSANDRA_RACK
+          value: "RAC1"
+        - name: CASSANDRA_START_RPC
+          value: "true"
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        livenessProbe:
+          exec:
+            command: [ "/bin/sh", "-c", "nodetool status" ]
+          initialDelaySeconds: 90
+          periodSeconds: 30
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 3
+        readinessProbe:
+          exec:
+            command: [ "/bin/sh", "-c", "nodetool status | grep -E \"^UN\\s+${POD_IP}\"" ]
+          initialDelaySeconds: 90
+          periodSeconds: 30
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 3
+        ports:
+        - name: intra
+          containerPort: 7000
+        - name: tls
+          containerPort: 7001
+        - name: jmx
+          containerPort: 7199
+        - name: cql
+          containerPort: 9042
+        - name: thrift
+          containerPort: 9160
+        volumeMounts:
+        - name: data
+          mountPath: /var/lib/cassandra
+      terminationGracePeriodSeconds: 30
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+      labels:
+        app: cassandra
+    spec:
+      accessModes:
+        - "ReadWriteOnce"
+      resources:
+        requests:
+          storage: "10Gi"
+---
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  labels:
+    app: cassandra
+  name: cassandra
+  namespace: kong
+spec:
+  selector:
+    matchLabels:
+      app: cassandra
+  minAvailable: 2
+---

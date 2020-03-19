@@ -1,0 +1,20 @@
+apiVersion: mysql.oracle.com/v1alpha1
+kind: BackupSchedule
+metadata:
+  name: mysql-backup-schedule
+spec:
+  schedule: '30 * * * *'
+  backupTemplate:
+    executor:
+      mysqldump:
+        databases:
+          - name: test
+    storageProvider:
+      s3:
+        endpoint: ocitenancy.compat.objectstorage.ociregion.oraclecloud.com
+        region: ociregion
+        bucket: mybucket
+        credentialsSecret:
+          name: s3-credentials
+    cluster:
+      name: mysql

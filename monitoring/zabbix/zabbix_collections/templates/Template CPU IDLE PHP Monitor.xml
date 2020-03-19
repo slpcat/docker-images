@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbix_export>
+    <version>4.4</version>
+    <date>2019-11-05T12:05:27Z</date>
+    <groups>
+        <group>
+            <name>Templates/Custom</name>
+        </group>
+    </groups>
+    <templates>
+        <template>
+            <template>Template CPU IDLE PHP Monitor</template>
+            <name>Template CPU IDLE PHP Monitor</name>
+            <groups>
+                <group>
+                    <name>Templates/Custom</name>
+                </group>
+            </groups>
+            <applications>
+                <application>
+                    <name>CPU状态</name>
+                </application>
+            </applications>
+            <items>
+                <item>
+                    <name>CPU $2 time</name>
+                    <key>system.cpu.util[,idle]</key>
+                    <history>30d</history>
+                    <value_type>FLOAT</value_type>
+                    <units>%</units>
+                    <description>The time the CPU has spent doing nothing.</description>
+                    <applications>
+                        <application>
+                            <name>CPU状态</name>
+                        </application>
+                    </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{avg(5m)}&lt;10</expression>
+                            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+                            <recovery_expression>{last()}&gt;20</recovery_expression>
+                            <name>{HOST.NAME} [CPU Idle]-[&lt; 10%]</name>
+                            <priority>WARNING</priority>
+                            <manual_close>YES</manual_close>
+                        </trigger>
+                    </triggers>
+                </item>
+            </items>
+        </template>
+    </templates>
+</zabbix_export>

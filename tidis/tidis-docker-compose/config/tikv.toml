@@ -1,0 +1,44 @@
+log-level = "info"
+[server]
+addr = "10.240.200.211:20160"
+[storage]
+data-dir = "tikv"
+[pd]
+endpoints = ["10.240.200.211:3379"]
+[metric]
+interval = "1500s"
+address = ""
+job = "tikv"
+[raftstore]
+sync-log = false
+region-max-size = "384MB"
+region-split-size = "256MB"
+region-split-check-diff = "32MB"
+[rocksdb]
+max-manifest-file-size = "20MB"
+[rocksdb.defaultcf]
+block-size = "64KB"
+compression-per-level = ["no", "no", "lz4", "lz4", "lz4", "zstd", "zstd"]
+write-buffer-size = "128MB"
+max-write-buffer-number = 5
+level0-slowdown-writes-trigger = 20
+level0-stop-writes-trigger = 36
+max-bytes-for-level-base = "512MB"
+target-file-size-base = "32MB"
+[rocksdb.writecf]
+compression-per-level = ["no", "no", "lz4", "lz4", "lz4", "zstd", "zstd"]
+write-buffer-size = "128MB"
+max-write-buffer-number = 5
+min-write-buffer-number-to-merge = 1
+max-bytes-for-level-base = "512MB"
+target-file-size-base = "32MB"
+[raftdb]
+compaction-readahead-size = "2MB"
+[raftdb.defaultcf]
+compression-per-level = ["no", "no", "lz4", "lz4", "lz4", "zstd", "zstd"]
+write-buffer-size = "128MB"
+max-write-buffer-number = 5
+min-write-buffer-number-to-merge = 1
+max-bytes-for-level-base = "512MB"
+target-file-size-base = "32MB"
+block-cache-size = "256MB"

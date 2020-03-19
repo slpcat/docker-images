@@ -1,0 +1,10 @@
+#!/bin/bash
+
+echo $OSS_BUCKET:$OSSS_ACCESSKEY:$OSS_SECRETKEY > /etc/passwd-ossfs
+chmod 640 /etc/passwd-ossfs
+
+mkdir -p /tmp/cache && mkdir -p $MOUNT_POINT
+chown -R $UID:$GID /tmp/cache
+chown -R $UID:$GID $MOUNT_POINT
+
+ossfs $OSS_BUCKET:$OSS_KEY $MOUNT_POINT -o uid=$UID -o gid=$GID -f -d -o use_cache=/tmp/cache -o kernel_cache -o url=$OSS_URL -o endpoint=$OSS_REGION -o dbglevel=$DEBUG_LEVEL -o use_path_request_style -o mp_umask=0222 -o ro,noatime -o enable_noobj_cache -o allow_other

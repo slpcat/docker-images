@@ -1,0 +1,83 @@
+{{/*
+Copyright 2017 The Openstack-Helm Authors.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/}}
+
+{{- if .Values.manifests.configmap_bin }}
+{{- $envAll := . }}
+{{- if .Values.deployment.ceph }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ceph-bin
+data:
+{{- if .Values.bootstrap.enabled }}
+  bootstrap.sh: |+
+{{ tuple "bin/_bootstrap.sh.tpl" . | include "helm-toolkit.utils.template" | indent 4 }}
+{{- end }}
+  ceph-key.py: |+
+{{ tuple "bin/_ceph-key.py.tpl" . | include "helm-toolkit.utils.template" | indent 4 }}
+  ceph-key.sh: |+
+{{ tuple "bin/_ceph-key.sh.tpl" . | include "helm-toolkit.utils.template" | indent 4 }}
+  ceph-storage-key.sh: |+
+{{ tuple "bin/_ceph-storage-key.sh.tpl" . | include "helm-toolkit.utils.template" | indent 4 }}
+  init_dirs.sh: |+
+{{ tuple "bin/_init_dirs.sh.tpl" . | include "helm-toolkit.utils.template" | indent 4 }}
+  common_functions.sh: |+
+{{ tuple "bin/_common_functions.sh.tpl" . | include "helm-toolkit.utils.template" | indent 4 }}
+  osd_activate_journal.sh: |+
+{{ tuple "bin/_osd_activate_journal.sh.tpl" . | include "helm-toolkit.utils.template" | indent 4 }}
+  osd_common.sh: |+
+{{ tuple "bin/_osd_common.sh.tpl" . | include "helm-toolkit.utils.template" | indent 4 }}
+  osd_directory.sh: |+
+{{ tuple "bin/_osd_directory.sh.tpl" . | include "helm-toolkit.utils.template" | indent 4 }}
+  osd_directory_single.sh: |+
+{{ tuple "bin/_osd_directory_single.sh.tpl" . | include "helm-toolkit.utils.template" | indent 4 }}
+  osd_disk_activate.sh: |+
+{{ tuple "bin/_osd_disk_activate.sh.tpl" . | include "helm-toolkit.utils.template" | indent 4 }}
+  osd_disk_prepare.sh: |+
+{{ tuple "bin/_osd_disk_prepare.sh.tpl" . | include "helm-toolkit.utils.template" | indent 4 }}
+  osd_disks.sh: |+
+{{ tuple "bin/_osd_disks.sh.tpl" . | include "helm-toolkit.utils.template" | indent 4 }}
+  start_mon.sh: |+
+{{ tuple "bin/_start_mon.sh.tpl" . | include "helm-toolkit.utils.template" | indent 4 }}
+  start_osd.sh: |+
+{{ tuple "bin/_start_osd.sh.tpl" . | include "helm-toolkit.utils.template" | indent 4 }}
+  start_mds.sh: |+
+{{ tuple "bin/_start_mds.sh.tpl" . | include "helm-toolkit.utils.template" | indent 4 }}
+  start_rgw.sh: |+
+{{ tuple "bin/_start_rgw.sh.tpl" . | include "helm-toolkit.utils.template" | indent 4 }}
+  start_mgr.sh: |+
+{{ tuple "bin/_start_mgr.sh.tpl" . | include "helm-toolkit.utils.template" | indent 4 }}
+  init_rgw_ks.sh: |+
+{{ tuple "bin/_init_rgw_ks.sh.tpl" . | include "helm-toolkit.utils.template" | indent 4 }}
+  watch_mon_health.sh: |+
+{{ tuple "bin/_watch_mon_health.sh.tpl" . | include "helm-toolkit.utils.template" | indent 4 }}
+  variables_entrypoint.sh: |
+{{ tuple "bin/_variables_entrypoint.sh.tpl" . | include  "helm-toolkit.utils.template" | indent 4 }}
+  check_zombie_mons.py: |
+{{ tuple "bin/_check_zombie_mons.py.tpl" . | include  "helm-toolkit.utils.template" | indent 4 }}
+  rbd-provisioner.sh: |
+{{ tuple "bin/_rbd-provisioner.sh.tpl" . | include  "helm-toolkit.utils.template" | indent 4 }}
+  log_handler.sh: |
+{{ tuple "bin/_log_handler.sh.tpl" . | include  "helm-toolkit.utils.template" | indent 4 }}
+  ceph-storage-admin-key-cleaner.sh: |+
+{{ tuple "bin/_ceph-storage-admin-key-cleaner.sh.tpl" . | include "helm-toolkit.utils.template" | indent 4 }}
+  check_mgr.sh: |+
+{{ tuple "bin/_check_mgr.sh.tpl" . | include "helm-toolkit.utils.template" | indent 4 }}
+  exec_ceph_commands.sh: |+
+{{ tuple "bin/_exec_ceph_commands.sh.tpl" . | include "helm-toolkit.utils.template" | indent 4 }}
+{{- end }}
+{{- end }}

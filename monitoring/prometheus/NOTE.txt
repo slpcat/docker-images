@@ -1,0 +1,155 @@
+exporters
+具体exporter见每个程序目录
+aliyun-exporter
+blackbox_exporter
+elasticsearch-prometheus-exporter
+hadoop_exporter
+https://github.com/prometheus/influxdb_exporter
+influxdb_exporter
+kafka_exportor
+目录 kafka/kafka_exporter
+php-fpm-exporter
+snmp_exporter
+zk-exporter
+rocketmq-exporter
+https://github.com/apache/rocketmq-exporter
+github.com/MyBook/zabbix-exporter
+
+监控Nginx主要用到以下三个模块：
+nginx-module-vts：Nginx virtual host traffic status module，Nginx的监控模块，能够提供JSON格式的数据产出。
+nginx-vts-exporter：Simple server that scrapes Nginx vts stats and exports them via HTTP for Prometheus consumption。主要用于收集Nginx的监控数据，并给Prometheus提供监控接口，默认端口号9913。
+nginx-lua-prometheus 
+
+https://github.com/aylei/aliyun-exporter
+https://github.com/vvanholl/elasticsearch-prometheus-exporter
+https://github.com/danielqsj/kafka_exporter
+https://github.com/ignatev/burrow-kafka-dashboard
+https://github.com/bakins/php-fpm-exporter
+process-exporter
+kong-plugin-prometheus
+https://prometheus.io/docs/instrumenting/exporters/
+
+https://github.com/percona/mongodb_exporter
+
+https://github.com/prometheus/jmx_exporter
+
+https://github.com/prometheus/memcached_exporter
+docker run -p 9150:9150 quay.io/prometheus/memcached-exporter:v0.5.0
+
+https://github.com/prometheus/mysqld_exporter
+docker run -d \
+  -p 9104:9104 \
+  --network my-mysql-network  \
+  -e DATA_SOURCE_NAME="user:password@(my-mysql-network:3306)/" \
+  prom/mysqld-exporter
+
+https://github.com/oliver006/redis_exporter
+
+https://github.com/wrouesnel/postgres_exporter
+
+docker run -d --restart=always -p 9187:9187 -e DATA_SOURCE_NAME="postgresql://postgres:password@localhost:5432/postgres?sslmode=disable" wrouesnel/postgres_exporter
+
+https://github.com/kubernetes-incubator/metrics-server
+https://github.com/kubernetes-incubator/custom-metrics-apiserver
+
+https://github.com/mgxian/k8s-monitor.git
+
+https://github.com/coreos/prometheus-operator
+
+监控安装
+3个组件: prometheus-operator k8s-prometheus-adapter custom-metrics-apiserver
+
+实践建议: 每个部门1-N个prometheus实例，监控本部门的所有服务/pod
+1.pod 内置exporter或者sidecar exporter 多个namespace
+production/example-app
+自定义路径 /metrics
+自定义端口 metrics
+2.prometheus-operator收集监控 namespace:monitoring
+后端存储推荐使用m3db
+注意启用存储
+3.核心指标core metrics:prometheus-adapter指标转换 namespace:monitoring metrics.k8s.io/v1beta1
+推荐metrics-server
+external.metrics.k8s.io 外部监控指标
+4.自定义指标non-core metrics:custom-metrics-apiserver指标对接hpa namespace:monitoring custom.metrics.k8s.io/v1beta1
+custom-metrics-apiserver
+需要挂一个secret存储卷，secret名为"cm-adapter-serving-certs"，这个secret是一个证书，因此这里需要创建相应的证书和key，这个证书必须由k8s的kube-apiserver信任的CA签发，因此直接用k8s的CA签发。
+
+生成证书：
+私钥
+$  (umask 077;openssl genrsa -out serving.key 2048)
+$  ls
+      serving.key
+证书请求：
+$ openssl req -new -key serving.key -out serving.csr -subj "/CN=serving"
+$  ls
+serving.csr  serving.key
+签署证书：
+$ openssl x509 -req -in serving.csr -CA /etc/kubernetes/pki/ca.crt -CAkey /etc/kubernetes/pki/ca.key -CAcreateserial -out serving.crt -days 3650
+ Signature ok
+ subject=/CN=serving
+ Getting CA Private Key
+
+$ ls
+serving.crt  serving.csr  serving.key
+创建secret：
+$ kubectl create secret generic cm-adapter-serving-certs --from-file=serving.crt=./serving.crt --from-file=serving.key=./serving.key  -n monitoring 
+secret/cm-adapter-serving-certs created
+
+$ kubectl get secrets -n monitoring 
+kubectl apply -f ./production/custom-metrics-apiserver
+常用自定义水平扩容指标
+http_request_number, QPS每秒请求数
+http_response_time, 响应时间
+kafka_consumergroup_lag_sum，kafka消费组积压
+在线人数，
+web socket 长连接数量 
+GPU使用率
+
+5.钉钉报警
+prometheus-webhook-dingtalk
+http://theo.im/blog/2017/10/16/release-prometheus-alertmanager-webhook-for-dingtalk/
+
+
+alertmanager通知规则
+production/alertmanager-secret.yaml
+改动:
+kube-scheduler-metrics-svc.yaml 
+kube-controller-manager-metrics-svc.yml
+prometheus-roleBindingSpecificNamespaces.yaml
+加入kong openebs ceph
+kubends->coredns
+去掉prometheus-adapter
+报警规则
+
+Promgen: Web UI and configuration generator for Prometheus and Alertmanager
+karma: alert dashboard
+
+https://github.com/prymitive/karma
+
+promettheus存储卷
+
+https://prometheus.io/docs/operating/integrations/#remote-endpoints-and-storage
+无限数据存储的可伸缩Prometheus
+https://github.com/improbable-eng/thanos
+
+weave cortex
+
+Uber开源了他们针对prometheus存储解决方案M3
+
+https://www.kubernetes.org.cn/3418.html
+https://www.kubernetes.org.cn/4438.html
+
+所有grafana详见
+grafana/
+
+数据存储与各种adapter
+
+opentsdb
+m3db
+prome2click
+prometheus-kafka-adapter
+https://github.com/Telefonica/prometheus-kafka-adapter
+
+prometheus-timescaledb
+
+注意:与metrics-server 冲突

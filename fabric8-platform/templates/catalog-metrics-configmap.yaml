@@ -1,0 +1,619 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  annotations:
+    fabric8.io/git-commit: 2b9f7ce19493fe6d18392ac4f4be16f5e1a76fa3
+    fabric8.io/iconUrl: https://cdn.rawgit.com/fabric8io/fabric8-devops/master/prometheus-blackbox-exporter/src/main/fabric8/icon.png
+    fabric8.io/git-branch: release-v2.2.311
+    maven.fabric8.io/app-catalog: "true"
+  labels:
+    provider: fabric8
+    project: metrics
+    version: target
+    expose: "true"
+    group: io.fabric8.devops.apps
+    kind: catalog
+  name: catalog-metrics
+data:
+  catalog-metrics.yml: |
+    ---
+    apiVersion: "v1"
+    kind: "Template"
+    metadata:
+      annotations:
+        fabric8.io/git-commit: "2b9f7ce19493fe6d18392ac4f4be16f5e1a76fa3"
+        fabric8.io/iconUrl: "https://cdn.rawgit.com/fabric8io/fabric8-devops/master/prometheus-blackbox-exporter/src/main/fabric8/icon.png"
+        fabric8.io/git-branch: "release-v2.2.311"
+      finalizers: []
+      labels:
+        provider: "fabric8"
+        project: "metrics"
+        version: "target"
+        expose: "true"
+        group: "io.fabric8.devops.apps"
+      name: "metrics"
+      ownerReferences: []
+    labels: {}
+    objects:
+    - apiVersion: "v1"
+      kind: "ServiceAccount"
+      metadata:
+        annotations: {}
+        finalizers: []
+        labels:
+          provider: "fabric8"
+          project: "prometheus"
+          version: "2.2.311"
+          group: "io.fabric8.devops.apps"
+        name: "metrics"
+        ownerReferences: []
+      imagePullSecrets: []
+      secrets: []
+    - apiVersion: "v1"
+      kind: "ServiceAccount"
+      metadata:
+        annotations: {}
+        finalizers: []
+        labels:
+          provider: "fabric8"
+          project: "prometheus-node-exporter"
+          version: "2.2.311"
+          group: "io.fabric8.devops.apps"
+        name: "node-exporter"
+        ownerReferences: []
+      imagePullSecrets: []
+      secrets: []
+    - apiVersion: "v1"
+      kind: "Service"
+      metadata:
+        annotations:
+          prometheus.io/scrape: "true"
+          prometheus.io/port: "9115"
+          fabric8.io/git-commit: "2b9f7ce19493fe6d18392ac4f4be16f5e1a76fa3"
+          fabric8.io/iconUrl: "https://cdn.rawgit.com/fabric8io/fabric8-devops/master/prometheus-blackbox-exporter/src/main/fabric8/icon.png"
+          fabric8.io/git-branch: "release-v2.2.311"
+        finalizers: []
+        labels:
+          expose: "true"
+          provider: "fabric8"
+          project: "prometheus-blackbox-exporter"
+          version: "2.2.311"
+          group: "io.fabric8.devops.apps"
+        name: "blackbox-exporter"
+        ownerReferences: []
+      spec:
+        deprecatedPublicIPs: []
+        externalIPs: []
+        loadBalancerSourceRanges: []
+        ports:
+        - name: "http"
+          port: 80
+          protocol: "TCP"
+          targetPort: 9115
+        selector:
+          project: "prometheus-blackbox-exporter"
+          provider: "fabric8"
+          group: "io.fabric8.devops.apps"
+    - apiVersion: "v1"
+      kind: "Service"
+      metadata:
+        annotations:
+          fabric8.io/app-menu: "development"
+          fabric8.io/git-commit: "2b9f7ce19493fe6d18392ac4f4be16f5e1a76fa3"
+          fabric8.io/iconUrl: "https://cdn.rawgit.com/fabric8io/fabric8-devops/master/grafana/src/main/fabric8/icon.png"
+          fabric8.io/git-branch: "release-v2.2.311"
+        finalizers: []
+        labels:
+          provider: "fabric8"
+          expose: "true"
+          project: "grafana"
+          version: "2.2.311"
+          group: "io.fabric8.devops.apps"
+        name: "grafana"
+        ownerReferences: []
+      spec:
+        deprecatedPublicIPs: []
+        externalIPs: []
+        loadBalancerSourceRanges: []
+        ports:
+        - name: "http"
+          port: 80
+          protocol: "TCP"
+          targetPort: 3000
+        selector:
+          project: "grafana"
+          provider: "fabric8"
+          group: "io.fabric8.devops.apps"
+    - apiVersion: "v1"
+      kind: "Service"
+      metadata:
+        annotations:
+          prometheus.io/scrape: "true"
+          fabric8.io/app-menu: "management"
+          fabric8.io/git-commit: "2b9f7ce19493fe6d18392ac4f4be16f5e1a76fa3"
+          fabric8.io/iconUrl: "https://cdn.rawgit.com/fabric8io/fabric8-devops/master/prometheus/src/main/fabric8/icon.png"
+          fabric8.io/git-branch: "release-v2.2.311"
+        finalizers: []
+        labels:
+          provider: "fabric8"
+          expose: "true"
+          project: "prometheus"
+          version: "2.2.311"
+          group: "io.fabric8.devops.apps"
+        name: "prometheus"
+        ownerReferences: []
+      spec:
+        deprecatedPublicIPs: []
+        externalIPs: []
+        loadBalancerSourceRanges: []
+        ports:
+        - name: "http"
+          port: 80
+          protocol: "TCP"
+          targetPort: 9090
+        selector:
+          project: "prometheus"
+          provider: "fabric8"
+          group: "io.fabric8.devops.apps"
+    - apiVersion: "v1"
+      kind: "PersistentVolumeClaim"
+      metadata:
+        annotations:
+        finalizers: []
+        labels:
+          provider: "fabric8"
+          project: "grafana"
+          version: "2.2.311"
+          group: "io.fabric8.devops.apps"
+        name: "grafana-data"
+        ownerReferences: []
+      spec:
+        accessModes:
+        - "ReadWriteOnce"
+        resources:
+          limits: {}
+          requests:
+            storage: "1Gi"
+    - apiVersion: "v1"
+      kind: "PersistentVolumeClaim"
+      metadata:
+        annotations:
+        finalizers: []
+        labels:
+          provider: "fabric8"
+          project: "prometheus"
+          version: "2.2.311"
+          group: "io.fabric8.devops.apps"
+        name: "prometheus-data"
+        ownerReferences: []
+      spec:
+        accessModes:
+        - "ReadWriteOnce"
+        resources:
+          limits: {}
+          requests:
+            storage: "1Gi"
+    - apiVersion: "v1"
+      kind: "ConfigMap"
+      metadata:
+        annotations: {}
+        finalizers: []
+        labels:
+          provider: "fabric8"
+          project: "prometheus-blackbox-exporter"
+          version: "2.2.311"
+          group: "io.fabric8.devops.apps"
+        name: "blackbox-exporter"
+        ownerReferences: []
+      data:
+        config.yml: "modules:\n  http_2xx:\n    prober: http\n    timeout: 5s\n    http:\n\
+          \      valid_status_codes: []  # Defaults to 2xx\n      method: GET\n      no_follow_redirects:\
+          \ false\n      fail_if_ssl: false\n      fail_if_not_ssl: false"
+    - apiVersion: "v1"
+      kind: "ConfigMap"
+      metadata:
+        annotations: {}
+        finalizers: []
+        labels:
+          provider: "fabric8"
+          project: "prometheus"
+          version: "2.2.311"
+          group: "io.fabric8.devops.apps"
+        name: "prometheus"
+        ownerReferences: []
+      data:
+        prometheus.yml: "global:\n  scrape_interval:     30s\n  evaluation_interval: 60s\n\
+          \nrule_files:\n  - \"*.rules\"\n\n# A scrape configuration for running Prometheus\
+          \ on a Kubernetes cluster.\n# This uses separate scrape configs for cluster\
+          \ components (i.e. API server, node)\n# and services to allow each to use different\
+          \ authentication configs.\n#\n# Kubernetes labels will be added as Prometheus\
+          \ labels on metrics via the\n# `labelmap` relabeling action.\nscrape_configs:\n\
+          \n# Scrape config for API servers.\n- job_name: 'kubernetes-apiservers'\n\n\
+          \  # This TLS & bearer token file config is used to connect to the actual scrape\n\
+          \  # endpoints for cluster components. This is separate to discovery auth\n\
+          \  # configuration (`in_cluster` below) because discovery & scraping are two\n\
+          \  # separate concerns in Prometheus.\n  tls_config:\n    # workaround for Prometheus\
+          \ -> Kubernetes cert issue https://github.com/fabric8io/fabric8-devops/issues/438\n\
+          \    insecure_skip_verify: true\n    ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt\n\
+          \  bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token\n\n\
+          \  scheme: https\n\n  kubernetes_sd_configs:\n  - role: endpoints\n\n  relabel_configs:\n\
+          \  - source_labels: [__meta_kubernetes_namespace, __meta_kubernetes_service_name,\
+          \ __meta_kubernetes_endpoint_port_name]\n    action: keep\n    regex: default;kubernetes;https\n\
+          \n# Scrape config for nodes.\n- job_name: 'kubernetes-nodes'\n\n  # This TLS\
+          \ & bearer token file config is used to connect to the actual scrape\n  # endpoints\
+          \ for cluster components. This is separate to discovery auth\n  # configuration\
+          \ (`in_cluster` below) because discovery & scraping are two\n  # separate concerns\
+          \ in Prometheus.\n  tls_config:\n    # workaround for Prometheus -> Kubernetes\
+          \ cert issue https://github.com/fabric8io/fabric8-devops/issues/438\n    insecure_skip_verify:\
+          \ true\n    ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt\n\
+          \  bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token\n\n\
+          \  scheme: https\n\n  kubernetes_sd_configs:\n  - role: node\n\n  relabel_configs:\n\
+          \  - action: labelmap\n    regex: __meta_kubernetes_node_label_(.+)\n\n# Scrape\
+          \ config for node exporter pods deployed as a daemonset.\n- job_name: 'kubernetes-node-exporters'\n\
+          \n  kubernetes_sd_configs:\n  - role: pod\n\n  relabel_configs:\n  - source_labels:\
+          \ [__meta_kubernetes_pod_name]\n    action: keep\n    regex: node-exporter-.+\n\
+          \  - source_labels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]\n\
+          \    action: replace\n    regex: (.+):(?:\\d+);(\\d+)\n    replacement: ${1}:${2}\n\
+          \    target_label: __address__\n  - source_labels: [__meta_kubernetes_pod_node_name]\n\
+          \    action: replace\n    target_label: instance\n\n# Scrape config for service\
+          \ endpoints.\n#\n# The relabeling allows the actual service scrape endpoint\
+          \ to be configured\n# via the following annotations:\n#\n# * `prometheus.io/scrape`:\
+          \ Only scrape services that have a value of `true`\n# * `prometheus.io/scheme`:\
+          \ If the metrics endpoint is secured then you will need\n# to set this to `https`\
+          \ & most likely set the `tls_config` of the scrape config.\n# * `prometheus.io/path`:\
+          \ If the metrics path is not `/metrics` override this.\n# * `prometheus.io/port`:\
+          \ If the metrics are exposed on a different port to the\n# service then set\
+          \ this appropriately.\n- job_name: 'kubernetes-service-endpoints'\n\n  kubernetes_sd_configs:\n\
+          \  - role: endpoints\n\n  relabel_configs:\n  - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_scrape]\n\
+          \    action: keep\n    regex: true\n  - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_scheme]\n\
+          \    action: replace\n    target_label: __scheme__\n    regex: (https?)\n  -\
+          \ source_labels: [__meta_kubernetes_service_annotation_prometheus_io_path]\n\
+          \    action: replace\n    regex: (.+)\n    target_label: __metrics_path__\n\
+          \  - source_labels: [__address__, __meta_kubernetes_service_annotation_prometheus_io_port]\n\
+          \    action: replace\n    target_label: __address__\n    regex: (.+)(?::\\d+);(\\\
+          d+)\n    replacement: $1:$2\n  - action: labelmap\n    regex: __meta_kubernetes_service_label_(.+)\n\
+          \  - source_labels: [__meta_kubernetes_service_namespace]\n    action: replace\n\
+          \    target_label: kubernetes_namespace\n  - source_labels: [__meta_kubernetes_service_name]\n\
+          \    action: replace\n    target_label: kubernetes_name\n\n# Scrape config for\
+          \ probing services via the Blackbox Exporter.\n#\n# The relabeling allows the\
+          \ actual service scrape endpoint to be configured\n# via the following annotations:\n\
+          #\n# * `prometheus.io/probe`: Only probe services that have a value of `true`\n\
+          - job_name: 'kubernetes-services'\n\n  metrics_path: /probe\n  params:\n   \
+          \ module: [http_2xx]\n\n  kubernetes_sd_configs:\n  - role: service\n\n  relabel_configs:\n\
+          \  - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_probe]\n\
+          \    action: keep\n    regex: true\n  - source_labels: []\n    target_label:\
+          \ __address__\n    replacement: blackbox\n  - source_labels: [__address__]\n\
+          \    regex: (.*)(:80)?\n    target_label: __param_target\n  - source_labels:\
+          \ [__meta_kubernetes_service_name,__meta_kubernetes_service_namespace]\n   \
+          \ target_label: __param_target\n    regex: ([^;]+);(.+)\n    replacement: $1.$2.svc\n\
+          \  - action: labelmap\n    regex: __meta_kubernetes_service_label_(.+)\n  -\
+          \ source_labels: [__meta_kubernetes_service_namespace]\n    action: replace\n\
+          \    target_label: kubernetes_namespace\n  - source_labels: [__meta_kubernetes_service_name]\n\
+          \    action: replace\n    target_label: kubernetes_name\n\n# Scrape config for\
+          \ pods\n#\n# The relabeling allows the actual pod scrape endpoint to be configured\
+          \ via the\n# following annotations:\n#\n# * `prometheus.io/scrape`: Only scrape\
+          \ pods that have a value of `true`\n# * `prometheus.io/port`: Scrape the pod\
+          \ on the indicated port instead of the default of `9102`.\n- job_name: 'kubernetes-pods'\n\
+          \n  kubernetes_sd_configs:\n  - role: pod\n\n  relabel_configs:\n  - source_labels:\
+          \ [__meta_kubernetes_pod_annotation_prometheus_io_scrape]\n    action: keep\n\
+          \    regex: true\n  - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scheme]\n\
+          \    action: replace\n    target_label: __scheme__\n    regex: (https?)\n  -\
+          \ source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]\n   \
+          \ action: replace\n    target_label: __metrics_path__\n    regex: (.+)\n  -\
+          \ source_labels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]\n\
+          \    action: replace\n    regex: (.+):(?:\\d+);(\\d+)\n    replacement: ${1}:${2}\n\
+          \    target_label: __address__\n  - action: labelmap\n    regex: __meta_kubernetes_pod_label_(.+)"
+        pod.rules: "pod:memory_usage_bytes = sum(container_memory_usage_bytes{kubernetes_pod_name=~\"\
+          .+\", job=\"kubernetes-nodes\"}) by (kubernetes_pod_name, kubernetes_namespace)\n\
+          \npod:network_receive_bytes:1m = sum(rate(container_network_receive_bytes_total{kubernetes_pod_name=~\"\
+          .+\", job=\"kubernetes-nodes\"}[1m])) by (kubernetes_pod_name, kubernetes_namespace)\n\
+          \npod:network_transmit_bytes:1m = sum(rate(container_network_transmit_bytes_total{kubernetes_pod_name=~\"\
+          .+\", job=\"kubernetes-nodes\"}[1m])) by (kubernetes_pod_name, kubernetes_namespace)\n\
+          \npod:cpu_usage_seconds:1m = sum(rate(container_cpu_usage_seconds_total{kubernetes_pod_name=~\"\
+          .+\", job=\"kubernetes-nodes\"}[1m])) by (kubernetes_pod_name, kubernetes_namespace)\n\
+          \nALERT ServiceDown\nIF probe_success{job=\"kubernetes-services\"} == 0\n  FOR\
+          \ 10s\n  LABELS {\n    service = \"{{"{{"}}$labels.kubernetes_namespace{{"}}"}}/{{"{{"}}$labels.kubernetes_name{{"}}"}}\"\
+          \n  }\n  ANNOTATIONS {\n    severity    =\"page\",\n    summary     =\"Service\
+          \ {{"{{"}}$labels.kubernetes_namespace{{"}}"}}/{{"{{"}}$labels.kubernetes_name{{"}}"}} down\",\n   \
+          \ description =\"Service {{"{{"}}$labels.kubernetes_namespace{{"}}"}}/{{"{{"}}$labels.kubernetes_name{{"}}"}}\
+          \ has been down for more than 10 seconds!\"\n  }"
+    - apiVersion: "extensions/v1beta1"
+      kind: "DaemonSet"
+      metadata:
+        annotations:
+          fabric8.io/iconUrl: "https://cdn.rawgit.com/fabric8io/fabric8-devops/master/prometheus-node-exporter/src/main/fabric8/icon.png"
+        finalizers: []
+        labels:
+          provider: "fabric8"
+          project: "prometheus-node-exporter"
+          version: "2.2.311"
+          group: "io.fabric8.devops.apps"
+        name: "node-exporter"
+        ownerReferences: []
+      spec:
+        template:
+          metadata:
+            annotations: {}
+            finalizers: []
+            labels:
+              provider: "fabric8"
+              project: "prometheus-node-exporter"
+              version: "2.2.311"
+              group: "io.fabric8.devops.apps"
+            name: "node-exporter"
+            ownerReferences: []
+          spec:
+            containers:
+            - args:
+              - "-collector.procfs"
+              - "/host/proc"
+              - "-collector.sysfs"
+              - "/host/proc"
+              - "-collector.filesystem.ignored-mount-points"
+              - "^/(sys|proc|dev|host|etc)($|/)"
+              command: []
+              env: []
+              image: "prom/node-exporter"
+              name: "node-exporter"
+              ports:
+              - containerPort: 9100
+                name: "scrape"
+              volumeMounts:
+              - mountPath: "/host/proc"
+                name: "host-proc"
+                readOnly: true
+              - mountPath: "/host/sys"
+                name: "host-sys"
+                readOnly: true
+              - mountPath: "/rootfs"
+                name: "host-root"
+                readOnly: true
+            hostNetwork: true
+            imagePullSecrets: []
+            nodeSelector: {}
+            serviceAccountName: "node-exporter"
+            volumes:
+            - hostPath:
+                path: "/proc"
+              name: "host-proc"
+            - hostPath:
+                path: "/sys"
+              name: "host-sys"
+            - hostPath:
+                path: "/"
+              name: "host-root"
+    - apiVersion: "extensions/v1beta1"
+      kind: "Deployment"
+      metadata:
+        annotations:
+          fabric8.io/git-commit: "2b9f7ce19493fe6d18392ac4f4be16f5e1a76fa3"
+          fabric8.io/iconUrl: "https://cdn.rawgit.com/fabric8io/fabric8-devops/master/grafana/src/main/fabric8/icon.png"
+          fabric8.io/git-branch: "release-v2.2.311"
+          fabric8.io/metrics-path: "dashboard/file/kubernetes-pods.json/?var-project=grafana&var-version=2.2.311"
+        finalizers: []
+        labels:
+          provider: "fabric8"
+          project: "grafana"
+          version: "2.2.311"
+          group: "io.fabric8.devops.apps"
+        name: "grafana"
+        ownerReferences: []
+      spec:
+        replicas: 1
+        selector:
+          matchExpressions: []
+          matchLabels:
+            project: "grafana"
+            provider: "fabric8"
+            group: "io.fabric8.devops.apps"
+        template:
+          metadata:
+            annotations:
+              fabric8.io/git-commit: "2b9f7ce19493fe6d18392ac4f4be16f5e1a76fa3"
+              fabric8.io/iconUrl: "https://cdn.rawgit.com/fabric8io/fabric8-devops/master/grafana/src/main/fabric8/icon.png"
+              fabric8.io/git-branch: "release-v2.2.311"
+              fabric8.io/metrics-path: "dashboard/file/kubernetes-pods.json/?var-project=grafana&var-version=2.2.311"
+              pod.alpha.kubernetes.io/init-containers: "[{\"image\":\"busybox\",\"imagePullPolicy\"\
+                :\"IfNotPresent\",\"name\":\"init\",\"command\":[\"chmod\",\"777\",\"\
+                /var/lib/grafana\"],\"volumeMounts\":[{\"mountPath\":\"/var/lib/grafana\"\
+                ,\"name\":\"data-volume\"}]}]"
+            finalizers: []
+            labels:
+              provider: "fabric8"
+              project: "grafana"
+              version: "2.2.311"
+              group: "io.fabric8.devops.apps"
+            ownerReferences: []
+          spec:
+            containers:
+            - args: []
+              command: []
+              env:
+              - name: "PROMETHEUS_ADDRESS"
+                value: "http://prometheus"
+              image: "fabric8/grafana:2.6.1"
+              livenessProbe:
+                httpGet:
+                  httpHeaders: []
+                  port: "http"
+                initialDelaySeconds: 5
+              name: "grafana"
+              ports:
+              - containerPort: 3000
+                name: "http"
+              readinessProbe:
+                httpGet:
+                  httpHeaders: []
+                  port: "http"
+                initialDelaySeconds: 5
+              volumeMounts:
+              - mountPath: "/var/lib/grafana"
+                name: "data-volume"
+            imagePullSecrets: []
+            nodeSelector: {}
+            volumes:
+            - name: "data-volume"
+              persistentVolumeClaim:
+                claimName: "grafana-data"
+    - apiVersion: "extensions/v1beta1"
+      kind: "Deployment"
+      metadata:
+        annotations:
+          fabric8.io/git-commit: "2b9f7ce19493fe6d18392ac4f4be16f5e1a76fa3"
+          fabric8.io/iconUrl: "https://cdn.rawgit.com/fabric8io/fabric8-devops/master/prometheus/src/main/fabric8/icon.png"
+          fabric8.io/git-branch: "release-v2.2.311"
+          fabric8.io/metrics-path: "dashboard/file/kubernetes-pods.json/?var-project=prometheus&var-version=2.2.311"
+        finalizers: []
+        labels:
+          provider: "fabric8"
+          project: "prometheus"
+          version: "2.2.311"
+          group: "io.fabric8.devops.apps"
+        name: "prometheus"
+        ownerReferences: []
+      spec:
+        replicas: 1
+        selector:
+          matchExpressions: []
+          matchLabels:
+            project: "prometheus"
+            provider: "fabric8"
+            group: "io.fabric8.devops.apps"
+        template:
+          metadata:
+            annotations:
+              fabric8.io/git-commit: "2b9f7ce19493fe6d18392ac4f4be16f5e1a76fa3"
+              fabric8.io/iconUrl: "https://cdn.rawgit.com/fabric8io/fabric8-devops/master/prometheus/src/main/fabric8/icon.png"
+              fabric8.io/git-branch: "release-v2.2.311"
+              fabric8.io/metrics-path: "dashboard/file/kubernetes-pods.json/?var-project=prometheus&var-version=2.2.311"
+              pod.alpha.kubernetes.io/init-containers: "[{\"image\":\"busybox\",\"imagePullPolicy\"\
+                :\"IfNotPresent\",\"name\":\"init\",\"command\":[\"chmod\",\"777\",\"\
+                /prometheus\"],\"volumeMounts\":[{\"mountPath\":\"/prometheus\",\"name\"\
+                :\"data-volume\"}]}]"
+            finalizers: []
+            labels:
+              provider: "fabric8"
+              project: "prometheus"
+              version: "2.2.311"
+              group: "io.fabric8.devops.apps"
+            ownerReferences: []
+          spec:
+            containers:
+            - args: []
+              command: []
+              env: []
+              image: "prom/prometheus:v1.3.1"
+              livenessProbe:
+                httpGet:
+                  httpHeaders: []
+                  port: "http"
+                initialDelaySeconds: 1
+              name: "prometheus"
+              ports:
+              - containerPort: 9090
+                name: "http"
+              readinessProbe:
+                httpGet:
+                  httpHeaders: []
+                  port: "http"
+                initialDelaySeconds: 1
+              volumeMounts:
+              - mountPath: "/etc/prometheus"
+                name: "config-volume"
+              - mountPath: "/prometheus"
+                name: "data-volume"
+                subPath: "prometheus-db"
+            - args:
+              - "-volume-dir"
+              - "/etc/prometheus"
+              - "-webhook-url"
+              - "http://localhost:9090/-/reload"
+              command: []
+              env: []
+              image: "jimmidyson/configmap-reload:v0.1"
+              name: "configmap-reload"
+              ports: []
+              volumeMounts:
+              - mountPath: "/etc/prometheus"
+                name: "config-volume"
+            imagePullSecrets: []
+            nodeSelector: {}
+            serviceAccountName: "metrics"
+            volumes:
+            - configMap:
+                items: []
+                name: "prometheus"
+              name: "config-volume"
+            - name: "data-volume"
+              persistentVolumeClaim:
+                claimName: "prometheus-data"
+    - apiVersion: "extensions/v1beta1"
+      kind: "Deployment"
+      metadata:
+        annotations:
+          fabric8.io/git-commit: "2b9f7ce19493fe6d18392ac4f4be16f5e1a76fa3"
+          fabric8.io/iconUrl: "https://cdn.rawgit.com/fabric8io/fabric8-devops/master/prometheus-blackbox-exporter/src/main/fabric8/icon.png"
+          fabric8.io/git-branch: "release-v2.2.311"
+          fabric8.io/metrics-path: "dashboard/file/kubernetes-pods.json/?var-project=prometheus-blackbox-exporter&var-version=2.2.311"
+        finalizers: []
+        labels:
+          provider: "fabric8"
+          project: "prometheus-blackbox-exporter"
+          version: "2.2.311"
+          group: "io.fabric8.devops.apps"
+        name: "prometheus-blackbox-expo"
+        ownerReferences: []
+      spec:
+        replicas: 1
+        selector:
+          matchExpressions: []
+          matchLabels:
+            project: "prometheus-blackbox-exporter"
+            provider: "fabric8"
+            group: "io.fabric8.devops.apps"
+        template:
+          metadata:
+            annotations:
+              fabric8.io/git-commit: "2b9f7ce19493fe6d18392ac4f4be16f5e1a76fa3"
+              fabric8.io/iconUrl: "https://cdn.rawgit.com/fabric8io/fabric8-devops/master/prometheus-blackbox-exporter/src/main/fabric8/icon.png"
+              fabric8.io/git-branch: "release-v2.2.311"
+              fabric8.io/metrics-path: "dashboard/file/kubernetes-pods.json/?var-project=prometheus-blackbox-exporter&var-version=2.2.311"
+            finalizers: []
+            labels:
+              provider: "fabric8"
+              project: "prometheus-blackbox-exporter"
+              version: "2.2.311"
+              group: "io.fabric8.devops.apps"
+            ownerReferences: []
+          spec:
+            containers:
+            - args: []
+              command: []
+              env: []
+              image: "prom/blackbox-exporter:master"
+              livenessProbe:
+                httpGet:
+                  httpHeaders: []
+                  port: "http"
+                initialDelaySeconds: 1
+              name: "blackbox-exporter"
+              ports:
+              - containerPort: 9115
+                name: "http"
+              readinessProbe:
+                httpGet:
+                  httpHeaders: []
+                  port: "http"
+                initialDelaySeconds: 1
+              volumeMounts:
+              - mountPath: "/etc/blackbox_exporter"
+                name: "config-volume"
+            imagePullSecrets: []
+            nodeSelector: {}
+            volumes:
+            - configMap:
+                items: []
+                name: "blackbox-exporter"
+              name: "config-volume"
+    parameters: []

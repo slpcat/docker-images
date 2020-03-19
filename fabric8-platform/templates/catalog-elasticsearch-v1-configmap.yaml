@@ -1,0 +1,180 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  annotations:
+    fabric8.io/git-commit: 0b90360981bed67ebde7b71cc6a96d34cca3dcc6
+    fabric8.io/iconUrl: https://cdn.rawgit.com/fabric8io/fabric8-ipaas/master/elasticsearch/src/main/fabric8/icon.png
+    fabric8.io/git-branch: release-v2.2.168
+    maven.fabric8.io/app-catalog: "true"
+  labels:
+    provider: fabric8
+    project: elasticsearch-v1
+    version: 2.2.168
+    group: io.fabric8.ipaas.apps
+    kind: catalog
+  name: catalog-elasticsearch-v1
+data:
+  catalog-elasticsearch-v1.yml: |
+    ---
+    apiVersion: "v1"
+    kind: "Template"
+    metadata:
+      annotations:
+        fabric8.io/git-commit: "0b90360981bed67ebde7b71cc6a96d34cca3dcc6"
+        fabric8.io/iconUrl: "https://cdn.rawgit.com/fabric8io/fabric8-ipaas/master/elasticsearch/src/main/fabric8/icon.png"
+        fabric8.io/git-branch: "release-v2.2.168"
+      finalizers: []
+      labels:
+        provider: "fabric8"
+        project: "elasticsearch-v1"
+        version: "2.2.168"
+        group: "io.fabric8.ipaas.apps"
+      name: "elasticsearch-v1"
+      ownerReferences: []
+    labels: {}
+    objects:
+    - apiVersion: "v1"
+      kind: "Service"
+      metadata:
+        annotations:
+          api.service.kubernetes.io/protocol: "REST"
+          fabric8.io/iconUrl: "https://cdn.rawgit.com/fabric8io/fabric8-ipaas/master/elasticsearch/src/main/fabric8/icon.png"
+          fabric8.io/git-commit: "0b90360981bed67ebde7b71cc6a96d34cca3dcc6"
+          fabric8.io/git-branch: "release-v2.2.168"
+        finalizers: []
+        labels:
+          provider: "fabric8"
+          project: "elasticsearch-v1"
+          version: "2.2.168"
+          group: "io.fabric8.ipaas.apps"
+        name: "elasticsearch-v1"
+        ownerReferences: []
+      spec:
+        deprecatedPublicIPs: []
+        externalIPs: []
+        loadBalancerSourceRanges: []
+        ports:
+        - port: 9200
+          protocol: "TCP"
+          targetPort: 9200
+        selector:
+          project: "elasticsearch-v1"
+          provider: "fabric8"
+          group: "io.fabric8.ipaas.apps"
+        type: "LoadBalancer"
+    - apiVersion: "v1"
+      kind: "Service"
+      metadata:
+        annotations:
+          api.service.kubernetes.io/protocol: "REST"
+          fabric8.io/iconUrl: "https://cdn.rawgit.com/fabric8io/fabric8-ipaas/master/elasticsearch/src/main/fabric8/icon.png"
+          fabric8.io/git-commit: "0b90360981bed67ebde7b71cc6a96d34cca3dcc6"
+          fabric8.io/git-branch: "release-v2.2.168"
+        finalizers: []
+        labels:
+          provider: "fabric8"
+          project: "elasticsearch-v1"
+          version: "2.2.168"
+          group: "io.fabric8.ipaas.apps"
+        name: "elasticsearch-v1-masters"
+        ownerReferences: []
+      spec:
+        clusterIP: "None"
+        deprecatedPublicIPs: []
+        externalIPs: []
+        loadBalancerSourceRanges: []
+        ports:
+        - port: 9300
+          protocol: "TCP"
+          targetPort: 9300
+        selector:
+          project: "elasticsearch-v1"
+          provider: "fabric8"
+          group: "io.fabric8.ipaas.apps"
+        type: "LoadBalancer"
+    - apiVersion: "extensions/v1beta1"
+      kind: "Deployment"
+      metadata:
+        annotations:
+          fabric8.io/iconUrl: "https://cdn.rawgit.com/fabric8io/fabric8-ipaas/master/elasticsearch/src/main/fabric8/icon.png"
+          fabric8.io/git-commit: "0b90360981bed67ebde7b71cc6a96d34cca3dcc6"
+          fabric8.io/git-branch: "release-v2.2.168"
+          fabric8.io/metrics-path: "dashboard/file/kubernetes-pods.json/?var-project=elasticsearch-v1&var-version=2.2.168"
+        finalizers: []
+        labels:
+          provider: "fabric8"
+          project: "elasticsearch-v1"
+          version: "2.2.168"
+          group: "io.fabric8.ipaas.apps"
+        name: "elasticsearch-v1"
+        ownerReferences: []
+      spec:
+        replicas: 1
+        selector:
+          matchExpressions: []
+          matchLabels:
+            provider: "fabric8"
+            project: "elasticsearch-v1"
+            group: "io.fabric8.ipaas.apps"
+        template:
+          metadata:
+            annotations:
+              fabric8.io/iconUrl: "https://cdn.rawgit.com/fabric8io/fabric8-ipaas/master/elasticsearch/src/main/fabric8/icon.png"
+              fabric8.io/git-commit: "0b90360981bed67ebde7b71cc6a96d34cca3dcc6"
+              fabric8.io/git-branch: "release-v2.2.168"
+              fabric8.io/metrics-path: "dashboard/file/kubernetes-pods.json/?var-project=elasticsearch-v1&var-version=2.2.168"
+            finalizers: []
+            labels:
+              provider: "fabric8"
+              project: "elasticsearch-v1"
+              version: "2.2.168"
+              group: "io.fabric8.ipaas.apps"
+            ownerReferences: []
+          spec:
+            containers:
+            - args: []
+              command: []
+              env:
+              - name: "SERVICE_DNS"
+                value: "elasticsearch-v1-masters"
+              - name: "KUBERNETES_NAMESPACE"
+                valueFrom:
+                  fieldRef:
+                    fieldPath: "metadata.namespace"
+              image: "fabric8/elasticsearch-v1:2.2.168"
+              imagePullPolicy: "IfNotPresent"
+              livenessProbe:
+                initialDelaySeconds: 30
+                tcpSocket:
+                  port: 9300
+              name: "elasticsearch-v1"
+              ports:
+              - containerPort: 9200
+                name: "http"
+              - containerPort: 9300
+                name: "transport"
+              readinessProbe:
+                exec:
+                  command:
+                  - "/probe.sh"
+                  - "http"
+                initialDelaySeconds: 30
+              resources:
+                limits:
+                  cpu: "0"
+                  memory: "0"
+                requests:
+                  cpu: "0"
+                  memory: "0"
+              securityContext:
+                privileged: false
+              volumeMounts:
+              - mountPath: "/usr/share/elasticsearch/data"
+                name: "elasticsearch-data"
+                readOnly: false
+            imagePullSecrets: []
+            nodeSelector: {}
+            volumes:
+            - name: "elasticsearch-data"
+    parameters: []

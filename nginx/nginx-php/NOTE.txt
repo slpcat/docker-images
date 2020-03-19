@@ -1,0 +1,7 @@
+1.常规存储 php程序和资源文件打包到docker镜像里面,适合php程序和资源文件总量比较小的场景
+当前目录
+2.S3存储 php程序和资源文件保存到S3存储，运行时挂载,首次访问从网络存储获取，后续访问使用本地缓存，建议同时设置nginx和php文件缓存，并指定较长的过期时间，适合php程序和资源文件总量巨大的场景
+见 minio/nginx-php-s3fs
+3.prometheus监控 
+php-fpm-exporter
+4.pinpoint全链路追踪

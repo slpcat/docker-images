@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: opentsdb-svc
+spec:
+  selector:
+    app: opentsdb
+  ports:
+    - name: port1
+      port: 4242
+      targetPort: 4242
+---
+apiVersion: v1
+kind: Pod
+metadata:
+    name: opentsdb
+    labels:
+      app: opentsdb
+spec:
+  containers:
+    - name: opentsdb-node
+      image: index.caicloud.io/caicloud/opentsdb:createtable
+      imagePullPolicy: Always
+      ports:
+      - containerPort: 4242
+        name: port1
+      env:
+      - name: CREATE_TABLE
+        value: "Y"
+      - name: HDFS_PATH
+        value: mycluster
+      - name: ZOOKEEPER_SERVICE_LIST
+        value: zookeeper-1,zookeeper-2,zookeeper-3
+      - name: ZOOKEEPER_PORT
+        value: "2181"
+      - name: ZNODE_PARENT
+        value: hbase
+          # command: ["tail","-f","/dev/null"]

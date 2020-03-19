@@ -1,0 +1,4 @@
+1、代码中的example_username请用网宿提供的username替换；example_apiKey用网宿提供的apiKey替换
+2、示例代码只是一个示例，每个接口的具体body、method、querystring需要根据具体的接口文档确定
+3、HttpUri 需要根据接口的具体URI替换
+4、HttpHost 根据具体接口确定域名和协议是否是https

@@ -1,0 +1,54 @@
+常用模版、脚本收藏
+
+Template OS Linux Basic
+Template Network Interface Traffic 800M
+
+Template Disk Performance
+https://share.zabbix.com/storage-devices/linux-disk-performance-monitoring
+
+Zabbix-TCP
+https://github.com/omni-lchen/zabbix-tcp
+
+zabbix-module-sockets
+https://github.com/cavaliercoder/zabbix-module-sockets
+
+iostat监控
+https://github.com/lesovsky/zabbix-extensions/tree/master/files/iostat
+
+etcd监控
+https://github.com/shamil/zabbix-etcd
+
+consul监控
+https://github.com/akomic/zabbix-utils/tree/master/consul
+
+监控HDFS、NameNode, YARN ResourceManager, Hive, Zookeeper, HBase Master.
+https://github.com/Staroon/zabbix-hadoop-template
+
+zookeeper监控
+
+kafka监控
+
+mysql
+
+postgresql
+
+memcache
+
+redis
+
+influxdb
+
+Docker/Kubernetes/Mesos/Marathon/Chronos/LXC/LXD/Swarm container monitoring - Docker image, Zabbix template and C module
+https://github.com/monitoringartist/zabbix-docker-monitoring
+
+zabbix-kubernetes is "plugin" used for Kubernetes monitoring.
+https://github.com/objectiveit/zabbix-kubernetes
+
+Zabbix-CLI
+https://github.com/usit-gd/zabbix-cli
+
+node_exporter
+https://www.zabbix.com/integrations/prometheus
+https://git.zabbix.com/projects/ZBX/repos/zabbix/browse/templates/os/linux_prom
+
+

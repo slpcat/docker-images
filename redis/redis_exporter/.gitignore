@@ -1,0 +1,8 @@
+redis_exporter
+coverage.out
+dist/
+pkg/
+src/
+.DS_Store
+.idea
+*.rdb

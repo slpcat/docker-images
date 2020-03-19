@@ -1,0 +1,67 @@
+1.istio官方原版
+https://istio.io/docs/setup/kubernetes/
+https://github.com/knative/serving/tree/master/third_party/istio-1.0.2
+knative设置:所有命名空间都允许注入，默认不注入，只有注解istio.sidecar.inject=true才自动注入
+helm template install/kubernetes/helm/istio --name istio --namespace istio-system \
+      --set global.proxy.includeIPRanges="10.233.0.0/16\,10.234.0.0/16" \
+      --set sidecarInjectorWebhook.enabled=true \
+      --set sidecarInjectorWebhook.enableNamespacesByDefault=true \
+      --set global.proxy.autoInject=disabled \
+      --set global.controlPlaneSecurityEnabled=false \
+      --set global.mtls.enabled=false \
+      --set tracing.enabled=true \
+      --set servicegraph.enabled=true \
+      --set grafana.enabled=true \
+      --set kiali.enabled=true \
+      --set ingress.enabled=false \
+      --set egressgateway.enabled=false \
+      > istio-single.yaml
+pilot.traceSampling  set the percentage of trace sampling
+kubectl -n istio-system edit deploy istio-pilot
+PILOT_TRACE_SAMPLING
+
+2.istio cilium增强版
+istio 1.0.3
+cilium 1.3.0
+
+https://cilium.readthedocs.io/en/stable/gettingstarted/istio/
+
+helm template istio-cilium-helm --name istio --namespace istio-system \
+      --set global.proxy.includeIPRanges="10.233.0.0/16\,10.234.0.0/16" \
+      --set pilot.image=docker.io/cilium/istio_pilot:1.0.2 \
+      --set sidecarInjectorWebhook.enabled=true \
+      --set global.controlPlaneSecurityEnabled=true \
+      --set global.mtls.enabled=true \
+      --set tracing.enabled=true \
+      --set global.proxy.image=proxy_debug \
+      --set servicegraph.enabled=true \
+      --set grafana.enabled=true \
+      --set kiali.enabled=true \
+      --set ingress.enabled=false \
+      --set egressgateway.enabled=false \
+      > istio-cilium-single.yaml
+
+https://raw.githubusercontent.com/cilium/cilium/1.3.0/examples/kubernetes-istio/istio-sidecar-init-policy.yaml
+
+#启用sidecar自动注入
+kubectl label namespace default istio-injection=enabled
+
+3.istio增强版
+cilium 透明代理拦截
+所有配置符合knative规范 启用sidecar自动注入,但是默认不注入
+log-pilot日志输出，es集群存储
+prometheus监控接入,持久化
+jaeger追踪接入，持久化
+
+示例:
+支持蓝绿发布，灰度发布，支持2个或多个版本切换，并且能够瞬时回滚
+1.蓝绿发布
+
+2.灰度发布,分配策略:HTTP头(Header)/权重(weight)/域名(Host)/URL/URL param
+
+3.熔断器
+
+4.流量镜像
+
+5.限流
+

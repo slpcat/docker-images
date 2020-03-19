@@ -1,0 +1,10 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    provider: fabric8
+    project: configmapcontroller
+    version: 2.2.311
+    group: io.fabric8.devops.apps
+  name: configmapcontroller

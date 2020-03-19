@@ -1,0 +1,39 @@
+{{- if .Values.ceph_commands }}
+{{- $envAll := . }}
+{{- $dependencies := .Values.dependencies.ceph_commands }}
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: ceph-commands-{{ randAlphaNum 5 | lower }}
+spec:
+  template:
+    metadata:
+      labels:
+{{ tuple $envAll "ceph" "ceph-commands" | include "helm-toolkit.snippets.kubernetes_metadata_labels" | indent 8 }}
+    spec:
+      restartPolicy: OnFailure
+      nodeSelector:
+        {{ $envAll.Values.labels.jobs.node_selector_key }}: {{ $envAll.Values.labels.jobs.node_selector_value }}
+      initContainers:
+{{ tuple $envAll $dependencies "" | include "helm-toolkit.snippets.kubernetes_entrypoint_init_container" | indent 8 }}
+      containers:
+        - name: ceph-commands
+          image: {{ .Values.images.ceph_config_helper }}
+          imagePullPolicy: {{ .Values.images.pull_policy }}
+          env:
+            - name: CEPH_COMMANDS_LIST
+              value: {{ .Values.ceph_commands | join ";"  | quote }}
+          command:
+            - /exec_ceph_commands.sh
+          volumeMounts:
+            - name: ceph-bin
+              mountPath: /exec_ceph_commands.sh
+              subPath: exec_ceph_commands.sh
+              readOnly: true
+      volumes:
+        - name: ceph-bin
+          configMap:
+            name: ceph-bin
+            defaultMode: 0555
+{{- end}}

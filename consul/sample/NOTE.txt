@@ -1,0 +1,8 @@
+常见使用场景
+1.Docker+Consul+Registrator 实现服务注册与发现
+2.整合Kong和Consul
+3.Consul以及与Prometheus集成的统一配置管理
+4.Consul + Nomad 服务编排
+  Envoy with Nomad and Consul
+  Istio / Nomad & Consul
+Traefik Consul

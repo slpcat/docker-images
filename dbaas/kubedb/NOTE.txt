@@ -1,0 +1,13 @@
+kubedb(elasticsearch,memcached,mongodb,mysql,postgres,redis)
+https://kubedb.com/docs/v0.13.0-rc.0/setup/install/
+$ curl -fsSL https://github.com/kubedb/installer/raw/v0.13.0-rc.0/deploy/kubedb.sh | bash
+
+# Linux amd 64-bit
+wget -O kubedb https://github.com/kubedb/cli/releases/download/v0.13.0-rc.0/kubedb-linux-amd64 \
+  && chmod +x kubedb \
+  && sudo mv kubedb /usr/local/bin/
+
+# Mac 64-bit
+wget -O kubedb https://github.com/kubedb/cli/releases/download/v0.13.0-rc.0/kubedb-darwin-amd64 \
+  && chmod +x kubedb \
+  && sudo mv kubedb /usr/local/bin/

@@ -1,0 +1,38 @@
+{{- if .Values.enabled -}}
+{{- if coalesce .Values.ingress.enabled .Values.global.ingress.enabled | default false -}}
+{{- $gitlabHostname := include "gitlab.gitlab.hostname" . -}}
+{{- $tlsSecret := include "unicorn.tlsSecret" . -}}
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: {{ template "fullname" . }}
+  namespace: {{ $.Release.Namespace }}
+  labels:
+{{ include "gitlab.standardLabels" . | indent 4 }}
+  annotations:
+    kubernetes.io/ingress.class: "{{ template "gitlab.ingressclass" . }}"
+    kubernetes.io/ingress.provider: nginx
+    nginx.ingress.kubernetes.io/proxy-body-size: {{ .Values.ingress.proxyBodySize | quote }}
+    nginx.ingress.kubernetes.io/proxy-read-timeout: {{ .Values.ingress.proxyReadTimeout | quote }}
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: {{ .Values.ingress.proxyConnectTimeout | quote }}
+    {{ include "gitlab.certmanager_annotations" . }}
+  {{- range $key, $value := merge .Values.ingress.annotations .Values.global.ingress.annotations }}
+    {{ $key }}: {{ $value | quote }}
+  {{- end }}
+spec:
+  rules:
+    - host: {{ $gitlabHostname }}
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: {{ template "fullname" . }}
+              servicePort: {{ .Values.service.workhorseExternalPort }}
+  {{- if $tlsSecret }}
+  tls:
+    - hosts:
+      - {{ $gitlabHostname }}
+      secretName: {{ $tlsSecret }}
+  {{- end }}
+{{- end -}}
+{{- end -}}

@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: pinpoint-agent
+  namespace: default
+  labels:
+    app: pinpoint-agent
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pinpoint-agent
+#  minReadySeconds: 60     #滚动升级时60s后认为该pod就绪
+  serviceName: pinpoint-agent
+  template:
+    metadata:
+      labels:
+        app: pinpoint-agent
+      annotations:
+        #disable istio sidecar injection
+        sidecar.istio.io/inject: "false"
+        #net.ipv4.tcp_syncookies=0 need kernel version 4.4 or newer
+        security.alpha.kubernetes.io/sysctls: "net.ipv4.tcp_syncookies=0,net.ipv4.ip_local_port_range=10000 65535"
+        #kernel version 4.15 needed
+        security.alpha.kubernetes.io/unsafe-sysctls: "net.core.somaxconn=65535,net.ipv4.tcp_tw_reuse=1,net.ipv4.tcp_fin_timeout=30,net.ipv4.tcp_keepalive_intvl=4,net.ipv4.tcp_keepalive_probes=3,net.ipv4.tcp_keepalive_time=120,net.ipv4.tcp_max_syn_backlog=65535,net.ipv4.tcp_rfc1337=1,net.ipv4.tcp_slow_start_after_idle=0,net.ipv4.tcp_fack=1,net.ipv4.tcp_max_tw_buckets=262144,net.ipv4.tcp_fastopen=3,net.ipv4.icmp_ratelimit=100,net.ipv4.tcp_abort_on_overflow=1,net.ipv4.tcp_adv_win_scale=2,net.ipv4.tcp_retries2=8,net.ipv4.tcp_syn_retries=3,net.ipv4.tcp_synack_retries=2,net.unix.max_dgram_qlen=512,net.ipv4.tcp_fwmark_accept=1,net.ipv4.fwmark_reflect=1,net.ipv4.tcp_no_metrics_save=1,net.netfilter.nf_conntrack_helper=1,net.netfilter.nf_conntrack_max=1048576,net.netfilter.nf_conntrack_tcp_timeout_close_wait=60,net.netfilter.nf_conntrack_tcp_timeout_established=120,net.netfilter.nf_conntrack_tcp_timeout_fin_wait=30,net.netfilter.nf_conntrack_tcp_timeout_last_ack=30,net.netfilter.nf_conntrack_tcp_timeout_time_wait=60"
+    spec:
+      #nodeName: k8s.node1 #指定调度节点为k8s.node1
+      #nodeSelector:  #调度特定的节点
+      #  env: test-team
+      terminationGracePeriodSeconds: 60 ##k8s将会给应用发送SIGTERM信号，可以用来正确、优雅地关闭应用,默认为30秒
+      #imagePullSecrets:
+      #- name: registrykey-ali-ext
+      containers:
+      - name: pinpoint-agent
+        image: slpcat/pinpoint-agent
+        imagePullPolicy: Always
+        resources:
+          requests:
+            cpu: 500m
+            memory: 512Mi
+          limits:
+            cpu: 2
+            #nvidia.com/gpu: 1
+            memory: 4Gi
+        securityContext:
+          capabilities: {}
+          privileged: false
+        env:
+        - name: COLLECTOR_IP
+          value: "pinpoint-collector-headless"
+        - name: COLLECTOR_TCP_PORT
+          value: "9994"
+        - name: COLLECTOR_STAT_PORT
+          value: "9995"
+        - name: COLLECTOR_SPAN_PORT
+          value: "9996"
+        - name: PROFILER_SAMPLING_RATE
+          value: "20"
+        - name: DEBUG_LEVEL
+          value: info

@@ -1,0 +1,17 @@
+apiVersion: autoscaling/v2beta1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: php-apache-mem
+  namespace: default
+spec:
+  maxReplicas: 10
+  metrics:
+  - resource:
+      name: memory
+      targetAverageUtilization: 10
+    type: Resource
+  minReplicas: 1
+  scaleTargetRef:
+    apiVersion: extensions/v1beta1
+    kind: Deployment
+    name: php-apache-mem

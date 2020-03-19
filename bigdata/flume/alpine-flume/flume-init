@@ -1,0 +1,19 @@
+#!/bin/bash
+
+FLUME_CONFIGDIR="${FLUME_CONFIGDIR:=/config}"
+FLUME_STARTUP="${FLUME_STARTUP:=flume-startup.json}"
+
+echo "FLUME_STARTUP:$FLUME_STARTUP"
+echo "FLUME_CONFIGDIR:$FLUME_CONFIGDIR"
+
+/wait-for-step.sh
+/execute-step.sh
+
+if [ -f "$FLUME_CONFIGDIR/$FLUME_STARTUP" ]; then
+  /app/bin/flume-bin.py "$FLUME_CONFIGDIR/$FLUME_STARTUP"
+else
+  echo "Flume Startup Configuration not available: $FLUME_CONFIGDIR/$FLUME_STARTUP"
+  exit 1
+fi
+
+/finish-step.sh

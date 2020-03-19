@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: zabbix-web
+  namespace: monitoring
+  labels:
+    app: zabbix
+spec:
+  ports:
+  - port: 80
+    targetPort: 80
+  selector:
+    name: zabbix-web
+  type: NodePort

@@ -1,0 +1,8 @@
+golang写的rocketmq-exporter
+https://github.com/hepyu/RocketmqExporter
+
+官方rocketmq-exporter >=4.3.2
+https://github.com/apache/rocketmq-exporter
+
+https://github.com/apache/rocketmq-externals
+

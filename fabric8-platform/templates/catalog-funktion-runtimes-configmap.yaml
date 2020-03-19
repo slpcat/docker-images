@@ -1,0 +1,83 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  annotations:
+    fabric8.io/iconUrl: https://funktion.fabric8.io/img/profile.png
+    maven.fabric8.io/app-catalog: "true"
+  labels:
+    funktion.fabric8.io/kind: Runtime
+    provider: fabric8
+    project: funktion-runtimes
+    version: 1.1.44
+    group: io.fabric8.funktion
+    kind: catalog
+  name: catalog-funktion-runtimes
+data:
+  catalog-funktion-runtimes.yml: |
+    ---
+    apiVersion: "v1"
+    kind: "Template"
+    metadata:
+      annotations:
+        fabric8.io/iconUrl: "https://funktion.fabric8.io/img/profile.png"
+      finalizers: []
+      labels:
+        funktion.fabric8.io/kind: "Runtime"
+        provider: "fabric8"
+        project: "funktion-runtimes"
+        version: "1.1.44"
+        group: "io.fabric8.funktion"
+      name: "funktion-runtimes"
+      ownerReferences: []
+    labels: {}
+    objects:
+    - apiVersion: "v1"
+      kind: "ConfigMap"
+      metadata:
+        annotations:
+          fabric8.io/iconUrl: "https://funktion.fabric8.io/img/profile.png"
+          funktion.fabric8.io/chromeDevTools: "true"
+        finalizers: []
+        labels:
+          funktion.fabric8.io/kind: "Runtime"
+          provider: "fabric8"
+          project: "funktion-runtimes"
+          version: "1.1.44"
+          group: "io.fabric8.funktion"
+        name: "nodejs"
+        ownerReferences: []
+      data:
+        fileExtensions: "js"
+        debugPort: "5858"
+        deployment: "metadata:\n  annotations:\n    fabric8.io/iconUrl: \"https://funktion.fabric8.io/img/profile.png\"\
+          \n  labels:\n    kind: function\n    name: hello\nspec:\n  replicas: 1\n  template:\n\
+          \    metadata:\n      labels:\n        kind: function\n        name: hello\n\
+          \    spec:\n      terminationGracePeriodSeconds: 1\n      containers:\n    \
+          \  - image: funktion/funktion-nodejs-runtime:1.0.3\n        name: connector\n\
+          \        imagePullPolicy: IfNotPresent\n        volumeMounts:\n          - name:\
+          \ source\n            readOnly: true\n            mountPath: /usr/src/app/funktion\n\
+          \        livenessProbe:\n          httpGet:\n            path: \"/healthz\"\n\
+          \            port: 8888\n          initialDelaySeconds: 30\n        readinessProbe:\n\
+          \          httpGet:\n            path: \"/healthz\"\n            port: 8888\n\
+          \          initialDelaySeconds: 2\n      volumes:\n      - name: source\n  \
+          \      configMap:\n          name: hello\n          items:\n          - key:\
+          \ source\n            path: source.js\n"
+        deploymentDebug: "metadata:\n  annotations:\n    fabric8.io/iconUrl: \"https://funktion.fabric8.io/img/profile.png\"\
+          \n  labels:\n    kind: function\n    name: hello\nspec:\n  replicas: 1\n  template:\n\
+          \    metadata:\n      labels:\n        kind: function\n        name: hello\n\
+          \    spec:\n      terminationGracePeriodSeconds: 1\n      containers:\n    \
+          \  - image: funktion/funktion-nodejs-runtime:1.0.3\n        command:\n     \
+          \   - node\n        - '--inspect'\n        - '--debug=5858'\n        - server.js\n\
+          \        - '--codepath=./funktion/source.js'\n        name: connector\n    \
+          \    imagePullPolicy: IfNotPresent\n        volumeMounts:\n          - name:\
+          \ source\n            readOnly: true\n            mountPath: /usr/src/app/funktion\n\
+          \        livenessProbe:\n          httpGet:\n            path: \"/healthz\"\n\
+          \            port: 8888\n          initialDelaySeconds: 30\n        readinessProbe:\n\
+          \          httpGet:\n            path: \"/healthz\"\n            port: 8888\n\
+          \          initialDelaySeconds: 2\n      volumes:\n      - name: source\n  \
+          \      configMap:\n          name: hello\n          items:\n          - key:\
+          \ source\n            path: source.js\n"
+        service: "metadata:\n  annotations:\n    fabric8.io/iconUrl: \"https://funktion.fabric8.io/img/profile.png\"\
+          \nspec:\n  ports:\n  - port: 80\n    targetPort: 8888\n"
+    parameters: []

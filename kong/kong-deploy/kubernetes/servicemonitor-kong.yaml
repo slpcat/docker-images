@@ -1,0 +1,19 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: kong
+  namespace: kong
+  labels:
+    k8s-app: kong
+spec:
+  selector:
+    matchLabels:
+      k8s-app: kong
+  jobLabel: k8s-app
+  endpoints:
+  - port: kong-admin
+    interval: 10s
+    path: /metrics
+  namespaceSelector:
+    matchNames:
+      - kong

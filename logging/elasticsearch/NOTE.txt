@@ -1,0 +1,479 @@
+版本说明：
+helm-elasticsearch-bitnami 只有es集群
+helm-elasticsearch es集群+kibana
+https://github.com/pires/kubernetes-elasticsearch-cluster
+
+Elastic Cloud on Kubernetes
+Elasticsearch Operator
+
+1.official 
+https://www.elastic.co/cn/products/elastic-cloud-kubernetes
+kubectl apply -f https://download.elastic.co/downloads/eck/1.0.0/all-in-one.yaml
+https://github.com/elastic/cloud-on-k8s
+
+2.kubedb
+
+3.kubestack umpc elasticsearch operator
+https://akomljen.com/kubernetes-elasticsearch-operator/
+
+prometheus-operator监控
+servicemonitor-elasticsearch-bitnami.yml
+dashboard-elasticsearch-bitnami.json
+
+Tools for moving and saving indices
+https://github.com/taskrabbit/elasticsearch-dump
+
+elastalert报警通知(荐)
+https://github.com/Yelp/elastalert
+
+Sentinl报警通知
+KAAE：Kibi + Kibana Alert & Report App for Elasticsearch
+https://github.com/sirensolutions/sentinl
+https://github.com/elastic/kibana/wiki/Known-Plugins
+https://www.elastic.co/guide/en/kibana/current/known-plugins.html
+es-hadoop
+https://www.elastic.co/products/hadoop
+
+Elasticsearch Curator 索引管理工具
+https://github.com/elastic/curator
+
+esrally功能：es的性能测试工具
+
+kibana plugin
+
+
+docker image repack
+
+analysis-icu
+analysis-ik
+analysis-kuromoji
+analysis-phonetic
+analysis-pinyin
+analysis-smartcn
+elasticsearch-repository-oss
+ingest-attachment
+ingest-geoip
+ingest-user-agent
+
+es常用插件
+search-guard：https://github.com/floragunncom/search-guard 
+elasticsearch-http-user-auth：https://github.com/elasticfence/elasticsearch-http-user-auth
+分词插件
+
+1.   插件列表
+
+ComboAnalysis Plugin (作者 Olivier Favre, Yakaz)
+
+简介：组合分词器，可以把多个分词器的结果组合在一起。
+
+
+SmartChinese Analysis Plugin (作者 elasticsearch 团队)
+
+简介：lucene默认的中文分词器
+ 
+
+ICU Analysisplugin (作者 elasticsearch 团队)
+
+简介：lucene自带的ICU分词，ICU是一套稳定、成熟、功能强大、轻便易用和跨平台支持Unicode 的开发包。
+ 
+
+Stempel(Polish) Analysis plugin (作者 elasticsearch 团队)
+
+简介：法文分词器
+
+
+IK Analysis Plugin (作者 Medcl)
+
+简介：大名鼎鼎的ik分词，都懂的！
+
+ 
+Mmseg Analysis Plugin (作者 Medcl)
+
+简介：mmseg中文分词
+
+ 
+
+HunspellAnalysis Plugin (作者 Jörg Prante)
+
+简介：lucene自带的Hunspell模块
+
+ 
+
+Japanese(Kuromoji) Analysis plugin (作者 elasticsearch 团队).
+
+简介：日文分词器
+
+
+
+JapaneseAnalysis plugin (作者 suguru).
+
+简介：日文分词器
+
+ 
+
+Russianand English Morphological Analysis Plugin (作者 Igor Motov)
+
+简介：俄文英文分词器
+
+ 
+
+PinyinAnalysis Plugin (作者 Medcl)
+
+简介：拼音分词器
+
+ 
+
+String2IntegerAnalysis Plugin (作者 Medcl)
+
+简介：字符串转整型工具。主要用在facet这个功能上，如果facet的field的值是字符串的话，计算起来比较耗资源。可以把字符串映射成整型，对整型进行facet操作要比对字符串的快很多。
+
+
+ 同步插件
+
+1.   插件列表
+
+CouchDBRiver Plugin (作者 elasticsearch 团队)
+
+简介：CouchDB和elasticsearch的同步插件
+
+ 
+
+WikipediaRiver Plugin (作者 elasticsearch 团队)
+
+简介：wikipedia文件读取插件。wikipedia是维基百科的一个离线库，不定期发布最新数据，是以xml形式发布的。这个river读取这个文件来建索引。
+
+ 
+
+TwitterRiver Plugin (作者 elasticsearch 团队)
+
+简介：twitter的同步插件，可以同步你twitter上的微博。
+
+ 
+
+RabbitMQRiver Plugin (作者 elasticsearch 团队)
+
+简介：rabbitmq同步插件，读取rabbitmq上的队列信息并索引。
+
+RSS River Plugin (作者 David Pilato)
+
+简介：定期索引指定一个或多个RSS源的数据。
+
+ 
+
+MongoDBRiver Plugin (作者 Richard Louapre)
+
+简介：mongodb同步插件，mongodb必须搭成副本集的模式，因为这个插件的原理是通过定期读取mongodb中的oplog来同步数据。
+
+ 
+
+OpenArchives Initiative (OAI) River Plugin (作者 Jörg Prante)
+
+简介：可以索引oai数据提供者提供的数据。
+
+ 
+
+St9River Plugin (作者 Sunny Gleason)
+
+简介：可以索引索引st9数据（st9是神马？囧！！！）
+
+SofaRiver Plugin (作者 adamlofts)
+
+简介：这个插件可以把多个CouchDB的数据库同步到同一个es索引中。
+
+
+JDBC RiverPlugin (作者 JörgPrante)
+
+简介：关系型数据库的同步插件
+
+ 
+
+FileSystem River Plugin (作者 David Pilato)
+
+简介：本地文件系统文件同步插件，使用方法是指定一个本地目录路径，es会定期扫描索引该目录下的文件。
+
+ 
+
+LDAP River Plugin (作者 Tanguy Leroux)
+
+简介：索引LDAP目录下的文件数据。
+
+ 
+
+Dropbox River Plugin (作者 David Pilato)
+
+简介：索引dropbox网盘上的文件。通过oauth协议来调用dropbox上的api建索引。
+
+ActiveMQRiver Plugin (作者 Dominik Dorn)
+
+简介：activemq队列的同步插件，和之前rabbitmq的类似
+ 
+
+SolrRiver Plugin (作者 Luca Cavanna)
+
+简介：solr同步插件，可以把solr里面的索引同步到es
+
+ 
+
+CSV RiverPlugin (作者 MartinBednar)
+
+简介：通过指定目录地址来索引csv文件。
+
+ 
+
+2.   插件——MongoDB River
+
+插件地址：https://github.com/richardwilly98/elasticsearch-river-mongodb
+
+ 
+
+插件安装：Plugin--installcom.github.richardwilly98.elasticsearch/elasticsearch-river-mongodb/2.0.9
+备用：Plugin–install –url https://github.com/downloads/richardwilly98/elasticsearch-river-mongodb/elasticsearch-river-mongodb-2.0.9.zip-install river-mongodb
+
+ 
+
+【todo:需要配置MongoDB的集群功能，未能成功，下周再试】
+
+四、           数据传输插件
+
+1.   插件列表
+
+Servlettransport (作者 elasticsearch 团队)
+
+简介：Servletrest插件，通过servlet来封装rest接口。
+
+ 
+
+Memcachedtransport plugin (作者 elasticsearch 团队)
+
+简介：本插件可以通过memcached协议进行rest接口的调用。注意：这里不是使用memcache作为es的缓存。
+
+ 
+
+ThriftTransport (作者 elasticsearch 团队)
+
+简介：使用thrift进行数据传输。
+
+ZeroMQ transport layer plugin (作者 Tanguy Leroux)
+
+简介：使用zeromq进rest接口的调用。
+
+ 
+
+Jetty HTTP transportplugin (作者 SonianInc.)
+
+简介：使用jetty来提供http rest接口。默认是使用netty。这个插件的好处是可以对http接口进行一些权限的设置。
+
+ 
+
+2.   插件——
+
+【todo：暂不需要未经测试】
+
+五、           脚本插件
+
+1.   插件列表
+
+Pythonlanguage Plugin (作者 elasticsearch 团队)
+
+简介：python脚本支持
+JavaScriptlanguage Plugin (作者 elasticsearch 团队)
+
+简介：javascript脚本支持
+
+ 
+
+Groovylang Plugin (作者 elasticsearch 团队)
+
+简介：groovy脚本支持
+
+ 
+
+ClojureLanguage Plugin (作者 Kevin Downey)
+
+简介：clojure脚本支持
+
+2.   插件——
+
+ 
+
+六、           站点插件
+
+
+1.   插件列表
+
+Paramedic Plugin (作者 Karel Minařík)
+
+简介：es监控插件
+
+
+SegmentSpyPlugin (作者 ZacharyTong)
+
+简介：查看es索引segment状态的插件
+ 
+
+InquisitorPlugin (作者 ZacharyTong)
+
+简介：这个插件主要用来调试你的查询。
+ 
+
+2.   插件——Mavel
+
+Cd D:\Sooil\Elasticsearch\elasticsearch-1.6.0\bin
+
+D:
+
+
+Plugin –install elasticsearch/marvel/latest
+ 
+
+ 
+
+注意：Marvel由于其功能强大，为收费产品。
+
+访问地址如下：
+
+http://192.168.1.184:9200/_plugin/marvel
+
+http://192.168.1.184:9200/_plugin/marvel/sense/index.html
+
+七、           其它插件
+
+1.   插件列表
+
+MapperAttachments Type plugin (作者 elasticsearch 团队)
+
+简介：附件类型插件，通过tika库把各种类型的文件格式解析成字符串。
+
+ 
+
+HadoopPlugin (作者 elasticsearchteam)
+
+简介：hadoop和elasticsearch的集成插件，可以通过hadoop的mapreduce算法来并行建立索引，同时支持cascading，hive和pig等框架。
+
+ 
+
+AWS CloudPlugin (作者 elasticsearch 团队)
+
+简介：elasticsearch与amazon web services的集成。
+ 
+
+ElasticSearchMock Solr Plugin (作者 Matt Weber)
+
+简介：elasticsearch的solr api接口。用了这个插件可以使用solr的api来调用es，直接用solrj就可以调用es。比较适用于从solr转es时暂时过度。
+
+ 
+
+SuggesterPlugin (作者 AlexanderReelsen)
+
+简介：es 搜索提示功能插件，不过es0.9版本后自带了这个功能，
+
+ 
+
+ElasticSearchPartialUpdate Plugin (作者 Medcl)
+
+简介：elasticsearch的部分更新插件。
+
+ 
+
+ZooKeeperDiscovery Plugin (作者 Sonian Inc.)
+
+简介：通过zookeeper管理集群的插件。通过这个插件，es的分布式架构和solrcloud相似。
+
+ 
+
+ElasticSearchChanges Plugin (作者 Thomas Peuss)
+
+简介：elasticsearch索引操作记录插件。通过这个插件可以查看用户对索引的增删改操作。
+
+ 
+
+ElasticSearch View Plugin (作者 Tanguy Leroux)
+
+简介：这个插件可以把es的文档以html，xml或text的方式显示出来，它也可以通过查询生成web页面。
+
+ 
+
+ElasticSearchNew Relic Plugin (作者 Vinicius Carvalho)
+
+简介：elasticsearch和newrelic的集成插件。newrelica是一个性能监控工具。这个插件会把节点的状态数据传到newrelic的账号上。
+
+ 
+
+2.   插件——
+
+Todo：产品中需要做测试集成的插件：
+
+ElasticSearchChanges Plugin
+
+MapperAttachments Type plugin
+
+八、           Elasticsearch客户端
+
+1.   客户端列表
+
+1)     Perl
+
+ElasticSearch.pm: Perl客户端
+
+2)    Python
+
+pyes: Python客户端
+pyelasticsearch: Python客户端
+ESClient:一个轻量级Python客户端
+rawes: Python客户端
+elasticutils: Python客户端
+
+3)    Ruby
+
+Tire:Ruby API & DSL, with ActiveRecord/ActiveModel integration
+rubberband: Ruby客户端
+stretcher: Ruby客户端
+elastic_searchable: Ruby客户端 + Rails整合
+
+4)    PHP
+
+Elastica: PHP客户端
+elasticsearch PHP客户端
+Sherlock: PHP客户端
+
+5)    Java
+
+Jest: Java Rest客户端
+
+6)    Javascript
+
+Elastic.js: JavaScript实现Query DSL和主要API读取
+
+7)    .Net
+
+PlainElastic.Net: .NET客户端
+NEST: .NET客户端
+ElasticSearch.NET: .NET客户端
+
+8)    Scala
+
+scalastic: Scala客户端
+esclient:瘦Scala客户端
+
+9)    Clojure
+
+Elastisch: Clojure客户端
+
+10)             Go
+
+elastigo: Go客户端
+
+11)             Erlang
+
+erlastic_search: Erlang客户端
+Tirexs:一个基于Elixir的API/DSL,可以在纯Erlang环境中使用
+
+12)             EventMachine
+
+em-elasticsearch: eventmachine的elasticsearch库
+
+13)             Linux Command Line
+
+es2unix:通过unix命令行调用elasticsearchapi
+
+ 

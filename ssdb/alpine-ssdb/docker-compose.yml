@@ -1,0 +1,19 @@
+version: '3'
+
+services:
+
+  ssdb:
+    build:
+      dockerfile: ./Dockerfile
+    # command: /ssdb/ssdb-server /ssdb/ssdb.conf
+    volumes:
+      - ./volumes/ssdb/data:/ssdb/var
+      # - ./configs/ssdb/ssdb.conf:/ssdb/ssdb.conf:ro
+    ports:
+      - 8888:8888
+    networks:
+      - ssdb-net
+
+networks:
+  ssdb-net:
+    driver: bridge

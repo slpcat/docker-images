@@ -1,0 +1,51 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: hclient
+  namespace: default
+spec:
+  containers:
+  - name: hbase-client
+    #image: slpcat/hbase:centos7
+    image: slpcat/hbase:alpine
+    imagePullPolicy: Always
+    command:
+    - sh
+    - -c
+    - "/opt/hbase/bin/start-k8s-hbase.sh; /opt/hbase/bin/hbase shell /tmp/hclient.hbase"
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        cpu: 4
+        #nvidia.com/gpu: 1
+        memory: 8Gi
+    securityContext:
+      capabilities: {}
+      privileged: false
+    env:
+    #- name: HBASE_SERVER_TYPE
+    #  value: client
+    #- name: HDFS_PATH
+    #hdfs headless service
+    #  value: hadoop-hadoop-hdfs-nn:9000
+    - name: ZOOKEEPER_SERVICE_LIST
+      #zookeeper headless service
+      value: zookeeper-1,zookeeper-2,zookeeper-3
+    - name: ZOOKEEPER_PORT
+      value: "2181"
+    - name: ZNODE_PARENT
+      value: hbase
+    volumeMounts:
+      - name: hclient-hbase
+        mountPath: "/tmp/hclient.hbase"
+        subPath: hclient.hbase
+  volumes:
+    - name: hclient-hbase
+      configMap:
+        name: hclient-configmap
+        #Add ConfigMap data to a specific path in the Volume
+        items:
+        - key: hclient.hbase
+          path: hclient.hbase

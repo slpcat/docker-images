@@ -1,0 +1,9 @@
+https://www.colabug.com/3222094.html
+https://www.colabug.com/3607687.html
+https://www.elastic.co/guide/en/beats/filebeat/6.3/running-on-kubernetes.html
+https://www.elastic.co/guide/en/beats/filebeat/6.3/add-kubernetes-metadata.html
+https://www.elastic.co/guide/en/beats/filebeat/master/configuration-autodiscover-hints.html#configuration-autodiscover-hints
+
+tolerations:
+    - effect: NoSchedule
+      operator: Exists

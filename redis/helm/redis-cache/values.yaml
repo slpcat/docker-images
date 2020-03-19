@@ -1,0 +1,52 @@
+# Default values for redis-cache.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+## Statefulset related configurations ss.yaml
+antiAffinity: "hard"
+replicaCount: 3
+redis:
+  image:
+    repository: redis
+    tag: 3.0-alpine
+    pullPolicy: IfNotPresent
+  resources:
+    limits:
+      memory: 1Gi
+    requests:
+      memory: 256Mi
+microSentinel:
+  image:
+    #repository: dhilipkumars/redis-sentinel-k8s
+    repository: slpcat/redis-sentinel-k8s
+    tag: 0.1.0
+    pullPolicy: IfNotPresent
+  resources: {}
+    # limits:
+    #   cpu: 10m
+    #   memory: 20Mi
+    # requests:
+    #   cpu: 10m
+    #   memory: 20Mi
+makeSlave:
+  image:
+    #repository: dhilipkumars/mk-redis-slave
+    repository: slpcat/mk-redis-slave
+    tag: 0.1.0
+    pullPolicy: IfNotPresent
+  resources: {}
+    limits:
+    #   cpu: 10m
+      memory: 1Gi
+    requests:
+      cpu: 200m
+      memory: 256Mi
+
+# Service related configurations common for templates/service.yaml and templates/ss.yaml (redis container)
+service:
+  name: rd-port
+  port: 6379
+
+  # Pod Disruption budget related configurations
+podDisruptionBudget:
+  minAvailable: 2

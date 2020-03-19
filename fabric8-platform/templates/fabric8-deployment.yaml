@@ -1,0 +1,103 @@
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    fabric8.io/iconUrl: https://cdn.rawgit.com/fabric8io/fabric8-console/master/app-kubernetes/src/main/fabric8/icon.svg
+    configmap.fabric8.io/update-on-change: fabric8
+    fabric8.io/git-commit: 95aff298eeca6fba8f6ade3a5dab742a0f3a4381
+    fabric8.io/metrics-path: dashboard/file/kubernetes-pods.json/?var-project=fabric8-console&var-version=2.2.199
+    fabric8.io/build-id: "5"
+    fabric8.io/build-url: http://jenkins.ux.fabric8.io/job/oss-parent/5
+    fabric8.io/git-branch: release-v2.2.199
+    fabric8.io/git-url: http://gogs.ux.fabric8.io/gogsadmin/oss-parent/commit/95aff298eeca6fba8f6ade3a5dab742a0f3a4381
+  labels:
+    provider: fabric8
+    project: fabric8-console
+    expose: "true"
+    version: 2.2.199
+    group: io.fabric8.apps
+  name: fabric8
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      provider: fabric8
+      group: io.fabric8.platform.console
+      project: fabric8-console
+      expose: "true"
+  template:
+    metadata:
+      annotations:
+        fabric8.io/git-commit: 95aff298eeca6fba8f6ade3a5dab742a0f3a4381
+        fabric8.io/metrics-path: dashboard/file/kubernetes-pods.json/?var-project=fabric8-console&var-version=2.2.199
+        fabric8.io/build-id: "5"
+        fabric8.io/build-url: http://jenkins.ux.fabric8.io/job/oss-parent/5
+        fabric8.io/iconUrl: https://cdn.rawgit.com/fabric8io/fabric8-console/master/app-kubernetes/src/main/fabric8/icon.svg
+        configmap.fabric8.io/update-on-change: fabric8
+        fabric8.io/git-branch: release-v2.2.199
+        fabric8.io/git-url: http://gogs.ux.fabric8.io/gogsadmin/oss-parent/commit/95aff298eeca6fba8f6ade3a5dab742a0f3a4381
+      labels:
+        provider: fabric8
+        group: io.fabric8.platform.console
+        project: fabric8-console
+        expose: "true"
+        version: 2.2.199
+    spec:
+      containers:
+      - command:
+        - /kuisp
+        - -p
+        - "9090"
+        - -c
+        - /site/osconsole/config.${OAUTH_PROVIDER}.js.tmpl=/site/osconsole/config.js
+        - --bearer-token=/var/run/secrets/kubernetes.io/serviceaccount/token
+        - --skip-cert-validation=true
+        - --default-page=/index.html
+        - --max-age=24h
+        - -s
+        - /k8s/=https://kubernetes:443/
+        - --compress
+        env:
+        - name: GITHUB_OAUTH_CLIENT_SECRET
+          valueFrom:
+            configMapKeyRef:
+              key: github-oauth-client-secret
+              name: fabric8
+        - name: OAUTH_PROVIDER
+          valueFrom:
+            configMapKeyRef:
+              key: auth-mode
+              name: fabric8
+        - name: GITHUB_OAUTH_CLIENT_ID
+          valueFrom:
+            configMapKeyRef:
+              key: github-oauth-client-id
+              name: fabric8
+        - name: KUBERNETES_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: KUBERNETES_MASTER_URI
+          valueFrom:
+            configMapKeyRef:
+              key: master-uri
+              name: fabric8
+        image: fabric8/fabric8-console:2.2.199
+        name: fabric8
+        ports:
+        - containerPort: 9090
+          name: http
+        resources:
+          limits:
+            cpu: "0"
+            memory: "0"
+          requests:
+            cpu: "0"
+            memory: "0"
+      - image: fabric8/jenkinshift:2.2.199
+        name: jenkinshift
+        ports:
+        - containerPort: 9191
+          name: sun-as-jpda
+          protocol: TCP

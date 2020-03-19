@@ -1,0 +1,73 @@
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    fabric8.io/git-commit: f7967da2069f486a3e6dbef233574eccac3e0dae
+    fabric8.io/metrics-path: dashboard/file/kubernetes-pods.json/?var-project=keycloak&var-version=2.2.327
+    fabric8.io/scm-con-url: scm:git:git@github.com:fabric8io/fabric8-devops.git/keycloak
+    fabric8.io/scm-url: http://github.com/fabric8io/fabric8-devops/keycloak
+    fabric8.io/iconUrl: https://cdn.rawgit.com/fabric8io/fabric8-devops/master/keycloak/src/main/fabric8/icon.svg
+    fabric8.io/git-branch: release-v2.2.327
+    fabric8.io/scm-devcon-url: scm:git:git@github.com:fabric8io/fabric8-devops.git/keycloak
+    fabric8.io/scm-tag: fabric8-devops-2.0.1
+  labels:
+    provider: fabric8
+    project: keycloak
+    version: 2.2.327
+    group: io.fabric8.devops.apps
+  name: keycloak
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      project: keycloak
+      provider: fabric8
+      version: 2.2.327
+      group: io.fabric8.devops.apps
+  template:
+    metadata:
+      annotations:
+        fabric8.io/git-commit: f7967da2069f486a3e6dbef233574eccac3e0dae
+        fabric8.io/metrics-path: dashboard/file/kubernetes-pods.json/?var-project=keycloak&var-version=2.2.327
+        fabric8.io/scm-con-url: scm:git:git@github.com:fabric8io/fabric8-devops.git/keycloak
+        fabric8.io/scm-url: http://github.com/fabric8io/fabric8-devops/keycloak
+        fabric8.io/iconUrl: https://cdn.rawgit.com/fabric8io/fabric8-devops/master/keycloak/src/main/fabric8/icon.svg
+        fabric8.io/git-branch: release-v2.2.327
+        fabric8.io/scm-devcon-url: scm:git:git@github.com:fabric8io/fabric8-devops.git/keycloak
+        fabric8.io/scm-tag: fabric8-devops-2.0.1
+        pod.alpha.kubernetes.io/init-containers: '[{"image":"busybox","imagePullPolicy":"IfNotPresent","name":"fmp-volume-permission","command":["chmod","777","/opt/jboss/keycloak/standalone/data"],"volumeMounts":[{"mountPath":"/opt/jboss/keycloak/standalone/data","name":"keycloak-data"}]}]'
+      labels:
+        provider: fabric8
+        project: keycloak
+        version: 2.2.327
+        group: io.fabric8.devops.apps
+    spec:
+      containers:
+      - env:
+        - name: KEYCLOAK_USER
+          value: admin
+        - name: KEYCLOAK_PASSWORD
+          value: admin
+        image: jboss/keycloak:2.5.1.Final
+        livenessProbe:
+          httpGet:
+            path: /auth
+            port: 8080
+          initialDelaySeconds: 60
+          timeoutSeconds: 10
+        name: keycloak
+        readinessProbe:
+          httpGet:
+            path: /auth
+            port: 8080
+          initialDelaySeconds: 10
+          timeoutSeconds: 10
+        volumeMounts:
+        - mountPath: /opt/jboss/keycloak/standalone/data
+          name: keycloak-data
+          readOnly: false
+      volumes:
+      - name: keycloak-data
+        persistentVolumeClaim:
+          claimName: keycloak-data

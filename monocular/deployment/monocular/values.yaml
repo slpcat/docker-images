@@ -1,0 +1,133 @@
+# Default values for monocular.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+api:
+  replicaCount: 2
+  image:
+    repository: bitnami/monocular-api
+    tag: v0.7.3
+    pullPolicy: Always
+  service:
+    name: monocular-api
+    type: NodePort
+    externalPort: 80
+    internalPort: 8081
+    annotations: {}
+      # foo.io/bar: "true"
+  resources:
+    limits:
+      cpu: 100m
+      memory: 128Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+  livenessProbe:
+    initialDelaySeconds: 180
+  auth:
+    signingKey:
+    github:
+      clientID:
+      clientSecret:
+  config:
+    repos:
+      # Official repositories
+      - name: stable
+        url: https://kubernetes-charts.storage.googleapis.com
+        source: https://github.com/kubernetes/charts/tree/master/stable
+      - name: incubator
+        url: https://kubernetes-charts-incubator.storage.googleapis.com
+        source: https://github.com/kubernetes/charts/tree/master/incubator
+      # Add your own repository
+      #- name: my-repo-name
+      #  url: my-repository-url
+      #  source: my-repository-source
+    cors:
+      allowed_origins:
+        - ""
+        # e.g. UI served on a different domain
+        # - http://monocular.local
+      allowed_headers:
+        - "content-type"
+        - "x-xsrf-token"
+    # Enable Helm deployment integration
+    releasesEnabled: true
+    tillerNamespace: kube-system
+    # Cache refresh interval in sec.
+    cacheRefreshInterval: 3600
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+ui:
+  replicaCount: 2
+  image:
+    repository: bitnami/monocular-ui
+    tag: v0.7.3
+    pullPolicy: Always
+  service:
+    name: monocular-ui
+    type: NodePort
+    externalPort: 80
+    internalPort: 8080
+    annotations: {}
+      # foo.io/bar: "true"
+  resources:
+    limits:
+      cpu: 100m
+      memory: 128Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+  # ui-config populate
+  googleAnalyticsId: UA-XXXXXX-X
+  appName: Monocular
+  # API served on same-domain at /api path using Nginx Ingress controller
+  backendHostname: /api
+  # e.g. API served on a different domain
+  # backendHostname: http://monocular-api.local
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+
+prerender:
+  replicaCount: 1
+  image:
+    repository: migmartri/prerender
+    tag: latest
+    pullPolicy: Always
+  cacheEnabled: true
+  service:
+    name: prerender
+    type: NodePort
+    externalPort: 80
+    internalPort: 3000
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+
+ingress:
+  enabled: true
+  hosts:
+  # Wildcard
+  -
+  # - monocular.local
+
+  ## Ingress annotations
+  ##
+  annotations:
+    ## Nginx ingress controller (default)
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: 'true'
+    ## Traefik ingress controller
+    # traefik.frontend.rule.type: PathPrefixStrip
+    # kubernetes.io/ingress.class: traefik
+
+  ## Ingress TLS configuration
+  ## Secrets must be manually created in the namespace
+  ##
+  # tls:
+  #   secretName: monocular.local-tls

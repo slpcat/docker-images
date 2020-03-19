@@ -1,0 +1,4 @@
+1.etcd operator 创建etcd集群
+2.m3db operator 创建m3db集群
+https://m3db.github.io/m3/how_to/kubernetes/
+https://operator.m3db.io/getting_started/installation/

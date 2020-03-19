@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Release.Name }}-pvc
+  annotations:
+    "helm.sh/hook": pre-install
+    "helm.sh/hook-weight": "-5"
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: {{ .Values.persistence.pvc.storage }}
+{{- if .Values.persistence.pvc.matchLabels }}
+  selector:
+    matchLabels:
+{{ toYaml .Values.persistence.pvc.matchLabels | indent 12 }}
+{{- end}}

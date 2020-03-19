@@ -1,0 +1,7 @@
+1.autoscaling
+根据http每秒请求数(QPS)进行水平扩容/缩容
+2.启用镜像构建，镜像仓库存储
+  enable-build-step: "true"
+3.自定义runtime
+4.自建kafka消息队列
+

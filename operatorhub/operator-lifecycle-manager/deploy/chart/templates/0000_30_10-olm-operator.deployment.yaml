@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: olm-operator
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: olm-operator
+spec:
+  strategy:
+    type: RollingUpdate
+  replicas: {{ .Values.olm.replicaCount }}
+  selector:
+    matchLabels:
+      app: olm-operator
+  template:
+    metadata:
+      labels:
+        app: olm-operator
+    spec:
+      serviceAccountName: olm-operator-serviceaccount
+      containers:
+        - name: olm-operator
+          command:
+          - /bin/olm
+          {{- if .Values.watchedNamespaces }}
+          - -watchedNamespaces
+          - {{ .Values.watchedNamespaces }}
+          {{- end }}
+          {{- if .Values.olm.commandArgs }}
+          - {{ .Values.olm.commandArgs }}
+          {{- end }}
+          image: {{ .Values.olm.image.ref }}
+          imagePullPolicy: {{ .Values.olm.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.olm.service.internalPort }}
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: {{ .Values.olm.service.internalPort }}
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: {{ .Values.olm.service.internalPort }}
+          env:
+          - name: OPERATOR_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          - name: OPERATOR_NAME
+            value: olm-operator
+          {{- if .Values.olm.resources }}
+          resources:
+{{ toYaml .Values.olm.resources | indent 12 }}
+          {{- end}}
+    {{- if .Values.olm.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.olm.nodeSelector | indent 8 }}
+    {{- end }}
+      imagePullSecrets:
+        - name: coreos-pull-secret

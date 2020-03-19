@@ -1,0 +1,31 @@
+# This file and its contents are licensed under the Apache License 2.0.
+# Please see the included NOTICE for copyright information and LICENSE for a copy of the license.
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ template "timescaledb.accessname" . }}
+  labels:
+    app: {{ template "timescaledb.fullname" . }}
+    chart: {{ template "timescaledb.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+type: Opaque
+data:
+  password-superuser: {{ .Values.credentials.accessNode.superuser | b64enc }}
+...
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ template "timescaledb.dataname" . }}
+  labels:
+    app: {{ template "timescaledb.fullname" . }}
+    chart: {{ template "timescaledb.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+type: Opaque
+data:
+  password-superuser: {{ .Values.credentials.dataNode.superuser | b64enc }}
+...

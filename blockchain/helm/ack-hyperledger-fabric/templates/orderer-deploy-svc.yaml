@@ -1,0 +1,79 @@
+{{- $ordererNum := int $.Values.ordererNum }}
+{{- $network := $.Values.fabricNetwork -}}
+{{- range $loopIndex, $ordererIndex := untilStep 1 (int (add $ordererNum 1)) 1 -}}
+kind: Service
+apiVersion: v1
+metadata:
+  name: {{ $network }}-orderer{{ $ordererIndex }}
+spec:
+  type: NodePort
+  selector:
+    app: {{ $network }}-orderer{{ $ordererIndex }}
+  ports:
+    - protocol: TCP
+      port: 7050
+      nodePort: {{ index $.Values.ordererExternalPortList $loopIndex }}
+      name: orderer-port
+---
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: {{ $network }}-orderer{{ $ordererIndex }}-deployment
+  labels:
+    app: {{ $network }}-orderer{{ $ordererIndex }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ $network }}-orderer{{ $ordererIndex }}
+  template:
+    metadata:
+      labels:
+        app: {{ $network }}-orderer{{ $ordererIndex }}
+    spec:
+      containers:
+        - name: {{ $network }}-orderer{{ $ordererIndex }}
+          image: {{ $.Values.dockerImageRegistry }}/fabric-orderer:x86_64-{{ $.Values.hyperledgerFabricVersion }}
+          imagePullPolicy: {{ $.Values.imagePullPolicy | quote }}
+          ports:
+            - containerPort: 7050
+              name: orderer-port
+          command: ["orderer"]
+          env:
+            - name: GODEBUG
+              value: "netdns=go"
+            - name: ORDERER_GENERAL_LOGLEVEL
+              value: "debug"
+            - name: ORDERER_GENERAL_LISTENADDRESS
+              value: "0.0.0.0"
+            - name: ORDERER_GENERAL_GENESISMETHOD
+              value: "file"
+            - name: ORDERER_GENERAL_GENESISFILE
+              value: "/var/hyperledger/production/{{ include "genesisBlockFile" . }}"
+            - name: ORDERER_GENERAL_LOCALMSPID
+              value: {{ include "ordererMsp" . | quote }}
+            - name: ORDERER_GENERAL_LOCALMSPDIR
+              value: "/var/hyperledger/production/msp"
+            - name: ORDERER_GENERAL_TLS_ENABLED
+              value: "true"
+            - name: ORDERER_GENERAL_TLS_PRIVATEKEY
+              value: "/var/hyperledger/production/tls/server.key"
+            - name: ORDERER_GENERAL_TLS_CERTIFICATE
+              value: "/var/hyperledger/production/tls/server.crt"
+            - name: ORDERER_GENERAL_TLS_ROOTCAS
+              value: "[/var/hyperledger/production/tls/ca.crt]"
+          volumeMounts:
+            - name: data
+              mountPath: /var/hyperledger/production
+      initContainers:
+        - name: check-kafka
+          image: {{ $.Values.dockerImageRegistry }}/fabric-tools:x86_64-{{ $.Values.hyperledgerFabricVersion }}
+          imagePullPolicy: {{ $.Values.imagePullPolicy | quote }}
+          command: ['sh', '-c']
+          args: ['until echo dump | nc -w 3 {{ $network }}-zookeeper1 2181 | grep brokers; do echo waiting for kafka brokers; sleep 3; done;']
+      volumes:
+        - name: data
+          hostPath:
+            path: "/data/fabric/{{ $network }}/{{ $network }}-orderer{{ $ordererIndex }}"
+---
+{{- end -}}

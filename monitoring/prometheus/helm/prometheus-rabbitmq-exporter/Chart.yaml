@@ -1,0 +1,8 @@
+apiVersion: v1
+appVersion: v0.28.0
+description: Rabbitmq metrics exporter for prometheus
+home: https://github.com/kbudde/rabbitmq_exporter
+name: prometheus-rabbitmq-exporter
+sources:
+- https://github.com/kbudde/rabbitmq_exporter
+version: 0.1.2

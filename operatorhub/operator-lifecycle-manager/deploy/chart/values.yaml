@@ -1,0 +1,31 @@
+rbacApiVersion: rbac.authorization.k8s.io
+namespace: operator-lifecycle-manager
+catalog_namespace: operator-lifecycle-manager
+imagestream: false
+olm:
+  replicaCount: 1
+  image:
+    ref: quay.io/coreos/olm:master
+    pullPolicy: Always
+  service:
+    internalPort: 8080
+
+catalog:
+  replicaCount: 1
+  image:
+    ref: quay.io/coreos/olm:master
+    pullPolicy: Always
+  service:
+    internalPort: 8080
+
+package:
+  replicaCount: 1
+  image:
+    ref: quay.io/coreos/olm:master
+    pullPolicy: Always
+  service:
+    internalPort: 443
+
+catalog_sources:
+ - rh-operators
+ - certified-operators

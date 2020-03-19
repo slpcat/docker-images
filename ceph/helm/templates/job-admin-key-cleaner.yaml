@@ -1,0 +1,50 @@
+{{- if .Values.manifests.job_storage_admin_keys_cleaner }}
+{{- $envAll := . }}
+{{- if .Values.deployment.storage_secrets }}
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: ceph-storage-admin-key-cleaner-{{ randAlphaNum 5 | lower }}
+  annotations:
+    "helm.sh/hook": pre-delete
+spec:
+  template:
+    metadata:
+      labels:
+{{ tuple $envAll "ceph" "admin-key-cleaner" | include "helm-toolkit.snippets.kubernetes_metadata_labels" | indent 8 }}
+    spec:
+      restartPolicy: OnFailure
+      nodeSelector:
+        {{ $envAll.Values.labels.jobs.node_selector_key }}: {{ $envAll.Values.labels.jobs.node_selector_value }}
+      containers:
+        - name:  ceph-storage-admin-keys-cleaner
+          image: {{ .Values.images.ceph_config_helper }}
+          imagePullPolicy: {{ .Values.images.pull_policy }}
+{{ tuple $envAll $envAll.Values.pod.resources.jobs.secret_provisioning | include "helm-toolkit.snippets.kubernetes_resources" | indent 10 }}
+          env:
+            - name: DEPLOYMENT_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: PVC_CEPH_STORAGECLASS_ADMIN_SECRET_NAME
+              value: {{ .Values.storageclass.admin_secret_name }}
+            - name: CEPH_ADMIN_SECRETS_NAME
+              value: |-
+          {{- range $key, $val := .Values.secrets.keyrings }}
+                {{ $val }}
+          {{- end }}
+          command:
+            - /opt/ceph/ceph-storage-admin-key-cleaner.sh
+          volumeMounts:
+            - name: ceph-bin
+              mountPath: /opt/ceph/ceph-storage-admin-key-cleaner.sh
+              subPath: ceph-storage-admin-key-cleaner.sh
+              readOnly: true
+      volumes:
+        - name: ceph-bin
+          configMap:
+            name: ceph-bin
+            defaultMode: 0555
+{{- end }}
+{{- end }}

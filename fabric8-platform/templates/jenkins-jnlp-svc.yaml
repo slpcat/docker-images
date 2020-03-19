@@ -1,0 +1,25 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    fabric8.io/git-commit: 2b9f7ce19493fe6d18392ac4f4be16f5e1a76fa3
+    fabric8.io/iconUrl: https://cdn.rawgit.com/fabric8io/fabric8-devops/master/jenkins/src/main/fabric8/icon.svg
+    fabric8.io/git-branch: release-v2.2.311
+  labels:
+    project: jenkins
+    provider: fabric8
+    expose: "true"
+    version: 2.2.311
+    group: io.fabric8.devops.apps
+  name: jenkins-jnlp
+spec:
+  ports:
+  - name: agent
+    port: 50000
+    protocol: TCP
+    targetPort: 50000
+  selector:
+    project: jenkins
+    provider: fabric8
+    group: io.fabric8.devops.apps

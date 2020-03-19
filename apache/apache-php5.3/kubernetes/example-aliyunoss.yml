@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: oss-pv1 # TODO: put your name of oss pv here
+spec:
+  capacity:
+    storage: 5Gi #size
+  accessModes:
+    - ReadWriteMany
+  flexVolume:
+    driver: "alicloud/oss"
+    options:
+      bucket: "mybucket" #TODO: put your buncket here
+      url: "oss-cn-hangzhou.aliyuncs.com"
+      akId: "***" #TODO: put your ak ID here
+      akSecret: "***" #TODO: put your ak secret here
+      otherOpts: "-o max_stat_cache_size=0 -o allow_other"

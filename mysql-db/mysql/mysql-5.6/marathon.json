@@ -1,0 +1,100 @@
+{
+  "id": "/mysql",
+  "backoffFactor": 1.15,
+  "backoffSeconds": 1,
+  "constraints": [
+    [
+      "hostname",
+      "CLUSTER",
+      "10.0.2.133"
+    ]
+  ],
+  "container": {
+    "portMappings": [
+      {
+        "containerPort": 3306,
+        "hostPort": 0,
+        "labels": {
+          "VIP_0": "/mysql:3306"
+        },
+        "protocol": "tcp",
+        "servicePort": 13306,
+        "name": "mysql"
+      }
+    ],
+    "type": "DOCKER",
+    "volumes": [
+      {
+        "persistent": {
+          "type": "root",
+          "size": 10240,
+          "constraints": []
+        },
+        "mode": "RW",
+        "containerPath": "mysql_data"
+      },
+      {
+        "containerPath": "/var/lib/mysql",
+        "hostPath": "mysql_data",
+        "mode": "RW"
+      }
+    ],
+    "docker": {
+      "image": "slpcat/mysql-5.6",
+      "forcePullImage": true,
+      "privileged": false,
+      "parameters": []
+    }
+  },
+  "cpus": 4,
+  "disk": 0,
+  "env": {
+    "MYSQL_CONTEXT": "/service/mysql",
+    "MYSQL_DATABASE": "defaultdb",
+    "MYSQL_PASSWORD": "password",
+    "MYSQL_USER": "admin",
+    "MYSQL_ROOT_PASSWORD": "root"
+  },
+  "healthChecks": [
+    {
+      "gracePeriodSeconds": 300,
+      "intervalSeconds": 60,
+      "maxConsecutiveFailures": 3,
+      "portIndex": 0,
+      "timeoutSeconds": 20,
+      "delaySeconds": 15,
+      "protocol": "TCP"
+    }
+  ],
+  "instances": 1,
+  "labels": {
+    "DCOS_PACKAGE_SOURCE": "https://universe.mesosphere.com/repo",
+    "HAPROXY_GROUP": "external",
+    "DCOS_SERVICE_NAME": "mysql",
+    "DCOS_PACKAGE_VERSION": "5.7.12-0.3",
+    "DCOS_PACKAGE_NAME": "mysql",
+    "MARATHON_SINGLE_INSTANCE_APP": "true",
+    "DCOS_PACKAGE_IS_FRAMEWORK": "false"
+  },
+  "maxLaunchDelaySeconds": 3600,
+  "mem": 2048,
+  "gpus": 0,
+  "networks": [
+    {
+      "mode": "container/bridge"
+    }
+  ],
+  "residency": {
+    "relaunchEscalationTimeoutSeconds": 3600,
+    "taskLostBehavior": "WAIT_FOREVER"
+  },
+  "requirePorts": false,
+  "upgradeStrategy": {
+    "maximumOverCapacity": 0,
+    "minimumHealthCapacity": 0
+  },
+  "killSelection": "YOUNGEST_FIRST",
+  "unreachableStrategy": "disabled",
+  "fetch": [],
+  "constraints": []
+}

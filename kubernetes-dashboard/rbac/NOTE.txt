@@ -1,0 +1,4 @@
+管理员用户admin-user 具备命名空间default的所有权限 admin-default.yml
+https://kubernetes.io/docs/reference/access-authn-authz/authorization/
+https://kubernetes.io/docs/reference/access-authn-authz/rbac/
+https://www.kubernetes.org.cn/4062.html

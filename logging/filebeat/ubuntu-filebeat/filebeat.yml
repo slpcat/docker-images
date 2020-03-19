@@ -1,0 +1,24 @@
+filebeat.registry_file: /var/log/containers/filebeat_registry
+
+filebeat.prospectors:
+-
+  paths:
+    - "/var/log/containers/*.log"
+  symlinks: true
+  json.message_key: log
+  json.keys_under_root: true
+  json.add_error_key: true
+  multiline.pattern: '^\s'
+  multiline.match: after
+  document_type: kube-logs
+  fields:
+    host: ${FILEBEAT_HOST:${HOSTNAME}}
+    cluster_name: ${CLUSTER_NAME:default}
+  fields_under_root: true
+
+output.logstash:
+    hosts: ${LOGSTASH_HOSTS:?No logstash host configured. Use env var LOGSTASH_HOSTS to set hosts.}
+    timeout: 15
+
+logging.level: ${LOG_LEVEL:error}
+

@@ -1,0 +1,58 @@
+# Default values for kafka-operator.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+# Lists the secrets you need to use to pull kafka-operator image from a private registry.
+imagePullSecrets: []
+  # - private-registry-key
+
+operator:
+  image:
+    repository: banzaicloud/kafka-operator
+    tag: 0.8.1
+    pullPolicy: IfNotPresent
+  vaultAddress: ""
+  # vaultSecret containing a `ca.crt` key with the Vault CA Certificate
+  vaultSecret: ""
+  verboseLogging: false
+  resources:
+    limits:
+      cpu: 200m
+      memory: 256Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+webhook:
+  certs:
+    generate: true
+    secret: "kafka-operator-serving-cert"
+
+certManager:
+  namespace: "cert-manager"
+
+alertManager:
+  enable: true
+
+prometheusMetrics:
+  enabled: true
+  authProxy:
+    enabled: true
+    image:
+      repository: gcr.io/kubebuilder/kube-rbac-proxy
+      tag: v0.4.0
+      pullPolicy: IfNotPresent
+
+nameOverride: ""
+fullnameOverride: ""
+
+rbac:
+  enabled: true
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

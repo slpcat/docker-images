@@ -1,0 +1,23 @@
+{   "registry-mirrors": ["https://quay.azk8s.cn", "https://dockerhub.azk8s.cn", "https://registry.docker-cn.com"],
+    "insecure-registries": ["gitlab.default.svc.cluster.local:5000", "gitlab.marathon.l4lb.thisdcos.directory:50000"],
+    "live-restore": false,
+    "log-driver": "local",
+    "raw-logs": true,
+    "log-opts":{
+       "mode": "non-blocking",
+       "max-buffer-size": "8m",
+       "max-size" : "128m",
+       "max-file" : "4"
+    },
+    "default-shm-size": "128M",
+    "default-ulimits": {
+       "nofile": {
+          "Name": "nofile",
+          "Hard": 4000000,
+          "Soft": 3500000
+       }
+    },
+    "max-concurrent-downloads": 10,
+    "oom-score-adjust": -1000,
+    "debug": false
+}

@@ -1,0 +1,6 @@
+apiVersion: configuration.konghq.com/v1
+kind: KongConsumer
+metadata:
+  name: consumer-team-x
+username: team-X
+custom_id: my_team_x # optional and not recommended, please use `username`

@@ -1,0 +1,7 @@
+常用nginx模块
+Tengine 的Dyups模块。
+微博的Upsync+Consul 实现动态负载均衡。
+OpenResty的balancer_by_lua(又拍云使用其开源的slardar(Consul balancer_by_lua))。
+nginx-module-vts：Nginx virtual host traffic status module，Nginx的监控模块，能够提供JSON格式的数据产出。
+nginx-vts-exporter：Simple server that scrapes Nginx vts stats and exports them via HTTP for Prometheus consumption。主要用于收集Nginx的监控数据，并给Prometheus提供监控接口，默认端口号9913。
+https://blog.csdn.net/swcxy12315/article/details/86687151

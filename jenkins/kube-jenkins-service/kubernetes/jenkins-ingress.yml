@@ -1,0 +1,18 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: jenkins
+  namespace: ci
+spec:
+  tls:
+  - hosts:
+    - jenkins.gkkxd.com
+    secretName: jenkins-secret
+  rules:
+  - host: jenkins.gkkxd.com
+    http:
+      paths:
+      - backend:
+          serviceName: jenkins
+          servicePort: 8080
+        path: /

@@ -1,0 +1,17 @@
+1.常规存储 java程序和资源文件打包到docker镜像里面,适合java程序和资源文件总量比较小的场景
+当前目录
+2.S3存储 java程序和资源文件保存到S3存储，运行时挂载,首次访问从网络存储获取，后续访问使用本地缓存，适合java程序和资源文件总量巨大的场景
+见 minio/tomcat-s3fs
+3.pinpoint 全链路追踪
+pinpoint/pinpoint-agent-attach-example/tomcat
+
+4.consul配置中心
+
+
+开启Tomcat JMX功能
+CATALINA_OPTS="$CATALINA_OPTS
+-Dcom.sun.management.jmxremote
+-Djava.rmi.server.hostname=10.124.129.241
+-Dcom.sun.management.jmxremote.port=8889
+-Dcom.sun.management.jmxremote.ssl=false
+-Dcom.sun.management.jmxremote.authenticate=false"

@@ -1,0 +1,1 @@
+https://github.com/jenkinsci/kubernetes-operator.git

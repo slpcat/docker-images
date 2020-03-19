@@ -1,0 +1,128 @@
+.TH "systemtap " "1" " Container Image Pages" "Tomas Tomecek" "September 6th, 2017" 
+.nh
+.ad l
+
+
+.SH NAME
+.PP
+systemtap — programmable system\-wide instrumentation system running in a container.
+
+
+.SH DESCRIPTION
+.PP
+This container image provides functionality of packages \fB\fCsystemtap\fR, \fB\fCsystemtap\-client\fR and \fB\fCsystemtap\-testsuite\fR, which contains plenty of examples.
+
+
+.SH USAGE
+.PP
+In order to use systemtap successfully, it requires debug information your booted kernel, namely package \fB\fCkernel\-debuginfo\fR\&. There are two ways to do this when running systemtap in this container:
+.IP "  1." 5
+
+.PP
+Install \fB\fCkernel\-debuginfo\fR and \fB\fCkernel\-devel\fR inside container.
+.IP "  2." 5
+
+.PP
+Install \fB\fCkernel\-debuginfo\fR and \fB\fCkernel\-devel\fR on host system and mount the required files into container.
+
+.PP
+\fB\fCkernel\-debuginfo\fR package is usually available in \fB\fCfedora\-debuginfo\fR repository (or \fB\fCupdates\-debuginfo\fR). So this is how you can install the package:
+
+.PP
+.RS
+
+.nf
+$ dnf install \-y \-\-enablerepo="fedora\-debuginfo" \-\-enablerepo="updates\-debuginfo" kernel\-debuginfo
+
+.fi
+.RE
+
+.PP
+Please be sure that the \fB\fCkernel\-debuginfo\fR and \fB\fCkernel\-devel\fR packages match exactly the kernel you booted. \fB\fCuname \-a\fR command provides information about running kernel.
+
+.PP
+Once you figured out the place where to install the required packages, we can proceed with how the container is meant to be started. Let's go through a list of helpful options:
+.IP \(bu 2
+
+.PP
+\fB\fC\-\-cap\-add SYS\_MODULE\fR — systemtap needs to inject a kernel module into running kernel so it requires this capability.
+.IP \(bu 2
+
+.PP
+\fB\fC\-v /sys/kernel/debug:/sys/kernel/debug\fR — systemtap accesses \fB\fC/sys/kernel/debug\fR, you can either mount that filesystem into container, or provide capability \fB\fCCAP\_SYS\_ADMIN\fR to the container so systemtap can mount it.
+.IP \(bu 2
+
+.PP
+\fB\fC\-v /usr/lib/debug:/usr/lib/debug \-v /usr/src/kernels:/usr/src/kernels \-v /usr/lib/modules/:/usr/lib/modules/\fR — when you installed the required kernel packages on your host system, these are the places where the files live so with these options you can make them available within the container.
+.IP \(bu 2
+
+.PP
+\fB\fC\-\-security\-opt label:disable\fR — when mounting directories inside the container, if SELinux is in enforcing mode, the container process may not have permissions to access files which are being mounted from host system. This option prevents changing labels on files which are being mounted inside (\fB\fC:z\fR and \fB\fC:Z\fR fields of \fB\fC\-v\fR change labels).
+
+.PP
+So the resulting commandline may look like this when the packages are installed on your host:
+
+.PP
+.RS
+
+.nf
+$ docker run \-\-cap\-add SYS\_MODULE \-v /sys/kernel/debug:/sys/kernel/debug \-v /usr/src/kernels:/usr/src/kernels \-v /usr/lib/modules/:/usr/lib/modules/ \-v /usr/lib/debug:/usr/lib/debug \-\-security\-opt label:disable \-t \-i f26/tools bash
+
+.fi
+.RE
+
+.PP
+And this could be the commandline when you installed the packages in the container:
+
+.PP
+.RS
+
+.nf
+$ docker run \-\-cap\-add SYS\_MODULE \-v /sys/kernel/debug:/sys/kernel/debug \-t \-i f26/tools bash
+
+.fi
+.RE
+
+.PP
+You can also use atomic command to invoke the container:
+
+.PP
+.RS
+
+.nf
+$ atomic run f26/systemtap /usr/share/systemtap/examples/io/iotop.stp
+
+.fi
+.RE
+
+.PP
+If you need an inspiration, there is a plenty of examples available in the container:
+
+.PP
+.RS
+
+.nf
+$ ls \-lha /usr/share/systemtap/examples/
+
+.fi
+.RE
+
+
+.SH SECURITY IMPLICATIONS
+.PP
+Please make sure that only trusted users are allowed to invoke systemtap in
+your infrastructure, because they are able to inspect every bit of information
+which goes through kernel.
+
+
+.SH HISTORY
+.PP
+Release 1: initial release
+
+
+.SH SEE ALSO
+.PP
+Please consult upstream documentation for more information: 
+\[la]https://sourceware.org/systemtap/wiki\[ra]
+You can also read SystemTap Beginners Guide, which is available at Red Hat Customer Portal: 
+\[la]https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/SystemTap_Beginners_Guide/index.html\[ra]

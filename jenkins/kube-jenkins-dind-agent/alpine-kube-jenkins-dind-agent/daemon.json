@@ -1,0 +1,7 @@
+{ "registry-mirrors": ["https://registry.docker-cn.com"],
+  "insecure-registries":["gitlab.default.svc.cluster.local:5000", "gitlab.marathon.l4lb.thisdcos.directory:50000"],
+  "live-restore": true,
+  "max-concurrent-downloads": 10,
+  "oom-score-adjust": -1000,
+  "debug": false
+}

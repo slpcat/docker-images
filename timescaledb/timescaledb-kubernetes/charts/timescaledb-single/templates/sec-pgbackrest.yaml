@@ -1,0 +1,39 @@
+# This file and its contents are licensed under the Apache License 2.0.
+# Please see the included NOTICE for copyright information and LICENSE for a copy of the license.
+
+{{- if or .Values.backup.enable .Values.backup.enabled }}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ template "timescaledb.fullname" . }}-pgbackrest
+  labels:
+    app: {{ template "timescaledb.fullname" . }}
+    chart: {{ template "timescaledb.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+type: Opaque
+stringData:
+  pgbackrest.conf: |
+    [global]
+    repo1-path=/{{ .Release.Namespace }}/{{ template "clusterName" . }}/
+{{- range $key, $val := .Values.backup.pgBackRest }}
+    {{ $key }}={{ $val }}
+{{- end }}
+
+    [poddb]
+    pg1-port=5432
+    pg1-host-user=postgres
+    pg1-path={{ template "data_directory" . }}
+    pg1-socket-path={{ template "socket_directory" . }}
+
+    recovery-option=standby_mode=on
+    recovery-option=recovery_target_timeline=latest
+    recovery-option=recovery_target_action=shutdown
+
+    link-all=y
+
+    [global:archive-push]
+    compress-level=3
+...
+{{ end }}

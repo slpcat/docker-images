@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: pinpoint-web-headless
+  namespace: default
+spec:
+  clusterIP: None
+  selector:
+    app: pinpoint-web
+  ports:
+    - name: p1
+      port: 9997
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pinpoint-web-ui
+  namespace: default
+spec:
+  selector:
+    app: pinpoint-web
+  ports:
+    - name: http
+      port: 8080
+  type: NodePort

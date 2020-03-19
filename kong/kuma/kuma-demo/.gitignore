@@ -1,0 +1,38 @@
+.DS_Store
+node_modules
+dist
+
+# local env files
+.env.local
+.env.*.local
+
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Editor directories and files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# vagrant - ignore sync folder
+.vagrant.data/
+/vagrant/*
+!/vagrant/common/
+!/vagrant/frontend/
+!/vagrant/backend/
+!/vagrant/backend-v1/
+!/vagrant/elastic/
+!/vagrant/control-plane/
+!/vagrant/redis/
+!/vagrant/metrics/
+!/vagrant/kong/
+!/vagrant/images/
+!/vagrant/README.md
+!Vagrantfile
+

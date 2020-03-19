@@ -1,0 +1,6 @@
+https://blog.csdn.net/polo2044/article/details/83963211
+job_name 分类
+1.node_exporter
+2.cadvisor
+3.nomad-client
+

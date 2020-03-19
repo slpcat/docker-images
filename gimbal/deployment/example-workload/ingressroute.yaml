@@ -1,0 +1,16 @@
+---
+apiVersion: contour.heptio.com/v1beta1
+kind: IngressRoute
+metadata: 
+  name: kuard
+  namespace: default
+spec: 
+  virtualhost:
+    fqdn: mixed.local
+  routes: 
+    - match: /
+      services: 
+        - name: kuard
+          port: 80
+        - name: nginx
+          port: 80

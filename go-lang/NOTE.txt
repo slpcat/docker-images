@@ -1,0 +1,11 @@
+常用库
+kafka
+https://github.com/confluentinc/confluent-kafka-go
+https://docs.confluent.io/current/clients/confluent-kafka-go/index.html
+
+Golang audio/video library and streaming server
+https://github.com/nareix/joy4
+
+https://getqor.com/cn
+QOR是首个使用Go语言开发的电商系统、CMS的SDK
+http://www.open-open.com/lib/view/open1396063913278.html

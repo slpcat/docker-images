@@ -1,0 +1,225 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-php-configmap
+  namespace: default
+data:
+  nginx.conf: |-
+    user  nginx;
+    worker_processes  4;
+    worker_cpu_affinity auto;
+    worker_rlimit_nofile 90000;
+    thread_pool default threads=128 max_queue=0;
+    
+    error_log /docker.stderr  warn;
+    pid        /var/run/nginx.pid;
+    
+    events {
+        worker_connections 40000;
+        use epoll;
+        accept_mutex off;
+        multi_accept on;
+    }
+    
+    http {
+        include       /etc/nginx/mime.types;
+        charset UTF-8;
+        default_type  application/octet-stream;
+    
+        log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                          '$status $body_bytes_sent "$http_referer" '
+                          '"$http_user_agent" "$http_x_forwarded_for"';
+    
+        access_log /docker.stdout   main;
+        #access_log syslog:server=10.0.2.253,facility=local7,tag=nginx,severity=info main;
+        uninitialized_variable_warn off;
+        server_tokens off;
+        #autoindex off;
+        #autoindex_exact_size off;
+        #autoindex_localtime on;
+        #重定向使用域名(Host头)
+        server_name_in_redirect on;
+        server_names_hash_bucket_size 256;
+        #connection_pool_size 4096;
+        disable_symlinks off;
+        etag on;
+        ignore_invalid_headers on;
+        merge_slashes on;
+        keepalive_disable msie6;
+        client_header_buffer_size 4k;
+        large_client_header_buffers 4 32k;
+        client_header_timeout  1m;
+        client_body_timeout    1m;
+        reset_timedout_connection on;
+        send_timeout           1m;
+    
+        open_file_cache max=1000 inactive=20s;
+        open_file_cache_valid 30s;
+        open_file_cache_min_uses 2;
+        open_file_cache_errors on;
+        read_ahead 128k;
+        sendfile        on;
+        sendfile_max_chunk 512k;
+        aio threads=default;
+        aio_write on;
+        tcp_nodelay   on;
+        tcp_nopush    on;
+        client_max_body_size 100m;
+        client_body_buffer_size 8m;
+        types_hash_max_size 2048;
+        #request_pool_size 4k;
+        keepalive_timeout  60;
+        keepalive_requests 5000;
+        lingering_close on;
+        recursive_error_pages      on;
+        output_buffers 8 64k;
+        postpone_output 1460;
+    
+        fastcgi_connect_timeout      600;
+        fastcgi_intercept_errors	on;
+        fastcgi_send_timeout         600;
+        fastcgi_read_timeout         600;
+        fastcgi_buffer_size          128k;
+        fastcgi_buffers 16           256k;
+        fastcgi_busy_buffers_size    256k;
+        fastcgi_temp_file_write_size 256k;
+        #fastcgi_temp_path  /var/tmp/fastcgi_temp;
+        #client_body_temp_path  /var/tmp/client_body_temp;
+        #fastcgi_cache_path /var/run/nginx/fastcgi_cache levels=2:2 keys_zone=TEST:320m inactive=16m max_size=2g;
+        #fastcgi_cache 	TEST;
+        #fastcgi_cache_key  unix:/var/run/php-fpm.sock$request_uri;
+        #fastcgi_cache_key  127.0.0.1:9000$request_uri;
+        #fastcgi_cache_key  $request_method://$host$request_uri;
+        #fastcgi_cache_methods  POST;
+        #fastcgi_cache_valid 200 302 1h;
+        #fastcgi_cache_valid 301 2h;
+        #fastcgi_cache_valid any 1m;
+        #fastcgi_cache_min_uses 1;
+        #fastcgi_cache_use_stale error timeout invalid_header http_500;
+        #fastcgi_keep_conn on;
+
+        #proxy_cache仅用于前端反向代理，后端关掉避免浪费内存
+        #proxy_cache_path  /var/lib/nginx/tmp/proxy_cache  levels=2:2 keys_zone=proxy_cache:512m inactive=2d max_size=8g;
+        proxy_cache_methods GET HEAD;
+        proxy_cache_background_update on;
+        proxy_http_version 1.1;
+        proxy_set_header Connection "";
+        proxy_set_header Host  $host;
+        #proxy_set_header Accept-Encoding 'gzip';
+        proxy_set_header X-Real-IP $realip_remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto   $scheme;
+        #避免一次将大文件加入缓存
+        proxy_set_header Range $http_range;
+        proxy_set_header If-Range $http_if_range;
+        proxy_no_cache  $http_range $http_if_range;
+        proxy_hide_header X-Powered-By;
+        proxy_cache_lock          off;
+        proxy_cache_lock_timeout  5s;
+        proxy_cache_use_stale     error timeout invalid_header http_403 http_404 http_500 http_502 http_503 http_504;
+        #不在静态定义列表的内容都视为动态内容，不进行缓存,避免缓存导致访问异常
+        proxy_buffering off;
+        proxy_connect_timeout 600;
+        proxy_send_timeout 600;
+        proxy_read_timeout 600;
+        proxy_buffer_size 128k;
+        proxy_buffers 8 128k;
+        proxy_busy_buffers_size 256k;
+        proxy_temp_file_write_size 256k;
+        proxy_max_temp_file_size 64m;
+        #屏蔽后端错误信息
+        proxy_intercept_errors  on;
+        proxy_ignore_client_abort on;
+        #proxy_temp_path  /var/lib/nginx/tmp/proxy;
+        proxy_next_upstream error timeout invalid_header http_500 http_502 http_503 http_504;
+    
+        #gzip  on;
+        #gzip_disable "msie6";
+        #gzip_static on;
+        #gzip_proxied any;
+        #gzip_min_length  4k;
+        #gzip_buffers     32 8k;
+        #gzip_http_version 1.1;
+        #gzip_comp_level 4;
+        #gzip_types       text/plain text/css text/xml text/javascript application/json application/x-javascript application/javascript application/xml application/xml+rss;
+        #gzip_vary on;
+    
+        include /etc/nginx/conf.d/*.conf;
+    }
+  #all vhosts default config
+  vhost.conf: |-
+    server {
+        listen 80 backlog=8192 bind deferred fastopen=3 reuseport so_keepalive=on default_server;
+        server_name  _ *.vm docker;
+        root "/app";
+        index index.php;
+        include /opt/docker/etc/nginx/vhost.common.d/*.conf;
+    }
+    
+    # SSL
+    #server {
+    #    listen 443 backlog=8192 bind deferred fastopen=3 reuseport so_keepalive=on default_server;
+    #    server_name  _ *.vm docker;
+    #    root "/app";
+    #    index index.php;
+    #    include /opt/docker/etc/nginx/vhost.common.d/*.conf;
+    #    include /opt/docker/etc/nginx/vhost.ssl.conf;
+    #}
+  #php.ini config
+  php.webdevops.ini: |-
+    ; -------------------------------------
+    ; Docker Webdevops PHP configuration
+    ; -------------------------------------
+    
+    ; this file will overwrite default php.ini settings
+    
+    display_errors = 0
+    log_errors = 1
+    
+    short_open_tag    = Off
+    variables_order   = 'GPCS'
+    request_order     = 'GP'
+    
+    allow_url_fopen   = On
+    allow_url_include = Off
+    
+    memory_limit        = 512M
+    max_execution_time  = 300
+    max_input_time      = 300
+    post_max_size       = 50M
+    upload_max_filesize = 50M
+    max_input_vars      = 5000
+    
+    expose_php          = Off
+    
+    date.timezone = Asia/Shanghai
+    
+    mysql.default_host = mysql
+    mysqli.default_host = mysql
+    
+    opcache.memory_consumption = 256
+    opcache.interned_strings_buffer = 16
+    opcache.max_accelerated_files = 7963
+    opcache.fast_shutdown = 1
+    
+    ; container env settings
+  #php-fpm pool config
+  docker.conf: |-  
+    [global]
+    error_log = /proc/self/fd/2
+    
+    [www]
+    ; if we send this to /proc/self/fd/1, it never appears
+    access.log = /proc/self/fd/2
+    user = application
+    group = application
+    listen = 127.0.0.1:9000
+    pm = dynamic
+    pm.max_children = 50
+    pm.start_servers = 20
+    pm.min_spare_servers = 10
+    pm.max_spare_servers = 30
+    clear_env = no
+    
+    ; Ensure worker stdout and stderr are sent to the main error log.
+    catch_workers_output = yes

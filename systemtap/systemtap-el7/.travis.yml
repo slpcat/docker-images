@@ -1,0 +1,16 @@
+language: python
+python:
+        - 3.6
+sudo: required
+services:
+        - docker
+install:
+        - 'pip install docker'
+        - 'sudo apt-get install go-md2man'
+env:
+        - VERSION=x.y
+        - VERSION=x.z
+script:
+        - make test-in-container VERSION=$VERSION
+notifications:
+        email: false

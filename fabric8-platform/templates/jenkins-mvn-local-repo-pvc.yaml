@@ -1,0 +1,17 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  annotations:
+  labels:
+    provider: fabric8
+    project: jenkins
+    version: 2.2.311
+    group: io.fabric8.devops.apps
+  name: jenkins-mvn-local-repo
+spec:
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi

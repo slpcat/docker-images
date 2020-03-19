@@ -1,0 +1,58 @@
+{{- $gpuCount := .Values.gpuCount -}}
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-serving
+  labels:
+    heritage: {{ .Release.Service | quote }}
+    release: {{ .Release.Name | quote }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    app: {{ .Release.Name }}-serving
+  annotations:
+    "helm.sh/created": {{ .Release.Time.Seconds | quote }}
+spec:
+  replicas: {{ default 1 .Values.replicas }}
+  strategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-serving
+  template:
+    metadata:
+      labels:
+        heritage: {{ .Release.Service | quote }}
+        release: {{ .Release.Name | quote }}
+        chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+        app: {{ .Release.Name }}-serving
+    spec:
+      containers:
+        - name: serving
+          image: "{{ .Values.image }}"
+          imagePullPolicy: "{{ .Values.imagePullPolicy }}"
+          {{- if .Values.command }}
+          command:
+{{ toYaml .Values.command | indent 12 }}
+          {{- end }}
+          {{- if .Values.args }}
+          args:
+{{ toYaml .Values.args | indent 12 }}
+          {{- end }}
+          ports:
+            - containerPort: {{ .Values.port }}
+          readinessProbe:
+            tcpSocket:
+              port: {{ .Values.port }}
+            initialDelaySeconds: 15
+            timeoutSeconds: 1
+          {{- if gt (int $gpuCount) 0}}        
+          resources:
+            limits:
+              nvidia.com/gpu: {{ int .Values.gpuCount }}
+          {{- end}}
+          volumeMounts:
+            - mountPath: {{ .Values.mountPath }}
+              name: model-volume
+      volumes:
+        - name: model-volume
+          persistentVolumeClaim:
+              claimName: {{ .Release.Name }}-pvc

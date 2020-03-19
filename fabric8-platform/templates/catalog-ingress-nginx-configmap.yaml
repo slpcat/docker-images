@@ -1,0 +1,132 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  annotations:
+    fabric8.io/git-commit: 2b9f7ce19493fe6d18392ac4f4be16f5e1a76fa3
+    fabric8.io/iconUrl: https://cdn.rawgit.com/fabric8io/fabric8-devops/master/ingress-nginx/src/main/fabric8/icon.png
+    fabric8.io/git-branch: release-v2.2.311
+    maven.fabric8.io/app-catalog: "true"
+  labels:
+    provider: fabric8
+    project: ingress-nginx
+    version: 2.2.311
+    group: io.fabric8.devops.apps
+    kind: catalog
+  name: catalog-ingress-nginx
+data:
+  catalog-ingress-nginx.yml: |
+    ---
+    apiVersion: "v1"
+    kind: "Template"
+    metadata:
+      annotations:
+        fabric8.io/git-commit: "2b9f7ce19493fe6d18392ac4f4be16f5e1a76fa3"
+        fabric8.io/iconUrl: "https://cdn.rawgit.com/fabric8io/fabric8-devops/master/ingress-nginx/src/main/fabric8/icon.png"
+        fabric8.io/git-branch: "release-v2.2.311"
+      finalizers: []
+      labels:
+        provider: "fabric8"
+        project: "ingress-nginx"
+        version: "2.2.311"
+        group: "io.fabric8.devops.apps"
+      name: "ingress-nginx"
+      ownerReferences: []
+    labels: {}
+    objects:
+    - apiVersion: "v1"
+      kind: "Namespace"
+      metadata:
+        annotations: {}
+        finalizers: []
+        labels:
+          provider: "fabric8"
+          project: "ingress-nginx"
+          version: "2.2.311"
+          group: "io.fabric8.devops.apps"
+        name: "fabric8-system"
+        ownerReferences: []
+    - apiVersion: "v1"
+      kind: "ConfigMap"
+      metadata:
+        annotations: {}
+        finalizers: []
+        labels:
+          provider: "fabric8"
+          project: "ingress-nginx"
+          version: "2.2.311"
+          group: "io.fabric8.devops.apps"
+        name: "nginx-config"
+        namespace: "fabric8-system"
+        ownerReferences: []
+      data:
+        client-max-body-size: "2000m"
+        proxy-connect-timeout: "500s"
+        proxy-read-timeout: "500s"
+        server-names-hash-bucket-size: "256"
+        server-names-hash-max-size: "1024"
+    - apiVersion: "extensions/v1beta1"
+      kind: "Deployment"
+      metadata:
+        annotations:
+          configmap.fabric8.io/update-on-change: "nginx-config"
+          fabric8.io/git-commit: "2b9f7ce19493fe6d18392ac4f4be16f5e1a76fa3"
+          fabric8.io/iconUrl: "https://cdn.rawgit.com/fabric8io/fabric8-devops/master/ingress-nginx/src/main/fabric8/icon.png"
+          fabric8.io/git-branch: "release-v2.2.311"
+          fabric8.io/metrics-path: "dashboard/file/kubernetes-pods.json/?var-project=ingress-nginx&var-version=2.2.311"
+        finalizers: []
+        labels:
+          provider: "fabric8"
+          project: "ingress-nginx"
+          version: "2.2.311"
+          group: "io.fabric8.devops.apps"
+        name: "ingress-nginx"
+        namespace: "fabric8-system"
+        ownerReferences: []
+      spec:
+        replicas: 1
+        selector:
+          matchExpressions: []
+          matchLabels:
+            project: "ingress-nginx"
+            provider: "fabric8"
+            group: "io.fabric8.devops.apps"
+        template:
+          metadata:
+            annotations:
+              fabric8.io/git-commit: "2b9f7ce19493fe6d18392ac4f4be16f5e1a76fa3"
+              fabric8.io/iconUrl: "https://cdn.rawgit.com/fabric8io/fabric8-devops/master/ingress-nginx/src/main/fabric8/icon.png"
+              configmap.fabric8.io/update-on-change: "nginx-config"
+              fabric8.io/git-branch: "release-v2.2.311"
+              fabric8.io/metrics-path: "dashboard/file/kubernetes-pods.json/?var-project=ingress-nginx&var-version=2.2.311"
+            finalizers: []
+            labels:
+              provider: "fabric8"
+              project: "ingress-nginx"
+              version: "2.2.311"
+              group: "io.fabric8.devops.apps"
+            ownerReferences: []
+          spec:
+            containers:
+            - args:
+              - "-v=3"
+              - "-nginx-configmaps=fabric8-system/nginx-config"
+              command: []
+              env: []
+              image: "nginxdemos/nginx-ingress:0.3.1"
+              name: "nginx-ingress"
+              ports:
+              - containerPort: 80
+                hostPort: 80
+                name: "http"
+                protocol: "TCP"
+              - containerPort: 443
+                hostPort: 443
+                name: "https"
+                protocol: "TCP"
+              volumeMounts: []
+            imagePullSecrets: []
+            nodeSelector:
+              fabric8.io/externalIP: "true"
+            volumes: []
+    parameters: []

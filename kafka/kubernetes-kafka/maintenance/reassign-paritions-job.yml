@@ -1,0 +1,51 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: reassign-partitions
+  namespace: kafka
+spec:
+  template:
+    metadata:
+      name: reassign-partitions
+    spec:
+      containers:
+      - name: kafka
+        image: solsson/kafka:1.0.1@sha256:1a4689d49d6274ac59b9b740f51b0408e1c90a9b66d16ad114ee9f7193bab111
+        env:
+        - name: ZOOKEEPER
+          value: zookeeper.kafka:2181
+        # the following must be edited per job
+        - name: TOPICS
+          value: test-produce-consume,test-kafkacat
+        - name: BROKERS
+          value: 0,2
+        command:
+        - /bin/bash
+        - -ce
+        - >
+          echo '{"topics":[' > /tmp/reassign-topics.json;
+          echo -n ' {"topic":"' >> /tmp/reassign-topics.json;
+          echo -n $TOPICS | sed 's/,/"},\n {"topic":"/g' >> /tmp/reassign-topics.json;
+          echo '"}' >> /tmp/reassign-topics.json;
+          echo ']}' >> /tmp/reassign-topics.json;
+
+          echo "# reassign-topics.json";
+          cat /tmp/reassign-topics.json;
+
+          ./bin/kafka-reassign-partitions.sh 
+          --zookeeper=$ZOOKEEPER
+          --generate
+          --topics-to-move-json-file=/tmp/reassign-topics.json
+          --broker-list=$BROKERS > /tmp/generated.txt;
+
+          tail -n 1 /tmp/generated.txt > /tmp/proposed-reassignment.json;
+
+          echo "# proposed-reassignment.json";
+          cat /tmp/proposed-reassignment.json;
+
+          ./bin/kafka-reassign-partitions.sh
+          --zookeeper=$ZOOKEEPER
+          --execute
+          --reassignment-json-file=/tmp/proposed-reassignment.json;
+      restartPolicy: Never
+  backoffLimit: 3

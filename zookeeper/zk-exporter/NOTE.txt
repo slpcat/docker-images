@@ -1,0 +1,200 @@
+prometheus监控zookeeper
+官方介绍：主要有两种方式，四字命令和jmx
+
+1、四字命令：
+https://zookeeper.apache.org/doc/r3.4.14/zookeeperAdmin.html#sc_zkCommands 其中最常用的三个stat、srvr、cons
+
+Three of the more interesting commands: "stat" gives some general information about the server and connected clients, while "srvr" and "cons" give extended details on server and connections respectively.
+
+$ echo srvr | nc svc-zk.o.svc.mhc.local 2181   
+Zookeeper version: 3.4.10-39d3a4f269333c922ed3db283be479f9deacaa0f, built on 03/23/2017 10:13 GMT
+Latency min/avg/max: 0/0/802
+Received: 5833450
+Sent: 6074801
+Connections: 84
+Outstanding: 0
+Zxid: 0x2d9407
+Mode: standalone
+Node count: 12977
+使用四字命令对已经在生产运行的zookeeper监控起来比较方便，就是向zookeeper服务发送mntr之类的命令
+
+具体实现参考：https://github.com/jiankunking/zookeeper_exporter
+
+按照上述参考文档构建镜或者使用打好的镜像 carlpett/zookeeper_exporter ，并启动exporter
+
+docker run -it -p 9141:9141 --name=zookeeper_exporter_m -d xxx.xxx.com/library/zookeeper_exporter:1.0.2 -zookeeper svc-zk.m.svc.uuu.local:2181
+curl http://127.0.0.1:9141/metrics 
+......
+# HELP zk_avg_latency Average latency of requests
+# TYPE zk_avg_latency gauge
+zk_avg_latency 0
+# HELP zk_ephemerals_count Number of ephemeral nodes
+# TYPE zk_ephemerals_count gauge
+zk_ephemerals_count 2625
+# HELP zk_max_file_descriptor_count Maximum number of open file descriptors
+# TYPE zk_max_file_descriptor_count counter
+zk_max_file_descriptor_count 1.048576e+06
+# HELP zk_max_latency Maximum seen latency of requests
+# TYPE zk_max_latency gauge
+zk_max_latency 1
+# HELP zk_min_latency Minimum seen latency of requests
+# TYPE zk_min_latency gauge
+zk_min_latency 0
+# HELP zk_num_alive_connections Number of active connections
+# TYPE zk_num_alive_connections gauge
+zk_num_alive_connections 82
+# HELP zk_open_file_descriptor_count Number of open file descriptors
+# TYPE zk_open_file_descriptor_count gauge
+zk_open_file_descriptor_count 107
+# HELP zk_outstanding_requests Number of outstanding requests
+# TYPE zk_outstanding_requests gauge
+zk_outstanding_requests 0
+# HELP zk_packets_received Number of packets received
+# TYPE zk_packets_received counter
+zk_packets_received 40
+# HELP zk_packets_sent Number of packets sent
+# TYPE zk_packets_sent counter
+zk_packets_sent 40
+# HELP zk_server_state Server state (leader/follower)
+# TYPE zk_server_state untyped
+zk_server_state{state="standalone"} 1
+# HELP zk_up Exporter successful
+# TYPE zk_up gauge
+zk_up 1
+# HELP zk_watch_count Number of watches
+# TYPE zk_watch_count gauge
+zk_watch_count 22108
+# HELP zk_znode_count Number of znodes
+# TYPE zk_znode_count gauge
+zk_znode_count 13105
+# HELP zookeeper_exporter_build_info A metric with a constant '1' value labeled by version, revision, branch, and goversion from which zookeeper_exporter was built.
+# TYPE zookeeper_exporter_build_info gauge
+zookeeper_exporter_build_info{branch="",goversion="go1.10.8",revision="",version=""} 1
+prometheus配置内容添加如下配置，此处同时添加了自定义标签env：
+
+ - job_name: zk-u
+      static_configs:
+      - targets:
+        - 172.21.11.101:9141
+        labels:
+          env: u
+
+    - job_name: zk-m
+      static_configs:
+      - targets:
+        - 172.21.11.101:9142
+        labels:
+          env: m
+
+    - job_name: zk-h
+      static_configs:
+      - targets:
+        - 172.21.11.101:9143
+        labels:
+          env: h
+
+    - job_name: zk-c
+      static_configs:
+      - targets:
+        - 172.21.11.101:9144
+        labels:
+          env: c
+reload生效配置
+
+curl -XPOST http://prometheus:9090/-/reload
+prometheus页面上查看target：
+利用prometheus监控zookeeper
+
+grafana展示：
+利用prometheus监控zookeeper
+
+2、jmx监控
+是利用jvm_exporter暴露指标，参考prometheus官方jmx_exporter https://github.com/prometheus/jmx_exporter
+
+jvm-exporter从基于jvm的应用读取jmx数据并以http的方式暴露给prometheus抓取
+jmx是一种常用的技术，输出运行中应用的状态信息，并且可以控制它（例如用jmx触发gc）
+jvm-exporter是用jmx apis收集app和jvm metrics的Java应用，以Java agent方式运行在同一个jvm里面。
+jvm-exporter用Java写的，以jar包的方式发布，下载地址
+有一个ansible role（https://github.com/alexdzyoba/ansible-jmx-exporter)，配置文件包含将JMX MBean重写为Prometheus展示格式度量标准的规则。基本上它是将MBeans字符串转换为Prometheus字符串的regexp集合。
+
+zookeeper是很多系统的关键组成部分，例如Hadoop, Kafka and Clickhouse，因此监控是必不可少的。
+
+2.1、以java-agent方式运行（官方推荐）：
+zookeeper启动的时候传入参数启用，不需要开启jmx
+
+$ cat java.env 
+export SERVER_JVMFLAGS="-javaagent:/root/jmx_prometheus_javaagent-0.12.0.jar=7070:/root/config.yaml $SERVER_JVMFLAGS"
+查看启动日志并检查结果：
+
+$ netstat -tlnp | grep 7070
+tcp        0      0 0.0.0.0:7070            0.0.0.0:*               LISTEN      892/java
+
+$ curl -s localhost:7070/metrics | head
+# HELP jvm_threads_current Current thread count of a JVM
+# TYPE jvm_threads_current gauge
+jvm_threads_current 16.0
+# HELP jvm_threads_daemon Daemon thread count of a JVM
+# TYPE jvm_threads_daemon gauge
+jvm_threads_daemon 12.0
+# HELP jvm_threads_peak Peak thread count of a JVM
+# TYPE jvm_threads_peak gauge
+jvm_threads_peak 16.0
+# HELP jvm_threads_started_total Started thread count of a JVM
+With jmx-exporter you can scrape the metrics of running JVM applications. jmx-exporter runs as a Java agent (inside the target JVM) scrapes JMX metrics, rewrite it according to config rules and exposes it in Prometheus exposition format.
+
+容器中启用jvm_exporter
+基于官方zookeeper的github仓库，修改官方dockerfile以加入启动参数
+下面链接是我修改后的，亲测可用
+
+https://github.com/weifan01/zookeeper-docker/tree/master/3.4.14
+
+构建好的zk-3.4.14版本镜像： docker pull 3070656869/zookeeper:3.4.14-jvm-exporter
+启动OK后，访问8080端口查看结果
+
+2.2、以http方式独立运行
+参考官方文档：https://github.com/prometheus/jmx_exporter
+
+git clone https://github.com/prometheus/jmx_exporter.git
+cd jmx_exporter
+mvn package
+#修改配置文件example_configs/httpserver_sample_config.yml
+#修改启动脚本里面的监听地址和端口
+sh run_sample_httpserver.sh
+我测试配置如下：
+
+$ cat http_server_config.yaml 
+---
+# jmx地址和端口
+hostPort: 172.21.10.248:6666
+username: 
+password: 
+
+rules:
+  # replicated Zookeeper
+  - pattern: "org.apache.ZooKeeperService<name0=ReplicatedServer_id(\\d+)><>(\\w+)"
+    name: "zookeeper_$2"
+  - pattern: "org.apache.ZooKeeperService<name0=ReplicatedServer_id(\\d+), name1=replica.(\\d+)><>(\\w+)"
+    name: "zookeeper_$3"
+    labels:
+      replicaId: "$2"
+  - pattern: "org.apache.ZooKeeperService<name0=ReplicatedServer_id(\\d+), name1=replica.(\\d+), name2=(\\w+)><>(\\w+)"
+    name: "zookeeper_$4"
+    labels:
+      replicaId: "$2"
+      memberType: "$3"
+  - pattern: "org.apache.ZooKeeperService<name0=ReplicatedServer_id(\\d+), name1=replica.(\\d+), name2=(\\w+), name3=(\\w+)><>(\\w+)"
+    name: "zookeeper_$4_$5"
+    labels:
+      replicaId: "$2"
+      memberType: "$3"
+  # standalone Zookeeper
+  - pattern: "org.apache.ZooKeeperService<name0=StandaloneServer_port(\\d+)><>(\\w+)"
+    name: "zookeeper_$2"
+  - pattern: "org.apache.ZooKeeperService<name0=StandaloneServer_port(\\d+), name1=InMemoryDataTree><>(\\w+)"
+    name: "zookeeper_$2"
+启动：
+
+java -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.port=6667 -jar jmx_prometheus_httpserver-0.12.1-SNAPSHOT-jar-with-dependencies.jar 172.21.10.248:6668 http_server_config.yaml
+访问：
+利用prometheus监控zookeeper
+

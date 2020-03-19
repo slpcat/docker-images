@@ -1,0 +1,19 @@
+## Go
+bin/*
+!bin/.gitkeep
+_output
+vendor
+
+## IntelliJ
+.idea
+*.iml
+
+# Build
+build/
+
+# CSRs and TLS material
+hack/e2e/certs/*.csr
+hack/e2e/certs/*.pem
+
+# Temporary directory used to template skaffold manifests
+tmp/

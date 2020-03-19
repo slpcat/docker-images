@@ -1,0 +1,6 @@
+bin
+build
+tmp
+*.pyc
+.idea
+*.iml

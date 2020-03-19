@@ -1,0 +1,30 @@
+#!/bin/bash
+{{range $dir := lsdir "/services/nginx"}}
+
+{{$filename := base $dir}}
+# {{$filename}}
+
+{{$sslcrt := printf "/services/nginx/%s/ssl-crt" $filename}}
+{{if exists $sslcrt}}
+echo "{{getv $sslcrt}}" > /etc/nginx/keys/{{$filename}}.crt
+
+{{$sslkey := printf "/services/nginx/%s/ssl-key" $filename}}
+echo "{{getv $sslkey}}" > /etc/nginx/keys/{{$filename}}.key
+{{end}}
+
+{{$restrict := printf "/services/nginx/%s/restrict" $filename}}
+{{if exists $restrict}}
+  {{$htpassword := printf "/etc/nginx/keys/%s.htpasswd" $filename }}
+  rm {{$htpassword}}
+  touch {{$htpassword}}
+
+  {{$restrictusers := printf "/services/nginx/%s/restrict-users" $filename}}
+  {{range $restriction := ls $restrictusers}}
+    {{$key := printf "/services/nginx/%s/restrict-users/%s" $filename $restriction}}
+    # {{$restriction}}
+    {{$password := getv $key}}
+    htpasswd -b {{$htpassword}} {{$restriction}} "{{$password}}"
+  {{end}}
+{{end}}
+
+{{end}}

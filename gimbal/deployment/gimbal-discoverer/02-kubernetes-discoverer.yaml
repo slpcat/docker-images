@@ -1,0 +1,49 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: kubernetes-discoverer
+    cluster: k8s
+  name: k8s-kubernetes-discoverer
+  namespace: gimbal-discovery
+spec:
+  selector:
+    matchLabels:
+      app: kubernetes-discoverer
+      cluster: k8s
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: kubernetes-discoverer
+        cluster: k8s
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"
+    spec:
+      containers:
+      - image: gcr.io/heptio-images/gimbal-discoverer:v0.3.1
+        imagePullPolicy: Always
+        name: kubernetes-discoverer
+        command: ["/kubernetes-discoverer"]
+        args: ["--discover-kubecfg-file", "/etc/remote-discover-kubecfg/config", "--backend-name", "$(CLUSTER_NAME)"]
+        env:
+        - name: CLUSTER_NAME
+          valueFrom:
+            secretKeyRef:
+              name: remote-discover-kubecfg
+              key: backend-name
+        volumeMounts:
+        - name: discover-kubecfg
+          readOnly: true
+          mountPath: "/etc/remote-discover-kubecfg"
+      volumes:
+      - name: discover-kubecfg
+        secret:
+          secretName: remote-discover-kubecfg
+          items:
+          - key: config
+            path: config
+      dnsPolicy: ClusterFirst
+      serviceAccountName: gimbal-discoverer
+      terminationGracePeriodSeconds: 30

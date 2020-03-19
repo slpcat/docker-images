@@ -1,0 +1,69 @@
+---
+# Specify either "latest" or a version such as "1.7.10"
+kubernetes_version: latest
+kubernetes_token: abcdef.1234567890abcdef
+kubernetes_version_tag: "{% if kubernetes_version != 'latest' %}-{{ kubernetes_version }}{% endif %}"
+install_pkgs:
+- wget
+- screen
+- git
+- vim
+- glusterfs-client
+- heketi-client
+- iptables
+- iptables-utils
+- iptables-services
+- docker
+- kubeadm{{ kubernetes_version_tag }}
+- kubelet{{ kubernetes_version_tag }}
+- kubectl{{ kubernetes_version_tag }}
+- ntp
+# The following variables control the use and configuration of a custom docker
+# registry and/or custom rpm repositories:
+# * custom_registry: Specifies and enables a custom registry (default none)
+# * custom_registry_insecure: Marks the custom registry as insecure. This is
+#   typically the case if you're running a local registry on your host machine
+#   (default true)
+# * custom_registry_add: Adds the custom registry as the first registry, making
+#   it the default registry to search for images if no registry is specified.
+#   (default true)
+# * custom_registry_gcr: Sets up an nginx proxy on the master node VM to allow
+#   redirection of requests to gcr.io to your custom registry. This allows you
+#   to pull Google's images without changing image names/URLs. (default false)
+#   It is recommended to increase your master node's RAM to at least 2048 MB
+#   in the Vagrantfile for better performance.
+# * gcr_proxy_state: Whether or not the VMs' /etc/hosts will be updated to
+#   redirect gcr.io traffic to the nginx proxy running on the master node VM.
+#   Valid values are 'present' and 'absent'. (default 'present')
+# * gcr_proxy_nginx: The version of nginx-slim to use for the gcr.io proxy.
+#   (default '0.8')
+# * custom_yum_repos: Define custom yum repos as mapping of repo names
+#   (short strings) to repo urls. One or more repo must be specified if this
+#   option is enabled. Using this option will disable the normal user of
+#   the centos epel, centos gluster, and google kubernetes repos.
+# * custom_host_aliases: If the custom_repos or registry refer to hostnames
+#   that cannot be resolved normally a custom_host_aliases variable can be
+#   used to add specific entries to /etc/hosts.
+#custom_registry: 192.168.10.1:5000
+#custom_registry_insecure: false
+#custom_registry_add: false
+#custom_registry_gcr: true
+#gcr_proxy_state: absent
+#gcr_proxy_nginx: 0.23
+#custom_yum_repos:
+#  kubernetes_el7: http://mypkgs/path/to/repo1
+#  epel_el7: http://mypkgs/path/to/repo2
+#  gluster_el7: http://mypkgs/another/repo/path/repo3
+#custom_host_aliases:
+#  - addr: 192.168.122.164
+#    names:
+#      - mypkgs
+#      - mypkgs.localdomain
+#      - rpms.example.com
+#  - addr: 192.168.122.168
+#    names:
+#      - marble
+#  - addr: 192.168.122.169
+#    names:
+#      - jimmy
+#      - cricket

@@ -1,0 +1,72 @@
+## Specify the docker image registry with namespace (no trailing slash) to pull images from
+## Choose from below regions:
+## North China 1: registry.cn-qingdao.aliyuncs.com/cos-solution
+## North China 2: registry.cn-beijing.aliyuncs.com/cos-solution
+## North China 3: registry.cn-zhangjiakou.aliyuncs.com/cos-solution
+## East China 1: registry.cn-hangzhou.aliyuncs.com/cos-solution
+## East China 2: registry.cn-shanghai.aliyuncs.com/cos-solution
+## South China 1: registry.cn-shenzhen.aliyuncs.com/cos-solution
+##
+dockerImageRegistry: registry.cn-hangzhou.aliyuncs.com/cos-solution
+
+## Public IP address for external applications to access services via NodePort
+##
+externalAddress: 1.2.3.4
+
+## Name of Hyperledger Fabric blockchain network
+##
+fabricNetwork: network01
+
+## Name of the initial channel of blockchain network
+##
+fabricChannel: bankchannel
+
+## Number of orderers
+## 
+ordererNum: 3
+
+## Domain of orderers
+## This domain will be used mainly for certification generation
+##
+ordererDomain: alibaba.com
+
+## Domain of peers
+## This domain will be used mainly for certification generation
+##
+peerDomain: alibaba.com
+
+## Number of peer organizations
+## There will be two peers created for each organization for HA. So the total number of peers
+## will be (orgNum * 2)
+##
+orgNum: 2
+
+## NodePort list for CA services
+## We use JSON-format sequence so that it will be easier for user to set via CLI
+##
+caExternalPortList: ["31054", "31064"]
+
+## NodePort list for orderer services
+## We use JSON-format sequence so that it will be easier for user to set via CLI
+##
+ordererExternalPortList: ["31050", "31060", "31070"]
+
+## NodePort list for peer services via gRPC
+## We use JSON-format sequence so that it will be easier for user to set via CLI
+##
+peerExternalGrpcPortList: ["31051", "31061", "31071", "31081"]
+
+## NodePort list for peer services via eventing
+## We use JSON-format sequence so that it will be easier for user to set via CLI
+##
+peerExternalEventPortList: ["31053", "31063", "31073", "31083"]
+
+## Specify an imagePullPolicy
+## It's recommended to change this to 'Always' if the image tag is 'latest'
+## ref: http://kubernetes.io/docs/user-guide/images/#updating-images
+##
+imagePullPolicy: IfNotPresent
+
+## Specify version of Hyperledger Fabric. Currently only support 1.0.0
+##
+hyperledgerFabricVersion: 1.0.0

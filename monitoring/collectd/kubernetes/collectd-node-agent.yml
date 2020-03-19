@@ -1,0 +1,105 @@
+apiVersion: extensions/v1beta1
+
+kind: DaemonSet
+
+metadata:
+
+  name: collectd-node-agent
+
+  labels:
+
+    app: collectd-node-agent
+
+spec:
+
+  template:
+
+    metadata:
+
+      labels:
+
+        name: collectd-node-agent
+
+    spec:
+
+      hostNetwork: true
+
+      imagePullSecrets:
+
+        - name: acrregkey
+
+      containers:
+
+      - name: collectd
+
+        image: <your registry name>-microsoft.azurecr.io/collectd-agent:1.0
+
+        securityContext:
+
+          privileged: true
+
+        volumeMounts:
+
+        - name: collectd-config
+
+          mountPath: /etc/collectd
+
+        - name: proc
+
+          mountPath: /mnt/proc
+
+          readOnly: true
+
+        - name: root
+
+          mountPath: /hostfs
+
+          readOnly: true
+
+        - name: etc
+
+          mountPath: /mnt/etc
+
+          readOnly: true
+
+        - name: run
+
+          mountPath: /var/run/docker.sock
+
+      volumes:
+
+      - name: collectd-config
+
+        configMap:
+
+          name: collectd-config
+
+          items:
+
+          - key: node-collectd.conf
+
+            path: collectd.conf
+
+      - name: proc
+
+        hostPath:
+
+          path: /proc
+
+      - name: root
+
+        hostPath:
+
+          path: /
+
+      - name: etc
+
+        hostPath:
+
+          path: /etc
+
+      - name: run
+
+        hostPath:
+
+          path: /var/run/docker.sock

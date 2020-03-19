@@ -1,0 +1,404 @@
+# This file and its contents are licensed under the Apache License 2.0.
+# Please see the included NOTICE for copyright information and LICENSE for a copy of the license.
+
+replicaCount: 3
+
+# To prevent very long names, we override the name, otherwise it would default to
+# timescaledb-single (the name of the chart)
+nameOverride: timescaledb
+
+# The default Patroni name of the cluster ("scope") is derived from the name of the release,
+# but you can override this behaviour here
+# https://patroni.readthedocs.io/en/latest/SETTINGS.html#global-universal
+clusterName:
+
+image:
+  # Image was built from
+  # https://github.com/timescale/timescaledb-docker-ha
+  repository: timescaledev/timescaledb-ha
+  tag: pg11-ts1.6
+  pullPolicy: IfNotPresent
+
+# Credentials used by PostgreSQL and Patroni
+# https://github.com/zalando/patroni/blob/master/docs/SETTINGS.rst#postgresql
+credentials:
+  admin: cola
+  # the postgres and standby users are vital for Patroni, and therefore should not be
+  # removed altogether.
+  postgres: tea
+  standby: pinacolada
+
+# To set your own certificate (instead of autogenerating one), you can add
+# the certificate and key here
+tls:
+  cert: |
+#    -----BEGIN CERTIFICATE-----
+#    ABC
+#    -----END CERTIFICATE-----
+  key: |
+#    -----BEGIN PRIVATE KEY-----
+#    ABC
+#    -----END PRIVATE KEY-----
+
+backup:
+  enabled: false
+  pgBackRest:
+    # https://pgbackrest.org/configuration.html
+    process-max: 4
+    start-fast: "y"
+    compress-level: 3
+    repo1-retention-diff: 2
+    repo1-retention-full: 2
+    repo1-s3-region: us-east-2
+    repo1-s3-bucket: my_example_s3_bucket_for_backups
+    repo1-s3-endpoint: s3.amazonaws.com
+    repo1-type: s3
+    repo1-cipher-type: "none"
+    # These secrets should contain an IAM access key ID and a secret access key:
+    # https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html
+    # These can also be specified as EnvVars below, which allows you to refer to k8s
+    # secrets or other secret injection mechanisms
+    repo1-s3-key: examplekeyid
+    repo1-s3-key-secret: examplesecret+D48GXfDdtl823nlSRRv7dmB
+  jobs:
+      # name: needs to adhere to the kubernetes restrictions
+      # type: can be full, incr or diff, see https://pgbackrest.org/user-guide.html
+      # schedule: https://en.wikipedia.org/wiki/Cron#CRON_expression
+    - name: full-weekly
+      type: full
+      schedule: "12 02 * * 0"
+    - name: incremental-daily
+      type: incr
+      schedule: "12 02 * * 1-6"
+  # Extra custom environment variables for prometheus.
+  # These should be an EnvVar, as this allows you to inject secrets into the environment
+  # https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.16/#envvar-v1-core
+  env:
+  #- name: PGBACKREST_REPO1_S3_KEY
+  #  value: examplekeyid
+  #- name: PGBACKREST_REPO1_S3_KEY_SECRET
+  #  valueFrom:
+  #    secretKeyRef:
+  #      name: pgbackrest-dev-secrets
+  #      key: repo1-s3-key-secret
+
+# Extra custom environment variables.
+# These should be an EnvVar, as this allows you to inject secrets into the environment
+# https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.16/#envvar-v1-core
+env:
+#  - name: NOT_A_SECRET
+#    value: "test"
+#  - name: MYAPPLICATION_STANDBY_PASSWORDS
+#    valueFrom:
+#      secretKeyRef:
+#        name: myapplication-passwords
+#        key: standby
+
+# This configuration will be passed on to Patroni directly, there are a few things that are
+# injected/changed, these are:
+#   - archive_command will be set to /bin/true if backup is disabled
+#   - any context sensitive parameter (scope, namespace, name) will be overridden by the Kubernetes context
+# https://patroni.readthedocs.io/en/latest/SETTINGS.html#settings
+patroni:
+  log:
+    level: WARNING
+  # https://patroni.readthedocs.io/en/latest/replica_bootstrap.html#bootstrap
+  bootstrap:
+    method: restore_or_initdb
+    restore_or_initdb:
+      command: >
+        /etc/timescaledb/scripts/restore_or_initdb.sh
+        --encoding=UTF8
+        --locale=C.UTF-8
+      keep_existing_recovery_conf: True
+    post_init: /etc/timescaledb/scripts/post_init.sh
+    dcs:
+      loop_wait: 10
+      maximum_lag_on_failover: 33554432
+      postgresql:
+        parameters:
+          archive_command: "/etc/timescaledb/scripts/pgbackrest_archive.sh %p"
+          archive_mode: 'on'
+          archive_timeout: 1800s
+          autovacuum_analyze_scale_factor: 0.02
+          autovacuum_max_workers: 10
+          autovacuum_vacuum_scale_factor: 0.05
+          hot_standby: 'on'
+          log_autovacuum_min_duration: 0
+          log_checkpoints: 'on'
+          log_connections: 'on'
+          log_disconnections: 'on'
+          log_line_prefix: "%t [%p]: [%c-%l] %u@%d,app=%a [%e] "
+          log_lock_waits: 'on'
+          log_min_duration_statement: '1s'
+          log_statement: ddl
+          max_connections: 100
+          max_prepared_transactions: 150
+          shared_preload_libraries: timescaledb,pg_stat_statements
+          ssl: 'on'
+          ssl_cert_file: '/etc/certificate/tls.crt'
+          ssl_key_file: '/etc/certificate/tls.key'
+          tcp_keepalives_idle: 900
+          tcp_keepalives_interval: 100
+          temp_file_limit: 1GB
+          timescaledb.passfile: '../.pgpass'
+          unix_socket_directories: "/var/run/postgresql"
+          unix_socket_permissions: '0750'
+          wal_level: hot_standby
+          wal_log_hints: 'on'
+        use_pg_rewind: true
+        use_slots: true
+      retry_timeout: 10
+      ttl: 30
+  kubernetes:
+    role_label: role
+    scope_label: cluster-name
+    use_endpoints: true
+    ports:
+    - name: postgresql
+      port: 5432
+      targetPort: 5432
+  postgresql:
+    create_replica_methods:
+    - pgbackrest
+    - basebackup
+    pgbackrest:
+      command: /etc/timescaledb/scripts/pgbackrest_restore.sh
+      keep_data: True
+      no_params: True
+      no_master: 1
+    basebackup:
+    - waldir: "/var/lib/postgresql/wal/pg_wal"
+    recovery_conf:
+      restore_command: /etc/timescaledb/scripts/pgbackrest_archive_get.sh %f "%p"
+    callbacks:
+      on_role_change: /etc/timescaledb/scripts/patroni_callback.sh
+      on_start: /etc/timescaledb/scripts/patroni_callback.sh
+      on_reload: /etc/timescaledb/scripts/patroni_callback.sh
+      on_restart: /etc/timescaledb/scripts/patroni_callback.sh
+      on_stop: /etc/timescaledb/scripts/patroni_callback.sh
+    authentication:
+      replication:
+        username: standby
+      superuser:
+        username: postgres
+    listen: 0.0.0.0:5432
+    pg_hba:
+    - hostnossl all,replication all                all                reject
+    - local     all             all                                   peer
+    - hostssl   all             all                127.0.0.1/32       md5
+    - hostssl   all             all                ::1/128            md5
+    - hostssl   replication     standby            all                md5
+    - hostssl   all             all                all                md5
+    use_unix_socket: true
+  restapi:
+    listen: 0.0.0.0:8008
+
+callbacks:
+  # If set, this configMap will be used for the Patroni callbacks.
+  configMap: # example-patroni-callbacks
+
+loadBalancer:
+  # If not enabled, we still expose the primary using a so called Headless Service
+  # https://kubernetes.io/docs/concepts/services-networking/service/#headless-services
+  enabled: True
+  # Read more about the AWS annotations here:
+  # https://kubernetes.io/docs/concepts/cluster-administration/cloud-providers/#aws
+  # https://docs.aws.amazon.com/eks/latest/userguide/load-balancing.html
+  annotations:
+    # Setting idle-timeout to the maximum allowed value, as in general
+    # database connections are long lived
+    service.beta.kubernetes.io/aws-load-balancer-connection-idle-timeout: "4000"
+
+    # service.beta.kubernetes.io/aws-load-balancer-type: nlb            # Use an NLB instead of ELB
+    # service.beta.kubernetes.io/aws-load-balancer-internal: 0.0.0.0/0  # Internal Load Balancer
+
+replicaLoadBalancer:
+  # If not enabled, we still expose the replica's using a so called Headless Service
+  # https://kubernetes.io/docs/concepts/services-networking/service/#headless-services
+  enabled: False
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-connection-idle-timeout: "4000"
+
+readinessProbe:
+  enabled: true
+  initialDelaySeconds: 5
+  periodSeconds: 30
+  timeoutSeconds: 5
+  failureThreshold: 6
+  successThreshold: 1
+
+persistentVolumes:
+  # For sanity reasons, the actual PGDATA and wal directory will be subdirectories of the Volume mounts,
+  # this allows Patroni/a human/an automated operator to move directories during bootstrap, which cannot
+  # be done if we did not use subdirectories
+  # https://www.postgresql.org/docs/current/creating-cluster.html#CREATING-CLUSTER-MOUNT-POINTS
+  data:
+    enabled: True
+    size: 2Gi
+    ## database data Persistent Volume Storage Class
+    ## If defined, storageClassName: <storageClass>
+    ## If set to "-", storageClassName: "", which disables dynamic provisioning
+    ## If undefined (the default) or set to null, no storageClassName spec is
+    ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
+    ##   GKE, AWS & OpenStack)
+    ##
+    # storageClass: "-"
+    subPath: ""
+    mountPath: "/var/lib/postgresql"
+    annotations: {}
+    accessModes:
+      - ReadWriteOnce
+  # WAL will be a subdirectory of the data volume, which means enabling a separate
+  # volume for the WAL files should just work for new pods.
+  wal:
+    enabled: True
+    size: 1Gi
+    subPath: ""
+    storageClass:
+    # When changing this mountPath ensure you also change the following key to reflect this:
+    # patroni.postgresql.basebackup.[].waldir
+    mountPath: "/var/lib/postgresql/wal"
+    annotations: {}
+    accessModes:
+      - ReadWriteOnce
+  # Any tablespace mentioned here requires a volume that will be associated with it.
+  # tablespaces:
+    # example1:
+    #   size: 5Gi
+    #   storageClass: gp2
+    # example2:
+    #   size: 5Gi
+    #   storageClass: gp2
+
+
+resources: {}
+  # If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+# timescaledb-tune will be run with the Pod resources requests or - if not set - its limits.
+# This should give a reasonably tuned PostgreSQL instance.
+# Any PostgreSQL parameter that is explicitly set in the Patroni configuration will override
+# the auto-tuned variables.
+timescaledbTune:
+  enabled: False
+  # For full flexibility, we allow you to override any timescaledb-tune parameter below.
+  # However, these parameters only take effect on newly scheduled pods and their settings are
+  # only visibible inside those new pods.
+  # Therefore you probably want to set explicit overrides in patroni.bootstrap.dcs.postgresql.parameters,
+  # as those will take effect as soon as possible.
+  # https://github.com/timescale/timescaledb-tune
+  args: {}
+    # max-conns: 120
+    # cpus: 5
+    # memory: 4GB
+
+networkPolicy:
+  enabled: False
+  prometheusApp: prometheus
+  # Below you can specify a whitelist of Ingress rules, for more information:
+  # https://kubernetes.io/docs/concepts/services-networking/network-policies/#the-networkpolicy-resource
+  ingress:
+  #- from:
+  #  - podSelector:
+  #      matchLabels:
+  #        app: foo
+  #  ports:
+  #    - protocol: TCP
+  #      port: 11111
+
+# https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#nodeselector
+nodeSelector: {}
+
+# Prometheus exporter for PostgreSQL server metrics.
+# https://github.com/wrouesnel/postgres_exporter
+prometheus:
+  enabled: False
+  image:
+    repository: wrouesnel/postgres_exporter
+    tag: v0.7.0
+    pullPolicy: IfNotPresent
+  # Extra custom environment variables for prometheus.
+  # These should be an EnvVar, as this allows you to inject secrets into the environment
+  # https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.16/#envvar-v1-core
+  env:
+  #- name: NOT_A_SECRET
+  #  value: "test"
+  #- name: MYAPPLICATION_STANDBY_PASSWORDS
+  #  valueFrom:
+  #    secretKeyRef:
+  #      name: myapplication-passwords
+  #      key: standby
+  # Additional volumes for prometheus, e.g., to support additional queries.
+  # These should be a Volume, as this allows you to inject any kind of Volume
+  # https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.16/#volume-v1-core
+  volumes:
+  #- name: exporter-config
+  #  configMap:
+  #    name: exporter-prometheus
+  #    items:
+  #      - key: metrics_queries
+  #        path: queries.yaml
+  # Additional volume mounts, to be used in conjunction with the above variable.
+  # https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.16/#volumemount-v1-core
+  volumeMounts:
+  #- name: exporter-config
+  #  mountPath: /var/exporter
+
+
+# Annotations that are applied to each pod in the stateful set
+# https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/
+podAnnotations: {}
+
+# https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+tolerations: []
+
+# https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
+affinityTemplate: |
+  podAntiAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+    - weight: 100
+      podAffinityTerm:
+        topologyKey: "kubernetes.io/hostname"
+        labelSelector:
+          matchLabels:
+            app:  {{ template "timescaledb.name" . }}
+            release: {{ .Release.Name | quote }}
+            cluster-name: {{ template "clusterName" . }}
+    - weight: 50
+      podAffinityTerm:
+        topologyKey: failure-domain.beta.kubernetes.io/zone
+        labelSelector:
+          matchLabels:
+            app:  {{ template "timescaledb.name" . }}
+            release: {{ .Release.Name | quote }}
+            cluster-name: {{ template "clusterName" . }}
+affinity: {}
+
+## Use an alternate scheduler, e.g. "stork".
+## ref: https://kubernetes.io/docs/tasks/administer-cluster/configure-multiple-schedulers/
+##
+# schedulerName:
+
+rbac:
+  # Specifies whether RBAC resources should be created
+  create: true
+
+serviceAccount:
+  # Specifies whether a ServiceAccount should be created
+  create: true
+  # The name of the ServiceAccount to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name:
+
+debug:
+  # This setting is mainly for during development, debugging or troubleshooting.
+  # This command will be executed *before* the main container starts. In the
+  # example below, we can mimick a slow restore by sleeping for 5 minutes before starting
+  execStartPre: # sleep 300

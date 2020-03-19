@@ -1,0 +1,66 @@
+{
+  "templates": [
+    {
+      "name": "logstash_template",
+      "body": {
+        "order": 0,
+        "template": "*-logstash-*",
+        "settings": {
+          "index.mapping.ignore_malformed": "true",
+          "routing.allocation.total_shards_per_node": 2
+        },
+        "mappings": {
+          "_default_": {
+            "dynamic": true
+          },
+          "logstash-input": {
+            "properties": {
+              "@timestamp": {
+                "type": "date"
+              },
+              "@version": {
+                "type": "long"
+              },
+              "count": {
+                "type": "long"
+              },
+              "duration": {
+                "type": "long"
+              },
+              "id": {
+                "type": "long"
+              },
+              "logger_name": {
+                "type": "text",
+                "fields": {
+                  "keyword": {
+                    "type": "keyword",
+                    "ignore_above": 256
+                  }
+                }
+              },
+              "message": {
+                "type": "text",
+                "fields": {
+                  "keyword": {
+                    "type": "keyword",
+                    "ignore_above": 256
+                  }
+                }
+              },
+              "method": {
+                "type": "text",
+                "fields": {
+                  "keyword": {
+                    "type": "keyword",
+                    "ignore_above": 256
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

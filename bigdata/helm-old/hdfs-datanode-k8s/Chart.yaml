@@ -1,0 +1,3 @@
+description: Hadoop Distributed File System (HDFS) hosted by Kubernetes.
+name: hdfs-datanode-k8s
+version: 0.1.1

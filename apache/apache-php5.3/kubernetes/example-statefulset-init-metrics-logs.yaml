@@ -1,0 +1,155 @@
+# Source: percona-xtradb-cluster/templates/statefulset.yaml
+apiVersion: apps/v1beta2
+kind: StatefulSet
+metadata:
+  name: wintering-frog-pxc
+  labels:
+    app: wintering-frog-pxc
+    chart: "percona-xtradb-cluster-0.1.5"
+    release: "wintering-frog"
+    heritage: "Tiller"
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: wintering-frog-pxc
+      release: "wintering-frog"
+  serviceName: wintering-frog-pxc
+  template:
+    metadata:
+      labels:
+        app: wintering-frog-pxc
+        chart: "percona-xtradb-cluster-0.1.5"
+        release: "wintering-frog"
+        heritage: "Tiller"
+    spec:
+      initContainers:
+      - name: "remove-lost-found"
+        image: "busybox:1.25.0"
+        imagePullPolicy: IfNotPresent
+        command:
+        - "rm"
+        - "-fr"
+        - "/var/lib/mysql/lost+found"
+        volumeMounts:
+        - name: mysql-data
+          mountPath: /var/lib/mysql
+      containers:
+      - name: database
+        image: "percona/percona-xtradb-cluster:5.7.19"
+        imagePullPolicy: "IfNotPresent"
+        command:
+        - "/bin/bash"
+        - "/startup-scripts/entrypoint.sh"
+        resources:
+          null
+          
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: wintering-frog-pxc
+              key: mysql-root-password
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: wintering-frog-pxc
+              key: mysql-password
+        - name: XTRABACKUP_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: wintering-frog-pxc
+              key: xtrabackup-password
+        - name: MYSQL_USER
+          value: ""
+        - name: MYSQL_DATABASE
+          value: ""
+        - name: ALLOW_ROOT_FROM
+          value: "%"
+        - name: CLUSTER_NAME
+          value: wintering-frog-pxc
+        - name: K8S_SERVICE_NAME
+          value: wintering-frog-pxc-repl
+        - name: DEBUG
+          value: "true"
+        ports:
+        - name: mysql
+          containerPort: 3306
+        - name: galera-repl
+          containerPort: 4567
+        - name: state-transfer
+          containerPort: 4568
+        - name: state-snapshot
+          containerPort: 4444
+        livenessProbe:
+          exec:
+            command: ["mysqladmin","ping"]
+          initialDelaySeconds: 30
+          timeoutSeconds: 2
+        readinessProbe:
+          exec:
+            command: ["mysql", "-h", "127.0.0.1", "-e", "SELECT 1"]
+          initialDelaySeconds: 30
+          timeoutSeconds: 2
+        volumeMounts:
+        - name: mysql-data
+          mountPath: /var/lib/mysql
+        - name: mysql-startup-scripts
+          mountPath: /startup-scripts
+        - name: mysql-config-files
+          mountPath: /etc/mysql/conf.d
+        - name: slash-root
+          mountPath: /root
+        - name: var-log
+          mountPath: /var/log
+      
+      - name: "logs"
+        image: "busybox:1.25.0"
+        imagePullPolicy: IfNotPresent
+        command:
+        - "tail"
+        - "-f"
+        - "/var/log/mysqld.log"
+        volumeMounts:
+        - name: var-log
+          mountPath: /var/log
+
+      - name: metrics
+        image: prom/mysqld-exporter
+        imagePullPolicy: IfNotPresent
+        ports:
+        - name: metrics
+          containerPort: 9104
+        volumeMounts:
+        - name: slash-root
+          mountPath: /root
+        livenessProbe:
+          exec:
+            command: ["wget","-q","-O","-","localhost:9104"]
+          initialDelaySeconds: 30
+          timeoutSeconds: 2
+        readinessProbe:
+          exec:
+            command: ["wget","-q","-O","-","localhost:9104"]
+          initialDelaySeconds: 30
+          timeoutSeconds: 2
+      
+      volumes:
+      - name: slash-root
+        emptyDir: {}
+      - name: var-log
+        emptyDir: {}
+      - name: mysql-config-files
+        configMap:
+          name: wintering-frog-pxc-config-files
+      - name: mysql-startup-scripts
+        configMap:
+          name: wintering-frog-pxc-startup-scripts
+  volumeClaimTemplates:
+  - metadata:
+      name: mysql-data
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: "8Gi"

@@ -1,0 +1,79 @@
+################################################################
+# Consul Catalog Provider
+################################################################
+
+# Enable Consul Catalog Provider.
+[consulCatalog]
+
+# Consul server endpoint.
+#
+# Required
+# Default: "127.0.0.1:8500"
+#
+endpoint = "127.0.0.1:8500"
+
+# Expose Consul catalog services by default in Traefik.
+#
+# Optional
+# Default: true
+#
+exposedByDefault = false
+
+# Allow Consul server to serve the catalog reads regardless of whether it is the leader.
+#
+# Optional
+# Default: false
+#
+stale = false
+
+# Default base domain used for the frontend rules.
+#
+# Optional
+#
+#domain = "consul.localhost"
+domain = "example.com"
+
+# Prefix for Consul catalog tags.
+#
+# Optional
+# Default: "traefik"
+#
+prefix = "traefik"
+
+# Default frontEnd Rule for Consul services.
+#
+# The format is a Go Template with:
+# - ".ServiceName", ".Domain" and ".Attributes" available
+# - "getTag(name, tags, defaultValue)", "hasTag(name, tags)" and "getAttribute(name, tags, defaultValue)" functions are available
+# - "getAttribute(...)" function uses prefixed tag names based on "prefix" value
+#
+# Optional
+# Default: "Host:{{.ServiceName}}.{{.Domain}}"
+#
+#frontEndRule = "Host:{{.ServiceName}}.{{.Domain}}"
+
+# Enable Consul catalog TLS connection.
+#
+# Optional
+#
+#    [consulCatalog.tls]
+#    ca = "/etc/ssl/ca.crt"
+#    cert = "/etc/ssl/consul.crt"
+#    key = "/etc/ssl/consul.key"
+#    insecureSkipVerify = true
+
+# Override default configuration template.
+# For advanced users :)
+#
+# Optional
+#
+# filename = "consulcatalog.tmpl"
+
+# Override template version
+# For advanced users :)
+#
+# Optional
+# - "1": previous template version (must be used only with older custom templates, see "filename")
+# - "2": current template version (must be used to force template version when "filename" is used)
+#
+# templateVersion = 2

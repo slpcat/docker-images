@@ -1,0 +1,18 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: rocketmqcluster-nameserver
+  namespace: default
+  labels:
+      app: rocketmqcluster-nameserver
+spec:
+  ports:
+  - port: 9876
+    targetPort: 9876
+    name: namesrv
+  - port: 10911
+    targetPort: 10911
+    name: broker
+  clusterIP: None
+  selector:
+    app: rocketmqcluster-nameserver

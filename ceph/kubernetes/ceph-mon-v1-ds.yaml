@@ -1,0 +1,119 @@
+---
+kind: DaemonSet
+apiVersion: apps/v1
+metadata:
+  labels:
+    app: ceph
+    daemon: mon
+  name: ceph-mon
+  namespace: ceph
+spec:
+  selector:
+    matchLabels:
+      app: ceph
+      daemon: mon
+  template:
+    metadata:
+      name: ceph-mon
+      namespace: ceph
+      labels:
+        app: ceph
+        daemon: mon
+    spec:
+      nodeSelector:
+        #node-type: storage
+        ceph-mon: enabled
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+      serviceAccount: default
+      volumes:
+        - name: ceph-conf
+          secret:
+            secretName: ceph-conf-combined
+        - name: ceph-bootstrap-osd-keyring
+          secret:
+            secretName: ceph-bootstrap-osd-keyring
+        - name: ceph-bootstrap-mds-keyring
+          secret:
+            secretName: ceph-bootstrap-mds-keyring
+        - name: ceph-bootstrap-rgw-keyring
+          secret:
+            secretName: ceph-bootstrap-rgw-keyring
+        - name: ceph-bootstrap-rbd-keyring
+          secret:
+            secretName: ceph-bootstrap-rbd-keyring
+        - name: ceph-mon-data
+          hostPath:
+            path: /var/lib/ceph/mon
+      containers:
+        - name: ceph-mon
+          #image: slpcat/ceph-daemon:mimic
+          image: slpcat/ceph-daemon:v3.1.0-mimic-centos7
+          imagePullPolicy: Always
+          lifecycle:
+            preStop:
+                exec:
+                  # remove the mon on Pod stop.
+                  command:
+                    - "/remove-mon.sh"
+            postStart:
+              exec:
+                command:
+                  - "sh"
+                  - "-c"
+                  - cp /tmp/ceph/* /etc/ceph/
+          ports:
+            - containerPort: 6789
+          env:
+            - name: K8S_HOST_NETWORK
+              value: "1"
+            - name: MONMAP
+              value: /var/lib/ceph/mon/monmap
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.namespace
+            - name: CEPH_DAEMON
+              value: MON
+            - name: KV_TYPE
+              value: k8s
+            #NETWORK_AUTO_DETECT can't work with calico to get CEPH_PUBLIC_NETWORK
+            - name: NETWORK_AUTO_DETECT
+              value: "0"
+            - name: CLUSTER
+              value: ceph
+            - name: CEPH_PUBLIC_NETWORK
+              value: 172.19.0.0/16
+            - name: MON_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            - name: MON_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            #- name: DEBUG
+            #  value: stayalive
+          volumeMounts:
+            - name: ceph-conf
+              mountPath: /tmp/ceph
+            - name: ceph-mon-data
+              mountPath: /var/lib/ceph/mon
+            - name: ceph-bootstrap-osd-keyring
+              mountPath: /var/lib/ceph/bootstrap-osd
+            - name: ceph-bootstrap-mds-keyring
+              mountPath: /var/lib/ceph/bootstrap-mds
+            - name: ceph-bootstrap-rgw-keyring
+              mountPath: /var/lib/ceph/bootstrap-rgw
+            - name: ceph-bootstrap-rbd-keyring
+              mountPath: /var/lib/ceph/bootstrap-rbd
+          livenessProbe:
+              tcpSocket:
+                port: 6789
+              initialDelaySeconds: 60
+              timeoutSeconds: 5
+          readinessProbe:
+              tcpSocket:
+                port: 6789
+              timeoutSeconds: 5

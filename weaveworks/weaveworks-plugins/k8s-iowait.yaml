@@ -1,0 +1,28 @@
+apiVersion: extensions/v1beta1
+kind: DaemonSet
+metadata:
+  labels:
+    app: weavescope
+    weavescope-component: weavescope-iowait-plugin
+  name: weavescope-iowait-plugin
+spec:
+  template:
+    metadata:
+      labels:
+        app: weavescope
+        weavescope-component: weavescope-iowait-plugin
+    spec:
+      hostPID: true
+      hostNetwork: true
+      containers:
+        - name: weavescope-iowait-plugin
+          image: weaveworksplugins/scope-iowait:latest
+          securityContext:
+            privileged: true
+          volumeMounts:
+          - name: scope-plugins
+            mountPath: /var/run/scope/plugins
+      volumes:
+      - name: scope-plugins
+        hostPath:
+          path: /var/run/scope/plugins

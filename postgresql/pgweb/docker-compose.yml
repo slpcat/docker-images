@@ -1,0 +1,12 @@
+pgweb:
+  container_name: pgweb
+  restart: always
+  image: sosedoff/pgweb
+  ports: 
+    - "8081:8081" 
+  links: 
+    - postgres:postgres  # my database container is called postgres, not db
+  environment:
+    - DATABASE_URL=postgres://postgres:postgres@postgres:5432/postgres?sslmode=disable
+  depends_on:
+    - postgres

@@ -1,0 +1,81 @@
+global:
+  resolve_timeout: 5m
+  # The smarthost and SMTP sender used for mail notifications.
+  #smtp_smarthost: 'smtp.163.com:25'
+  #smtp_from: 'xxxxxx@163.com'
+  #smtp_auth_username: 'xxxxxx@163.com'
+  #smtp_auth_password: 'xxxxxx'
+  # The API URL to use for Slack notifications.
+  #slack_api_url: 'https://hooks.slack.com/services/some/api/token'
+  #wechat_api_url: 'https://qyapi.weixin.qq.com/cgi-bin/' # 企业微信地址
+#templates:
+  #- '/usr/local/alertmanager/ceph.tmpl'
+  #- 'template/*.tmpl'
+
+route:
+  group_by: ["job","alertname", "cluster", "service"]
+  group_wait: 30s # 最初即第一次等待多久时间发送一组警报的通知
+  group_interval: 5m # 在发送新警报前的等待时间
+  repeat_interval: 1h # 发送重复警报的周期 对于email配置中，此项不可以设置过低，否则将会由于邮件发送太多频繁，被smtp服务器拒绝
+  receiver: webhook # 发送警报的接收者的名称，以下receivers name的名称
+
+  routes:
+  - receiver: webhook
+    group_wait: 10s
+    match:
+      team: node
+  - receiver: webhook
+    match:
+      alertname: "Watchdog"
+    group_wait: 10s
+  #- match:
+  #    severity: critical
+  #  receiver: critical_email_alert
+  #- match_re:
+  #    alertname: "^KubeJob*"
+  #  receiver: default_email
+
+
+receivers:
+  - name: webhook
+    webhook_configs:
+    - url: http://prometheus-webhook-dingtalk.monitoring:8060/dingtalk/webhook1/send 
+      send_resolved: true
+  #- name: 'default_email'
+  #  email_configs:
+  #  - to : 'xxxxxx@163.com'
+  #    send_resolved: true
+
+  #- name: 'critical_email_alert'
+  #  email_configs:
+  #  - to : 'xxxxxx@163.com'
+  #    send_resolved: true
+
+  #- name: 'email' # 警报
+  #  email_configs: # 邮箱配置
+  #  - to: 'xxxxxx@163.com'  # 接收警报的email配置
+  #    html: '{{ template "test.html" . }}' # 设定邮箱的内容模板
+  #    headers: { Subject: "[WARN] 报警邮件"} # 接收邮件的标题
+  #  webhook_configs: # webhook配置
+  #  - url: 'http://127.0.0.1:5001'
+  #    send_resolved: true
+
+  #- name: 'noemail'
+  #  email_configs:
+  #  - to : 'null@null.cn'
+  #    send_resolved: false
+
+  #- name: 'wechat' #微信的配置
+  #  wechat_configs:
+  #  - corp_id: 'id'  #企业微信都有的四个字段
+  #    to_party: '2'
+  #    agent_id: '1000003'
+  #    api_secret: 'secretid'
+  #    send_resolved: true  #告警解除后否发送通知，这里选择发送
+#配置抑制规则，是存在另一组匹配器匹配的情况下，静音其他被引发警报的规则。
+inhibit_rules:
+- source_match:
+    severity: 'critical'
+  target_match:
+    severity: 'warning'
+  equal: ['low_connected_users']

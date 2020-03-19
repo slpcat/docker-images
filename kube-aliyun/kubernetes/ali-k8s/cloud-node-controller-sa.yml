@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  creationTimestamp: 2018-05-23T08:26:33Z
+  name: cloud-node-controller
+  namespace: kube-system
+  resourceVersion: "638"
+  selfLink: /api/v1/namespaces/kube-system/serviceaccounts/cloud-node-controller
+  uid: 008014e5-5e63-11e8-9ba1-00163e083d38
+secrets:
+- name: cloud-node-controller-token-qpwll

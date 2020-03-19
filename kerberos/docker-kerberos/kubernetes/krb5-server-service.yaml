@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: krb5kdc
+  name: krb5kdc
+  namespace: krb5ldap
+spec:
+  ports:
+    - name: krb5kdc
+      protocol: TCP
+      port: 88
+      targetPort: 88
+      nodePort: 30088
+    - name: krb5kdc-admin
+      protocol: TCP
+      port: 749
+      targetPort: 749
+      nodePort: 30749
+    - name: krb5kdc-u
+      protocol: UDP
+      port: 88
+      targetPort: 88
+      nodePort: 30088
+    - name: krb5kdc-admin-u
+      protocol: UDP
+      port: 749
+      targetPort: 749
+      nodePort: 30749
+  type: NodePort
+  selector:
+    app: krb5kdc

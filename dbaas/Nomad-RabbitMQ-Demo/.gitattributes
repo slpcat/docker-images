@@ -1,0 +1,3 @@
+*.sh eol=lf
+*.conf eol=lf
+*.nomad eol=lf

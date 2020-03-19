@@ -1,0 +1,93 @@
+{
+  "paragraphs": [
+    {
+      "text": "import scala.math.random\n\nimport org.apache.spark.sql.SparkSession\n\nval slices \u003d 2\nval n \u003d math.min(100000L * slices, Int.MaxValue).toInt // avoid overflow\nval count \u003d spark.sparkContext.parallelize(1 until n, slices).map { i \u003d\u003e\n    val x \u003d random * 2 - 1\n    val y \u003d random * 2 - 1\n    if (x*x + y*y \u003c\u003d 1) 1 else 0\n}.reduce(_ + _)\nprintln(\"Pi is roughly \" + 4.0 * count / (n - 1))",
+      "user": "anonymous",
+      "dateUpdated": "May 11, 2017 8:47:28 AM",
+      "config": {
+        "colWidth": 12.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/text",
+        "editorHide": false,
+        "tableHide": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\nimport scala.math.random\n\nimport org.apache.spark.sql.SparkSession\n\nslices: Int \u003d 2\n\nn: Int \u003d 200000\n\ncount: Int \u003d 156835\nPi is roughly 3.136715683578418\n"
+          }
+        ]
+      },
+      "apps": [],
+      "jobName": "paragraph_1494446151737_1359394047",
+      "id": "20170510-195551_400594820",
+      "dateCreated": "May 10, 2017 7:55:51 PM",
+      "dateStarted": "May 10, 2017 8:40:36 PM",
+      "dateFinished": "May 10, 2017 8:41:04 PM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "text": "",
+      "user": "anonymous",
+      "dateUpdated": "May 11, 2017 8:49:13 AM",
+      "config": {
+        "colWidth": 12.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/scala",
+        "tableHide": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "jobName": "paragraph_1494446793336_527866307",
+      "id": "20170510-200633_2002902352",
+      "dateCreated": "May 10, 2017 8:06:33 PM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500
+    }
+  ],
+  "name": "SparkPi",
+  "id": "2CF34ERK6",
+  "angularObjects": {
+    "2CHD267MK:shared_process": [],
+    "2CFCYW8ZZ:shared_process": [],
+    "2CGGU1AUC:shared_process": [],
+    "2CHDUK5RT:shared_process": [],
+    "2CFPWN8ZX:shared_process": [],
+    "2CJT3A9WM:shared_process": [],
+    "2CFTT4BX1:shared_process": [],
+    "2CHPV1WNR:shared_process": [],
+    "2CH8NUNKD:shared_process": [],
+    "2CG24PUFX:shared_process": [],
+    "2CJHA5F79:shared_process": [],
+    "2CFD8HYGS:shared_process": [],
+    "2CH5TSP4J:shared_process": [],
+    "2CF3WY7WY:shared_process": [],
+    "2CFYWKGJK:shared_process": [],
+    "2CJFHW9TZ:shared_process": [],
+    "2CGEFHREK:shared_process": [],
+    "2CG4M1FG9:shared_process": [],
+    "2CH3SASQ1:shared_process": []
+  },
+  "config": {},
+  "info": {}
+}

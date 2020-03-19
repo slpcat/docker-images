@@ -1,0 +1,27 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+   name: slow
+provisioner: kubernetes.io/rbd
+parameters:
+    # Ceph monitors, comma delimited. It is required.
+    monitors: 10.0.0.1:6789,10.0.0.2:6789,10.0.0.3:6789
+    # Ceph client ID that is capable of creating images in the pool. Default is "admin".
+    adminId: admin
+    #Secret Name for adminId. It is required. The provided secret must have type "kubernetes.io/rbd".
+    adminSecretName: ceph-secret-admin
+    #The namespace for adminSecret. Default is "default".
+    adminSecretNamespace: "kube-system"
+    #Ceph RBD pool. Default is "rbd".
+    pool: kube
+    #Ceph client ID that is used to map the RBD image. Default is the same as adminId.
+    userId: kube
+    #The name of Ceph Secret for userId to map RBD image. It must exist in the same namespace as PVCs. It is required.
+    userSecretName: ceph-secret-user
+    #fsType that are supported by kubernetes. Default: "ext4".
+    fsType: ext4
+    #Ceph RBD image format, "1" or "2". Default is "2".
+    imageFormat: "2"
+    #Ceph RBD image format 2 features, comma delimited. This is optional, and only be used if you set imageFormat to "2". Currently supported features are layering only. Default is "", no features is turned on.
+    #NOTE: We cannot turn on exclusive-lock feature for now (and object-map, fast-diff, journaling which require exclusive-lock), because exclusive lock and advisory lock cannot work together.
+    #imageFeatures:  "layering"

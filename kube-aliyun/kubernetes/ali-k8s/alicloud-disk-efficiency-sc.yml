@@ -1,0 +1,12 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  annotations:
+    storageclass.beta.kubernetes.io/is-default-class: "true"
+  name: alicloud-disk-efficiency
+parameters:
+  type: cloud_efficiency
+  #regionid: cn-beijing
+  #zoneid: cn-beijing-e
+provisioner: alicloud/disk
+reclaimPolicy: Retain

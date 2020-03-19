@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: jdk-pv
+spec:
+  capacity:
+    storage: 20Gi
+  accessModes:
+    - ReadWriteOnce
+  rbd:
+    # Ceph monitors.
+    monitors:
+      - 10.10.10.1:6789
+      - 10.10.10.2:6789
+      - 10.10.10.3:6789
+    #The name of the RADOS pool, if not provided, default rbd pool is used.
+    pool: rbd
+    #The image name that rbd has created.
+    image: jdk-image
+    #The RADOS user name. If not provided, default admin is used.
+    user: admin
+    secretRef:
+      name: ceph-secret
+    #The filesystem type (ext4, xfs, etc) that formatted on the device.
+    fsType: ext4
+    #Whether the filesystem is used as readOnly.
+    readOnly: false
+  persistentVolumeReclaimPolicy: Recycle

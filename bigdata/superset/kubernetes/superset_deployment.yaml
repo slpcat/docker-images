@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: superset
+  namespace: superset
+  labels:
+    app: superset
+spec:
+  selector:
+    matchLabels:
+      app: superset
+  replicas: 5
+  template:
+    metadata:
+      labels:
+        app: superset
+    spec:
+      containers:
+      - name: superset
+        image: slpcat/superset
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8088

@@ -1,0 +1,13 @@
+https://github.com/etcd-io/etcd/blob/master/Documentation/op-guide/configuration.md
+
+etcd 内置metrics，prometheus直接获取
+export NODE1=192.168.1.21
+docker run \
+  --net=host \
+  --volume=${DATA_DIR}:/etcd-data \
+  --name etcd quay.io/coreos/etcd:v3.3.13 \
+  /usr/local/bin/etcd \
+  --data-dir=/etcd-data --name node1 \
+  --initial-advertise-peer-urls http://${NODE1}:2380 --listen-peer-urls http://${NODE1}:2380 \
+  --advertise-client-urls http://${NODE1}:2379 --listen-client-urls http://${NODE1}:2379 \
+  --initial-cluster node1=http://${NODE1}:2380

@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus-postgresql-adapter
+  namespace: monitoring
+spec:
+  ports:
+  - name:  pg-adapter
+    protocol: TCP
+    port: 9201
+    targetPort: 9201
+  type: NodePort
+  selector:
+    app: prometheus-postgresql-adapter

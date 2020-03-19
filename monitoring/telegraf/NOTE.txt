@@ -1,0 +1,11 @@
+telegraf常用的input plugins:
+收集docker相关的信息：https://github.com/influxdata/telegraf/tree/master/plugins/inputs/docker 主要是通过docker API调用相关监控
+收集相关redis的信息：https://github.com/influxdata/telegraf/tree/master/plugins/inputs/redis
+收集相关mesos的信息：https://github.com/influxdata/telegraf/tree/master/plugins/inputs/mesos
+收集相关nginx的信息：https://github.com/influxdata/telegraf/tree/master/plugins/inputs/nginx
+收集相关mysql的信息：https://github.com/influxdata/telegraf/tree/master/plugins/inputs/mysql
+收集ping相关信息：https://github.com/influxdata/telegraf/tree/master/plugins/inputs/ping
+收集influxdb相关信息：https://github.com/influxdata/telegraf/tree/master/plugins/inputs/influxdb
+收集系统相关的信息：https://github.com/influxdata/telegraf/tree/master/plugins/inputs/system
+收集haproxy相关信息：https://github.com/influxdata/telegraf/tree/master/plugins/inputs/haproxy
+收集cgroup相关信息：https://github.com/influxdata/telegraf/tree/master/plugins/inputs/cgroup

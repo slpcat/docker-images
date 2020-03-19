@@ -1,0 +1,3 @@
+Honeycomb 是用于观察和关联分布式系统中各事件的工具。它的方法与现有工具（例如Zipkin）不同。Honeycomb由原有的单一请求跟踪模型转变为更自由形式的模型，能够跨层(layers)、跨维度(dimensions)地收集和查询数据。
+
+Honeycomb is a tool for introspecting and interrogating your production systems. We can gather data from any source—from your clients (mobile, IoT, browsers), vendored software, or your own code. Single-node debugging tools miss crucial details in a world where infrastructure is dynamic and ephemeral. Honeycomb is a new type of tool, designed and evolved to meet the real needs of platforms, microservices, serverless apps, and complex systems.

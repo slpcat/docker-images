@@ -1,0 +1,15 @@
+kind: Service
+apiVersion: v1
+metadata:
+  labels:
+      app: konga
+  name: konga-svc
+  namespace: kong
+spec:
+  ports:
+  - port: 80
+    targetPort: 1337
+    name: web
+  selector:
+    app: konga
+  type: NodePort

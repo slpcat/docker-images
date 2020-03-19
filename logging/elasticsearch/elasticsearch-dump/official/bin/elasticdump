@@ -1,0 +1,134 @@
+#!/usr/bin/env node
+
+const argv = require('optimist').argv
+const path = require('path')
+const fs = require('fs')
+const Elasticdump = require(path.join(__dirname, '..', 'elasticdump.js'))
+const packageData = require(path.join(__dirname, '..', 'package.json'))
+const isUrl = require(path.join(__dirname, '..', 'lib', 'is-url.js'))
+
+// For future developers.  If you add options here, be sure to add the option to test suite tests where necessary
+const defaults = {
+  size: -1,
+  limit: 100,
+  offset: 0,
+  debug: false,
+  type: 'data',
+  delete: false,
+  maxSockets: null,
+  input: null,
+  'input-index': null,
+  output: null,
+  'output-index': null,
+  noRefresh: false,
+  inputTransport: null,
+  outputTransport: null,
+  searchBody: null,
+  headers: null,
+  sourceOnly: false,
+  jsonLines: false,
+  format: '',
+  'ignore-errors': false,
+  'support-big-int': false,
+  scrollTime: '10m',
+  timeout: null,
+  toLog: null,
+  quiet: false,
+  awsChain: false,
+  awsAccessKeyId: null,
+  awsSecretAccessKey: null,
+  awsIniFileProfile: null,
+  s3AccessKeyId: null,
+  s3SecretAccessKey: null,
+  s3Region: null,
+  s3Bucket: null,
+  s3RecordKey: null,
+  s3Compress: false,
+  awsIniFileName: null,
+  sessionToken: null,
+  transform: null,
+  httpAuthFile: null,
+  params: null,
+  prefix: '',
+  suffix: '',
+  retryAttempts: 0,
+  retryDelay: 5000,
+  parseExtraFields: '',
+  fileSize: -1,
+  cert: null,
+  key: null,
+  pass: null,
+  ca: null,
+  tlsAuth: false,
+  'input-cert': null,
+  'input-key': null,
+  'input-pass': null,
+  'input-ca': null,
+  'output-cert': null,
+  'output-key': null,
+  'output-pass': null,
+  'output-ca': null,
+  inputSocksProxy: null,
+  inputSocksPort: null,
+  outputSocksProxy: null,
+  outputSocksPort: null
+}
+const jsonParsedOpts = ['searchBody', 'headers', 'params']
+const options = {}
+
+// parse passed options & use defaults otherwise
+for (var i in defaults) {
+  options[i] = argv[i] || defaults[i]
+
+  if (options[i] === 'true') { options[i] = true }
+  if (options[i] === 'false') { options[i] = false }
+}
+
+// parse whitelisted json formatted options
+for (var i of jsonParsedOpts) {
+  if (options[i]) { options[i] = JSON.parse(options[i]) }
+}
+
+const log = function (type, message) {
+  if (type === 'debug') {
+    if (options.debug === true) {
+      message = `${new Date().toUTCString()} [debug] | ${message}`
+      console.log(message)
+    } else {
+      return false
+    }
+  } else if (type === 'error') {
+    message = `${new Date().toUTCString()} | ${message}`
+    console.error(message)
+  } else if (options.quiet === false) {
+    message = `${new Date().toUTCString()} | ${message}`
+    console.log(message)
+  } else {
+    return false
+  }
+}
+
+if (argv.help === true) {
+  let helpText = require('fs').readFileSync(path.join(__dirname, '..', 'lib', 'help.txt'))
+  helpText = helpText.toString()
+  helpText = helpText.replace('%%version%%', packageData.version)
+  console.log(helpText)
+} else if (argv.version === true) {
+  console.log(packageData.version)
+} else {
+  if (options.output !== '$' && !isUrl(options.output) && fs.existsSync(options.output)) {
+    throw new Error(`File \`${options.output}\` already exists, quitting`)
+  }
+
+  const dumper = new Elasticdump(options.input, options.output, options)
+
+  dumper.on('log', function (message) { log('log', message) })
+  dumper.on('debug', function (message) { log('debug', message) })
+  dumper.on('error', function (error) { log('error', `Error Emitted => ${error.message || JSON.stringify(error)}`) })
+
+  dumper.dump(function (error) {
+    if (error) {
+      process.exit(1)
+    }
+  })
+}

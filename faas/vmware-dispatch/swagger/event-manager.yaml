@@ -1,0 +1,686 @@
+swagger: '2.0'
+info:
+  description: |
+    VMware Dispatch Event Manager
+  version: 1.0.0
+  title: Event Manager
+  contact:
+    email: dispatch@vmware.com
+tags:
+- name: subscriptions
+  description: Operations on subscriptions
+- name: events
+  description: Operations on events
+- name: drivers
+  description: Operations on event drivers
+schemes:
+- http
+- https
+security:
+  - cookie: []
+  - bearer: []
+securityDefinitions:
+  cookie:
+    type: apiKey
+    description: use cookies for authentication, when the user already logged in
+    in: header
+    name: Cookie
+  bearer:
+    type: apiKey
+    name: Authorization
+    in: header
+parameters:
+  orgIDParam:
+    in: header
+    name: X-Dispatch-Org
+    type: string
+    required: true
+basePath: /v1/event
+paths:
+  /:
+    parameters:
+      - $ref: '#/parameters/orgIDParam'
+    post:
+      tags:
+      - events
+      summary: Emit an event
+      operationId: emitEvent
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: body
+        description: emission object
+        required: true
+        schema:
+          $ref: './models.json#/definitions/Emission'
+      responses:
+        200:
+          description: Event emitted
+          schema:
+            $ref: './models.json#/definitions/Emission'
+        400:
+          description: Invalid input
+          schema:
+            $ref: './models.json#/definitions/Error'
+        401:
+          description: Unauthorized Request
+          schema:
+            $ref: './models.json#/definitions/Error'
+        403:
+          description: access to this resource is forbidden
+          schema:
+            $ref: './models.json#/definitions/Error'
+        default:
+          description: Unknown error
+          schema:
+            $ref: './models.json#/definitions/Error'
+  /subscriptions:
+    parameters:
+      - $ref: '#/parameters/orgIDParam'
+    post:
+      tags:
+      - subscriptions
+      summary: Add a new subscription
+      operationId: addSubscription
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: body
+        description: subscription object
+        required: true
+        schema:
+          $ref: './models.json#/definitions/Subscription'
+      responses:
+        201:
+          description: Subscription created
+          schema:
+            $ref: './models.json#/definitions/Subscription'
+        400:
+          description: Invalid input
+          schema:
+            $ref: './models.json#/definitions/Error'
+        401:
+          description: Unauthorized Request
+          schema:
+            $ref: './models.json#/definitions/Error'
+        403:
+          description: access to this resource is forbidden
+          schema:
+            $ref: './models.json#/definitions/Error'
+        409:
+          description: Already Exists
+          schema:
+            $ref: './models.json#/definitions/Error'
+        default:
+          description: Unknown error
+          schema:
+            $ref: './models.json#/definitions/Error'
+    get:
+      tags:
+      - subscriptions
+      summary: List all existing subscriptions
+      operationId: getSubscriptions
+      produces:
+      - application/json
+      parameters:
+      - in: query
+        type: array
+        name: tags
+        description: Filter based on tags
+        items:
+          type: string
+        collectionFormat: 'multi'
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            type: array
+            items:
+              $ref: './models.json#/definitions/Subscription'
+        400:
+          description: Bad Request
+          schema:
+            $ref: './models.json#/definitions/Error'
+        401:
+          description: Unauthorized Request
+          schema:
+            $ref: './models.json#/definitions/Error'
+        403:
+          description: access to this resource is forbidden
+          schema:
+            $ref: './models.json#/definitions/Error'
+        default:
+          description: Unknown error
+          schema:
+            $ref: './models.json#/definitions/Error'
+  /subscriptions/{subscriptionName}:
+    parameters:
+    - $ref: '#/parameters/orgIDParam'
+    - in: query
+      type: array
+      name: tags
+      description: Filter based on tags
+      items:
+        type: string
+      collectionFormat: 'multi'
+    - in: path
+      name: subscriptionName
+      description: Name of the subscription to work on
+      required: true
+      type: string
+      pattern: '^[\w\d\-]+$'
+    get:
+      tags:
+      - subscriptions
+      summary: Find subscription by Name
+      description: Returns a single subscription
+      operationId: getSubscription
+      produces:
+      - application/json
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            $ref: './models.json#/definitions/Subscription'
+        400:
+          description: Invalid Name supplied
+          schema:
+            $ref: './models.json#/definitions/Error'
+        401:
+          description: Unauthorized Request
+          schema:
+            $ref: './models.json#/definitions/Error'
+        403:
+          description: access to this resource is forbidden
+          schema:
+            $ref: './models.json#/definitions/Error'
+        404:
+          description: Subscription not found
+          schema:
+            $ref: './models.json#/definitions/Error'
+        default:
+          description: Unknown error
+          schema:
+            $ref: './models.json#/definitions/Error'
+    put:
+      tags:
+      - subscriptions
+      summary: Update subscription by Name
+      description: Updates a single subscription
+      operationId: updateSubscription
+      parameters:
+      - in: body
+        name: body
+        description: subscription object
+        required: true
+        schema:
+          $ref: './models.json#/definitions/Subscription'
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            $ref: './models.json#/definitions/Subscription'
+        400:
+          description: Invalid Name supplied
+          schema:
+            $ref: './models.json#/definitions/Error'
+        401:
+          description: Unauthorized Request
+          schema:
+            $ref: './models.json#/definitions/Error'
+        403:
+          description: access to this resource is forbidden
+          schema:
+            $ref: './models.json#/definitions/Error'
+        404:
+          description: Subscription not found
+          schema:
+            $ref: './models.json#/definitions/Error'
+        default:
+          description: Unknown error
+          schema:
+            $ref: './models.json#/definitions/Error'
+    delete:
+      tags:
+      - subscriptions
+      summary: Deletes a subscription
+      operationId: deleteSubscription
+      produces:
+      - application/json
+      responses:
+        200:
+          description: successful operation
+          schema:
+            $ref: './models.json#/definitions/Subscription'
+        400:
+          description: Invalid ID supplied
+          schema:
+            $ref: './models.json#/definitions/Error'
+        401:
+          description: Unauthorized Request
+          schema:
+            $ref: './models.json#/definitions/Error'
+        403:
+          description: access to this resource is forbidden
+          schema:
+            $ref: './models.json#/definitions/Error'
+        404:
+          description: Subscription not found
+          schema:
+            $ref: './models.json#/definitions/Error'
+        default:
+          description: Generic error response
+          schema:
+            $ref: './models.json#/definitions/Error'
+  /drivers:
+    parameters:
+      - $ref: '#/parameters/orgIDParam'
+    post:
+      tags:
+      - drivers
+      summary: Create a new driver
+      operationId: addDriver
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: body
+        description: driver object
+        required: true
+        schema:
+          $ref: './models.json#/definitions/EventDriver'
+      responses:
+        201:
+          description: Driver created
+          schema:
+            $ref: './models.json#/definitions/EventDriver'
+        400:
+          description: Invalid input
+          schema:
+            $ref: './models.json#/definitions/Error'
+        401:
+          description: Unauthorized Request
+          schema:
+            $ref: './models.json#/definitions/Error'
+        403:
+          description: access to this resource is forbidden
+          schema:
+            $ref: './models.json#/definitions/Error'
+        409:
+          description: Already Exists
+          schema:
+            $ref: './models.json#/definitions/Error'
+        default:
+          description: Unknown error
+          schema:
+            $ref: './models.json#/definitions/Error'
+    get:
+      tags:
+      - drivers
+      summary: List all existing drivers
+      operationId: getDrivers
+      produces:
+      - application/json
+      parameters:
+      - in: query
+        type: array
+        name: tags
+        description: Filter based on tags
+        items:
+          type: string
+        collectionFormat: 'multi'
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            type: array
+            items:
+              $ref: './models.json#/definitions/EventDriver'
+        401:
+          description: Unauthorized Request
+          schema:
+            $ref: './models.json#/definitions/Error'
+        403:
+          description: access to this resource is forbidden
+          schema:
+            $ref: './models.json#/definitions/Error'
+        default:
+          description: Unknown error
+          schema:
+            $ref: './models.json#/definitions/Error'
+  /drivers/{driverName}:
+    parameters:
+    - $ref: '#/parameters/orgIDParam'
+    - in: query
+      type: array
+      name: tags
+      description: Filter based on tags
+      items:
+        type: string
+      collectionFormat: 'multi'
+    - in: path
+      name: driverName
+      description: Name of the driver to work on
+      required: true
+      type: string
+      pattern: '^[\w\d\-]+$'
+    get:
+      tags:
+      - drivers
+      summary: Find driver by Name
+      description: Returns a single driver
+      operationId: getDriver
+      produces:
+      - application/json
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            $ref: './models.json#/definitions/EventDriver'
+        400:
+          description: Invalid Name supplied
+          schema:
+            $ref: './models.json#/definitions/Error'
+        401:
+          description: Unauthorized Request
+          schema:
+            $ref: './models.json#/definitions/Error'
+        403:
+          description: access to this resource is forbidden
+          schema:
+            $ref: './models.json#/definitions/Error'
+        404:
+          description: Driver not found
+          schema:
+            $ref: './models.json#/definitions/Error'
+        default:
+          description: Unknown error
+          schema:
+            $ref: './models.json#/definitions/Error'
+    put:
+      tags:
+      - drivers
+      summary: Update driver by Name
+      description: Updates a single driver
+      operationId: updateDriver
+      parameters:
+      - in: body
+        name: body
+        description: driver object
+        required: true
+        schema:
+          $ref: './models.json#/definitions/EventDriver'
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            $ref: './models.json#/definitions/EventDriver'
+        400:
+          description: Invalid Name supplied
+          schema:
+            $ref: './models.json#/definitions/Error'
+        401:
+          description: Unauthorized Request
+          schema:
+            $ref: './models.json#/definitions/Error'
+        403:
+          description: access to this resource is forbidden
+          schema:
+            $ref: './models.json#/definitions/Error'
+        404:
+          description: Driver not found
+          schema:
+            $ref: './models.json#/definitions/Error'
+        default:
+          description: Unknown error
+          schema:
+            $ref: './models.json#/definitions/Error'
+    delete:
+      tags:
+      - drivers
+      summary: Deletes a driver
+      operationId: deleteDriver
+      produces:
+      - application/json
+      responses:
+        200:
+          description: successful operation
+          schema:
+            $ref: './models.json#/definitions/EventDriver'
+        400:
+          description: Invalid ID supplied
+          schema:
+            $ref: './models.json#/definitions/Error'
+        401:
+          description: Unauthorized Request
+          schema:
+            $ref: './models.json#/definitions/Error'
+        403:
+          description: access to this resource is forbidden
+          schema:
+            $ref: './models.json#/definitions/Error'
+        404:
+          description: Driver not found
+          schema:
+            $ref: './models.json#/definitions/Error'
+        default:
+          description: Generic error response
+          schema:
+            $ref: './models.json#/definitions/Error'
+  /drivertypes:
+    parameters:
+      - $ref: '#/parameters/orgIDParam'
+    post:
+      tags:
+      - drivers
+      summary: Create a new driver type
+      operationId: addDriverType
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: body
+        description: driver type object
+        required: true
+        schema:
+          $ref: './models.json#/definitions/EventDriverType'
+      responses:
+        201:
+          description: Driver Type created
+          schema:
+            $ref: './models.json#/definitions/EventDriverType'
+        400:
+          description: Invalid input
+          schema:
+            $ref: './models.json#/definitions/Error'
+        401:
+          description: Unauthorized Request
+          schema:
+            $ref: './models.json#/definitions/Error'
+        403:
+          description: access to this resource is forbidden
+          schema:
+            $ref: './models.json#/definitions/Error'
+        409:
+          description: Already Exists
+          schema:
+            $ref: './models.json#/definitions/Error'
+        default:
+          description: Unknown error
+          schema:
+            $ref: './models.json#/definitions/Error'
+    get:
+      tags:
+      - drivers
+      summary: List all existing driver types
+      operationId: getDriverTypes
+      produces:
+      - application/json
+      parameters:
+      - in: query
+        type: array
+        name: tags
+        description: Filter based on tags
+        items:
+          type: string
+        collectionFormat: 'multi'
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            type: array
+            items:
+              $ref: './models.json#/definitions/EventDriverType'
+        401:
+          description: Unauthorized Request
+          schema:
+            $ref: './models.json#/definitions/Error'
+        403:
+          description: access to this resource is forbidden
+          schema:
+            $ref: './models.json#/definitions/Error'
+        default:
+          description: Unknown error
+          schema:
+            $ref: './models.json#/definitions/Error'
+  /drivertypes/{driverTypeName}:
+    parameters:
+    - $ref: '#/parameters/orgIDParam'
+    - in: query
+      type: array
+      name: tags
+      description: Filter based on tags
+      items:
+        type: string
+      collectionFormat: 'multi'
+    - in: path
+      name: driverTypeName
+      description: Name of the driver type to work on
+      required: true
+      type: string
+      pattern: '^[\w\d\-]+$'
+    get:
+      tags:
+      - drivers
+      summary: Find driver type by Name
+      description: Returns a single driver type
+      operationId: getDriverType
+      produces:
+      - application/json
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            $ref: './models.json#/definitions/EventDriverType'
+        400:
+          description: Invalid Name supplied
+          schema:
+            $ref: './models.json#/definitions/Error'
+        401:
+          description: Unauthorized Request
+          schema:
+            $ref: './models.json#/definitions/Error'
+        403:
+          description: access to this resource is forbidden
+          schema:
+            $ref: './models.json#/definitions/Error'
+        404:
+          description: Driver not found
+          schema:
+            $ref: './models.json#/definitions/Error'
+        default:
+          description: Unknown error
+          schema:
+            $ref: './models.json#/definitions/Error'
+    put:
+      tags:
+      - drivers
+      summary: Update a driver type by Name
+      description: Updates a single driver type
+      operationId: updateDriverType
+      parameters:
+      - in: body
+        name: body
+        description: driver object
+        required: true
+        schema:
+          $ref: './models.json#/definitions/EventDriverType'
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            $ref: './models.json#/definitions/EventDriverType'
+        400:
+          description: Invalid Name supplied
+          schema:
+            $ref: './models.json#/definitions/Error'
+        401:
+          description: Unauthorized Request
+          schema:
+            $ref: './models.json#/definitions/Error'
+        403:
+          description: access to this resource is forbidden
+          schema:
+            $ref: './models.json#/definitions/Error'
+        404:
+          description: DriverType not found
+          schema:
+            $ref: './models.json#/definitions/Error'
+        default:
+          description: Unknown error
+          schema:
+            $ref: './models.json#/definitions/Error'
+    delete:
+      tags:
+      - drivers
+      summary: Deletes a driver type
+      operationId: deleteDriverType
+      produces:
+      - application/json
+      responses:
+        200:
+          description: successful operation
+          schema:
+            $ref: './models.json#/definitions/EventDriverType'
+        400:
+          description: Invalid ID supplied
+          schema:
+            $ref: './models.json#/definitions/Error'
+        401:
+          description: Unauthorized Request
+          schema:
+            $ref: './models.json#/definitions/Error'
+        403:
+          description: access to this resource is forbidden
+          schema:
+            $ref: './models.json#/definitions/Error'
+        404:
+          description: Driver not found
+          schema:
+            $ref: './models.json#/definitions/Error'
+        default:
+          description: Generic error response
+          schema:
+            $ref: './models.json#/definitions/Error'

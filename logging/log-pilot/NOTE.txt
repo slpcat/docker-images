@@ -1,0 +1,45 @@
+1.log-pilot daemonset 采集端
+收集工具 fluentd,filebeat
+输出到日志集群elasticsearch,graylog2,kafka或者阿里sls日志服务
+2.app pod接入规范
+https://github.com/AliyunContainerService/log-pilot/blob/master/docs/filebeat/docs.md
+
+启动收集容器
+docker run -d --restart=always --net=host \
+    -e PILOT_LOG_PREFIX="aliyun,custom" \
+    -e LOGGING_OUTPUT=kafka \
+    -e KAFKA_BROKERS="kafka1:9092,kafka2:9092" \
+    -e KAFKA_VERSION=2.0.0 \
+    -e KAFKA_WORKER=4 \
+    -e KAFKA_BULK_MAX_SIZE=16384 \
+    -e KAFKA_BROKER_TIMEOUT=20s \
+    -e KAFKA_CHANNEL_BUFFER_SIZE=4096 \
+    -e KAFKA_KEEP_ALIVE=60s \
+    -e KAFKA_MAX_MESSAGE_BYTES=10000000 \
+    -e KAFKA_REQUIRE_ACKS=0 \
+    -e KAFKA_COMPRESSION=lz4 \
+    -e FILEBEAT_MAX_PROCS=2 \
+    -e FILEBEAT_LOG_LEVEL=info \
+    -v /var/run/docker.sock:/var/run/docker.sock \
+    -v /:/host:ro \
+    --cap-add SYS_ADMIN \
+    registry.cn-hangzhou.aliyuncs.com/acs/log-pilot:0.9.5-filebeat
+
+kafka 2.2 slpcat/log-pilot:0.9.7-filebeat
+
+### Run applications whose logs need to be collected
+
+Open a new terminal, run the application. With tomcat for example:
+注意: 
+前缀跟PILOT_LOG_PREFIX一致，默认aliyun
+-v /path/to/log 必需，否则无法收集日志
+tags后缀指定字段 filebeat.yml 内fields, fluentd.conf 内<record>
+target后缀指定topic或者index
+```
+docker run -d  -p 10080:8080 \
+    -v /usr/local/tomcat/logs \
+    --label aliyun.logs.catalina=stdout \
+    --label aliyun.logs.access=/usr/local/tomcat/logs/localhost_access_log*.txt \
+    --label aliyun.logs.access.target="topic-or-index-name" \
+    --label aliyun.logs.access.tags="app_name=tomcat,log_level=info" \
+    tomcat

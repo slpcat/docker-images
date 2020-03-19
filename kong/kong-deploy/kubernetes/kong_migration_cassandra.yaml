@@ -1,0 +1,26 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: kong-migration
+  namespace: kong
+spec:
+  template:
+    metadata:
+      name: kong-migration
+    spec:
+      containers:
+      - name: kong-migration
+        image: slpcat/kong:0.14.1-alpine
+        env:
+          - name: KONG_NGINX_DAEMON
+            value: 'off'
+          - name: KONG_DATABASE
+            value: cassandra
+          - name: KONG_CASSANDRA_CONTACT_POINTS
+            value: "cassandra"
+          - name: KONG_CASSANDRA_DATA_CENTERS
+            value: "datacenter1"
+          - name: KONG_CASSANDRA_KEYSPACE
+            value: kong
+        command: [ "/bin/sh", "-c", "kong migrations up --vv" ]
+      restartPolicy: Never

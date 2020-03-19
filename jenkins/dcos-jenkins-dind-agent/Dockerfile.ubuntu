@@ -1,0 +1,36 @@
+FROM ubuntu:16.04
+
+ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
+
+RUN apt-get update -y       \
+    && apt-get upgrade -y   \
+    && apt-get install -y   \
+       apt-transport-https  \
+       build-essential      \
+       bzip2                \
+       ca-certificates      \
+       curl                 \
+       git                  \
+       iptables             \
+       jq                   \
+       lvm2                 \
+       lxc                  \
+       openjdk-8-jdk-headless  \
+       unzip                \
+       zip
+
+# links to commit hashes are listed inside posted Dockerfiles https://hub.docker.com/r/library/docker/
+# NOTE: must match engine version that is directly pulled from Alpine's Dockerfile
+ENV DIND_COMMIT 3b5fac462d21ca164b3778647420016315289034
+# docker
+RUN curl -sSL https://get.docker.com | sh
+# fetch DIND script
+RUN curl -sSL https://raw.githubusercontent.com/docker/docker/${DIND_COMMIT}/hack/dind -o /usr/local/bin/dind \
+    && chmod a+x /usr/local/bin/dind
+
+COPY ./wrapper.sh /usr/local/bin/wrapper.sh
+RUN chmod a+x /usr/local/bin/wrapper.sh
+
+VOLUME /var/lib/docker
+ENTRYPOINT []
+CMD []

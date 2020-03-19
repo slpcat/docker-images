@@ -1,0 +1,34 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: vmware/dispatch-golang-ci
+    tag: "1.10"
+
+params:
+  DASHBOARD_HOST:
+  UPDATE_COVERAGE: false
+
+inputs:
+- name: dispatch
+  path: src/github.com/vmware/dispatch
+
+outputs:
+- name: coverage
+
+run:
+  path: /bin/bash
+  args:
+  - -c
+  - |
+    set -e -u -x
+
+    export GOPATH=$PWD
+
+    cd $GOPATH/src/github.com/vmware/dispatch
+    mkdir -p .cover
+    ./scripts/coverage.sh
+
+    mv .cover/cover.html $GOPATH/coverage/

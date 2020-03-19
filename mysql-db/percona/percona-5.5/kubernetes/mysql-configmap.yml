@@ -1,0 +1,61 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-etc-configmap
+  namespace: default
+data:
+  my.cnf: |-
+    [client]
+    port        = 3306
+    socket      = /tmp/mysql.sock
+    [mysqld]
+    port        = 3306
+    default-storage-engine=MyISAM
+    max_connections=1500
+    socket      = /tmp/mysql.sock
+    skip-external-locking
+    skip-innodb
+    key_buffer_size = 4096M
+    bulk_insert_buffer_size = 64M
+    myisam_max_sort_file_size = 40G
+    max_allowed_packet = 32M
+    table_open_cache = 3600
+    open_files_limit=65535
+    tmp_table_size=256M
+    sort_buffer_size = 4M
+    read_buffer_size = 16M
+    query_cache_min_res_unit = 2k
+    read_rnd_buffer_size = 16M
+    myisam_sort_buffer_size = 128M
+    thread_cache_size = 256
+    query_cache_type=1
+    query_cache_size= 128M
+    innodb_buffer_pool_size = 1024M
+    skip-name-resolve
+    wait_timeout=200
+    thread_concurrency = 8
+    innodb_buffer_pool_instances = 35
+    innodb_file_per_table = 1
+    #datadir = /data/mydata
+    #log-bin=/data/binlogs/mysql-bin
+    binlog-do-db=TD_OA
+    expire_logs_day=30
+    max_binlog_size = 200M
+    slow_query_log=ON
+    #slow-query-log-file=/data/binlogs/slow_query.log
+    long_query_time=2
+    log_bin_trust_function_creators=1
+    binlog_format=mixed
+    server-id   = 1
+    [mysqldump]
+    quick
+    max_allowed_packet = 64M
+    [mysql]
+    no-auto-rehash
+    [myisamchk]
+    key_buffer_size = 1024M
+    sort_buffer_size = 512M
+    read_buffer = 256M
+    write_buffer = 256M
+    [mysqlhotcopy]
+    interactive-timeout

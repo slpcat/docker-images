@@ -1,0 +1,2 @@
+Sqoop是Hadoop和关系数据库服务器之间传送数据的一种工具。它是用来从关系数据库如：MySQL，Oracle到Hadoop的HDFS，并从Hadoop的文件系统导出数据到关系数据库。
+

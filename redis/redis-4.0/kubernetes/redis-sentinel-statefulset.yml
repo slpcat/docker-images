@@ -1,0 +1,31 @@
+apiVersion: apps/v1beta1
+kind: StatefulSet
+metadata:
+  name: redis-sentinel
+  namespace: default
+spec:
+  serviceName: redis-sentinel
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        redis-sentinel: "true"
+    spec:
+      terminationGracePeriodSeconds: 10
+      imagePullSecrets: 
+        - name: regsecret
+      containers:
+      - name: redis-sentinel
+        image: slpcat/redis-4.0
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 26379
+          name: redis-sentinel
+        env:
+          - name: SENTINEL
+            value: "true"
+          - name: REDIS_PASS
+            valueFrom:
+              secretKeyRef:
+                name: redis-secret
+                key: redisAuthPass

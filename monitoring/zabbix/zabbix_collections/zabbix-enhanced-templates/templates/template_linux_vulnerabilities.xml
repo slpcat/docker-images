@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbix_export>
+    <version>2.0</version>
+    <date>2015-10-13T10:34:06Z</date>
+    <groups>
+        <group>
+            <name>Templates</name>
+        </group>
+    </groups>
+    <templates>
+        <template>
+            <template>Template Linux Vulnerabilities</template>
+            <name>Template Linux Vulnerabilities</name>
+            <description/>
+            <groups>
+                <group>
+                    <name>Templates</name>
+                </group>
+            </groups>
+            <applications>
+                <application>
+                    <name>Vulnerabilities</name>
+                </application>
+            </applications>
+            <items>
+                <item>
+                    <name>GHOST: glibc vulnerability</name>
+                    <type>0</type>
+                    <snmp_community/>
+                    <multiplier>0</multiplier>
+                    <snmp_oid/>
+                    <key>system.run[cd /tmp/ ; wget -O GHOST.c https://webshare.uchicago.edu/orgs/ITServices/itsec/Downloads/GHOST.c 2&gt;/dev/null ; gcc -o GHOST GHOST.c 2&gt;/dev/null ; ./GHOST | grep ^vulnerable | wc -l]</key>
+                    <delay>3600</delay>
+                    <history>1</history>
+                    <trends>365</trends>
+                    <status>0</status>
+                    <value_type>4</value_type>
+                    <allowed_hosts/>
+                    <units/>
+                    <delta>0</delta>
+                    <snmpv3_contextname/>
+                    <snmpv3_securityname/>
+                    <snmpv3_securitylevel>0</snmpv3_securitylevel>
+                    <snmpv3_authprotocol>0</snmpv3_authprotocol>
+                    <snmpv3_authpassphrase/>
+                    <snmpv3_privprotocol>0</snmpv3_privprotocol>
+                    <snmpv3_privpassphrase/>
+                    <formula>1</formula>
+                    <delay_flex/>
+                    <params/>
+                    <ipmi_sensor/>
+                    <data_type>0</data_type>
+                    <authtype>0</authtype>
+                    <username/>
+                    <password/>
+                    <publickey/>
+                    <privatekey/>
+                    <port/>
+                    <description>http://www.cyberciti.biz/faq/cve-2015-0235-ghost-glibc-buffer-overflow-linux-test-program/</description>
+                    <inventory_link>0</inventory_link>
+                    <applications>
+                        <application>
+                            <name>Vulnerabilities</name>
+                        </application>
+                    </applications>
+                    <valuemap/>
+                    <logtimefmt/>
+                </item>
+                <item>
+                    <name>SHELLSHOCK: bash vulnerability</name>
+                    <type>0</type>
+                    <snmp_community/>
+                    <multiplier>0</multiplier>
+                    <snmp_oid/>
+                    <key>system.run[cd /tmp ; curl http://datacenter.sites.ufsc.br/downloads/shellshock_test.sh  2&gt; /dev/null | bash 2&gt; /dev/null| grep 'VULNERABLE' | wc -l]</key>
+                    <delay>3600</delay>
+                    <history>1</history>
+                    <trends>365</trends>
+                    <status>0</status>
+                    <value_type>4</value_type>
+                    <allowed_hosts/>
+                    <units/>
+                    <delta>0</delta>
+                    <snmpv3_contextname/>
+                    <snmpv3_securityname/>
+                    <snmpv3_securitylevel>0</snmpv3_securitylevel>
+                    <snmpv3_authprotocol>0</snmpv3_authprotocol>
+                    <snmpv3_authpassphrase/>
+                    <snmpv3_privprotocol>0</snmpv3_privprotocol>
+                    <snmpv3_privpassphrase/>
+                    <formula>1</formula>
+                    <delay_flex/>
+                    <params/>
+                    <ipmi_sensor/>
+                    <data_type>0</data_type>
+                    <authtype>0</authtype>
+                    <username/>
+                    <password/>
+                    <publickey/>
+                    <privatekey/>
+                    <port/>
+                    <description>https://en.wikipedia.org/wiki/Shellshock_(software_bug)</description>
+                    <inventory_link>0</inventory_link>
+                    <applications>
+                        <application>
+                            <name>Vulnerabilities</name>
+                        </application>
+                    </applications>
+                    <valuemap/>
+                    <logtimefmt/>
+                </item>
+            </items>
+            <discovery_rules/>
+            <macros/>
+            <templates/>
+            <screens/>
+        </template>
+    </templates>
+    <triggers>
+        <trigger>
+            <expression>{Template Linux Vulnerabilities:system.run[cd /tmp/ ; wget -O GHOST.c https://webshare.uchicago.edu/orgs/ITServices/itsec/Downloads/GHOST.c 2&gt;/dev/null ; gcc -o GHOST GHOST.c 2&gt;/dev/null ; ./GHOST | grep ^vulnerable | wc -l].last(,0)}&gt;0</expression>
+            <name>GHOST: Host vulnerable</name>
+            <url>http://www.cyberciti.biz/faq/cve-2015-0235-ghost-glibc-buffer-overflow-linux-test-program/</url>
+            <status>0</status>
+            <priority>5</priority>
+            <description/>
+            <type>0</type>
+            <dependencies/>
+        </trigger>
+        <trigger>
+            <expression>{Template Linux Vulnerabilities:system.run[cd /tmp ; curl http://datacenter.sites.ufsc.br/downloads/shellshock_test.sh  2&gt; /dev/null | bash 2&gt; /dev/null| grep 'VULNERABLE' | wc -l].last(,0)}&gt;0</expression>
+            <name>SHELLSHOCK: Host vulnerable</name>
+            <url>https://en.wikipedia.org/wiki/Shellshock_(software_bug)</url>
+            <status>0</status>
+            <priority>5</priority>
+            <description/>
+            <type>0</type>
+            <dependencies/>
+        </trigger>
+    </triggers>
+</zabbix_export>

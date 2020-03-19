@@ -1,0 +1,22 @@
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+  #命名规范:应用名称-版本
+  name: tomcat8-v1
+  namespace: default
+spec:
+  scaleTargetRef:
+    apiVersion: extensions/v1beta1
+    kind: Deployment
+    name: tomcat8-v1
+  minReplicas: 1
+  maxReplicas: 10
+  metrics:
+  #各种指标参数要依据压力测试结果而定
+  - type: Resource
+    resource:
+  #根据CPU占用率进行缩放
+      name: cpu
+      target:
+        averageUtilization: 80
+        type: Utilization

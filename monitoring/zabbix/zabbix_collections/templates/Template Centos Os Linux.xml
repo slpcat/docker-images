@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbix_export>
+    <version>4.4</version>
+    <date>2019-11-05T12:05:59Z</date>
+    <groups>
+        <group>
+            <name>Templates/Custom</name>
+        </group>
+    </groups>
+    <templates>
+        <template>
+            <template>Template Centos Os Linux</template>
+            <name>Template Centos Os Linux</name>
+            <description>基础系统模版监控,cpu,内存,磁盘,网卡流量监控客户。</description>
+            <groups>
+                <group>
+                    <name>Templates/Custom</name>
+                </group>
+            </groups>
+            <applications>
+                <application>
+                    <name>CPU</name>
+                </application>
+                <application>
+                    <name>Filesystems</name>
+                </application>
+                <application>
+                    <name>General</name>
+                </application>
+                <application>
+                    <name>Memory</name>
+                </application>
+                <application>
+                    <name>Network interfaces</name>
+                </application>
+                <application>
+                    <name>Security</name>
+                </application>
+            </applications>
+            <items>
+                <item>
+                    <name>监控代理状态</name>
+                    <key>agent.ping</key>
+                    <history>7d</history>
+                    <trends>30d</trends>
+                    <applications>
+                        <application>
+                            <name>General</name>
+                        </application>
+                    </applications>
+                    <valuemap>
+                        <name>Zabbix agent ping status</name>
+                    </valuemap>
+                    <triggers>
+                        <trigger>
+                            <expression>{nodata(3m)}=1</expression>
+                            <name>Zabbix agent on {HOST.NAME} is unreachable for 3 minutes</name>
+                            <priority>AVERAGE</priority>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>内存活跃率</name>
+                    <key>mem.active</key>
+                    <delay>5m</delay>
+                    <history>30d</history>
+                    <value_type>FLOAT</value_type>
+                    <units>%</units>
+                    <applications>
+                        <application>
+                            <name>Memory</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Interrupts per second</name>
+                    <key>system.cpu.intr</key>
+                    <delay>5m</delay>
+                    <history>30d</history>
+                    <units>ips</units>
+                    <applications>
+                        <application>
+                            <name>CPU</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>CHANGE_PER_SECOND</type>
+                            <params/>
+                        </step>
+                    </preprocessing>
+                </item>
+                <item>
+                    <name>Processor load (1 min average per core)</name>
+                    <key>system.cpu.load[percpu,avg1]</key>
+                    <delay>5m</delay>
+                    <history>30d</history>
+                    <value_type>FLOAT</value_type>
+                    <description>The processor load is calculated as system CPU load divided by number of CPU cores.</description>
+                    <applications>
+                        <application>
+                            <name>CPU</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Processor load (5 min average per core)</name>
+                    <key>system.cpu.load[percpu,avg5]</key>
+                    <delay>5m</delay>
+                    <history>30d</history>
+                    <value_type>FLOAT</value_type>
+                    <description>The processor load is calculated as system CPU load divided by number of CPU cores.</description>
+                    <applications>
+                        <application>
+                            <name>CPU</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Processor load (15 min average per core)</name>
+                    <key>system.cpu.load[percpu,avg15]</key>
+                    <delay>5m</delay>
+                    <history>30d</history>
+                    <value_type>FLOAT</value_type>
+                    <description>The processor load is calculated as system CPU load divided by number of CPU cores.</description>
+                    <applications>
+                        <application>
+                            <name>CPU</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Context switches per second</name>
+                    <key>system.cpu.switches</key>
+                    <delay>5m</delay>
+                    <history>30d</history>
+                    <units>sps</units>
+                    <applications>
+                        <application>
+                            <name>CPU</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>CHANGE_PER_SECOND</type>
+                            <params/>
+                        </step>
+                    </preprocessing>
+                </item>
+                <item>
+                    <name>CPU $2 time</name>
+                    <key>system.cpu.util[,interrupt]</key>
+                    <delay>5m</delay>
+                    <history>30d</history>
+                    <value_type>FLOAT</value_type>
+                    <units>%</units>
+                    <description>The amount of time the CPU has been servicing hardware interrupts.</description>
+                    <applications>
+                        <application>
+                            <name>CPU</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>CPU $2 time</name>
+                    <key>system.cpu.util[,iowait]</key>
+                    <delay>5m</delay>
+                    <history>30d</history>
+                    <value_type>FLOAT</value_type>
+                    <units>%</units>
+                    <description>Amount of time the CPU has been waiting for I/O to complete.</description>
+                    <applications>
+                        <application>
+                            <name>CPU</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>CPU $2 time</name>
+                    <key>system.cpu.util[,nice]</key>
+                    <delay>5m</delay>
+                    <history>30d</history>
+                    <value_type>FLOAT</value_type>
+                    <units>%</units>
+                    <description>The time the CPU has spent running users' processes that have been niced.</description>
+                    <applications>
+                        <application>
+                            <name>CPU</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>CPU $2 time</name>
+                    <key>system.cpu.util[,softirq]</key>
+                    <delay>5m</delay>
+                    <history>30d</history>
+                    <value_type>FLOAT</value_type>
+                    <units>%</units>
+                    <description>The amount of time the CPU has been servicing software interrupts.</description>
+                    <applications>
+                        <application>
+                            <name>CPU</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>CPU $2 time</name>
+                    <key>system.cpu.util[,steal]</key>
+                    <delay>5m</delay>
+                    <history>30d</history>
+                    <value_type>FLOAT</value_type>
+                    <units>%</units>
+                    <description>The amount of CPU 'stolen' from this virtual machine by the hypervisor for other tasks (such as running another virtual machine).</description>
+                    <applications>
+                        <application>
+                            <name>CPU</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>CPU $2 time</name>
+                    <key>system.cpu.util[,system]</key>
+                    <delay>5m</delay>
+                    <history>30d</history>
+                    <value_type>FLOAT</value_type>
+                    <units>%</units>
+                    <description>The time the CPU has spent running the kernel and its processes.</description>
+                    <applications>
+                        <application>
+                            <name>CPU</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>CPU $2 time</name>
+                    <key>system.cpu.util[,user]</key>
+                    <delay>5m</delay>
+                    <history>30d</history>
+                    <value_type>FLOAT</value_type>
+                    <units>%</units>
+                    <description>The time the CPU has spent running users' processes that are not niced.</description>
+                    <applications>
+                        <application>
+                            <name>CPU</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Checksum of $1</name>
+                    <key>vfs.file.cksum[/etc/passwd]</key>
+                    <delay>1h</delay>
+                    <history>7d</history>
+                    <trends>30d</trends>
+                    <applications>
+                        <application>
+                            <name>Security</name>
+                        </application>
+                    </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{diff(0)}&gt;0</expression>
+                            <name>/etc/passwd has been changed on {HOST.NAME}</name>
+                            <status>DISABLED</status>
+                            <priority>WARNING</priority>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>剩余内存</name>
+                    <key>vm.memory.size[pavailable]</key>
+                    <delay>5m</delay>
+                    <history>30d</history>
+                    <value_type>FLOAT</value_type>
+                    <units>%</units>
+                    <applications>
+                        <application>
+                            <name>Memory</name>
+                        </application>
+                    </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{last(0)}&lt;5</expression>
+                            <name>{HOST.NAME} 服务器 剩余可用内存小于 5% !</name>
+                            <priority>AVERAGE</priority>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>内存利用率</name>
+                    <key>vm.memory.size[pused]</key>
+                    <delay>5m</delay>
+                    <history>30d</history>
+                    <value_type>FLOAT</value_type>
+                    <units>%</units>
+                    <applications>
+                        <application>
+                            <name>Memory</name>
+                        </application>
+                    </applications>
+                </item>
+            </items>
+            <screens>
+                <screen>
+                    <name>System performance</name>
+                    <hsize>2</hsize>
+                    <vsize>5</vsize>
+                </screen>
+            </screens>
+        </template>
+    </templates>
+    <value_maps>
+        <value_map>
+            <name>Zabbix agent ping status</name>
+            <mappings>
+                <mapping>
+                    <value>1</value>
+                    <newvalue>Up</newvalue>
+                </mapping>
+            </mappings>
+        </value_map>
+    </value_maps>
+</zabbix_export>

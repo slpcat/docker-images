@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+#一主多从，读写分离，多从伸缩
+kind: StatefulSet
+metadata:
+  name: mysql
+  namespace: default
+  labels:
+    app: mysql
+spec:
+  selector:
+    matchLabels:
+      app: mysql
+  serviceName: mysql-server
+  replicas: 1
+#  minReadySeconds: 60     #滚动升级时60s后认为该pod就绪
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      terminationGracePeriodSeconds: 60 ##k8s将会给应用发送SIGTERM信号，可以用来正确、优雅地关闭应用,默认为30秒
+      #imagePullSecrets:
+      #- name: registrykey-ali-ext
+      containers:
+      - name: mysql
+        image: slpcat/percona-5.6
+        imagePullPolicy: Always
+        #livenessProbe:
+        #  exec:
+        #    command: ["mysqladmin", "ping"]
+        #  initialDelaySeconds: 30
+        #  periodSeconds: 10
+        #  timeoutSeconds: 5
+        #readinessProbe:
+        #  exec:
+        #    # Check we can execute queries over TCP (skip-networking is off).
+        #    command: ["mysql", "-h", "127.0.0.1", "-e", "SELECT 1"]
+        #  initialDelaySeconds: 5
+        #  periodSeconds: 2
+        #  timeoutSeconds: 1
+        resources:
+          # keep request = limit to keep this container in guaranteed class
+          requests:
+            cpu: 500m
+            memory: 2Gi
+          limits:
+            cpu: 4000m
+            memory: 8Gi
+        env:
+          # Use secret in real usage
+        - name: MYSQL_ROOT_PASSWORD
+          value: password
+        ports:
+        - containerPort: 3306
+          name: mysql
+        volumeMounts:
+        - name: config
+          mountPath: /etc/mysql
+        - name: mysql-persistent-storage
+          mountPath: /var/lib/mysql
+      volumes:
+      - name: config
+        configMap:
+          name: mysql-etc-configmap
+      - name: mysql-persistent-storage
+        persistentVolumeClaim:
+          claimName: mysql-data-claim

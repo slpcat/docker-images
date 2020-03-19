@@ -1,0 +1,837 @@
+apiVersion: v1
+kind: Template
+metadata:
+  creationTimestamp: null
+  name: ce-persistent-template
+  labels:
+    template:    ce-persistent-template
+    group:       nuodb
+    subgroup:    ce
+  annotations:
+    openshift.io/display-name: "NuoDB Community Edition"
+    iconClass: pficon pficon-domain
+    description: |-
+
+      NuoDB is an elastic SQL database for hybrid cloud applications that scales-out
+      on-demand; ensures continuous availability; and provides standard database
+      interfaces, operations and guarantees of consistency and durability. The
+      database is accessed by clients through an ANSI SQL interface as a single
+      logical database, even across data centers or Amazon availability zones.
+
+      NuoDB consists of three independently manageable layers:
+
+      - administration processes (Admin)
+      - transaction engines (TE)
+      - storage managers (SM)
+
+      The TE and SM layers form a distributed, peer-to-peer mesh of process nodes
+      which provides independent and highly available execution of the SQL, caching,
+      and storage processing. This allows the database operator to elastically scale
+      out and scale in each layer independently, and to provision appropriately to
+      guarantee availability in the face of failures without any interruption to the
+      database service.
+
+      The Community Edition is a full featured version of NuoDB but limited to one
+      Storage Manager (SM) and three Transaction Engine (TE) processes. The Community
+      Edition includes the Yahoo! Cloud Services Benchmark (YCSB). It's is a framework
+      for benchmarking database management systems. It's packaged in a convenient
+      Docker form to permit benchmarking container-native databases such as NuoDB.
+      By default the Pod is provisioned, but is not started. To generate sample load
+      against the provisioned database, the user should increase the count of YCSB
+      Pods.
+
+      For more information about NuoDB and how to obtain an unlimited trial version,
+      see:
+
+        https://www.nuodb.com
+
+      Transparent Huge Pages (THP)
+
+      Before running the NuoDB Community Edition (CE) template, you must first disable
+      Transparent Huge Pages (THP) for the nodes where you want to run NuoDB pods.
+      See the product documentation for details on how to disable THP:
+
+        http://doc.nuodb.com/Latest/Default.htm#Note-About-%20Using-Transparent-Huge-Pages.htm?Highlight=transparent
+
+      Node Labeling
+
+      Before running the NuoDB Community Edition (CE) persistent storage template,
+      you must first label the nodes you want to run NuoDB pods.
+
+      The first label, "nuodb.com/zone", constrains on which nodes NuoDB pods are
+      permitted to run. For example:
+
+        oc label node <node-name> nuodb.com/zone=east
+
+      Note: the label value, in this example "east", can be any value.
+
+      Next, label one of these nodes as your storage node, where you provide persistent
+      storage for your database. Ensure there is sufficient disk space. To create this
+      label:
+
+        oc label node <node-name> nuodb.com/node-type=storage
+
+      Storage Classes and Volumes
+
+      NuoDB uses persistent storage for the Admin Service pods and the storage managers.
+      For each of these you need to define a storage class.
+
+      The storage class for the Admin Service pod is configurable by the template parameters.
+      We've tested with GlusterFS ("glusterfs-storage") and OpenEBS ("openebs-standard").
+      Enter the storage class name you wish to provision for the Admin Service pods.
+
+      The storage class for the storage manager is predefined within the `local-disk-class.yaml`
+      file, along with the volume used by the storage manager. To create these:
+
+        oc create -f local-disk-class.yaml
+
+      NuoDB Insights Opt-In
+
+      Insights is a powerful visual database monitoring tool that can greatly aid
+      in visualizing database workload and resource consumption. For more information
+      about the benefits of Insights, please refer to:
+
+        https://www.nuodb.com/product/insights
+
+      Insights is also part of NuoDB Services, and except as set forth below, is
+      subject to our Terms of Use and Privacy Policy.
+
+      Terms of Use and Privacy Policy
+
+        https://www.nuodb.com/privacy-policy
+        https://www.nuodb.com/terms-use
+
+      Insights collects anonymized data about your NuoDB implementation, and use,
+      including system information, configuration, response times, load averages,
+      usage statistics, and user activity logs ("Usage Information").  Usage
+      Information does not include any personally identifiable information ("PII"),
+      but may include some aggregated and anonymized information derived from data
+      that may be considered PII in some contexts (e.g., user locations or IP
+      addresses).
+
+      NuoDB uses Usage Information to monitor, analyze and improve the performance
+      and reliability of our Services, and to contribute to analytical models used by
+      NuoDB.  Usage Information is not shared with any third parties.  Insights also
+      includes a user dashboard that allows administrators to view the performance of
+      your NuoDB implementation.
+
+      If you agree to these terms, type "true" in the "Opt In" field on the following
+      input form to activate Insights. Any other value than "true" results in Opting out.
+      Insights can also be enabled at a later time if you choose.
+
+      If you are Opting in to Insights, thank you for helping us build a better service.
+
+      Deployment Note
+
+      The input form presents many variables that indicate the types of options that
+      are available to configure in NuoDB. You can accept the recommended defaults to
+      create your database.
+
+    tags: "database,nuodb"
+    openshift.io/long-description: |-
+      This template provides the NuoDB Community Edition.
+    openshift.io/provider-display-name: "NuoDB, Inc."
+    openshift.io/documentation-url: "http://doc.nuodb.com"
+    openshift.io/support-url: "https://support.nuodb.com"
+objects:
+-
+  apiVersion: v1
+  kind: Secret
+  metadata:
+    name: "${DB_NAME}.nuodb.com"
+    annotations:
+      "template.openshift.io/expose-username": "{.data['database-username']}"
+      "template.openshift.io/expose-password": "{.data['database-password']}"
+      "template.openshift.io/expose-database-name": "{.data['database-name']}"
+    labels:
+      app: nuodb
+      group: nuodb
+  stringData:
+    "database-name": "${DB_NAME}"
+    "database-username": "${DB_USER}"
+    "database-password": "${DB_PASSWORD}"
+-
+  apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      description: |
+        Headless service permitting us to retrieve DNS A records that point directly to the pods backing the service.
+      "service.alpha.kubernetes.io/tolerate-unready-endpoints": "true"
+    name: domain
+    labels:
+      app: nuodb
+      group: nuodb
+  spec:
+    PublishNotReadyAddresses: true
+    clusterIP: None
+    ports:
+    - { name: 8888-tcp,   port: 8888,   protocol: TCP,  targetPort: 8888  }
+    - { name: 48004-tcp,  port: 48004,  protocol: TCP,  targetPort: 48004 }
+    - { name: 48005-tcp,  port: 48005,  protocol: TCP,  targetPort: 48005 }
+    selector:
+      dns: domain
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+-
+  apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      description: "Service (and load-balancer) for Admin pods."
+    labels:
+      app: nuodb
+      group: nuodb
+    name: admin
+  spec:
+    ports:
+    - { name: 8888-tcp,   port: 8888,   protocol: TCP,  targetPort: 8888  }
+    - { name: 48004-tcp,  port: 48004,  protocol: TCP,  targetPort: 48004 }
+    - { name: 48005-tcp,  port: 48005,  protocol: TCP,  targetPort: 48005 }
+    selector:
+      app: admin
+    sessionAffinity: None
+    type: LoadBalancer
+  status:
+    loadBalancer: {}
+-
+  apiVersion: "apps/v1"
+  kind: StatefulSet
+  metadata:
+    name: admin
+    labels:
+      app: nuodb
+      group: nuodb
+  spec:
+    serviceName: domain
+    replicas: ${ADMIN_COUNT}
+    selector:
+      matchLabels:
+        affinity: admin
+    template:
+      metadata:
+        labels:
+          dns: domain
+          app: admin
+          affinity: admin
+      spec:
+        affinity:
+          nodeAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              nodeSelectorTerms:
+                - matchExpressions:
+                  - { key: "nuodb.com/zone",      operator: Exists }
+          podAntiAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                - key: affinity
+                  operator: In
+                  values: [ "admin" ]
+              topologyKey: "kubernetes.io/hostname"
+        terminationGracePeriodSeconds: 15
+        containers:
+        - name: admin
+          image: ${CONTAINER}
+          imagePullPolicy: IfNotPresent
+          ports:
+          - { containerPort: 8888,  protocol: TCP }
+          - { containerPort: 48004, protocol: TCP }
+          - { containerPort: 48005, protocol: TCP }
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "0.5"
+            limits:
+              memory: "1024Mi"
+              cpu: "1"
+          env:
+          - name: NODE_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.nodeName
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          - { name: NUODB_DOMAIN_ENTRYPOINT,      value: "admin-0.domain" }
+          - { name: NUODB_ALT_ADDRESS,            value: "$(POD_NAME).domain.$(NAMESPACE).svc" }
+          - { name: NUODB_VARDIR,                 value: "/var/opt/nuodb/$(POD_NAME).$(NAMESPACE)" }
+          args: [ "nuoadmin" ]
+          livenessProbe:
+            initialDelaySeconds: 30
+            periodSeconds: 15
+            tcpSocket:
+              port: 8888
+          readinessProbe:
+            initialDelaySeconds: 30
+            periodSeconds: 15
+            exec:
+              command: [ "nuodocker", "check", "servers" ]
+          volumeMounts:
+          - name: raftlog
+            mountPath: /var/opt/nuodb
+          - name: log-volume
+            mountPath: /var/log/nuodb
+        volumes:
+          - name: log-volume
+            emptyDir: {}
+    volumeClaimTemplates:
+    - metadata:
+        name: raftlog
+        labels:
+          group: nuodb
+      spec:
+        labels:
+          app: nuodb
+          group: nuodb
+        accessModes: [ "ReadWriteOnce" ]
+        storageClassName: ${ADMIN_STORAGE_CLASS}
+        resources:
+          requests:
+            storage: ${ADMIN_STORAGE_SIZE}
+-
+  apiVersion: "apps/v1"
+  kind: StatefulSet
+  metadata:
+    name: sm
+    labels:
+      app: nuodb
+      group: nuodb
+  spec:
+    serviceName: sm
+    replicas: 1
+    selector:
+      matchLabels:
+        nodetype: sm
+        database: "${DB_NAME}"
+        app: sm
+        group: nuodb
+    podManagementPolicy: Parallel
+    template:
+      metadata:
+        labels:
+          nodetype: sm
+          database: "${DB_NAME}"
+          app: sm
+          group: nuodb
+      spec:
+        terminationGracePeriodSeconds: 15
+        affinity:
+          nodeAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              nodeSelectorTerms:
+                - matchExpressions:
+                  - { key: "nuodb.com/zone",      operator: Exists }
+                  - { key: "nuodb.com/node-type", operator: Exists }
+        containers:
+        - name: sm
+          image: ${CONTAINER}
+          imagePullPolicy: IfNotPresent
+          args: [ "nuosm", "--servers-ready-timeout", "300" ]
+          env:
+          - name: NODE_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.nodeName
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          - name: DB_NAME
+            valueFrom:
+              secretKeyRef:
+                name: "${DB_NAME}.nuodb.com"
+                key: database-name
+          - name: DB_USER
+            valueFrom:
+              secretKeyRef:
+                name: "${DB_NAME}.nuodb.com"
+                key: database-username
+          - name: DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: "${DB_NAME}.nuodb.com"
+                key: database-password
+          - { name: NUOCMD_API_SERVER,   value: "admin.$(NAMESPACE).svc:8888"}
+          - { name: PEER_ADDRESS,        value: "admin.$(NAMESPACE).svc" }
+          - { name: NUODB_LABELS,        value: "${LABELS}" }
+          - { name: NUODB_OPTIONS,       value: "mem ${SM_MEMORY}g ${OPTIONS}" }
+          ports:
+          - containerPort: 48006
+            protocol: TCP
+          resources:
+            requests:
+              memory: "${SM_MEMORY}Gi"
+              cpu: "${SM_CPU}"
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /var/opt/nuodb/archive
+            name: archive
+    volumeClaimTemplates:
+    - metadata:
+        name: archive
+      spec:
+        labels:
+          app: nuodb
+          group: nuodb
+        accessModes: [ "ReadWriteOnce" ]
+        storageClassName: ${SM_STORAGE_CLASS}
+        resources:
+          requests:
+            storage: ${SM_STORAGE_SIZE}
+-
+  apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    name: te-${UID}
+    labels:
+      app: nuodb
+      group: nuodb
+      deploymentconfig: te
+  spec:
+    replicas: ${TE_COUNT}
+    strategy:
+      activeDeadlineSeconds: 21600
+      resources: {}
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 25%
+        maxUnavailable: 25%
+        timeoutSeconds: 600
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        labels:
+          app: te
+          deploymentconfig: te
+          database: ${DB_NAME}
+          nodetype: te
+      spec:
+        affinity:
+          nodeAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              nodeSelectorTerms:
+                - matchExpressions:
+                  - { key: "nuodb.com/zone",      operator: Exists }
+          podAntiAffinity:
+            preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                  - key: database
+                    operator: In
+                    values:
+                    - "${DB_NAME}"
+                topologyKey: kubernetes.io/hostname
+        containers:
+        -
+          name: te
+          image: ${CONTAINER}
+          imagePullPolicy: IfNotPresent
+          env:
+          - name: NODE_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.nodeName
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          - { name: DB_NAME,             value: "${DB_NAME}" }
+          - { name: NUOCMD_API_SERVER,   value: "admin.$(NAMESPACE).svc:8888"}
+          - { name: PEER_ADDRESS,        value: "admin.$(NAMESPACE).svc" }
+          - { name: NUODB_LABELS,        value: "${LABELS}" }
+          - { name: NUODB_OPTIONS,       value: "mem ${TE_MEMORY}g ${OPTIONS}" }
+          args: [ "nuote", "--servers-ready-timeout", "300", "--database-created-timeout", "300" ]
+          ports:
+          - containerPort: 48006
+            protocol: TCP
+          resources:
+            requests:
+              memory: "${TE_MEMORY}Gi"
+              cpu: "${TE_CPU}"
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - name: logdir
+            mountPath: /var/log/nuodb
+        volumes:
+          - name: logdir
+            emptyDir: {}
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 15
+-
+  apiVersion: v1
+  kind: ReplicationController
+  metadata:
+    name: ${LOAD_NAME}-${UID}
+    labels:
+      group: nuodb
+  spec:
+    replicas: 0
+    selector:
+      app: ycsb-load
+    template:
+      metadata:
+        name: ycsb-load
+        labels:
+          app: ycsb-load
+          database: ${DB_NAME}
+      spec:
+        affinity:
+          podAffinity:
+            preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 50
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                  - { key: nodetype, operator: In, values: [ "te" ] }
+                  - { key: database, operator: In, values: [ "${DB_NAME}" ] }
+                topologyKey: "kubernetes.io/hostname"
+        containers:
+        - name: ycsb-load
+          image: ${YCSB_CONTAINER}
+          imagePullPolicy: IfNotPresent
+          env:
+          - name: DB_NAME
+            valueFrom:
+              secretKeyRef:
+                name: "${DB_NAME}.nuodb.com"
+                key: database-name
+          - name: DB_USER
+            valueFrom:
+              secretKeyRef:
+                name: "${DB_NAME}.nuodb.com"
+                key: database-username
+          - name: DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: "${DB_NAME}.nuodb.com"
+                key: database-password
+          - name: NODE_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.nodeName
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          - { name: PEER_ADDRESS,        value: "admin.$(NAMESPACE).svc" }
+          - { name: DB_SCHEMA,           value: "${DB_SCHEMA}" }
+          - { name: YCSB_WORKLOAD,       value: "${YCSB_WORKLOAD}" }
+          - { name: LB_POLICY,           value: "${LB_POLICY}" }
+          - { name: NO_OF_THREADS,       value: "${NO_OF_THREADS}" }
+          - { name: NO_OF_ROWS,          value: "${NO_OF_ROWS}" }
+          - { name: NO_OF_ITERATIONS,    value: "${NO_OF_ITERATIONS}" }
+          - { name: MAX_DELAY,           value: "${MAX_DELAY}" }
+-
+  apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      description: "Service for redirect."
+    labels:
+      app: insights
+      group: nuodb
+    name: insights-server
+  spec:
+    ports:
+    - { name: 8080-tcp,   port: 8080,   protocol: TCP,  targetPort: 8080  }
+    selector:
+      app: insights
+      group: nuodb
+    sessionAffinity: None
+    type: LoadBalancer
+  status:
+    loadBalancer: {}
+-
+  apiVersion: v1
+  kind: Route
+  metadata:
+    name: insights
+    labels:
+      group: nuodb
+  spec:
+    to:
+      kind: Service
+      name: insights-server
+-
+  apiVersion: v1
+  kind: ConfigMap
+  metadata:
+    annotations:
+      description: "Config map for metrics input and insights output"
+    name: insights-configmap
+    labels:
+      group: nuodb
+  data:
+    nuoca.yml.template: |
+      ---
+      NUOCA_LOGFILE: /var/log/nuodb/nuoca.log
+
+      INPUT_PLUGINS:
+      - NuoAdminNuoMon:
+         description : Collection from NuoDB engines
+         nuocaCollectionName: NuoMon
+         api_server: ${API_SERVER}
+         client_key:  /etc/nuodb/keys/nuocmd.pem
+      OUTPUT_PLUGINS:
+      - RestClient:
+          url: ${INSIGHTS_INGEST_URL}
+    nuoinsights: |
+      #!/bin/bash
+      . ${NUODB_HOME}/etc/nuodb_setup.sh
+      : ${NUOCMD_API_SERVER:=https://domain:8888}
+
+      SCRIPT=$(cat <<EOF
+      from BaseHTTPServer import BaseHTTPRequestHandler,HTTPServer
+      from nuoca import NuoCA as nuoca
+      import nuodb_mgmt
+
+      PORT_NUMBER = 8080
+
+      def get_insights_dashboard():
+        conn = nuodb_mgmt.AdminConnection('${NUOCMD_API_SERVER}', '/etc/nuodb/keys/nuocmd.pem')
+        metadata = nuoca.get_insights_metadata(conn)
+        return metadata.get(nuoca.INSIGHTS_DASHBOARD_KEY,None)
+
+        #ingest_url    = metadata[nuoca.INSIGHTS_URL_KEY]
+        #subscriber_id = metadata[nuoca.INSIGHTS_ID_KEY]
+        #return ingest_url[:-6] + subscriber_id
+
+      class myHandler(BaseHTTPRequestHandler):
+        def do_GET(self):
+          new_path = get_insights_dashboard()
+          if new_path and new_path != "None":
+            self.send_response(307)
+            self.send_header('Location', new_path)
+            self.end_headers()
+          else:
+            self.send_response(404)
+          self.end_headers()
+          return
+
+      try:
+        server = HTTPServer(('', PORT_NUMBER), myHandler)
+        print 'Started httpserver on port ' , PORT_NUMBER
+
+        #Wait forever for incoming http requests
+        server.serve_forever()
+
+      except KeyboardInterrupt:
+        print '^C received, shutting down the web server'
+        server.socket.close()
+
+      EOF
+      )
+
+      export PYTHONPATH=/opt/nuodb/drivers/pynuoadmin
+      exec /opt/nuodb/etc/python/nuopython -c "${SCRIPT}"
+-
+  apiVersion: v1
+  kind: Pod
+  metadata:
+    name: nuodb-insights
+    labels:
+      app: insights
+      group: nuodb
+  spec:
+    initContainers:
+    - name: optin
+      image: ${CONTAINER}
+      imagePullPolicy: IfNotPresent
+      args:
+      - "/bin/sh"
+      - "-c"
+      - "[ \"${OPT_IN}\" == \"true\" ] && nuoca enable insights --connect-timeout 300 || nuoca disable insights --connect-timeout 300"
+      env:
+      - { name: NUOCMD_API_SERVER , value: "${API_SERVER}" }
+    containers:
+    - name: insights
+      image: ${CONTAINER}
+      imagePullPolicy: IfNotPresent
+      args: [ "nuoca", "start" , "nuoca", "--insights" ]
+      env:
+      - { name: NUOCMD_API_SERVER , value: "${API_SERVER}" }
+      volumeMounts:
+      - name: log-volume
+        mountPath: /var/log/nuodb
+      - name: config-insights
+        mountPath: /etc/nuodb/nuoca.yml.template
+        subPath: nuoca.yml.template
+    - name: insights-server
+      image: ${CONTAINER}
+      imagePullPolicy: IfNotPresent
+      args: [ "nuoinsights" ]
+      ports:
+      - { name: 8080-tcp,  containerPort: 8080,  protocol: TCP }
+      env:
+      - { name: NUOCMD_API_SERVER , value: "${API_SERVER}" }
+      volumeMounts:
+      - name: log-volume
+        mountPath: /var/log/nuodb
+      - name: nuoinsights
+        mountPath: /usr/local/bin/nuoinsights
+        subPath: nuoinsights
+    volumes:
+    - name: log-volume
+      emptyDir: {}
+    - name: config-insights
+      configMap:
+        name: insights-configmap
+    - name: nuoinsights
+      configMap:
+        name: insights-configmap
+        defaultMode: 0754
+parameters:
+  - name: OPT_IN
+    displayName: Insights Opt In
+    description:  |+
+      Insights visual database monitoring, type "true" to Activate or "false" to deactivate
+    required: true
+    value: ""
+  - name: ADMIN_COUNT
+    displayName: Number of admin service pods
+    description: "Requires 1 server available for each Admin Service"
+    required: true
+    value: "1"
+  - name: ADMIN_STORAGE_SIZE
+    displayName: Admin service log volume size (GB)
+    required: true
+    value: 5G
+  - name: ADMIN_STORAGE_CLASS
+    displayName: Admin persistent storage class name
+    required: true
+    value: "glusterfs-storage"
+  - name: DB_NAME
+    displayName: Database name
+    description: "Database name, must consist of lowercase alphanumeric characters '[a-z0-9]+'"
+    required: true
+    value: test
+  - name: DB_USER
+    displayName: Database user
+    required: true
+    value: dba
+  - name: DB_PASSWORD
+    displayName: Database password
+    required: true
+    value: secret
+  - name: SM_STORAGE_SIZE
+    displayName: Storage manager (SM) volume size (GB)
+    required: true
+    value: 20G
+  - name: SM_STORAGE_CLASS
+    displayName: SM persistent storage class name
+    required: true
+    value: "local-disk"
+  - name: SM_MEMORY
+    displayName: SM memory (in GB)
+    required: true
+    value: "8"
+  - name: SM_CPU
+    displayName: SM CPU cores to request
+    required: true
+    value: "1"
+  - name: LABELS
+    displayName: Additional labels
+    description: "Format: label1 value label2 value2 ..."
+    required: false
+    value: ""
+  - name: OPTIONS
+    displayName: Additional database options
+    description: "Format: <option> <value> <option> <value> ..."
+    required: false
+    value:
+  - name: TE_COUNT
+    displayName: Number of transaction engines (TE) nodes
+    description: "Limit is 3 in CE version"
+    required: true
+    value: "1"
+  - name: TE_MEMORY
+    displayName: TE memory (in GB)
+    required: true
+    value: "8"
+  - name: TE_CPU
+    displayName: TE CPU cores to request
+    required: true
+    value: "1"
+  - name: YCSB_WORKLOAD
+    displayName: YCSB workload
+    description: "Valid values are a-f. Each letter determines a different mix of read and update workload percentage generated. a= 50/50, b=95/5, c=100 read. Refer to YCSB documentation for more detail"
+    required: true
+    value: b
+  - name: LB_POLICY
+    displayName: YCSB load-balancer policy
+    description: "Name of an existing load-balancer policy, that has already been created using the 'nuocmd set load-balancer' command"
+    required: false
+    value: ""
+  - name: NO_OF_THREADS
+    displayName: YCSB number of threads
+    value: "2"
+    required: false
+  - name: NO_OF_ROWS
+    displayName: YCSB number of initial rows in table
+    required: false
+    value: "10000"
+  - name: NO_OF_ITERATIONS
+    displayName: YCSB number of iterations
+    required: false
+    value: "10000"
+  - name: MAX_DELAY
+    displayName: YCSB maximum workload delay
+    description: "Maximum delay in milliseconds (Default is 4 minutes)"
+    required: false
+    value: "240000"
+  - name: LOAD_NAME
+    displayName: YCSB workload pod name
+    required: true
+    value: ycsb-load
+  - name: DB_SCHEMA
+    displayName: Database schema
+    description: "Default schema to use to resolve tables, views, etc"
+    required: true
+    value: User1
+  - name: API_SERVER
+    displayName: Load balancer service URL
+    description: "hostname:port (or LB address) for nuoadmin process to connect to"
+    required: true
+    value: "https://domain:8888"
+  - name: CONTAINER
+    displayName: NuoDB fully qualified image name
+    description: "Fully qualified image name (FQIN) for the Docker image to use"
+    required: true
+    value: "registry.connect.redhat.com/nuodb/nuodb-ce:latest"
+  - name: YCSB_CONTAINER
+    displayName: YCSB fully qualified image name
+    description: "Fully qualified image name (FQIN) for the Docker image to use"
+    required: true
+    value: "nuodb/ycsb:latest"
+  - name: UID
+    description: "Generate UID for deployment names"
+    generate: expression
+    from: "[a-z]{5}"

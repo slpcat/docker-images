@@ -1,0 +1,37 @@
+# Default values for acs-tensorflow-serving.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+## Kubernetes configuration
+## support NodePort, LoadBalancer
+##
+serviceType: LoadBalancer
+
+## expose the service to the grpc client
+port: 9090
+replicas: 1
+
+## Tensorflow server image version
+## if gpuCount>0, the default image is registry.cn-hangzhou.aliyuncs.com/tensorflow-samples/tensorflow-serving:1.4.0-devel-gpu in the regions of China except Hongkong,
+## registry.us-east-1.aliyuncs.com/tensorflow-samples/tensorflow-serving:1.4.0-devel-gpu for other regions including Hongkong.
+## if gpuCount=0, the default image is registry.cn-hangzhou.aliyuncs.com/tensorflow-samples/tensorflow-serving:1.4.0-devel in the regions of China except Hongkong,
+## registry.us-east-1.aliyuncs.com/tensorflow-samples/tensorflow-serving:1.4.0-devel for other regions including Hongkong.
+## You can also bring up your own docker image.
+image: "registry.cn-hangzhou.aliyuncs.com/tensorflow-samples/tensorflow-serving:1.4.0-devel-gpu"
+imagePullPolicy: "IfNotPresent"
+## the gpu resource to claim, for cpu, change it to 0
+gpuCount: 1
+
+
+## The command and args to run the pod
+command: ["/usr/bin/tensorflow_model_server"]
+args: [ "--port=9090", "--model_name=mnist", "--model_base_path=/serving/model/mnist"]  
+## the mount path inside the container
+mountPath: /serving/model/mnist
+
+persistence:
+## The request and label to select the persistent volume
+   pvc:
+      storage: 5Gi
+      matchLabels: {}
+

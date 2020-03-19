@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: pinpoint-collector-headless
+  namespace: default
+spec:
+  clusterIP: None
+  selector:
+    app: pinpoint-collector
+  ports:
+    - name: base
+      port: 9994
+      protocol: TCP
+    - name: stat-udp
+      port: 9995
+      protocol: UDP
+    - name: span-udp
+      port: 9996
+      protocol: UDP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pinpoint-collector
+  namespace: default
+spec:
+  selector:
+    app: pinpoint-collector
+  ports:
+    - name: base
+      port: 9994
+      protocol: TCP
+    - name: stat-udp
+      port: 9995
+      protocol: UDP
+    - name: span-udp
+      port: 9996
+      protocol: UDP
+  type: NodePort

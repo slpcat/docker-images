@@ -1,0 +1,23 @@
+---
+apiVersion: "nats.io/v1alpha2"
+kind: "NatsCluster"
+metadata:
+  name: "example-nats-auth"
+spec:
+  size: 3
+  version: "1.3.0"
+
+  pod:
+    # NOTE: Only supported in Kubernetes v1.12+.
+    enableConfigReload: true
+
+    # Defaults but can be customized to be a different image
+    reloaderImage: "connecteverything/nats-server-config-reloader"
+    reloaderImageTag: "0.4.5-v1alpha2"
+    reloaderImagePullPolicy: "IfNotPresent"
+  auth:
+    # Definition in JSON of the users permissions
+    clientsAuthSecret: "nats-clients-auth"
+
+    # How long to wait for authentication
+    clientsAuthTimeout: 5

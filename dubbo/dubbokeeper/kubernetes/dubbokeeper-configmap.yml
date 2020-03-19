@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dubbokeeper
+  namespace: default
+data:
+  dubbo.properties: |-
+    dubbo.application.name=dubbo-monitor-ui
+    dubbo.application.owner=demo
+    dubbo.registry.protocol=zookeeper
+    dubbo.registry.address=zk-cs:2181
+    #use netty4
+    #dubbo.reference.client=netty4
+
+    #peeper config
+    peeper.zookeepers=zk-cs:2181
+    peeper.zookeeper.session.timeout=60000
+
+    #logger
+    monitor.log.home=/tmp
+    monitor.collect.interval=6000
+    auth.key=k876anchj1Hqx0oi

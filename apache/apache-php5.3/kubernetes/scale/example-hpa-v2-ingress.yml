@@ -1,0 +1,17 @@
+kind: HorizontalPodAutoscaler
+apiVersion: autoscaling/v2beta1
+spec:
+  scaleTargetRef:
+    kind: ReplicationController
+    name: WebFrontend
+  minReplicas: 2
+  maxReplicas: 10
+  metrics:
+  #ingress对象中hits-per-second指
+  - type: Object
+    object:
+      target:
+        kind: Service
+        name: Frontend
+      metricName: hits-per-second
+      targetValue: 1k

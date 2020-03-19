@@ -1,0 +1,4 @@
+.vagrant
+server_ip
+
+vault/*.crt

@@ -1,0 +1,12 @@
+整体打包
+内置服务 dhcp ntp tftp nfs-ganesha http apt-cacher-ng
+启动命令 docker run -d --net=host --privileged -v /sys/fs/cgroup:/sys/fs/cgroup slpcat/fai-project
+准备阶段
+安装fai-nfs
+
+最终可用服务
+dhcpd
+tftpd
+
+使用
+默认安装时自动分配ip，并且安装完毕，转为静态ip

@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "fullname" . }}-jobmanager
+spec:
+  clusterIP: None
+  ports:
+  - name: rpc
+    port: 6123
+  - name: blob
+    port: 6124
+  selector:
+    app: {{ template "fullname" . }}
+    component: jobmanager
+  type: ClusterIP

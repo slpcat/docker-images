@@ -1,0 +1,79 @@
+{
+  "paragraphs": [
+    {
+      "text": "import net.sansa_stack.owl.spark.dataset.{FunctionalSyntaxOWLAxiomsDatasetBuilder, ManchesterSyntaxOWLAxiomsDatasetBuilder}\n\nval input \u003d \"hdfs://namenode:8020/data/ont_functional.owl\"\n\nval dataset \u003d FunctionalSyntaxOWLAxiomsDatasetBuilder.build(spark, input)\ndataset.take(10).foreach(println(_))",
+      "user": "anonymous",
+      "dateUpdated": "May 11, 2017 9:28:35 AM",
+      "config": {
+        "colWidth": 12.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/text"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\nimport net.sansa_stack.owl.spark.dataset.{FunctionalSyntaxOWLAxiomsDatasetBuilder, ManchesterSyntaxOWLAxiomsDatasetBuilder}\n\ninput: String \u003d hdfs://namenode:8020/data/ont_functional.owl\n\ndataset: net.sansa_stack.owl.spark.dataset.OWLAxiomsDataset \u003d [value: binary]\nDeclaration(Annotation(\u003chttp://ex.com/foo#ann\u003e \"some annotation\"^^xsd:string) Class(\u003chttp://ex.com/bar#Cls1\u003e))\nDeclaration(Class(\u003chttp://ex.com/bar#Cls2\u003e))\nDeclaration(Datatype(\u003chttp://ex.com/bar#dtype1\u003e))\nDeclaration(Datatype(\u003chttp://ex.com/bar#dtype2\u003e))\nDeclaration(ObjectProperty(\u003chttp://ex.com/bar#objProp1\u003e))\nDeclaration(ObjectProperty(\u003chttp://ex.com/bar#objProp2\u003e))\nDeclaration(DataProperty(\u003chttp://ex.com/bar#dataProp1\u003e))\nDeclaration(DataProperty(\u003chttp://ex.com/bar#dataProp2\u003e))\nDeclaration(AnnotationProperty(\u003chttp://ex.com/bar#annProp1\u003e))\nDeclaration(AnnotationProperty(\u003chttp://ex.com/bar#annProp2\u003e))\n"
+          }
+        ]
+      },
+      "apps": [],
+      "jobName": "paragraph_1494492505471_454897908",
+      "id": "20170511-084825_834127049",
+      "dateCreated": "May 11, 2017 8:48:25 AM",
+      "dateStarted": "May 11, 2017 9:28:35 AM",
+      "dateFinished": "May 11, 2017 9:28:48 AM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "user": "anonymous",
+      "config": {},
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "jobName": "paragraph_1494494845390_-1659187861",
+      "id": "20170511-092725_657991002",
+      "dateCreated": "May 11, 2017 9:27:25 AM",
+      "status": "READY",
+      "progressUpdateIntervalMs": 500
+    }
+  ],
+  "name": "OWL",
+  "id": "2CFH4E3TG",
+  "angularObjects": {
+    "2CF3RJ5MG:shared_process": [],
+    "2CG82CXC6:shared_process": [],
+    "2CGUETVFU:shared_process": [],
+    "2CJSY2U8W:shared_process": [],
+    "2CG2FJB5M:shared_process": [],
+    "2CG3MZ35T:shared_process": [],
+    "2CH1NDZTZ:shared_process": [],
+    "2CF1A3GZY:shared_process": [],
+    "2CFP46J5J:shared_process": [],
+    "2CEXCBT9Q:shared_process": [],
+    "2CFTSHR86:shared_process": [],
+    "2CFVTZA26:shared_process": [],
+    "2CFKV2E7E:shared_process": [],
+    "2CJ4DKA2S:shared_process": [],
+    "2CFBSCM9Q:shared_process": [],
+    "2CGQHTNJC:shared_process": [],
+    "2CHTUVCMC:shared_process": [],
+    "2CHUU16RS:shared_process": [],
+    "2CHE8XKZD:shared_process": []
+  },
+  "config": {},
+  "info": {}
+}

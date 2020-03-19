@@ -1,0 +1,6 @@
+[cloudera-impala-kudu]
+# Packages for Cloudera's Distribution for impala-kudu, Version 1, on RedHat	or CentOS 7 x86_64
+name=Cloudera's Distribution for impala-kudu, Version 1
+baseurl=http://archive.cloudera.com/beta/impala-kudu/redhat/7/x86_64/impala-kudu/1/
+gpgkey = http://archive.cloudera.com/beta/impala-kudu/redhat/7/x86_64/impala-kudu/RPM-GPG-KEY-cloudera    
+gpgcheck = 1
