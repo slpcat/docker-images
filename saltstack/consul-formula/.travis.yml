@@ -1,0 +1,16 @@
+sudo: required
+language: python
+services: 
+  - docker
+
+before_install:
+  - bundle install
+
+env:
+  matrix:
+    - INSTANCE: consul-server-ubuntu-1404
+    - INSTANCE: consul-server-ubuntu-1604
+    - INSTANCE: consul-server-centos-7
+
+script:
+  - bundle exec kitchen verify ${INSTANCE}

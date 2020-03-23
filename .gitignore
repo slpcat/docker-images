@@ -1,2 +1,17 @@
 *.bin
 */www_root/
+*.rpm
+
+# Package Files #
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+*.log
+*.temp
+
+*.apk
+

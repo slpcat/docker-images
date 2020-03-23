@@ -1,0 +1,15 @@
+ansible-galaxy install dj-wasabi.zabbix-agent
+
+ansible-galaxy install cloudalchemy.prometheus
+
+ansible-galaxy install brianshumate.consul
+
+ansible-galaxy install geerlingguy.docker
+
+ansible-galaxy install elastic.elasticsearch
+
+ansible-galaxy install cloudalchemy.node-exporter
+
+ansible-galaxy install cloudalchemy.grafana
+
+ansible-galaxy install ansible-thoteam.nexus3-oss

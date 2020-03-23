@@ -98,8 +98,11 @@ Windows Phone
 
 Zabbkit - Windows Phone 专用 Zabbix Client 端。
 
-报警脚本
+钉钉报警脚本
+{ALERT.SENDTO} 
+{ALERT.MESSAGE} 
 
+alert_dingding.py
 
 docker 命令
 

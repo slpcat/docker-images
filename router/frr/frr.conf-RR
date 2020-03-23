@@ -1,0 +1,28 @@
+frr defaults traditional
+log syslog informational
+no ipv6 forwarding
+service integrated-vtysh-config
+!
+router bgp 64514
+ bgp router-id 192.168.159.252
+ bgp graceful-restart select-defer-time 600
+ bgp graceful-restart rib-stale-time 600
+ bgp graceful-restart
+ bgp bestpath as-path multipath-relax
+ bgp log-neighbor-changes
+ maximum-paths eibgp 4 import 2
+ timers bgp 2 6
+ neighbor kube-mesh peer-group
+ neighbor kube-mesh capability dynamic
+ neighbor 192.168.159.48 peer-group kube-mesh
+ neighbor 192.168.159.49 peer-group kube-mesh
+ neighbor kube-mesh remote-as 64514
+ neighbor kube-mesh route-reflector-client
+ !
+ address-family ipv4 unicast
+  redistribute connected route-map RM_BGP_REDISTRIBUTED_CONNECTED
+  maximum-paths eibgp 4 import 2
+ exit-address-family
+!
+line vty
+!

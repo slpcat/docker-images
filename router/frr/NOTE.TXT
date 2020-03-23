@@ -1,0 +1,77 @@
+https://frrouting.org/
+https://github.com/FRRouting/frr
+
+Installing FRRouting (FRR) on your CentOS KVM/Libvirt host and setting up BGP
+
+Introduction
+so I had this idea when looking at FRRouting. as its a linux package, you can install it on a box running KVM/Libvirt, then you can enable BGP and redistribute the connected networks. This makes spining up new virtual networks on the hypervisor very easy as you do not need to rely on static routes and as soon as you spin up a new virtual network its adveristing to the rest of your network.
+
+what is FRRouting (FRR)
+FRRouting (FRR) is a fork of Quagga. its used in Cumulus networks OS as the routing suite.
+
+This guide is based on a install of CentOS 7.5
+
+Step 1 Install FRR
+Install the latest FRR rpm from https://github.com/FRRouting/frr/releases
+yum install -y https://github.com/FRRouting/frr/releases/download/frr-5.0.1/frr-5.0.1-2018070501.el7.centos.x86_64.rpm
+
+Edit the daemons file and change the routing protocols you want from no to yes (you must always enable zebra) in this case zebra and bgpd
+vi /etc/frr/daemons
+
+zebra=yes
+bgpd=yes
+
+Start FRR and set to start on boot
+systemctl enable frr && systemctl start frr
+
+Check status of frr - should show as active (running)
+systemctl status frr
+
+Step 2 configure FRR and BGP
+open the frr shell by typing the command
+vtysh
+
+Enter cofiguration mode
+
+conf t
+
+This step is optional this command command puts all the frr config into one file
+service integrated-vtysh-config
+
+configure BGP on the KVM host
+
+I am configuring a route-map used to prevent some routes from being redistributed also will tag a bgp community for all the permitted routes you do not need to do this but it gives you more control and tagging the route helps with visibility.
+
+ip prefix-list PL_BGP_DENY_CONNECTED seq 5 permit 10.25.10.0/24
+
+route-map RM_BGP_REDISTRIBUTED_CONNECTED deny 10
+match ip address prefix-list PL_BGP_DENY_CONNECTED
+
+route-map RM_BGP_REDISTRIBUTED_CONNECTED permit 9999
+set community 65010:10100
+
+Here we are configuring the BGP process AS/router id/tuning the timers from there defualt to 2/6 and configuring the neighour
+
+router bgp 65010
+bgp router-id 10.25.10.100
+bgp log-neighbor-changes
+timers bgp 2 6
+neighbor 10.25.10.1 remote-as 65000
+
+now to configure the redistribute connected command and set the route map we have created
+
+address-family ipv4 unicast
+redistribute connected route-map RM_BGP_REDISTRIBUTED_CONNECTED
+exit-address-family
+
+Exit and save configuration
+
+end
+
+write
+
+Step 3 Verify bgp is up and that we have routes
+Here we can see that the bgp session is up
+Screenshot-from-2018-08-06-13-18-19
+Below we can see that have two connected virtual networks in bgp and are receiving a default route from the router we are connected to.
+Screenshot-from-2018-08-06-13-17-47

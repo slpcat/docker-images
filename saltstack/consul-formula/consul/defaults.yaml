@@ -1,0 +1,24 @@
+consul:
+  version: 1.3.0
+  download_host: releases.hashicorp.com
+
+  service: false
+
+  user: consul
+  user_uid:
+  group: consul
+  group_gid:
+
+  config:
+    server: false
+    bind_addr: 0.0.0.0
+    data_dir: /var/consul
+    ui: true
+    enable_debug: false
+    log_level: info
+    encrypt: ""
+    retry_join: []
+    retry_interval: 30s
+    datacenter: "main"
+  register: []
+  scripts: []
