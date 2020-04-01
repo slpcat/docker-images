@@ -1,0 +1,1 @@
+https://guides.sonatype.com/repo3/technical-guides/go-dependencies-nxrm3/

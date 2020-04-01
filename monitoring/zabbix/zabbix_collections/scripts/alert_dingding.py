@@ -12,6 +12,10 @@ import datetime
 token_list = [
     "123456789abcdef123456789",
 ]
+
+index = int(sys.argv[1])
+text = sys.argv[2]
+
 weburl = "https://oapi.dingtalk.com/robot/send?access_token="
 
 webhook = weburl + token_list[index]

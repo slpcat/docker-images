@@ -1,0 +1,172 @@
+elasticsearch:
+  antiAffinity: hard
+  antiAffinityTopologyKey: kubernetes.io/hostname
+  clusterHealthCheckParams: wait_for_status=green&timeout=1s
+  clusterName: elasticsearch
+  config:
+    host: elasticsearch
+    password: xxx
+    port:
+      http: 9200
+    user: xxx
+  enabled: true
+  esConfig: {}
+  esJavaOpts: -Xmx1g -Xms1g
+  esMajorVersion: ""
+  extraEnvs: []
+  extraInitContainers: ""
+  extraVolumeMounts: ""
+  extraVolumes: ""
+  fsGroup: ""
+  fullnameOverride: ""
+  global: {}
+  httpPort: 9200
+  image: docker.elastic.co/elasticsearch/elasticsearch
+  imagePullPolicy: IfNotPresent
+  imagePullSecrets: []
+  imageTag: 7.5.1
+  ingress:
+    annotations: {}
+    enabled: false
+    hosts:
+    - chart-example.local
+    path: /
+    tls: []
+  initResources: {}
+  keystore: []
+  labels: {}
+  lifecycle: {}
+  masterService: ""
+  masterTerminationFix: false
+  maxUnavailable: 1
+  minimumMasterNodes: 2
+  nameOverride: ""
+  networkHost: 0.0.0.0
+  nodeAffinity: {}
+  nodeGroup: master
+  nodeSelector: {}
+  persistence:
+    annotations: {}
+    enabled: false
+  podAnnotations: {}
+  podManagementPolicy: Parallel
+  podSecurityContext:
+    fsGroup: 1000
+    runAsUser: 1000
+  podSecurityPolicy:
+    create: false
+    name: ""
+    spec:
+      fsGroup:
+        rule: RunAsAny
+      privileged: true
+      runAsUser:
+        rule: RunAsAny
+      seLinux:
+        rule: RunAsAny
+      supplementalGroups:
+        rule: RunAsAny
+      volumes:
+      - secret
+      - configMap
+      - persistentVolumeClaim
+  priorityClassName: ""
+  protocol: http
+  rbac:
+    create: false
+    serviceAccountName: ""
+  readinessProbe:
+    failureThreshold: 3
+    initialDelaySeconds: 10
+    periodSeconds: 10
+    successThreshold: 3
+    timeoutSeconds: 5
+  replicas: 3
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 2Gi
+    requests:
+      cpu: 100m
+      memory: 2Gi
+  roles:
+    data: "true"
+    ingest: "true"
+    master: "true"
+  schedulerName: ""
+  secretMounts: []
+  securityContext:
+    capabilities:
+      drop:
+      - ALL
+    runAsNonRoot: true
+    runAsUser: 1000
+  service:
+    annotations: {}
+    httpPortName: http
+    labels: {}
+    labelsHeadless: {}
+    nodePort: ""
+    transportPortName: transport
+    type: ClusterIP
+  sidecarResources: {}
+  sysctlInitContainer:
+    enabled: true
+  sysctlVmMaxMapCount: 262144
+  terminationGracePeriod: 120
+  tolerations: []
+  transportPort: 9300
+  updateStrategy: RollingUpdate
+  volumeClaimTemplate:
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 30Gi
+nameOverride: ""
+oap:
+  antiAffinity: soft
+  env: null
+  envoy:
+    als:
+      enabled: false
+  image:
+    pullPolicy: IfNotPresent
+    repository: apache/skywalking-oap-server
+    tag: 7.0.0-es7
+  istio:
+    adapter:
+      enabled: false
+  javaOpts: -Xmx2g -Xms2g
+  name: skywalking-oap
+  nodeAffinity: {}
+  nodeSelector: {}
+  ports:
+    grpc: 11800
+    rest: 12800
+  replicas: 2
+  resources: {}
+  service:
+    type: ClusterIP
+  storageType: elasticsearch7
+  tolerations: []
+serviceAccounts:
+  oap: null
+ui:
+  image:
+    pullPolicy: IfNotPresent
+    repository: apache/skywalking-ui
+    tag: 7.0.0
+  ingress:
+    annotations: {}
+    enabled: false
+    hosts: []
+    path: /
+    tls: []
+  name: skywalking-ui
+  replicas: 1
+  service:
+    annotations: {}
+    externalPort: 80
+    internalPort: 8080
+    type: ClusterIP

@@ -153,3 +153,10 @@ https://github.com/Telefonica/prometheus-kafka-adapter
 prometheus-timescaledb
 
 注意:与metrics-server 冲突
+
+
+docker run  -d \
+   -p 9090:9090 \
+   -v /etc/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml  \
+   -v /data/prometheus:/prometheus \
+   prom/prometheus

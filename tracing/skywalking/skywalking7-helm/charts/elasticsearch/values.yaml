@@ -1,0 +1,116 @@
+antiAffinity: hard
+antiAffinityTopologyKey: kubernetes.io/hostname
+clusterHealthCheckParams: wait_for_status=green&timeout=1s
+clusterName: elasticsearch
+esConfig: {}
+esJavaOpts: -Xmx1g -Xms1g
+esMajorVersion: ""
+extraEnvs: []
+extraInitContainers: ""
+extraVolumeMounts: ""
+extraVolumes: ""
+fsGroup: ""
+fullnameOverride: ""
+httpPort: 9200
+image: docker.elastic.co/elasticsearch/elasticsearch
+imagePullPolicy: IfNotPresent
+imagePullSecrets: []
+imageTag: 7.5.2
+ingress:
+  annotations: {}
+  enabled: false
+  hosts:
+  - chart-example.local
+  path: /
+  tls: []
+initResources: {}
+keystore: []
+labels: {}
+lifecycle: {}
+masterService: ""
+masterTerminationFix: false
+maxUnavailable: 1
+minimumMasterNodes: 2
+nameOverride: ""
+networkHost: 0.0.0.0
+nodeAffinity: {}
+nodeGroup: master
+nodeSelector: {}
+persistence:
+  annotations: {}
+  enabled: true
+podAnnotations: {}
+podManagementPolicy: Parallel
+podSecurityContext:
+  fsGroup: 1000
+  runAsUser: 1000
+podSecurityPolicy:
+  create: false
+  name: ""
+  spec:
+    fsGroup:
+      rule: RunAsAny
+    privileged: true
+    runAsUser:
+      rule: RunAsAny
+    seLinux:
+      rule: RunAsAny
+    supplementalGroups:
+      rule: RunAsAny
+    volumes:
+    - secret
+    - configMap
+    - persistentVolumeClaim
+priorityClassName: ""
+protocol: http
+rbac:
+  create: false
+  serviceAccountName: ""
+readinessProbe:
+  failureThreshold: 3
+  initialDelaySeconds: 10
+  periodSeconds: 10
+  successThreshold: 3
+  timeoutSeconds: 5
+replicas: 3
+resources:
+  limits:
+    cpu: 1000m
+    memory: 2Gi
+  requests:
+    cpu: 100m
+    memory: 2Gi
+roles:
+  data: "true"
+  ingest: "true"
+  master: "true"
+schedulerName: ""
+secretMounts: []
+securityContext:
+  capabilities:
+    drop:
+    - ALL
+  runAsNonRoot: true
+  runAsUser: 1000
+service:
+  annotations: {}
+  httpPortName: http
+  labels: {}
+  labelsHeadless: {}
+  nodePort: ""
+  transportPortName: transport
+  type: ClusterIP
+sidecarResources: {}
+sysctlInitContainer:
+  enabled: true
+sysctlVmMaxMapCount: 262144
+terminationGracePeriod: 120
+tolerations: []
+transportPort: 9300
+updateStrategy: RollingUpdate
+volumeClaimTemplate:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 30Gi

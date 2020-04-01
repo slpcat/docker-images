@@ -1,11 +1,16 @@
+salt ui
+https://alcali.dev/
 
 The salt-bootstrap script makes bootstrapping a server with Salt simple for any OS with a Bourne shell:
 
+you can set up a Salt Minion with the Salt bootstrap.
 curl -L https://bootstrap.saltstack.com -o bootstrap_salt.sh
 sudo sh bootstrap_salt.sh
 
 https://github.com/saltstack-formulas/zabbix-formula
 https://github.com/salt-formulas/salt-formulas
+
+https://github.com/hbokh/awesome-saltstack
 
 consul-formula
 zabbix-formula
@@ -40,3 +45,5 @@ linux-formula
 https://github.com/hoonetorg/salt-disk-formula
 
 https://github.com/mgomersbach/grub-formula
+
+https://github.com/valentin2105/Kubernetes-Saltstack

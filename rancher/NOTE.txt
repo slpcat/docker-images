@@ -27,7 +27,7 @@ cluster-id 唯一
 A 安装Rancher服务端
 https://rancher.com/docs/rancher/v2.x/en/quick-start-guide/deployment/quickstart-manual-setup/#1-provision-a-linux-host
 
-docker run -d --restart=always -v /data/rancher:/var/lib/rancher/ -p 80:80 -p 443:443 rancher/rancher:v2.3.5
+docker run -d --restart=always -v /data/rancher:/var/lib/rancher/ -p 80:80 -p 443:443 rancher/rancher:v2.4.0
 高可用安装需要独立kubernetes集群和负载均衡器
 
 B 创建kubernetes集群
@@ -52,7 +52,7 @@ https://rancher.com/docs/rke/latest/en/example-yamls/
 详细内容见cluster1.yml
 
 添加node命令
-sudo docker run -d --privileged --restart=unless-stopped --net=host -v /etc/kubernetes:/etc/kubernetes -v /var/run:/var/run rancher/rancher-agent:v2.3.5 --server https://192.168.159.41 --token blhlzlvfjs8scddmsnq6hh5ctffd2z9hglh9t2bxfrbdwsb286qmgf --ca-checksum d7b892e2c588dc774ab6fc1d9f6878453f9ca622d45cfe5159754df16fd029e7 --etcd --controlplane --worker
+sudo docker run -d --privileged --restart=unless-stopped --net=host -v /etc/kubernetes:/etc/kubernetes -v /var/run:/var/run rancher/rancher-agent:v2.4.0 --server https://192.168.159.41 --token blhlzlvfjs8scddmsnq6hh5ctffd2z9hglh9t2bxfrbdwsb286qmgf --ca-checksum d7b892e2c588dc774ab6fc1d9f6878453f9ca622d45cfe5159754df16fd029e7 --etcd --controlplane --worker
 
 C 安装网络插件
 

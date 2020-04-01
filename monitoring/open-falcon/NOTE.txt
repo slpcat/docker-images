@@ -30,7 +30,7 @@ docker run -itd --name falcon-plus \
      --link=falcon-redis:redis.falcon \
      -p 8433:8433 \
      -p 8080:8080 \
-     -p 6030:6030
+     -p 6030:6030 \
      -e MYSQL_PORT=root:test123456@tcp\(db.falcon:3306\) \
      -e REDIS_PORT=redis.falcon:6379  \
      -v /home/work/open-falcon/data:/open-falcon/data \

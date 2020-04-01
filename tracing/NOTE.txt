@@ -1,0 +1,16 @@
+nginx-opentracing 简单使用
+nginx 的日常的应用开发中占比还是比较高的，opentracing 是一个分布式追踪标准
+相应是开源实现也比较多。nginx-opentracing 是一个opentracing nginx 的插件，让我们可以
+方便的进行服务的性能追踪，查看服务调用依赖
+
+例子使用官方demo，运行使用docker-compose
+
+项目准备
+git clone https://github.com/opentracing-contrib/nginx-opentracing.git
+构建demo项目
+cd nginx-opentracing/example/trivial/jaeger
+docker-compose build
+docker-compose up -d
+
+演示项目
+ https://github.com/rongfengliang/nginx-opentracing-demo

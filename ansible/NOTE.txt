@@ -13,3 +13,7 @@ ansible-galaxy install cloudalchemy.node-exporter
 ansible-galaxy install cloudalchemy.grafana
 
 ansible-galaxy install ansible-thoteam.nexus3-oss
+
+ansible UI
+
+ansible-semaphore, Ansible AWX

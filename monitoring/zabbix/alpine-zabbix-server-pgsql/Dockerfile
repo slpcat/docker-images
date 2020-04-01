@@ -1,6 +1,6 @@
 # Build a minimal distribution container
 # upstream https://github.com/gliderlabs/docker-alpine
-FROM zabbix/zabbix-server-pgsql:alpine-4.4.6
+FROM zabbix/zabbix-server-pgsql:alpine-4.4.7
 MAINTAINER 若虚 <slpcat@qq.com>
 
 # Container variables
@@ -27,16 +27,24 @@ RUN set -ex \
            su-exec \
            gzip \
            tar \
-           python \
-           py-pip \
            wget \
            openssh \
            curl \
-    && pip install requests \
     && echo "${TIMEZONE}" > /etc/TZ \
     && ln -sf /usr/share/zoneinfo/${TIMEZONE} /etc/localtime \
     # Network fix
     && echo 'hosts: files mdns4_minimal [NOTFOUND=return] dns mdns4' >> /etc/nsswitch.conf
+
+COPY pip.conf /etc/pip.conf
+
+#python2
+RUN \
+    apk add python  py-pip \
+    && pip install requests
+
+#python3
+RUN \
+    apk add python3
 
 COPY ssh_config /etc/ssh/ssh_config
 

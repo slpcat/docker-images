@@ -41,8 +41,11 @@ zabbix_server端监控主机数量过多的时候，Zabbix会出现严重的性�
 所以下面主要往以下几个优化方向考虑： 
 1. 通过增加代理的方式来进行收集数据 尽可能降低zabbix-server工作量，分担给zabbix-proxy
 2. 通过zabbix_agent主动往server/proxy端去发送数据
-3. 数据库采用timescaledb
-4. 历史数据存es集群或者订阅到kafka然后进入数据仓库
+3. 数据库采用时序数据库timescaledb
+4. 数据库使用分布式数据库tidb，CockroachDB 
+5. 历史数据存es集群或者订阅到kafka然后进入数据仓库
+6. 各种采集脚本使用单独的机器，不要在zabbix-server运行
+7. 监控项启用节流(throttling)
 
 zabbix模版
 https://github.com/monitoringartist/zabbix-community-repos
@@ -50,8 +53,6 @@ https://github.com/monitoringartist/zabbix-community-repos
 grafana dashboard
 https://github.com/alexanderzobnin/grafana-zabbix
 https://alexanderzobnin.github.io/grafana-zabbix
-
-
 
 第三方函数库及工具
 Zabbix 第三方工具列表。
@@ -138,7 +139,7 @@ docker run -d --restart=always --net=host --name zabbix-server \
 -v /data/zabbix-externalscripts:/usr/lib/zabbix/externalscripts \
 -v /data/zabbix-alertscripts:/usr/lib/zabbix/alertscripts \
 -v /data/zabbix-home:/var/lib/zabbix \
-slpcat/zabbix-server-pgsql:alpine-4.4.6
+slpcat/zabbix-server-pgsql:alpine-4.4.7
 
 web-ui
 docker run -d --restart=always --name zabbix-web \
@@ -146,7 +147,7 @@ docker run -d --restart=always --name zabbix-web \
 -e POSTGRES_DB=zabbix -e POSTGRES_USER=zabbix \
 -e POSTGRES_PASSWORD=pg_password -e PHP_TZ=Asia/Shanghai \
 -e ZBX_MAXEXECUTIONTIME=600 -e ZBX_MEMORYLIMIT=256M \
-slpcat/zabbix-web-nginx-pgsql:alpine-4.4.6
+slpcat/zabbix-web-nginx-pgsql:alpine-4.4.7
 
 proxy-mysql
 docker run -d --restart=always --net=host --name=zabbix-proxy \
@@ -169,7 +170,7 @@ docker run -d --restart=always --net=host --name=zabbix-proxy \
 -e ZBX_TRAPPERIMEOUT=300 -e ZBX_UNREACHABLEPERIOD=45 \
 -e ZBX_UNAVAILABLEDELAY=60 -e ZBX_UNREACHABLEDELAY=15 \
 -e ZBX_LOGSLOWQUERIES=3000 \
-slpcat/zabbix-proxy-mysql:alpine-4.4.6
+slpcat/zabbix-proxy-mysql:alpine-4.4.7
 
 proxy-pgsql (未实现)
 
@@ -193,7 +194,7 @@ docker run -d --restart=always --net=host --name=zabbix-proxy \
 -e ZBX_TRAPPERIMEOUT=300 -e ZBX_UNREACHABLEPERIOD=45 \
 -e ZBX_UNAVAILABLEDELAY=60 -e ZBX_UNREACHABLEDELAY=15 \
 -e ZBX_LOGSLOWQUERIES=3000 \
-zabbix/zabbix-proxy-pgsql:alpine-4.4.0
+zabbix/zabbix-proxy-pgsql:alpine-4.4.7
 
 美化相关：
 
