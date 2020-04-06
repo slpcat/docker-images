@@ -36,6 +36,9 @@ helm应用商店: chartmuseum,kubeapps
 ETL/CDC工具: DataX,Kettle,Sqoop,streamSets,Apache NiFi,Kafka Connect,Debezium,Waterdrop,databus,canal
 web服务器/容器: nginx-php,apache-php,tomcat,resin
 SQL数据库: mysql,percona,mariadb,postgresql,greenplum,MyRocks,Citus,mssql-linux
+SQL版本管理: Flyway
+mysql管理工具: Induction,Pinba,DB Ninja,DB Tools Manager,Dbeaver,SqlWave,MyWebSQL,Navicat,SQLyog,Sequel Pro,HeidiSQL,MyDB Studio,SQL Lite Manger,Database Master,Chive,phpMyAdmin
+Mongodb管理工具: Robo 3T/Robomongo,Navicat for MongoDB,MongoDB Compass 社区版,MongoBooster,Cluster control,NOSQLCLIENT,Mongo Management Studio,phpMoAdmin,Mongotron,Mongolime,Mongo-express,
 MPP DataBase: Teradata,Greenplum,Vertica,Impala,GPDB
 数据库中间件: proxySQL,ShardingSphere,MyCat,Vitess
 数据可视化: Superset,SQLPad,MetaBase,Franchise,Redash,ECharts,mapd-charting,highchart,d3.js,google chart,gephi,Sigma.js,Keylines,VivaGraph,ngraph,Linkurious,immerse,Mapv,deck.gl,DbVisualizer
@@ -49,7 +52,7 @@ API查询语言: GraphQL,prisma.io
 API管理和测试: API Fortress,MockApi,APIJSON,Postman,Tyk,Swagger,RAP2,YApi,Eolinker,DOClever,Apizza,EasyAPI,CrapApi,apidoc
 时间序列数据库: influxdb,opentsdb,m3db,Heroic,TimeScaleDB,KairosDB,DolphinDB,Druid,Graphite,pipelinedb
 消息队列/流存储: rabbitmq,memcacheq,rocketmq,rocketmq-console-ng,kafka,kafka-manager
-配置管理: zookeeper,zkui,qconf,etcd,apollo,disconf,spring-cloud-config
+配置管理: zookeeper,zkui,qconf,etcd,apollo,disconf,spring-cloud-config,nacos
 定时/任务管理: xxl-job,elasticjob,escalator
 聊天软件: Discourse,RocketChat
 培训管理: Canvas LMS,
@@ -57,7 +60,7 @@ API管理和测试: API Fortress,MockApi,APIJSON,Postman,Tyk,Swagger,RAP2,YApi,E
 门户平台: eXo Platform,
 自动化运维: puppet,cfengine,saltstack,SaltGUI,ansible,Ansible AWX,Anisble Tower
 集群管理: nomad,pke,rke,pipeline
-项目管理: jira,zentao,Redmine,Taiga,OpenProject,DotProject,Orangescrum 
+项目管理: jira,zentao,Redmine,Taiga,OpenProject,DotProject,Orangescrum,Bugzilla
 企业ERP: odoo,ADempiere,Apache OFBiz,Dolibarr,ERPNext,Metasfresh,Opentaps,WebERP,xTuple PostBooks
 开发环境SDK: golang,golang-gvm,oracle-jdk,oracle-jdk-maven
 配置管理与服务自动发现: consul,confd,containerpilot,registrator
@@ -67,8 +70,9 @@ API网关/反向代理/ingress: kong,konga,kong-dashboard,fabio,traefik,envoy,Ap
 FAAS: fission,fnproject,funktion,kubeless,nuclio,open-lambda,openfaas,openwhisk,vmware-dispatch,Claudia
 日志集群: elastic-stack(elasticsearch+cerebro+kibana),Elassandra
 日志采集: logstash,filebeat,logtail,log-pilot,logspout,auditbeat,hangout
-监控/APM: appdash,apm-server,Argus,bosun,cadvisor,cortex,heapster,kube-state-metrics,metrics-server,searchlight,prometheus,thanos,pinpoint,jaeger,zipkin,skywalking,kubewatch,searchlight,Molten,sensu,opencensus,opentelemetry,telegraf,zabbix,Honeycomb,Graphite,open-falcon,Elastic APM(原Opbeat),Xhprof/Xhgui,nightingale
+监控: ,Argus,bosun,cadvisor,cortex,heapster,kube-state-metrics,metrics-server,searchlight,prometheus,thanos,kubewatch,searchlight,Molten,sensu,telegraf,zabbix,Honeycomb,Graphite,open-falcon,Xhprof/Xhgui,nightingale,CAT（Central Application Tracking）
 动态性能追踪: bcc-tools,systemtap,sysdig
+APM/tracing: appdash,apm-server,pinpoint,jaeger,zipkin,skywalking,opentracing,opencensus,opentelemetry,Elastic APM(原Opbeat),Dapper(Google),StackDriver Trace (Google),鹰眼(taobao),谛听(盘古，阿里云云产品使用的Trace系统),云图(蚂蚁Trace系统),X-ray(aws),Datadog,AppDynamics,New Relic,ScienceLogic,SignalFx,Stackifya,Dynatrace,OneAPM,RichAPM,
 kubernetes集群安装/升级: kubespray
 Kubernetes发行版: Rancher,CoreOS Tectonic,Canonical Distribution of Kubernetes（CDK）,Heptio Kubernetes,Kontena Pharos,Pivotal 容器服务 (PKS),Red Hat OpenShift,Telekube,Microk8s,k3s,
 kubernetes可视化管理工具: kubernetes-dashboard,weavescope,kubebox,kubedash,kube-ops-view,cabin,wayne(360),KubeSphere,openshift,rancher
@@ -77,7 +81,9 @@ kubernetes扩容:virtual-kubelet,cluster-capacity,hpa-operator
 开发工具: Telepresence,Keel,Apollo,Deis Workflow,Kel,
 安全工具: anchore,clair,cert-manager,docker-bench-security,magic-namespace,notary,OpenSCAP,trireme,NeuVector,Deepfence,StackRox,Tenable,Cavirin,Kube-Bench,Sysdig Falco,Sysdig Secure,Kubesec.io;付费 Aquasec,flawcheck
 编排转换：kompose
-云管理软件: ManageIQ/CloudForms
+云管理软件(CMP): ManageIQ/CloudForms,腾讯蓝鲸(BlueKing),CODO,VMware vRealize Suite,AbiCloudi/Abiquo,Micro Focus,Scalr,RackSpace,RightCloud,RightScale,SaCa Aclome,新浪DCP,Cloudify,Mist.io,VirtEngine,openQRM,OpenNebula,Eucalyptus,天云SkyForm CMP,ZStack CMP,博云BeyondCMP,Cisco InterCloud,骞云SmartCMP,飞致云FIT2CLOUD,云霁CloudRes,浪潮OpsNow,行云管家,新钛云服TiOps,华讯CloudEagle，神州SmartCOP，九州云Animbus CMP，海云捷迅AWCloud，IBM MCMP,IBM Cloud Management，深信服云管平台,OpenNebula,Cloudability,Cloudyn Cloud Management,Dell Cloud Manager v11,BMC Cloud Management,HP Hybrid Cloud Management,CSC Agility Platform,优维EasyOps,
+云平台:OpenStack、CloudStack、Hadoop、Apache Mesos、基于Docker的kubernetes、swarm，微软System Center，AzureStack,EasyStack,CloudFoundry,CBSD,
+
 备份/恢复/迁移: mydumper,zkcopy,mongodb_consistent_backup, WAL-E
 PaaS:flynn,tsuru,service-catalog
 负载均衡: gimbal,metallb,porter,GLB Director,DPDK-LVS,Jupiter,Seesaw,LoadMaster by KEMP,HAProxy,Zevenet,PEN,Gobetween
@@ -92,7 +98,9 @@ https://github.com/thenaturalist/awesome-business-intelligence
 物联网开源平台: FIWARE
 机器学习: OpenNLP,Theano,Lasagne,TensorFlow,Keras,MXNet,PyTorch,Caffe,CNTK,Neon,arena
 
-PXE装机: fai-project
+蜜罐软件: Honeyd,Nepenthes,Honeytrap,HoneyBot,Opencanary,Kippo,T-Pot,Dionaea,MHN(Modern Honey Network),Conpot,HoneyDrive
+
+PXE装机: fai-project,Cobbler,kickstart
 集群pod调试: kubectl-debug
 
 kubernetes插件/增强: node-feature-discovery

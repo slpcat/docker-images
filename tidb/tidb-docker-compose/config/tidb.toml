@@ -19,7 +19,7 @@ socket = ""
 run-ddl = true
 
 # Schema lease duration, very dangerous to change only if you know what you do.
-lease = "45s"
+lease = "0"
 
 # When create table, split a separated region for it. It is recommended to
 # turn off this option if there will be a large number of tables created.
@@ -214,6 +214,14 @@ local-agent-host-port = ""
 [tikv-client]
 # Max gRPC connections that will be established with each tikv-server.
 grpc-connection-count = 16
+
+# After a duration of this time in seconds if the client doesn't see any activity it pings
+# the server to see if the transport is still alive.
+grpc-keepalive-time = 10
+
+# After having pinged for keepalive check, the client waits for a duration of Timeout in seconds
+# and if no activity is seen even after that the connection is closed.
+grpc-keepalive-timeout = 3
 
 # max time for commit command, must be twice bigger than raft election timeout.
 commit-timeout = "41s"

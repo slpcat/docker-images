@@ -1,0 +1,1 @@
+TiUP is a component manager for TiDB

@@ -19,3 +19,11 @@ Logging：传统的日志，提供精确的系统记录
 2019年11月，OpenTracing和OpenCensus正式不再维护(ReadOnly)
 在两年时间内提供对OpenTracing和OpenCensus的协议兼容
 
+https://opentelemetry.io/docs/collector/about/
+
+演示
+$ git clone git@github.com:open-telemetry/opentelemetry-collector.git; \
+    cd examples/demo; \
+    docker-compose up -d
+
+kubectl apply -f https://github.com/open-telemetry/opentelemetry-collector/blob/master/examples/k8s.yaml

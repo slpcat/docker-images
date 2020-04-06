@@ -12,4 +12,44 @@ https://github.com/Kong/kong-operator
 
 5.部署方式 kuma
 
-5.kong-dashboard配合ingress-kong主要用作展示，并非所有选项都可以修改配置
+6.部署方式 docker
+
+docker run -d --name kong-database \
+               --network=kong-net \
+               -p 9042:9042 \
+               cassandra:3
+
+docker run -d --name kong-database \
+               -p 5432:5432 \
+               -e "POSTGRES_USER=kong" \
+               -e "POSTGRES_DB=kong" \
+               -e "POSTGRES_PASSWORD=kong" \
+               -v "/data/kong-db:/var/lib/postgresql/data"
+               postgres:9.6
+
+docker run --rm \
+     -e "KONG_DATABASE=postgres" \
+     -e "KONG_PG_HOST=kong-database" \
+     -e "KONG_PG_PASSWORD=kong" \
+     -e "KONG_CASSANDRA_CONTACT_POINTS=kong-database" \
+     kong:2.0.2 kong migrations bootstrap
+
+
+docker run -d --name kong \
+     -e "KONG_DATABASE=postgres" \
+     -e "KONG_PG_HOST=kong-database" \
+     -e "KONG_PG_PASSWORD=kong" \
+     -e "KONG_CASSANDRA_CONTACT_POINTS=kong-database" \
+     -e "KONG_PROXY_ACCESS_LOG=/dev/stdout" \
+     -e "KONG_ADMIN_ACCESS_LOG=/dev/stdout" \
+     -e "KONG_PROXY_ERROR_LOG=/dev/stderr" \
+     -e "KONG_ADMIN_ERROR_LOG=/dev/stderr" \
+     -e "KONG_ADMIN_LISTEN=0.0.0.0:8001, 0.0.0.0:8444 ssl" \
+     -p 8000:8000 \
+     -p 8443:8443 \
+     -p 127.0.0.1:8001:8001 \
+     -p 127.0.0.1:8444:8444 \
+     kong:2.0.2
+
+
+7.kong-dashboard配合ingress-kong主要用作展示，并非所有选项都可以修改配置

@@ -2,6 +2,8 @@
 
 [![Build Status](https://travis-ci.org/pingcap/tidb-docker-compose.svg?branch=master)](https://travis-ci.org/pingcap/tidb-docker-compose)
 
+**WARNING: This is for testing only, DO NOT USE IN PRODUCTION!**
+
 ## Requirements
 
 * Docker >= 17.03
@@ -18,14 +20,82 @@ $ docker-compose up -d
 $ mysql -h 127.0.0.1 -P 4000 -u root
 ```
 
-* Access monitor at http://localhost:3000
-
-Default user/password: admin/admin
+* Access monitor at http://localhost:3000 (login with admin/admin if you want to modify grafana)
 
 * Access [tidb-vision](https://github.com/pingcap/tidb-vision) at http://localhost:8010
 
 * Access Spark Web UI at http://localhost:8080
   and access [TiSpark](https://github.com/pingcap/tispark) through spark://127.0.0.1:7077
+
+## Docker Swarm
+
+You can also use Docker Swarm to deploy a TiDB Platform cluster, and then you can scale the service using `docker stack` commands.
+
+```bash
+$ docker swarm init # if your docker daemon is not already part of a swarm
+$ mkdir -p data logs
+$ docker stack deploy tidb -c docker-swarm.yml
+$ mysql -h 127.0.0.1 -P 4000 -u root
+```
+
+After deploying the stack, you can scale the number of TiDB Server instances in the cluster like this:
+
+```bash
+$ docker service scale tidb_tidb=2
+```
+
+Docker Swarm automatically load-balances across the containers that implement a scaled service, which you can see if you execute `select @@hostname` several times:
+
+```bash
+$ mysql -h 127.0.0.1 -P 4000 -u root -te 'select @@hostname'
++--------------+
+| @@hostname   |
++--------------+
+| 340092e0ec9e |
++--------------+
+$ mysql -h 127.0.0.1 -P 4000 -u root -te 'select @@hostname'
++--------------+
+| @@hostname   |
++--------------+
+| e6f05ffe6274 |
++--------------+
+$ mysql -h 127.0.0.1 -P 4000 -u root -te 'select @@hostname'
++--------------+
+| @@hostname   |
++--------------+
+| 340092e0ec9e |
++--------------+
+```
+
+If you want to connect to specific backend instances, for example to test concurrency by ensuring that you are connecting to distinct instances of tidb-server, you can use the `docker service ps` command to assemble a hostname for each container:
+
+```bash
+$ docker service ps --no-trunc --format '{{.Name}}.{{.ID}}' tidb_tidb
+tidb_tidb.1.x3sc2sd66a88phsj103ohr6qq
+tidb_tidb.2.lk53apndq394cega46at853zw
+```
+
+To be able to resolve those hostnames, it's easiest to run the MySQL client in a container that has access to the swarm network:
+
+```bash
+$ docker run --rm --network=tidb_default arey/mysql-client -h tidb_tidb.1.x3sc2sd66a88phsj103ohr6qq -P 4000 -u root -t -e 'select @@version'
++-----------------------------------------+
+| @@version                               |
++-----------------------------------------+
+| 5.7.25-TiDB-v3.0.0-beta.1-40-g873d9514b |
++-----------------------------------------+
+```
+
+To loop through all instances of TiDB Server, you can use a bash loop like this:
+
+```bash
+for host in $(docker service ps --no-trunc --format '{{.Name}}.{{.ID}}' tidb_tidb)
+    do docker run --rm --network tidb_default arey/mysql-client \
+        -h "$host" -P 4000 -u root -te "select @@hostname"
+done
+```
+
+To stop all services and remove all containers in the TiDB stack, execute `docker stack rm tidb`.
 
 ## Customize TiDB Cluster
 
@@ -34,10 +104,12 @@ Default user/password: admin/admin
 * config/pd.toml is copied from [PD repo](https://github.com/pingcap/pd/tree/master/conf)
 * config/tikv.toml is copied from [TiKV repo](https://github.com/pingcap/tikv/tree/master/etc)
 * config/tidb.toml is copied from [TiDB repo](https://github.com/pingcap/tidb/tree/master/config)
+* config/pump.toml is copied from [TiDB-Binlog repo](https://github.com/pingcap/tidb-binlog/tree/master/cmd/pump)
+* config/drainer.toml is copied from [TiDB-Binlog repo](https://github.com/pingcap/tidb-binlog/tree/master/cmd/drainer)
 
 If you find these configuration files outdated or mismatch with TiDB version, you can copy these files from their upstream repos and change their metrics addr with `pushgateway:9091`. Also `max-open-files` are configured to `1024` in tikv.toml to simplify quick start on Linux, because setting up ulimit on Linux with docker is quite tedious.
 
-And config/*-dashboard.json are copied from [TiDB-Ansible repo](https://github.com/pingcap/tidb-ansible/tree/master/scripts)
+And config/\*-dashboard.json are copied from [TiDB-Ansible repo](https://github.com/pingcap/tidb-ansible/tree/master/scripts)
 
 You can customize TiDB cluster configuration by editing docker-compose.yml and the above config files if you know what you're doing.
 
@@ -62,13 +134,23 @@ $ vi compose/values.yaml # custom cluster size, docker image, port mapping etc
 $ helm template compose > generated-docker-compose.yaml
 $ docker-compose -f generated-docker-compose.yaml pull # Get the latest Docker images
 $ docker-compose -f generated-docker-compose.yaml up -d
+
+# If you want to Bring up TiDB cluster with Binlog support
+$ vi compose/values.yaml # set tidb.enableBinlog to true
+$ helm template compose > generated-docker-compose-binlog.yaml
+$ docker-compose -f generated-docker-compose-binlog.yaml up -d  # or you can use 'docker-compose-binlog.yml' file directly
+
+# Note: If the value of drainer.destDBType is "kafka" and 
+# you want to consume the kafka messages outside the docker containers,
+# please update the kafka.advertisedHostName with your docker host IP in compose/values.yaml and 
+# regenerate the 'generated-docker-compose-binlog.yaml' file
 ```
 
 You can build docker image yourself for development test.
 
 * Build from binary
 
-  For pd, tikv and tidb, comment their `image` and `buildPath` fields out. And then copy their binary files to pd/bin/pd-server, tikv/bin/tikv-server and tidb/bin/tidb-server.
+  For pd, tikv, tidb, pump and drainer comment their `image` and `buildPath` fields out. And then copy their binary files to pd/bin/pd-server, tikv/bin/tikv-server, tidb/bin/tidb-server, tidb-binlog/bin/pump and tidb-binlog/bin/drainer.
 
   These binary files can be built locally or downloaded from https://download.pingcap.org/tidb-latest-linux-amd64.tar.gz
 
@@ -150,7 +232,7 @@ Insert some sample data to the TiDB cluster:
 ```bash
 $ docker-compose exec tispark-master bash
 $ cd /opt/spark/data/tispark-sample-data
-$ mysql -h tidb -P 4000 -u root < dss.ddl
+$ mysql --local-infile=1 -h tidb -P 4000 -u root < dss.ddl
 ```
 
 After the sample data is loaded into the TiDB cluster, you can access Spark Shell by `docker-compose exec tispark-master /opt/spark/bin/spark-shell`.

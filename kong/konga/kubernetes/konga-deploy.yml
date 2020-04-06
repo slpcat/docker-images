@@ -77,7 +77,8 @@ spec:
             value: "1"
       containers:
       - name: konga
-        image: slpcat/konga
+        #image: slpcat/konga
+        image: pantsel/konga:0.14.7
         imagePullPolicy: Always
         env:
         - name: TOKEN_SECRET
