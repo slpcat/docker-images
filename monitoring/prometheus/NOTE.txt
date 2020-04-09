@@ -126,34 +126,57 @@ karma: alert dashboard
 
 https://github.com/prymitive/karma
 
-promettheus存储卷
+OpenMetrics
+https://openmetrics.io/
+https://github.com/OpenObservability
+文档：
+https://github.com/OpenObservability/OpenMetrics
+
+prometheus长期存储解决方案:
 
 https://prometheus.io/docs/operating/integrations/#remote-endpoints-and-storage
-无限数据存储的可伸缩Prometheus
-https://github.com/improbable-eng/thanos
 
-weave cortex
+1. opentsdb
 
+2. Uber m3db
 Uber开源了他们针对prometheus存储解决方案M3
 
 https://www.kubernetes.org.cn/3418.html
 https://www.kubernetes.org.cn/4438.html
 
-所有grafana详见
-grafana/
+3. thanos
+无限数据存储的可伸缩Prometheus
+https://github.com/improbable-eng/thanos
 
-数据存储与各种adapter
+4. weave cortex
+Cortex：多租户、可横向扩展的Prometheus即服务
+https://cortexmetrics.io/
+https://github.com/cortexproject/cortex
 
-opentsdb
-m3db
+5. clickhouse
 prome2click
+
+6. postgresql/timescaledb
+prometheus-timescaledb
+
+7. Elasticsearch
+
+8. Graphite
+
+9. TiKV
+
+10. VictoriaMetrics(荐)
+VictoriaMetrics is fast, cost-effective and scalable time-series database. 
+
+11. kafka pipeline 对接大数据平台
 prometheus-kafka-adapter
 https://github.com/Telefonica/prometheus-kafka-adapter
 
-prometheus-timescaledb
+
+所有grafana详见
+grafana/
 
 注意:与metrics-server 冲突
-
 
 docker run  -d \
    -p 9090:9090 \
