@@ -65,6 +65,9 @@ https://github.com/coreos/prometheus-operator
 
 监控安装
 3个组件: prometheus-operator k8s-prometheus-adapter custom-metrics-apiserver
+https://github.com/coreos/kube-prometheus
+production-v2 兼容rancher
+
 
 实践建议: 每个部门1-N个prometheus实例，监控本部门的所有服务/pod
 1.pod 内置exporter或者sidecar exporter 多个namespace
