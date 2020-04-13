@@ -15,6 +15,13 @@ rocketmq-exporter
 https://github.com/apache/rocketmq-exporter
 github.com/MyBook/zabbix-exporter
 
+GPU监控分为板卡维度和容器/进程维度
+NV原厂方案
+nvidia/dcgm-exporter
+pod-gpu-metrics-exporter
+阿里方案
+node-gpu-exporter
+
 监控Nginx主要用到以下三个模块：
 nginx-module-vts：Nginx virtual host traffic status module，Nginx的监控模块，能够提供JSON格式的数据产出。
 nginx-vts-exporter：Simple server that scrapes Nginx vts stats and exports them via HTTP for Prometheus consumption。主要用于收集Nginx的监控数据，并给Prometheus提供监控接口，默认端口号9913。
@@ -97,6 +104,10 @@ secret/cm-adapter-serving-certs created
 
 $ kubectl get secrets -n monitoring 
 kubectl apply -f ./production/custom-metrics-apiserver
+
+
+todo: 与rancher整合
+
 常用自定义水平扩容指标
 http_request_number, QPS每秒请求数
 http_response_time, 响应时间
