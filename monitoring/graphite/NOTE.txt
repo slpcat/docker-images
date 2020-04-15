@@ -1,1 +1,11 @@
 Graphite通常用于监控基础设施级别的度量，比如CPU、内存、I/O利用率、网络吞吐量和延迟，当然Graphite在应用程序级的度量和业务级的度量方面也很不错。
+
+docker run -d \
+ --name graphite \
+ --restart=always \
+ -p 80:80 \
+ -p 2003-2004:2003-2004 \
+ -p 2023-2024:2023-2024 \
+ -p 8125:8125/udp \
+ -p 8126:8126 \
+ graphiteapp/graphite-statsd
