@@ -24,6 +24,7 @@ ipvlan需要内核版本>=4.19
 
 代码仓库: gitlab-ce,gogs
 代码审核: gerrit
+代码品质管理: SonarQube
 编译器: numba
 docker基础镜像源：webdevops，bitnami,turnkey,distroless
 持续集成/发布: jenkins,jenkins-x,fabric8,spinnaker,gitlab-ci,drone,makisu,flagger,shipper,Hubot,Lita,Err,StackStorm,Netflix Winston
@@ -57,7 +58,6 @@ API管理和测试: API Fortress,MockApi,APIJSON,Postman,Tyk,Swagger,RAP2,YApi,E
 定时/任务管理: xxl-job,elasticjob,escalator
 聊天软件: Discourse,RocketChat
 培训管理: Canvas LMS,
-代码品质管理: SonarQube
 门户平台: eXo Platform,
 自动化运维: puppet,cfengine,saltstack,SaltGUI,ansible,Ansible AWX,Anisble Tower
 集群管理: nomad,pke,rke,pipeline
