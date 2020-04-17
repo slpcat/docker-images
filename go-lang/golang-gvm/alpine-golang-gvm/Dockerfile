@@ -1,6 +1,6 @@
 # Build a minimal distribution container
 # upstream https://github.com/gliderlabs/docker-alpine
-FROM alpine:3.8
+FROM alpine:3.11
 MAINTAINER 若虚 <slpcat@qq.com>
 
 # Container variables
@@ -9,7 +9,8 @@ ENV \
     LANG="en_US.UTF-8" \ 
     LANGUAGE="en_US.UTF-8" \
     LC_ALL="en_US.UTF-8" \
-    TIMEZONE="Asia/Shanghai"
+    TIMEZONE="Asia/Shanghai" \
+    GOPROXY="https://goproxy.io"
 
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/' /etc/apk/repositories
 

@@ -23,13 +23,17 @@ ipvlan需要内核版本>=4.19
 
 
 代码仓库: gitlab-ce,gogs
-代码审核: gerrit
+代码审核: gerrit,crucible
 代码品质管理: SonarQube
-编译器: numba
+
+编译器: numba,Emscripten
 docker基础镜像源：webdevops，bitnami,turnkey,distroless
+
 持续集成/发布: jenkins,jenkins-x,fabric8,spinnaker,gitlab-ci,drone,makisu,flagger,shipper,Hubot,Lita,Err,StackStorm,Netflix Winston
 测试: chaos-monkey,chaoskube,k8s-testsuite,test-infra,sonobuoy,PowerfulSeal,twemperf(memcached),locust，selenium
-artifactory仓库: nexus2,nexus3,harbor,registry,quay
+artifactory仓库: nexus2,nexus3,harbor,registry,quay,jfrog
+
+跳板机/堡垒机: jumpserver
 helm应用商店: chartmuseum,kubeapps
 分布式存储: ceph,minio,openebs,glusterfs,EdgeFS
 大数据集群: hadoop(hdfs+yarn),hbase,spark,flink,Drill
@@ -75,11 +79,13 @@ FAAS: fission,fnproject,funktion,kubeless,nuclio,open-lambda,openfaas,openwhisk,
 监控: ,Argus,bosun,cadvisor,cortex,heapster,kube-state-metrics,metrics-server,searchlight,prometheus,thanos,kubewatch,searchlight,Molten,sensu,telegraf,zabbix,Honeycomb,Graphite,open-falcon,Xhprof/Xhgui,nightingale,CAT（Central Application Tracking）
 动态性能追踪: bcc-tools,systemtap,sysdig
 APM/tracing: appdash,apm-server,pinpoint,jaeger,zipkin,skywalking,opentracing,opencensus,opentelemetry,Elastic APM(原Opbeat),Dapper(Google),StackDriver Trace (Google),鹰眼(taobao),谛听(盘古，阿里云云产品使用的Trace系统),云图(蚂蚁Trace系统),X-ray(aws),Datadog,AppDynamics,New Relic,ScienceLogic,SignalFx,Stackifya,Dynatrace,OneAPM,RichAPM,
+
 kubernetes集群安装/升级: kubespray
 Kubernetes发行版: Rancher,CoreOS Tectonic,Canonical Distribution of Kubernetes（CDK）,Heptio Kubernetes,Kontena Pharos,Pivotal 容器服务 (PKS),Red Hat OpenShift,Telekube,Microk8s,k3s,
 kubernetes可视化管理工具: kubernetes-dashboard,weavescope,kubebox,kubedash,kube-ops-view,cabin,wayne(360),KubeSphere,openshift,rancher
 kubernetes灾难恢复: ark
 kubernetes扩容:virtual-kubelet,cluster-capacity,hpa-operator
+
 开发工具: Telepresence,Keel,Apollo,Deis Workflow,Kel,
 安全工具: anchore,clair,cert-manager,docker-bench-security,magic-namespace,notary,OpenSCAP,trireme,NeuVector,Deepfence,StackRox,Tenable,Cavirin,Kube-Bench,Sysdig Falco,Sysdig Secure,Kubesec.io;付费 Aquasec,flawcheck
 编排转换：kompose
