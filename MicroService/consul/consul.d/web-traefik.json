@@ -1,0 +1,36 @@
+{
+  "service": {
+    "Name": "webdemo",
+    "Tags": [
+      "primary",
+      "traefik.enable=true",
+      "traefik.frontend.entryPoints=http,https",
+      "traefik.protocol=http",
+      "traefik.backend.weight=10",
+      "traefik.backend.circuitbreaker=NetworkErrorRatio() > 0.5",
+      "traefik.backend.loadbalancer=drr",
+      "traefik.backend.maxconn.amount=10",
+      "traefik.backend.maxconn.extractorfunc=client.ip",
+      "traefik.frontend.passHostHeader=true",
+      "traefik.frontend.priority=10",
+      "traefik.frontend.rule=Host:example.com",
+      "traefik.frontend.rule=PathPrefix:/",
+      "traefik.frontends.A.rule=Host:A:PathPrefix:/A",
+      "traefik.frontends.B.rule=Host:B:PathPrefix:/"
+    ],
+    "Port": 8080,
+    "token": "881cfb69-2bcd-c2a9-d87c-cb79fc454df9",
+    "Meta": {
+      "web_version": "1.0"
+    },
+    "Check": {
+      "DeregisterCriticalServiceAfter": "90m",
+      "HTTP": "http://localhost:8080/metrics",
+      "Interval": "10s"
+    },
+    "Weights": {
+      "Passing": 10,
+      "Warning": 1
+    }
+  }
+}

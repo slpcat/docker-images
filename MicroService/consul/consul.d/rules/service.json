@@ -1,0 +1,9 @@
+service_prefix "" {
+  policy = "read"
+}
+service "app" {
+  policy = "write"
+}
+service "admin" {
+  policy = "deny"
+}

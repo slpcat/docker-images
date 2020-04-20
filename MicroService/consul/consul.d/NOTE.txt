@@ -1,0 +1,14 @@
+consul ACL安全策略(policy)
+1.所有未认证行为都被拒绝
+2.client使用token注册node 并且只能注册自己的主机名，建议为每个node单独指定
+service注册
+3.dns发现，可以列出本节点客户端允许的service 建议为每个service单独指定
+4.cli权限 默认拒绝，使用token访问
+5.ui权限 默认拒绝，使用token访问
+规则对象有：agent、event、key、keyring、node、operator、query、service、session。规则权限有：read、write、deny
+常用token列表
+常用policy列表
+list-all-nodes
+list-all-services
+
+https://www.consul.io/docs/acl/acl-rules.html

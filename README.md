@@ -62,6 +62,7 @@ API管理和测试: API Fortress,MockApi,APIJSON,Postman,Tyk,Swagger,RAP2,YApi,E
 定时/任务管理: xxl-job,elasticjob,escalator
 聊天软件: Discourse,RocketChat
 培训管理: Canvas LMS,
+业务流程管理（BPM): Activiti,Alfresco,SnakerFlow
 门户平台: eXo Platform,
 自动化运维: puppet,cfengine,saltstack,SaltGUI,ansible,Ansible AWX,Anisble Tower
 集群管理: nomad,pke,rke,pipeline
@@ -82,7 +83,7 @@ APM/tracing: appdash,apm-server,pinpoint,jaeger,zipkin,skywalking,opentracing,op
 
 kubernetes集群安装/升级: kubespray
 Kubernetes发行版: Rancher,CoreOS Tectonic,Canonical Distribution of Kubernetes（CDK）,Heptio Kubernetes,Kontena Pharos,Pivotal 容器服务 (PKS),Red Hat OpenShift,Telekube,Microk8s,k3s,
-kubernetes可视化管理工具: kubernetes-dashboard,weavescope,kubebox,kubedash,kube-ops-view,cabin,wayne(360),KubeSphere,openshift,rancher
+kubernetes可视化管理工具: kubernetes-dashboard,weavescope,kubebox,kubedash,kube-ops-view,cabin,wayne(360),KubeSphere,openshift,rancher,Kuboard
 kubernetes灾难恢复: ark
 kubernetes扩容:virtual-kubelet,cluster-capacity,hpa-operator
 

@@ -1,4 +1,18 @@
 ---
+# Source: cilium/charts/agent/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: cilium
+  namespace: kube-system
+---
+# Source: cilium/charts/operator/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: cilium-operator
+  namespace: kube-system
+---
 # Source: cilium/charts/config/templates/configmap.yaml
 apiVersion: v1
 kind: ConfigMap
@@ -6,21 +20,6 @@ metadata:
   name: cilium-config
   namespace: kube-system
 data:
-  # The kvstore configuration is used to enable use of a kvstore for state
-  # storage. This can either be provided with an external kvstore or with the
-  # help of cilium-etcd-operator which operates an etcd cluster automatically.
-  kvstore: etcd
-  kvstore-opt: '{"etcd.config": "/var/lib/etcd-config/etcd.config"}'
-
-  # This etcd-config contains the etcd endpoints of your cluster. If you use
-  # TLS please make sure you follow the tutorial in https://cilium.link/etcd-config
-  etcd-config: |-
-    ---
-    endpoints:
-      - https://cilium-etcd-client.kube-system.svc:2379
-    trusted-ca-file: '/var/lib/etcd-secrets/etcd-client-ca.crt'
-    key-file: '/var/lib/etcd-secrets/etcd-client.key'
-    cert-file: '/var/lib/etcd-secrets/etcd-client.crt'
 
   # Identity allocation mode selects how identities are shared between cilium
   # nodes by setting how they are stored. The options are "crd" or "kvstore".
@@ -103,11 +102,10 @@ data:
   #   - disabled
   #   - vxlan (default)
   #   - geneve
-  tunnel: disabled
+  tunnel: vxlan
 
   # Name of the cluster. Only relevant when building a mesh of clusters.
-  cluster-name: "default"
-  cluster-id: "1"
+  cluster-name: default
 
   # DNS Polling periodically issues a DNS lookup for each `matchName` from
   # cilium-agent. The result is used to regenerate endpoint policy.
@@ -133,48 +131,19 @@ data:
   # wait-bpf-mount makes init container wait until bpf filesystem is mounted
   wait-bpf-mount: "false"
 
-  masquerade: "false"
-  datapath-mode: ipvlan
-  ipvlan-master-device: eth0
+  masquerade: "true"
   enable-xt-socket-fallback: "true"
-  enable-l7-proxy: "false"
-  install-iptables-rules: "false"
+  install-iptables-rules: "true"
   auto-direct-node-routes: "false"
-  kube-proxy-replacement:  "disabled"
+  kube-proxy-replacement:  "probe"
   enable-host-reachable-services: "false"
   enable-external-ips: "false"
   enable-node-port: "false"
-  enable-well-known-identities: "true"
+  enable-auto-protect-node-port-range: "true"
+  # Chaining mode is set to portmap, enable health checking
+  enable-endpoint-health-checking: "true"
+  enable-well-known-identities: "false"
   enable-remote-node-identity: "true"
-
----
-# Source: cilium/charts/agent/templates/serviceaccount.yaml
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: cilium
-  namespace: kube-system
----
-# Source: cilium/charts/managed-etcd/templates/cilium-etcd-operator-serviceaccount.yaml
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: cilium-etcd-operator
-  namespace: kube-system
----
-# Source: cilium/charts/managed-etcd/templates/etcd-operator-serviceaccount.yaml
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: cilium-etcd-sa
-  namespace: kube-system
----
-# Source: cilium/charts/operator/templates/serviceaccount.yaml
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: cilium-operator
-  namespace: kube-system
 ---
 # Source: cilium/charts/agent/templates/clusterrole.yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -252,133 +221,6 @@ rules:
   verbs:
   - '*'
 ---
-# Source: cilium/charts/managed-etcd/templates/cilium-etcd-operator-clusterrole.yaml
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  name: cilium-etcd-operator
-rules:
-- apiGroups:
-  - etcd.database.coreos.com
-  resources:
-  - etcdclusters
-  verbs:
-  - get
-  - delete
-  - create
-  - update
-- apiGroups:
-  - apiextensions.k8s.io
-  resources:
-  - customresourcedefinitions
-  verbs:
-  - delete
-  - get
-  - create
-- apiGroups:
-  - ""
-  resources:
-  - deployments
-  verbs:
-  - delete
-  - create
-  - get
-  - update
-- apiGroups:
-  - ""
-  resources:
-  - pods
-  verbs:
-  - list
-  - get
-  - delete
-- apiGroups:
-  - apps
-  resources:
-  - deployments
-  verbs:
-  - delete
-  - create
-  - get
-  - update
-- apiGroups:
-  - ""
-  resources:
-  - componentstatuses
-  verbs:
-  - get
-- apiGroups:
-  - extensions
-  resources:
-  - deployments
-  verbs:
-  - delete
-  - create
-  - get
-  - update
-- apiGroups:
-  - ""
-  resources:
-  - secrets
-  verbs:
-  - get
-  - create
-  - delete
----
-# Source: cilium/charts/managed-etcd/templates/etcd-operator-clusterrole.yaml
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  name: etcd-operator
-rules:
-- apiGroups:
-  - etcd.database.coreos.com
-  resources:
-  - etcdclusters
-  - etcdbackups
-  - etcdrestores
-  verbs:
-  - '*'
-- apiGroups:
-  - apiextensions.k8s.io
-  resources:
-  - customresourcedefinitions
-  verbs:
-  - '*'
-- apiGroups:
-  - ""
-  resources:
-  - pods
-  - services
-  - endpoints
-  - persistentvolumeclaims
-  - events
-  - deployments
-  verbs:
-  - '*'
-- apiGroups:
-  - apps
-  resources:
-  - deployments
-  verbs:
-  - '*'
-- apiGroups:
-  - extensions
-  resources:
-  - deployments
-  verbs:
-  - create
-  - get
-  - list
-  - patch
-  - update
-- apiGroups:
-  - ""
-  resources:
-  - secrets
-  verbs:
-  - get
----
 # Source: cilium/charts/operator/templates/clusterrole.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -448,34 +290,6 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: cilium
-  namespace: kube-system
----
-# Source: cilium/charts/managed-etcd/templates/cilium-etcd-operator-clusterrolebinding.yaml
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  name: cilium-etcd-operator
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: cilium-etcd-operator
-subjects:
-- kind: ServiceAccount
-  name: cilium-etcd-operator
-  namespace: kube-system
----
-# Source: cilium/charts/managed-etcd/templates/etcd-operator-clusterrolebinding.yaml
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  name: etcd-operator
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: etcd-operator
-subjects:
-- kind: ServiceAccount
-  name: cilium-etcd-sa
   namespace: kube-system
 ---
 # Source: cilium/charts/operator/templates/clusterrolebinding.yaml
@@ -582,7 +396,7 @@ spec:
               key: custom-cni-conf
               name: cilium-config
               optional: true
-        image: "docker.io/cilium/cilium:v1.7.1"
+        image: "docker.io/cilium/cilium:v1.7.2"
         imagePullPolicy: IfNotPresent
         lifecycle:
           postStart:
@@ -610,12 +424,6 @@ spec:
           name: cni-path
         - mountPath: /host/etc/cni/net.d
           name: etc-cni-netd
-        - mountPath: /var/lib/etcd-config
-          name: etcd-config-path
-          readOnly: true
-        - mountPath: /var/lib/etcd-secrets
-          name: etcd-secrets
-          readOnly: true
         - mountPath: /var/lib/cilium/clustermesh
           name: clustermesh-secrets
           readOnly: true
@@ -628,9 +436,6 @@ spec:
           readOnly: true
         - mountPath: /run/xtables.lock
           name: xtables-lock
-      # In managed etcd mode, Cilium must be able to resolve the DNS name of
-      # the etcd service
-      dnsPolicy: ClusterFirstWithHostNet
       hostNetwork: true
       initContainers:
       - command:
@@ -654,7 +459,7 @@ spec:
               key: wait-bpf-mount
               name: cilium-config
               optional: true
-        image: "docker.io/cilium/cilium:v1.7.1"
+        image: "docker.io/cilium/cilium:v1.7.2"
         imagePullPolicy: IfNotPresent
         name: clean-cilium-state
         securityContext:
@@ -705,20 +510,6 @@ spec:
           path: /run/xtables.lock
           type: FileOrCreate
         name: xtables-lock
-        # To read the etcd config stored in config maps
-      - configMap:
-          defaultMode: 420
-          items:
-          - key: etcd-config
-            path: etcd.config
-          name: cilium-config
-        name: etcd-config-path
-        # To read the k8s etcd secrets in case the user might want to use TLS
-      - name: etcd-secrets
-        secret:
-          defaultMode: 420
-          optional: true
-          secretName: cilium-etcd-secrets
         # To read the clustermesh configuration
       - name: clustermesh-secrets
         secret:
@@ -733,78 +524,6 @@ spec:
     rollingUpdate:
       maxUnavailable: 2
     type: RollingUpdate
----
-# Source: cilium/charts/managed-etcd/templates/cilium-etcd-operator-deployment.yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  labels:
-    io.cilium/app: etcd-operator
-    name: cilium-etcd-operator
-  name: cilium-etcd-operator
-  namespace: kube-system
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      io.cilium/app: etcd-operator
-      name: cilium-etcd-operator
-  strategy:
-    rollingUpdate:
-      maxSurge: 1
-      maxUnavailable: 1
-    type: RollingUpdate
-  template:
-    metadata:
-      labels:
-        io.cilium/app: etcd-operator
-        name: cilium-etcd-operator
-    spec:
-      containers:
-      - args:
-        #- --etcd-node-selector=disktype=ssd,cputype=high
-        command:
-        - /usr/bin/cilium-etcd-operator
-        env:
-        - name: CILIUM_ETCD_OPERATOR_CLUSTER_DOMAIN
-          value: "cluster.local"
-        - name: CILIUM_ETCD_OPERATOR_CLUSTER_NAME
-          value: "cilium-etcd"
-        - name: CILIUM_ETCD_OPERATOR_IMAGE
-          value: "docker.io/slpcat/etcd-operator:v0.9.4"
-        - name: CILIUM_ETCD_OPERATOR_ETCD_CLUSTER_SIZE
-          value: "3"
-        - name: CILIUM_ETCD_OPERATOR_ETCD_VERSION
-          value: "3.3.12"
-        - name: CILIUM_ETCD_OPERATOR_NAMESPACE
-          valueFrom:
-            fieldRef:
-              apiVersion: v1
-              fieldPath: metadata.namespace
-        - name: CILIUM_ETCD_OPERATOR_POD_NAME
-          valueFrom:
-            fieldRef:
-              apiVersion: v1
-              fieldPath: metadata.name
-        - name: CILIUM_ETCD_OPERATOR_POD_UID
-          valueFrom:
-            fieldRef:
-              apiVersion: v1
-              fieldPath: metadata.uid
-        - name: CILIUM_ETCD_META_ETCD_AUTO_COMPACTION_MODE
-          value: "revision"
-        - name: CILIUM_ETCD_META_ETCD_AUTO_COMPACTION_RETENTION
-          value: "25000"
-        image: "docker.io/cilium/cilium-etcd-operator:v2.0.7"
-        imagePullPolicy: IfNotPresent
-        name: cilium-etcd-operator
-      dnsPolicy: ClusterFirst
-      hostNetwork: true
-      restartPolicy: Always
-      serviceAccount: cilium-etcd-operator
-      serviceAccountName: cilium-etcd-operator
-      tolerations:
-      - operator: Exists
 ---
 # Source: cilium/charts/operator/templates/deployment.yaml
 apiVersion: apps/v1
@@ -917,7 +636,7 @@ spec:
               key: identity-allocation-mode
               name: cilium-config
               optional: true
-        image: "docker.io/cilium/operator:v1.7.1"
+        image: "docker.io/cilium/operator:v1.7.2"
         imagePullPolicy: IfNotPresent
         name: cilium-operator
         livenessProbe:
@@ -929,32 +648,7 @@ spec:
           initialDelaySeconds: 60
           periodSeconds: 10
           timeoutSeconds: 3
-        volumeMounts:
-        - mountPath: /var/lib/etcd-config
-          name: etcd-config-path
-          readOnly: true
-        - mountPath: /var/lib/etcd-secrets
-          name: etcd-secrets
-          readOnly: true
       hostNetwork: true
-      # In managed etcd mode, Cilium must be able to resolve the DNS name of
-      # the etcd service
-      dnsPolicy: ClusterFirstWithHostNet
       restartPolicy: Always
       serviceAccount: cilium-operator
       serviceAccountName: cilium-operator
-      volumes:
-      # To read the etcd config stored in config maps
-      - configMap:
-          defaultMode: 420
-          items:
-          - key: etcd-config
-            path: etcd.config
-          name: cilium-config
-        name: etcd-config-path
-        # To read the k8s etcd secrets in case the user might want to use TLS
-      - name: etcd-secrets
-        secret:
-          defaultMode: 420
-          optional: true
-          secretName: cilium-etcd-secrets

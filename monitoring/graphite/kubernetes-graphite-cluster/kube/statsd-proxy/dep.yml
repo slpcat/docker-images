@@ -1,0 +1,25 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: {{APP_NAME}}
+spec:
+  replicas: {{REPLICAS}}
+  template:
+    metadata:
+      labels:
+        component: graphite
+        app: {{APP_NAME}}
+    spec:
+      containers:
+        - name: {{APP_NAME}}
+          image: {{IMAGE_NAME}}
+          resources:
+            requests:
+              cpu: 600m
+              memory: 256Mi
+          ports:
+          - containerPort: 8125
+            name: incoming-udp
+            protocol: UDP
+      serviceAccountName: graphite-cluster-sa
+      {{ADDITIONAL_YAML}}

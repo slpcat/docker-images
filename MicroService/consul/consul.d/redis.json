@@ -1,0 +1,23 @@
+{
+  "service": {
+    "Name": "redis",
+    "Tags": [
+      "primary",
+      "v1"
+    ],
+    "Port": 6379,
+    "token": "881cfb69-2bcd-c2a9-d87c-cb79fc454df9",
+    "Meta": {
+      "redis_version": "4.0"
+    },
+    "Check": {
+      "DeregisterCriticalServiceAfter": "90m",
+      "Args": ["/etc/consul.d/scripts/check_redis.sh"],
+      "Interval": "10s"
+    },
+    "Weights": {
+      "Passing": 10,
+      "Warning": 1
+    }
+  }
+}

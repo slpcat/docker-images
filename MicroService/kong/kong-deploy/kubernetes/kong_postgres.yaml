@@ -19,6 +19,24 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  name: kong-proxy-grpc
+  namespace: kong
+spec:
+  type: NodePort
+  #loadBalancerSourceRanges:
+  #- 0.0.0.0/0
+  ports:
+  - name: kong-proxy-grpc
+    port: 9080
+    targetPort: 9080
+    protocol: TCP
+  selector:
+    app: kong
+
+---
+apiVersion: v1
+kind: Service
+metadata:
   name: kong-proxy-ssl
   namespace: kong
 spec:
@@ -200,7 +218,7 @@ spec:
           - name: KONG_NGINX_WORKER_CONNECTIONS
             value: "20000"
           - name: KONG_PROXY_LISTEN
-            value: "0.0.0.0:8000, 0.0.0.0:8443 ssl http2"
+            value: "0.0.0.0:8000, 0.0.0.0:9080 http2, 0.0.0.0:8443 ssl http2"
           #log collector with aliyun log-pilot
           - name: aliyun_logs_kong
             value: "stdout"
@@ -210,6 +228,9 @@ spec:
           protocol: TCP
         - name: proxy
           containerPort: 8000
+          protocol: TCP
+        - name: proxy-grpc
+          containerPort: 9080
           protocol: TCP
         - name: proxy-ssl
           containerPort: 8443

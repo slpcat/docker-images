@@ -1,0 +1,24 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: {{APP_NAME}}
+spec:
+  replicas: {{REPLICAS}}
+  template:
+    metadata:
+      labels:
+        component: graphite
+        app: {{APP_NAME}}
+    spec:
+      containers:
+        - name: {{APP_NAME}}
+          image: {{IMAGE_NAME}}
+          resources:
+            requests:
+              cpu: 300m
+              memory: 512Mi
+          ports:
+          - containerPort: 80
+            name: http
+            protocol: TCP
+      serviceAccountName: graphite-cluster-sa

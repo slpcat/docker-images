@@ -1,0 +1,45 @@
+apiVersion: apps/v1beta1
+kind: StatefulSet
+metadata:
+  name: {{APP_NAME}}
+spec:
+  serviceName: {{APP_NAME}}
+  podManagementPolicy: Parallel
+  replicas: {{REPLICAS}}
+  template:
+    metadata:
+      labels:
+        component: graphite
+        app: {{APP_NAME}}
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: {{APP_NAME}}
+        image: {{IMAGE_NAME}}
+        env:
+          - name: CURATOR_RETENTION
+            value: "{{CURATOR_RETENTION}}"
+        resources:
+          requests:
+            cpu: 700m
+            memory: 6Gi
+        ports:
+        - containerPort: 80
+          name: http
+          protocol: TCP
+        - containerPort: 2004
+          name: pickle
+          protocol: TCP
+        volumeMounts:
+        - name: graphite-node-pv
+          mountPath: /opt/graphite/storage/whisper
+      {{ADDITIONAL_YAML}}
+  volumeClaimTemplates:
+  - metadata:
+      name: graphite-node-pv
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: "{{STORAGE_CLASS}}"
+      resources:
+        requests:
+          storage: "{{DISK_SIZE}}"

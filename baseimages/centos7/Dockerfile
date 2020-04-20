@@ -11,7 +11,7 @@ ENV \
     LC_ALL="en_US.UTF-8" \
     TIMEZONE="Asia/Shanghai"
 
-COPY epel.repo /etc/yum.repos.d/
+COPY yum.repos.d/*.repo /etc/yum.repos.d/
 
 # set timezone
 RUN ln -sf /usr/share/zoneinfo/${TIMEZONE} /etc/localtime

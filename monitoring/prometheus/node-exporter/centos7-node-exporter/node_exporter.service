@@ -1,0 +1,11 @@
+[Unit]
+Description=Prometheus node_exporter
+[Service]
+#User=nobody
+ExecStart=/usr/local/bin/node_exporter --log.level=error
+ExecStop=/usr/bin/killall node_exporter
+MemoryLimit=300M #限制内存使用最多300M
+CPUQuota=100% #限制CPU使用最多一个核
+ 
+[Install]
+WantedBy=default.target

@@ -133,13 +133,13 @@ data:
   # wait-bpf-mount makes init container wait until bpf filesystem is mounted
   wait-bpf-mount: "false"
 
-  masquerade: "false"
+  masquerade: "true"
   datapath-mode: ipvlan
   ipvlan-master-device: eth0
   enable-xt-socket-fallback: "true"
   enable-l7-proxy: "false"
   install-iptables-rules: "false"
-  auto-direct-node-routes: "false"
+  auto-direct-node-routes: "true"
   kube-proxy-replacement:  "disabled"
   enable-host-reachable-services: "false"
   enable-external-ips: "false"

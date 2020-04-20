@@ -1,0 +1,28 @@
+#!/bin/bash
+
+export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+trap "exit 0" SIGTERM SIGINT SIGHUP SIGQUIT SIGKILL
+
+if [[ ${KUBE_PROXY_NOOP} -eq 1 ]];then
+  clean-install netcat
+  
+  # mimic healthz server
+  while true; do
+    DATE="$(date -u "+%F %T.%N %z %Z m=+")$(perl -w -MTime::HiRes=clock_gettime,CLOCK_MONOTONIC -E 'say clock_gettime(CLOCK_MONOTONIC)')"
+    CONTENT="{\"lastUpdated\": \"${DATE}\",\"currentTime\": \"${DATE}\"}"
+    cat << EOF | perl -pe 'chomp if eof' | nc -s 127.0.0.1 -lp 10256 -q 1
+HTTP/1.1 200 OK$(printf "\r")
+Content-Type: application/json$(printf "\r")
+X-Content-Type-Options: nosniff$(printf "\r")
+Date: $(date -u)$(printf "\r")
+Content-Length: $((${#CONTENT}+0))$(printf "\r")
+$(printf "\r")
+${CONTENT}
+EOF
+
+  done
+else
+  # /usr/local/bin/kube-proxy
+  exec kube-proxy "$@"
+fi

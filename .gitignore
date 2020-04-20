@@ -1,17 +1,20 @@
 *.bin
 */www_root/
 *.rpm
+*.deb
+*.apk
 
 # Package Files #
 *.jar
 *.war
 *.ear
 *.zip
-*.tar.gz
+*.tar
+*.gz
+*.xz
+*.bz2
 *.rar
 
 *.log
 *.temp
-
-*.apk
 

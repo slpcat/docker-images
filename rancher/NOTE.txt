@@ -27,7 +27,7 @@ cluster-id 唯一
 A 安装Rancher服务端
 https://rancher.com/docs/rancher/v2.x/en/quick-start-guide/deployment/quickstart-manual-setup/#1-provision-a-linux-host
 
-docker run -d --restart=always -v /data/rancher:/var/lib/rancher/ -p 80:80 -p 443:443 rancher/rancher:v2.4.0
+docker run -d --restart=always -v /data/rancher:/var/lib/rancher/ -p 80:80 -p 443:443 rancher/rancher:v2.4.2
 高可用安装需要独立kubernetes集群和负载均衡器
 
 B 创建kubernetes集群
@@ -115,6 +115,9 @@ EOF
 配置样本
 cilium-bgp-ipvlan-l3s-etcd-v1.7.0.yml
 
+
+6.禁止自带network plugin,cilium提供网络直接路由，其他功能替换为cilium v1.7 启用etcd功能,network policy
+
 D 使用cilium实现ClusterMesh
 https://cilium.readthedocs.io/en/stable/gettingstarted/clustermesh/
 
@@ -148,3 +151,13 @@ helm template cilium/cilium --version 1.7.0 \
 
 debian10  
 update-alternatives --config iptables
+
+替换kube-proxy
+https://github.com/rancher/rke/issues/1432
+
+rancher 主机驱动
+https://github.com/lnxbil/docker-machine-driver-proxmox-ve
+
+https://github.com/AliyunContainerService/docker-machine-driver-aliyunecs
+
+

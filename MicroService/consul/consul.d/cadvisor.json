@@ -1,0 +1,25 @@
+{
+  "service": {
+    "Name": "cadvisor",
+    "Tags": [
+      "prometheus-target",
+      "primary",
+      "v1"
+    ],
+    "Port": 8080,
+    "token": "aabbccdd",
+    "Meta": {
+      "cadvisor_version": "1.0"
+    },
+    "Check": {
+      "DeregisterCriticalServiceAfter": "90m",
+      "HTTP": "http://localhost:800/metrics",
+      "Interval": "10s"
+    },
+    "Weights": {
+      "Passing": 10,
+      "Warning": 1
+    }
+  }
+}
+

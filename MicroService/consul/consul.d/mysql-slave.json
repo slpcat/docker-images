@@ -1,0 +1,18 @@
+{
+  "services": [
+    {
+      "name": "ro-mysql",
+      "tags": [
+        "mysql-slave"
+      ],
+      "port": 3306,
+      "token": "881cfb69-2bcd-c2a9-d87c-cb79fc454df9",
+      "checks": [
+        {
+          "script": "/etc/consul.d/scripts/check_mysql_slave.sh 3306",
+          "interval": "15s"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+node_prefix "" {
+  policy = "read"
+}
+node "app" {
+  policy = "write"
+}
+node "admin" {
+  policy = "deny"
+}

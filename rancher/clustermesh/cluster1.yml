@@ -83,8 +83,6 @@ rancher_kubernetes_engine_config:
     plugin: none
   restore:
     restore: false
-  rotate_certificates:
-    ca_certificates: false
 # 
 #    services:
 #      kube-api:
@@ -182,7 +180,7 @@ rancher_kubernetes_engine_config:
         v: '2'
         volume-stats-agg-period: 1m0s
       fail_swap_on: false
-      generate_serving_certificate: false
+      generate_serving_certificate: true
     kubeproxy:
       extra_args:
         conntrack-max-per-core: '262144'
@@ -195,13 +193,12 @@ rancher_kubernetes_engine_config:
         kube-api-qps: '10'
         proxy-mode: ipvs
         v: '2'
-      image: 'slpcat/hyperkube:v1.17.3'
     scheduler: {}
   ssh_agent_auth: false
   upgrade_strategy:
     drain: false
     max_unavailable_controlplane: '1'
-    max_unavailable_worker: 10%
+    max_unavailable_worker: 11%%%
     node_drain_input:
       delete_local_data: 'false'
       force: false
