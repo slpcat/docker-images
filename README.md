@@ -24,7 +24,7 @@ ipvlan需要内核版本>=4.19
 
 代码仓库: gitlab-ce,gogs
 代码审核: gerrit,crucible
-代码品质管理: SonarQube
+代码品质管理: SonarQube,revive
 
 编译器: numba,Emscripten
 docker基础镜像源：webdevops，bitnami,turnkey,distroless
@@ -89,8 +89,10 @@ kubernetes扩容:virtual-kubelet,cluster-capacity,hpa-operator
 
 开发工具: Telepresence,Keel,Apollo,Deis Workflow,Kel,
 安全工具: anchore,clair,cert-manager,docker-bench-security,magic-namespace,notary,OpenSCAP,trireme,NeuVector,Deepfence,StackRox,Tenable,Cavirin,Kube-Bench,Sysdig Falco,Sysdig Secure,Kubesec.io;付费 Aquasec,flawcheck
+安全平台: Wazuh,
+安全审计: Auditbeat+ELK,
 编排转换：kompose
-云管理软件(CMP): ManageIQ/CloudForms,腾讯蓝鲸(BlueKing),CODO,VMware vRealize Suite,AbiCloudi/Abiquo,Micro Focus,Scalr,RackSpace,RightCloud,RightScale,SaCa Aclome,新浪DCP,Cloudify,Mist.io,VirtEngine,openQRM,OpenNebula,Eucalyptus,天云SkyForm CMP,ZStack CMP,博云BeyondCMP,Cisco InterCloud,骞云SmartCMP,飞致云FIT2CLOUD,云霁CloudRes,浪潮OpsNow,行云管家,新钛云服TiOps,华讯CloudEagle，神州SmartCOP，九州云Animbus CMP，海云捷迅AWCloud，IBM MCMP,IBM Cloud Management，深信服云管平台,OpenNebula,Cloudability,Cloudyn Cloud Management,Dell Cloud Manager v11,BMC Cloud Management,HP Hybrid Cloud Management,CSC Agility Platform,优维EasyOps,
+云管理软件(CMP): ManageIQ/CloudForms,腾讯蓝鲸(BlueKing),CODO,VMware vRealize Suite,AbiCloudi/Abiquo,Micro Focus,Scalr,RackSpace,RightCloud,RightScale,SaCa Aclome,新浪DCP,Cloudify,Mist.io,VirtEngine,openQRM,OpenNebula,Eucalyptus,天云SkyForm CMP,ZStack CMP,博云BeyondCMP,Cisco InterCloud,骞云SmartCMP,飞致云FIT2CLOUD,云霁CloudRes,浪潮OpsNow,行云管家,新钛云服TiOps,华讯CloudEagle，神州SmartCOP，九州云Animbus CMP，海云捷迅AWCloud，IBM MCMP,IBM Cloud Management，深信服云管平台,OpenNebula,Cloudability,Cloudyn Cloud Management,Dell Cloud Manager v11,BMC Cloud Management,HP Hybrid Cloud Management,CSC Agility Platform,优维EasyOps,BigOps
 云平台:OpenStack、CloudStack、Hadoop、Apache Mesos、基于Docker的kubernetes、swarm，微软System Center，AzureStack,EasyStack,CloudFoundry,CBSD,CacheCloud(redis)
 
 备份/恢复/迁移: mydumper,zkcopy,mongodb_consistent_backup, WAL-E

@@ -30,7 +30,8 @@ COPY node_exporter* /
 # Set up certificates, base tools, and Consul.
 RUN set -eux && \
     mkdir -p $PKG_ROOT/usr/local/bin && \
-    tar -zxC $PKG_ROOT/usr/local/bin -f node_exporter-${NODE_EXPORTER_VERSION}.linux-amd64.tar.gz && \
+    tar -zxC /tmp/ -f node_exporter-${NODE_EXPORTER_VERSION}.linux-amd64.tar.gz && \
+    mv /tmp/node_exporter-${NODE_EXPORTER_VERSION}.linux-amd64/node_exporter $PKG_ROOT/usr/local/bin && \
     install -m644 -D /node_exporter.service $PKG_ROOT/usr/lib/systemd/system/node_exporter.service
 
 RUN \
@@ -55,8 +56,8 @@ RUN \
     #--config-files /etc/consul.d/
 
 FROM slpcat/centos:7
-COPY --from=builder /root/node_exporter-1.0.0-rc.0-1.el7.x86_64.rpm /root
-RUN yum install -y /root/node_exporter-1.0.0-rc.0-1.el7.x86_64.rpm /root
+COPY --from=builder /root/node_exporter-1.0.0_rc.0-1.el7.x86_64.rpm /root
+RUN yum install -y /root/node_exporter-1.0.0_rc.0-1.el7.x86_64.rpm /root
 
 
 #EXPOSE 9100

@@ -10,7 +10,7 @@ ENV \
     LANGUAGE="en_US.UTF-8" \
     LC_ALL="en_US.UTF-8" \
     TIMEZONE="Asia/Shanghai" \
-    GOPROXY="https://goproxy.io"
+    GOPROXY="https://goproxy.cn"
 
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/' /etc/apk/repositories
 

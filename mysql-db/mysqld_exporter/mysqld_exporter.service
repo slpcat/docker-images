@@ -1,12 +1,14 @@
 [Unit]
-Description=node_exporter
+Description=mysqld_exporter
 Documentation=https://prometheus.io/
 After=network.target
 
 [Service]
 Type=simple
-User=prometheus
-ExecStart=/app/prometheus/mysqld_exporter/mysqld_exporter --config.my-cnf=/app/prometheus/mysqld_exporter/.my.cnf
+User=root
+Group=root
+ExecStart=/usr/local/bin/mysqld_exporter --config.my-cnf=/etc/prometheus/mysqld_exporter/my.cnf
+ExecStop=/usr/bin/killall mysqld_exporter
 Restart=on-failure
 
 [Install]

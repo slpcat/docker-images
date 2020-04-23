@@ -4,3 +4,8 @@ docker run -d \
   -p 9104:9104 \
   -e DATA_SOURCE_NAME="user:password@(my-mysql-network:3306)/" \
   prom/mysqld-exporter
+
+创建MySQL监控用户
+CREATE USER `exporter`@`%` IDENTIFIED BY 'Ywb666666';
+GRANT Process, Replication Client, Select ON *.* TO `exporter`@`%`;
+flush privileges;
