@@ -40,10 +40,10 @@ zabbix_server端监控主机数量过多的时候，Zabbix会出现严重的性�
 
 所以下面主要往以下几个优化方向考虑： 
 1. 通过增加代理的方式来进行收集数据 尽可能降低zabbix-server工作量，分担给zabbix-proxy
-2. 通过zabbix_agent主动往server/proxy端去发送数据
-3. 数据库采用时序数据库timescaledb
-4. 数据库使用分布式数据库tidb，CockroachDB 
-5. 历史数据存es集群或者订阅到kafka然后进入数据仓库
+2. 通过zabbix_agent主动往server/proxy端去发送数据,避免使用Poller
+3. 数据库采用时序数据库timescaledb,避免使用Housekeeper
+4. 数据库使用分布式数据库tidb，CockroachDB(可选) 
+5. 历史数据存es集群或者订阅到kafka然后进入数据仓库(可选)
 6. 各种采集脚本使用单独的机器，不要在zabbix-server运行
 7. 监控项启用节流(throttling)
 
