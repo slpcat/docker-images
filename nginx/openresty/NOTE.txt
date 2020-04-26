@@ -1,0 +1,15 @@
+https://openresty.org/
+ yum install -y yum-utils
+ yum-config-manager --add-repo https://openresty.org/package/centos/openresty.repo
+yum install -y openresty
+
+http://www.luarocks.org/
+yum install -y luarocks
+
+skywalking-nginx-lua
+opentracing-jaeger
+
+provides request transformation between REST <-> gRPC with Openresty.
+luarocks install lua-resty-grpc-gateway
+https://github.com/ysugimoto/lua-resty-grpc-gateway
+
