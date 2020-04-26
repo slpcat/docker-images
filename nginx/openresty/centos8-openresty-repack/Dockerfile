@@ -243,7 +243,7 @@ RUN \
     #&& mv objs/nginx objs/nginx-debug \
     && ./configure $CONFIG \
     && make \
-    #&& make install \
+    && make install \
     && make install DESTDIR=$PKG_ROOT
 
 #install nginx 
@@ -275,8 +275,9 @@ RUN \
     export PATH="$PATH:/usr/local/openresty/bin" \
     && cd /usr/src \
     #&& wget https://luarocks.org/releases/luarocks-3.3.1.tar.gz \
+    #&& wget https://luarocks.github.io/luarocks/releases/luarocks-3.3.1.tar.gz \
     #&& wget https://github.com/luarocks/luarocks/archive/v3.3.1.tar.gz \
-    && tar -zxC /usr/src -f luarocks-3.3.1.tar.gz \
+    && tar -zxC /usr/src -f /luarocks-3.3.1.tar.gz \
     && cd luarocks-3.3.1 \
     && ./configure --prefix=/usr/local \
          --lua-suffix=jit \
@@ -302,7 +303,7 @@ RUN \
     -n openresty-repack \ 
     -s dir \
     --iteration 1.el8 \
-    -v ${RESTY_VERSION_VERSION} \
+    -v "${RESTY_VERSION}" \
     -t rpm \
     -m openresty-inc \
     --vendor openresty.org \
