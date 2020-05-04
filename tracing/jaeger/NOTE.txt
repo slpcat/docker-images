@@ -1,1 +1,502 @@
 https://github.com/jaegertracing/jaeger-kubernetes
+
+下面本文将介绍如何使用elasticsearch存储引擎部署jaeger！
+
+Jaeger组件
+Agent
+
+Agent是一个网络守护进程，监听通过UDP发送过来的Span，它会将其批量发送给collector。按照设计，Agent要被部署到所有主机上，作为基础设施。Agent将collector和客户端之间的路由与发现机制抽象了出来。
+
+Collector
+
+Collector从Jaeger Agent接收Trace，并通过一个处理管道对其进行处理。目前的管道会校验Trace、建立索引、执行转换并最终进行存储。存储是一个可插入的组件，现在支持Cassandra和elasticsearch。
+
+Query
+
+Query服务会从存储中检索Trace并通过UI界面进行展现，该UI界面通过React技术实现，其页面UI如下图所示，展现了一条Trace的详细信息。
+
+存储
+
+jaeger采集到的数据必须存储到某个存储引擎，目前支持Cassandra和elasticsearch
+
+ 
+
+docker + elasticsearch安装
+首先，你安装jaeger时,需要使用docker环境，
+
+然后使用docker安装一个elasticsearch
+
+docker run -d  --name elasticsearch --restart=always -p 9200:9200 -p 9300:9300 -e ES_JAVA_OPTS="-Xms512m -Xmx512m" elasticsearch:latest
+
+注意:
+
+1、此elasticsearch为单机版且数据存内存，若生产环境，请自行解决如何使用docker安装elasticsearch集群并且数据写入磁盘,elasticsearch版本请选择5.X，原因如下（github issues:https://github.com/jaegertracing/jaeger/issues/665）
+
+jaeger elasticsearch版本请使用5.X的版本，官网上虽然说明使用5.X和6.X都行，但是亲测使用6.2.4的es,会出现数据丢失:collector将数据写入elsasticsearch时会出现索引已存在的报错:
+
+error："trace_id":"89c90e9c1bc48622","span_id":"89c90e9c1bc48622","error":"elastic: Error 400 (Bad Request): index [jaeger-span-2018-05-27/5JHNIPoLRBe3c560r7FJlQ] already exists [type=resource_already_exists_exception]
+
+ 
+
+ 
+
+​ 若你需要把elsticsearc 9200暴露到公网上，你注意Elasticsearch服务安全加固，可参考：https://www.sojson.com/blog/213.html
+
+2、请使用docker安装elasticsearch，若未使用docker安装，下一步安装collector时会出现报错：
+
+docker: Error response from daemon: could not get container for elasticsearch: No such container: elasticsearch.
+
+容器中找不到对应的elasticsearch
+
+ 
+
+docker + collector安装
+若你安装的collector和elasticsearch是在同一台机器上，使用docker容易的--link命令就可以将collector和elasticsearch关联上，安装命令如下：
+
+docker run -d --name jaeger-collector --restart=always --link elasticsearch:elasticsearch -e SPAN_STORAGE_TYPE=elasticsearch -e ES_SERVER_URLS=http://elasticsearch:9200 -e ES_USERNAME=elastic -p 14267:14267 -p 14268:14268 -p 9411:9411 jaegertracing/jaeger-collector
+
+注意：
+
+​ --link elasticsearch:elasticsearch，代表docker容易关联，该名字必须和你安装elasticsearch —name的名字相同
+
+​ --SPAN_STORAGE_TYPE=elasticsearch 代表安装jaeger选择elasticsearch作为存储
+
+-e ES_SERVER_URLS=http://elasticsearch:9200次条目代表你选择容器安装的elasticsearch的9200端口
+
+-e ES_USERNAME elasticsearch的用户名:默认elastic，下同
+
+-e ES_PASSWORD elasticsearch的密码
+
+-e 其实就是代表的环境变量，其他变量你可以使用以下语句查看：
+
+docker run -e SPAN_STORAGE_TYPE=elasticsearch jaegertracing/jaeger-collector /go/bin/collector-linux --help
+
+ 
+
+当然，一般生产环境你肯定不会将collector和elasticsearch安装到同一台机器，至少你可能会安装多个collector，所以，如何跨机器的用collector连接此elasticsearch呢？
+
+你可以用用以下命令：
+
+docker run -d --name jaeger-collector  --restart=always -e SPAN_STORAGE_TYPE=elasticsearch -e ES_SERVER_URLS=http://你的es ip:9200 -e ES_USERNAME=elastic -p 14267:14267 -p 14268:14268 -p 9411:9411 jaegertracing/jaeger-collector
+
+区别在于，你无需使用—link来进行容器互连，只需ES_SERVER_URLS填写对应的ip和port即可；
+
+如果你想看启动是否成功，你可将命令中的“-d”改为“--rm”并删除“--restart=always” ，这样启动日志会即时打印到控制台
+
+--rm命令选项，等价于在容器退出后，执行docker rm -v
+
+--restart=always，一直执行，异常退出尝试重启
+
+启动成功日志：
+
+{"level":"info","ts":1527673610.349252,"caller":"healthcheck/handler.go:99","msg":"Health Check server started","http-port":14269,"status":"unavailable"}
+
+{"level":"info","ts":1527673610.7525811,"caller":"static/strategy_store.go:76","msg":"No sampling strategies provided, using defaults"}
+
+{"level":"info","ts":1527673610.752815,"caller":"collector/main.go:142","msg":"Registering metrics handler with HTTP server","route":"/metrics"}
+
+{"level":"info","ts":1527673610.7528777,"caller":"collector/main.go:150","msg":"Starting Jaeger Collector HTTP server","http-port":14268}
+
+{"level":"info","ts":1527673610.7529178,"caller":"healthcheck/handler.go:133","msg":"Health Check state change","status":"ready"}
+
+ 
+
+如你出现以下错误：
+
+"caller":"collector/main.go:102","msg":"Failed to init storage factory","error":"health check timeout: no Elasticsearch node available","errorVerbose":"no Elasticsearch node available
+
+请检查你的elasticsearch地址，
+
+ 
+
+ 
+
+docker + query安装
+同collector一样，若你安装的collector和elasticsearch是在同一台机器上，使用docker容易的--link命令就可以将query和elasticsearch关联上，安装命令如下：
+
+docker run -d --name jaeger-query --restart=always --link elasticsearch:elasticsearch -e SPAN_STORAGE_TYPE=elasticsearch -e ES_SERVER_URLS=http://elasticsearch:9200 -e ES_USERNAME=elastic -e ES_PASSWORD=你的密码 -p 16686:16686/tcp jaegertracing/jaeger-query
+
+其他对应的操作，你参考collector即可，到了这一步，如果你能将collector部署好，那么部署query也是一样的；
+
+注意，ES_USERNAME、ES_PASSWORD这两个环境变量，当你的elasticsearch未设置账号密码时，你可以不填，也可以填上默认值，elasticsearch的默认ES_USERNAME=elastic，ES_PASSWORD=changeme
+
+部署完成query之后，根据你暴露的端口号（-p 16686:16686/tcp），浏览器输入以下地址(将localhost换成你部署query的地址)：
+
+http://localhost:16686
+
+你就会看到开篇的UI界面了,当然数据肯定是空空如也。
+
+ 
+
+ 
+
+docker + agent安装
+根据uber jaeger官网的架构，agent一般是和jaeger-client部署在一起，agent作为一个基础架构，每一台应用（接入jaeger-client的应用）所在的机器都需要部署一个agent;
+
+根据数据采集原理，jaeger-client采集到数据之后，是通过UDP端口发送到agent的，jaeger-client和agent部署在一起的好处是UDP传输数据都在应用所在的机器，可避免UDP的跨网络传输，多一层安全保障。
+
+当然，架构可能是多变的，你的agent可能不和jaeger-client所在的应用在一台机器，这个时候，jaeger-client就必须显示的指定其连接的agent的IP及port,具体做法后文jaeger-client对应模块会讲到。
+
+前文提到，jaeger-client采集到数据之后，是通过UDP端口发送到agent的，agent接收到数据之后，使用Uber的Tchannel协议，将数据发送到collector，所以，agent是必须和collector相连的；
+
+docker安装agent命令如下：
+
+docker run   -d  --name jaeger-agent --restart=always -p 5775:5775/udp   -p 6831:6831/udp   -p 6832:6832/udp   -p 5778:5778/tcp   jaegertracing/jaeger-agent   /go/bin/agent-linux --collector.host-port=collector ip:14267
+
+ 
+
+如前文所述，你可能不止一个collector，你可能需要这样：
+
+docker run   -d  --name jaeger-agent --restart=always -p 5775:5775/udp   -p 6831:6831/udp   -p 6832:6832/udp   -p 5778:5778/tcp   jaegertracing/jaeger-agent   /go/bin/agent-linux --collector.host-port=collector ip1:14267,collector ip2:14267,collector ip3:14267
+
+--collector.host-port=collector ip1:14267,collector ip2:14267,collector ip3:14267，用逗号分开，连接三个collector，这样的话，这三个collector只要一个存活，agent就可以吧数据传输完成，以避免单点故障
+
+ 
+
+二进制安装jaeger
+以上，使用docker容器化的安装jaeger是非常方便的，然后加上Kubernetes,可以很好的做好监控管理；
+
+具体使用Kubernetes安装jaeger，你可自行研究，官方github地址:https://github.com/jaegertracing/jaeger-kubernetes
+
+当然你也可以不使用docker，linux安装jaeger网上资料很多，如：https://blog.csdn.net/niyuelin1990/article/details/80225305
+
+二进制安装包地址：
+
+https://github.com/jaegertracing/jaeger/releases
+
+如安装agent，如我们一般应用文件一样：
+
+nohup ./jaeger-agent --collector.host-port=10.100.7.46:14267 1>1.log 2>2.log &
+
+ 
+
+jaeger-client
+目前jaeger官方支持以下客户端：
+
+Language	GitHub Repo
+Go	jaegertracing/jaeger-client-go
+Java	jaegertracing/jaeger-client-java
+Node.js	jaegertracing/jaeger-client-node
+Python	jaegertracing/jaeger-client-python
+C++	jaegertracing/jaeger-client-cpp
+C#	jaegertracing/jaeger-client-csharp
+请他语言也在开发中，具体请看： issue #366.
+
+由于作者只会java开发，仅仅只能写点java client的东西；
+
+Java-client
+Jaeger tracing收集数据原理是第一个应用被调用的时候生成一个traceId，然后这个traceId会放到HTTP请求头里面将其传给下一个链路，然后每一个链路里面登录带有这个traceId，最后在elasticsearch/Cassandra里面讲采集到数据聚合成一个调用链路；
+
+所以，jaeger应用场景为HTTP调用链相关的场景，对于dubbo这种RPC调用个人认为是不适用的。
+
+以现有技术体系，目前成熟的框架有springmvc、springboot、springcloud,其中springboot、springcloud基本相同，本文只讲springmvc、springboot，因为二者有一些差别，需要特别处理；
+
+ 
+
+springboot接入jaeger client
+springboot 接入jaeger github地址如下：
+
+http://planet.jboss.org/post/opentracing_spring_boot_instrumentation
+
+1、在spring boot的项目pom.xml添加依赖
+
+<dependency>
+
+​ <groupId>io.opentracing.contrib</groupId>
+
+​ <artifactId>opentracing-spring-web-autoconfigure</artifactId>
+
+​ <version>0.3.0</version>
+
+</dependency>
+
+<!--添加jaeger-->
+
+<dependency>
+
+​ <groupId>com.uber.jaeger</groupId>
+
+​ <artifactId>jaeger-core</artifactId>
+
+​ <version>0.26.0</version>
+
+</dependency>
+
+2、注入jaeger bean
+
+@Bean
+    public Tracer jaegerTracer() {
+        com.uber.jaeger.Configuration.SenderConfiguration senderConfiguration = new com.uber.jaeger.Configuration.SenderConfiguration();
+        com.uber.jaeger.Configuration.ReporterConfiguration reporterConfiguration = new com.uber.jaeger.Configuration.ReporterConfiguration().withSender(senderConfiguration).withLogSpans(false).withMaxQueueSize(1000).withFlushInterval(100);
+        com.uber.jaeger.Configuration.SamplerConfiguration samplerConfiguration = new com.uber.jaeger.Configuration.SamplerConfiguration().withType(ConstSampler.TYPE).withParam(1);
+        com.uber.jaeger.Configuration configuration = new com.uber.jaeger.Configuration(traceAppName).withReporter(reporterConfiguration).withSampler(samplerConfiguration);
+        return configuration.getTracer();
+    }
+请注意，此bean所属的类必须随着spring容器启动，已确保spring启动是此bean被注入：
+
+即加上@Configuration 注解即可；
+
+ 
+
+SenderConfiguration可供你选择数据上报方式,使用with*方法选择对应的参数：
+
+senderConfiguration.withAgentHost(agent ip) —— 默认值为本机
+
+senderConfiguration.withAgentPort(6831) —— 默认值6831
+
+如上例：SenderConfiguration什么参数都没有，即默认选择本机agent，6831 UDP端口上报采集到的数据
+
+ 
+
+HTTP直接上报
+
+你也可以选择绕过agent，直接使用HTTP协议将数据上报给collector，这样，你上文中就可以不必安装agent;
+
+这是，你的SenderConfiguration设置以下参数:
+
+senderConfiguration.withEndpoint("http://localhost:14268/api/traces");
+
+localhost:14268 为你的collector的ip和端口号，这样你就可以把数据直接上报到collector
+
+当然，你可能会有一些安全方面的考虑，你可以使用下面的方式设置你的用户名和密码，或者你的token
+
+senderConfiguration.withAuthPassword(password);
+
+senderConfiguration.withAuthUsername(username);
+
+senderConfiguration.withAuthToken(authToken);
+
+ 
+
+ReporterConfiguration参数：
+
+withSender -------选择发送方式
+
+withLogSpans -------是否日志上报
+
+withMaxQueueSize -------数据最大累计量
+
+withFlushInterval -------报告间隔的刷新( ms )
+
+你可以根据你们业务系统给的数据量选择合适的参数；
+
+根据uber jaeger"不怜悯"数据原则，若你选择withMaxQueueSize为1000（条），withFlushInterval为1000（ms），即1000毫秒以内只会有1000条数据上报，其他数据会丢掉
+
+ 
+
+SamplerConfiguration 参数：
+
+SamplerConfiguration可设置你的采样策略：
+
+withType 采样策略：
+
+ConstSampler，全量采集
+
+ProbabilisticSampler ，概率采集，默认万份之一
+
+RateLimitingSampler ，限速采集，每秒只能采集一定量的数据
+
+RemotelyControlledSampler ，一种动态采集策略，根据当前系统的访问量调节采集策略
+
+withParam 采样率
+
+withManagerHostPort 采样策略配置 默认为:localhost:5778
+
+ 
+
+当使用uber jaeger时，如果你要在嵌入tracing的应用里面发送HTTP请求，你可能需要用到RestTemplate，否则你用的HTTP client会导致trace id丢失，从而导致调用链断裂；
+
+所以你还需要注入RestTemplate bean,方式和jaeger bean一样
+
+@Bean
+    public RestTemplate restTemplate(RestTemplateBuilder restTemplateBuilder) {
+        return restTemplateBuilder.build();
+    }
+说的再多，不过给你一个例子：
+
+https://github.com/pavolloffay/opentracing-java-examples
+
+ 
+
+Springmvc接入jaeger client
+Springmvc 接入jaeger github地址如下：
+
+https://github.com/opentracing-contrib/java-spring-web
+
+1、在spring mvc的项目pom.xml添加依赖
+
+<dependency>
+            <groupId>io.opentracing.contrib</groupId>
+            <artifactId>opentracing-spring-web</artifactId>
+            <version>0.3.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.uber.jaeger</groupId>
+            <artifactId>jaeger-core</artifactId>
+            <version>0.26.0</version>
+        </dependency>
+注意和springboot的区别
+
+ 
+
+想在spring mvc引入tracing功能，配置中是必须添加TracingFilter and TracingHandlerInterceptor，这两个类 是必须的，你可以通过手动注入或者CDI的方式注入
+
+具体代码示例如下：
+
+@EnableWebMvc
+@Configuration
+@Import({TracingBeansConfiguration.class})
+public class SpringMVCConfiguration extends WebMvcConfigurerAdapter implements ServletContextListener {
+​
+    @Autowired
+    private List<HandlerInterceptorSpanDecorator> spanDecorators;
+​
+    @Autowired
+    private Tracer tracer;
+    
+​
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        GlobalTracer.register(tracer);
+        registry.addInterceptor(new TracingHandlerInterceptor(tracer, spanDecorators));
+    }
+​
+​
+    @Bean
+    public RestTemplate restTemplate(Tracer tracer) {
+        RestTemplate restTemplate = new RestTemplate();
+        restTemplate.setInterceptors(Collections.<ClientHttpRequestInterceptor>singletonList(
+                new TracingRestTemplateInterceptor(tracer)));
+        return restTemplate;
+    }
+​
+    @Override
+    public void contextInitialized(ServletContextEvent sce) {
+        sce.getServletContext().setAttribute(TracingFilter.SPAN_DECORATORS,
+                Collections.singletonList(ServletFilterSpanDecorator.STANDARD_TAGS));
+    }
+​
+    @Override
+    public void contextDestroyed(ServletContextEvent sce) {
+        
+    }
+}
+这段代码：implements ServletContextListener
+
+所以我们需要在web.xml里面讲这个listener 配置进去
+
+ <listener>
+        <listener-class>com.xxx.ecm.platform.gw.server.trace.SpringMVCConfiguration</listener-class>
+      </listener>
+同事，我们看到里面 引入了这个类：@Import({TracingBeansConfiguration.class})
+
+TracingBeansConfiguration代码如下：
+
+@org.springframework.context.annotation.Configuration
+public class TracingBeansConfiguration {
+​
+    @Value("${trace.app.name}")
+    private String traceAppName;
+​
+    @Bean
+    public Tracer jaegerTracer() {
+        com.uber.jaeger.Configuration.SenderConfiguration senderConfiguration = new com.uber.jaeger.Configuration.SenderConfiguration();
+        com.uber.jaeger.Configuration.ReporterConfiguration reporterConfiguration = new com.uber.jaeger.Configuration.ReporterConfiguration().withSender(senderConfiguration).withLogSpans(false).withMaxQueueSize(1000).withFlushInterval(100);
+        com.uber.jaeger.Configuration.SamplerConfiguration samplerConfiguration = new com.uber.jaeger.Configuration.SamplerConfiguration().withType(ConstSampler.TYPE).withParam(1);
+        com.uber.jaeger.Configuration configuration = new com.uber.jaeger.Configuration(traceAppName).withReporter(reporterConfiguration).withSampler(samplerConfiguration);
+        return configuration.getTracer();
+    }
+​
+    @Bean
+    public List<HandlerInterceptorSpanDecorator> spanDecorators() {
+        return Arrays.asList(HandlerInterceptorSpanDecorator.STANDARD_LOGS,
+                HandlerInterceptorSpanDecorator.HANDLER_METHOD_OPERATION_NAME);
+    }
+此class的作用就是初始化两个bean,Tracer bean和HandlerInterceptorSpanDecorator bean，以供SpringMVCConfiguration使用，
+
+其中Tracer bean作用和配置和我们使用spring boot相同，详细配置请参考前文。
+
+另外还需要把tracing filter 配置到配置文件：
+
+<!-- tracing filter -->
+      <filter>
+        <filter-name>tracingFilter</filter-name>
+        <filter-class>io.opentracing.contrib.web.servlet.filter.TracingFilter</filter-class>
+        <async-supported>true</async-supported>
+      </filter>
+      <filter-mapping>
+        <filter-name>tracingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+      </filter-mapping>
+ 
+
+OK！你已经在springmvc配置好你的系统了！（spring-web版本要4.3.8.RELEASE以上）
+
+ 
+
+ 
+
+端口号说明
+我们从前文中可以看到，我们安装jaeger各个组件的时候使用了很多端口号，具体这些端口号都是些什么作用呢？
+
+下面将一一列举其作用：
+
+elasticsearch暴露如下端口
+
+端口号	协议	功能
+9200	HTTP	通过http协议连接es使用的端口
+9300	TCP	通过tcp协议连接es使用的端口
+ 
+
+agent 暴露如下端口
+
+端口号	协议	功能
+5775	UDP	通过兼容性 thrift 协议，接收 zipkin thrift 类型的数据
+6831	UDP	通过二进制 thrift 协议，接收 jaeger thrift 类型的数据
+6832	UDP	通过二进制 thrift 协议，接收 jaeger thrift 类型的数据
+5778	HTTP	可用于配置采样策略
+collector 暴露如下端口
+
+端口号	协议	功能
+14267	TChannel	用于接收 jaeger-agent 发送来的 jaeger.thrift 格式的 span
+14268	HTTP	能直接接收来自客户端的 jaeger.thrift 格式的 span
+9411	HTTP	能通过 JSON 或 Thrift 接收 Zipkin spans，默认关闭
+query 暴露如下端口
+
+端口号	协议	功能
+16686	HTTP	1. /api/* - API 端口路径 2. / - Jaeger UI 路径
+ 
+
+ 
+
+jaeger dependencies
+完成安装jaeger以后，你应该可以在jaeger ui上看到效果了，你可以采集到对应的数据，并且能够查询到调用链路。但是你会发现search按钮旁边，还有一个dependencies选项，你点开确什么也没有。
+
+此时你还需要安装jaeger dependencies了，而且他需要定时执行，因为jaeger dependencies是在执行时去捞取对应的数据。
+
+你可以定时执行以下代码：
+
+STORAGE=elasticsearch ES_NODES=http://localhost:9200 java -jar jaeger-spark-dependencies.jar
+
+ES_NODES为前面安装的es地址
+
+jaeger-spark-dependencies.jar 怎么来的？
+
+你可以搜索对应的资料下载，但是建议你下载官方源码，自己打包，github地址如下：
+
+https://github.com/jaegertracing/spark-dependencies
+
+下载源码执行mvn clean install -DskipTests打包，或许你可以crontab定时执行脚本，来跑每天的数据
+
+ 
+
+另外，你也可以使用docker执行：
+
+ docker run  --rm  --name  spark-dependencies  --env STORAGE=elasticsearch --env ES_NODES=http://localhost:9200 jaegertracing/spark-dependencies
+
+ES_NODES为前面安装的es地址
+
+当然，至于docker怎么执行定时任务，或者Kubernetes怎么执行CronJob，你可以自行研究dokcer或Kubernetes相关的知识。当然，你可以crontab定时执行脚本。
+
+ 
+

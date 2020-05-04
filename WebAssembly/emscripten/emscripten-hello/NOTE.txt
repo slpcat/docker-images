@@ -1,0 +1,5 @@
+docker run \
+  --rm \
+  -v $(pwd):/src \
+  trzeci/emscripten \
+  emcc helloworld.cpp -o helloworld.js

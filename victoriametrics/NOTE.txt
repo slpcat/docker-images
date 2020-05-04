@@ -1,0 +1,11 @@
+victoriametrics 是一个时序数据库，可以用来作为prometheus 的long-term 远端存储
+
+特性
+支持promtheus 查询api，同时实现了一个metricsql 查询语言
+支持全局查询视图，好处多prometheus 实例写数据到victoriametrics，然后提供一个统一的查询
+同时也提供了开源的集群版本
+高性能
+支持多种协议 influxdb line 协议，prometheus metrics，graphite ，prometheus 远端写api，opentsdb http 协议
+高压缩比
+
+https://victoriametrics.com/

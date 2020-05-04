@@ -1,0 +1,76 @@
+WebAssembly support is ever evolving. Right now it is supported by the following languages:
+
+C / C++ - has very good (production ready) support via EmScripten, or other minimal LLVM-based toolchains
+Rust - WebAssembly is an officially supported target, with a highly active community around it.
+Go - has now supports WebAssembly as an official, yet experimental, target
+C# - has experimental support via Blazor, however this currently requires embedding a .NET runtime into Wasm. Blazor was officially adopted by Microsoft as an experimental technology, with a recent preview release.
+D - the "betterC" subset of D can be compiled to WebAssembly through LDC (LLVM compiler).
+
+TypeScript - via AssemblyScript, highly experimental, but gaining momentum.
+
+Java - via TeaVM or Bytecoder
+https://github.com/konsoletyper/teavm
+https://github.com/i-net-software/JWebAssembly
+https://www.leaningtech.com/pages/cheerpj.html
+
+
+Haxe - just announced support
+Kotlin - Kotlin/Native 0.4 gained experimental support of WebAssembly and via TeaVM
+Python - Pyodide is a port of Python to WebAssembly that includes the core packages of the scientific Python stack (Numpy, Pandas, matplotlib).
+PHP - Experimental, but with a working prototype
+https://github.com/wasmerio/php-ext-wasm
+https://github.com/oraoto/pib
+
+Perl - WebPerl is a port of the Perl binary to WebAssembly, allowing you to run Perl scripts on the web.
+https://webperl.zero-g.net/
+
+Scala - using the Emscripten compiler
+Ruby - via the run.rb project
+Swift - using SwiftWasm, which is currently under development
+There are commercial solutions also:
+
+RemObjects - Which has announced support for C#, Java, Swift and Oxygene
+
+WASM 的框架 / 库的选择已经比较丰富了，如：C# + Blazor、Go + Vugu、Rust + Yew 等等
+Blazor正式成为Microsoft官方.NET 和WebAssembly项目 
+
+
+https://github.com/intel/wasm-micro-runtime
+WAMR（WebAssembly Micro Runtime）是一个独立的 WebAssembly（WASM）运行时，主要用于容量小的设备
+
+Wasmjit is a small embeddable WebAssembly runtime. Its core is written in C90 and is easily portable to most environments.
+
+envoy Wasm runtime
+https://github.com/envoyproxy/envoy-wasm
+
+来自微软的 DeisLabs 团队最近开源了一款完全基于 Rust 的新软件 Krustlet，该软件可以用来在 Kubernetes 上运行 WebAssembly 模块。
+
+
+Figma 是一个 基于浏览器 的协作式 UI 设计工具
+Figma = Sketch（UI 设计）+ InVision（原型设计） + Zeplin（标注）+ Dropbox（云端同步）+ Abstract（版本历史）+ Craft-Freehand（实时讨论） + Liveshare（实时分享）+ Team Library （团队组件库）+  Web API（第三方接入）+ …
+
+
+https://github.com/photopea
+https://ps.gaoding.com/
+免费在线 PS
+
+https://web.autocad.com/
+
+https://www.wasm.com.cn/
+
+https://wasmer.io/
+Wasmer is a standalone JIT WebAssembly runtime, aiming to be fully compatible with Emscripten, Rust and Go.
+https://github.com/bytecodealliance/wasmtime
+https://github.com/WAVM/WAVM
+
+https://github.com/rhysd/vim.wasm
+
+WebAssembly的包管理器
+https://wapm.io/
+https://webassembly.sh/
+https://github.com/wapm-packages/nginx
+https://github.com/wapm-packages
+
+https://github.com/wasmerio/wasmer/tree/master/examples/nginx
+
+

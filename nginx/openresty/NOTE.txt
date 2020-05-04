@@ -13,3 +13,11 @@ provides request transformation between REST <-> gRPC with Openresty.
 luarocks install lua-resty-grpc-gateway
 https://github.com/ysugimoto/lua-resty-grpc-gateway
 
+kong gateway安装
+
+luarocks install kong
+
+git clone https://github.com/Kong/kong.git
+复制脚本和配置
+
+

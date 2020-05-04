@@ -1,0 +1,82 @@
+{{- if .Values.vminsert.enabled -}}
+apiVersion: v1
+kind: Service
+metadata:
+{{- if .Values.vminsert.service.annotations }}
+  annotations:
+{{ toYaml .Values.vminsert.service.annotations | indent 4}}
+{{- end }}
+  labels:
+    {{- include "victoria-metrics.vminsert.labels" . | nindent 4 }}
+{{- if .Values.vminsert.service.labels }}
+{{ toYaml .Values.vminsert.service.labels | indent 4}}
+{{- end }}
+  name: {{ template "victoria-metrics.vminsert.fullname" . }}
+spec:
+{{- if .Values.vminsert.service.clusterIP }}
+  clusterIP: {{ .Values.vminsert.service.clusterIP }}
+{{- end }}
+{{- if .Values.vminsert.service.externalIPs }}
+  externalIPs:
+{{ toYaml .Values.vminsert.service.externalIPs | indent 4 }}
+{{- end }}
+{{- if .Values.vminsert.service.loadBalancerIP }}
+  loadBalancerIP: {{ .Values.vminsert.service.loadBalancerIP }}
+{{- end }}
+{{- if .Values.vminsert.service.loadBalancerSourceRanges }}
+  loadBalancerSourceRanges:
+  {{- range $cidr := .Values.vminsert.service.loadBalancerSourceRanges }}
+    - {{ $cidr }}
+  {{- end }}
+{{- end }}
+  ports:
+    - name: http
+      port: {{ .Values.vminsert.service.servicePort }}
+      protocol: TCP
+      targetPort: http
+{{- if .Values.vminsert.extraArgs.graphiteListenAddr }}
+    - name: graphite-tcp
+      protocol: TCP
+      port: {{ include "split-host-port" .Values.vminsert.extraArgs.graphiteListenAddr }}
+      targetPort: graphite-tcp
+{{- end }}
+{{- if .Values.vminsert.extraArgs.graphiteListenAddr }}
+    - name: graphite-udp
+      protocol: UDP
+      port: {{ include "split-host-port" .Values.vminsert.extraArgs.graphiteListenAddr }}
+      targetPort: graphite-udp
+{{- end }}
+{{- if .Values.vminsert.extraArgs.influxListenAddr }}
+    - name: influx-tcp
+      protocol: TCP
+      port: {{ include "split-host-port" .Values.vminsert.extraArgs.influxListenAddr }}
+      targetPort: influx-tcp
+{{- end }}
+{{- if .Values.vminsert.extraArgs.influxListenAddr }}
+    - name: influx-udp
+      protocol: UDP
+      port: {{ include "split-host-port" .Values.vminsert.extraArgs.influxListenAddr }}
+      targetPort: influx-udp
+{{- end }}
+{{- if .Values.vminsert.extraArgs.opentsdbHTTPListenAddr }}
+    - name: opentsdbhttp
+      port: {{ include "split-host-port" .Values.vminsert.extraArgs.opentsdbHTTPListenAddr }}
+      targetPort: opentsdbhttp
+{{- end }}
+{{- if .Values.vminsert.extraArgs.opentsdbListenAddr }}
+    - name: opentsdb-udp
+      protocol: UDP
+      port: {{ include "split-host-port" .Values.vminsert.extraArgs.opentsdbListenAddr }}
+      targetPort: opentsdb-udp
+{{- end }}
+{{- if .Values.vminsert.extraArgs.opentsdbListenAddr }}
+    - name: opentsdb-tcp
+      protocol: TCP
+      port: {{ include "split-host-port" .Values.vminsert.extraArgs.opentsdbListenAddr }}
+      targetPort: opentsdb-tcp
+{{- end }}
+
+  selector:
+    {{- include "victoria-metrics.vminsert.matchLabels" . | nindent 4 }}
+  type: "{{ .Values.vminsert.service.type }}"
+{{- end }}

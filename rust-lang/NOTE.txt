@@ -1,2 +1,87 @@
 https://timetill.rs/
 
+redox-os
+
+TiKV ，Rust实现的分布式KV存储，是TiDB的基础。
+Redox ，Rust实现的操作系统，背后是System76公司。
+tockOS，Rust实现的基于Cortex-M的微控制器的安全嵌入式操作系统。
+区块链相关： Parity和CITA区块链框架。
+Firecracker，亚马逊出品的一个基于KVM的轻量级VMM，可以在几分之一秒内启动虚拟机，内存占用少，可以实现高密度云环境。
+Mesalink，MesaLink TLS是百度安全实验室研发的下一代传输层安全(Transport Layer Security, TLS)库。正式支持TLS 1.3和IPv6，支持CMake编译，支持Windows，实现生产环境可用。最近刚发布1.0
+alacritty，Rust实现的跨平台且GPU加速的终端工具。
+citybound，一个Rust实现的多角色城市模拟游戏。
+Amethyst，Rust实现的游戏引擎，采用了ECS架构。
+Rustsim组织，聚焦于提供各种数值模拟的库，用于科学计算。包括alga（抽象代数库）/nalgebra（ 线性代数库）/ncollide（2D和3D的碰撞检测库）/nphysics（2D和3D的物理模拟库）。
+actix-web， 基于Actor库Actix的Web框架，最近发布了1.0-alpha版本。相关其他框架有：rocket，Rust实现的MVC框架，也值得关注。tide，Rust官方正在实现的Web框架。
+Deno，Node.js之父的新坑，TypeScript运行时，完全兼容浏览器API。
+Xi-editor，试图使用Rust和现代软件工程构建的高质量文本编辑器。所有的操作都在16md内提交和绘制，永远不会让你等待任何事情。主要开发者是Google前员工Raph Levien，目前他还在为Xi-editior一直做贡献。
+
+ripgrep
+一个文本搜索工具，应该算是Rust的Cli杀手级应用了，搜索性能超强，最近Atom编辑器新版本默认使用了该库
+
+https://github.com/BurntSushi/ripgrep
+
+git-interactive-rebase-tool
+一个交互式的命令行rebase工具，辅助你处理git rebase。
+
+https://github.com/MitMaro/git-interactive-rebase-tool
+
+Gloo
+Rust和WASM工作组的2019推出了Gloo，它是一个模块化的工具包，作用如下：
+
+构建更小且能集成到大型JavaScript系统种的WASM模块
+可以用Rust编写整个Web应用
+Gloo将进一步抽象出高级的库和框架，易于开发。Gloo的API将使用「洋葱（Onion）分层设计」，分好几个抽象层。他们希望在raw-sys库之上构建一层中级的API，然后在中级API层再构建一层高级的面向用户的API。并且每一层都是公开暴露接口并可复用。这样设计是为了最高限度地提高大型生态系统的可重用性、通用性等。目前该项目刚刚启动。
+
+https://github.com/rustwasm/gloo
+
+Inko
+Rust实现的面向对象语言，号称安全无痛地处理并发，主要是支持类Erlang轻量级进程来处理并发。
+
+https://inko-lang.org/
+
+sonic
+一个快速，轻量级和无架构的搜索后端。 Elasticsearch的替代方案，可在几MB的RAM上运行。
+
+https://github.com/valeriansaliou/sonic
+
+lucet
+Lucet是一个本地WASM编译器和运行时。基于Lucet运行时，Rust编译为wasm32-unknown-wasi target就可以创建一个运行于服务端的wasm程序。目前wasm32-unknown-wasi只支持Rust Nightly（2019-04-01版本确定可用）
+
+https://github.com/fastly/lucet
+
+Zola
+Rust实现的高性能静态网站生成器，类似于Hugo，具体优势可以看看项目Readme对比。
+
+https://github.com/getzola/zola
+
+tweek-rust
+Rust实现的Tween动画工具包 Tween动画可以对对象进行缩小，放大，旋转，渐变，位移等操作，用于在游戏或应用中实现一些渐变类动画动作。最早是伴随Flash技术出现的。现在该技术已经用在了web前端和手机App中。 该库中包含了两个示例，可以看看。 https://github.com/wasm-network/tweek-rust
+
+点此查看视频 https://www.bilibili.com/video/av45138427
+
+Ocypod
+基于Redis的任务队列服务，使用Rust/Actix/Redis实现。据作者称已经用于生产环境几个月，每周处理数百万个任务。 特点：
+
+语言无关
+使用redis
+使用HTTP/JSON协议
+提供HTTP接口
+灵活的工作元数据
+失败时自动重试
+https://github.com/davechallis/ocypod
+
+RustyVolleySrc
+
+使用Rust和WASM实现的排球游戏，挺好玩的，可以作为学习Rust和WASM的案例
+
+https://github.com/RustyVolley/RustyVolleySrc
+
+在线demo：https://rustyvolley.github.io/WebDemo/
+
+「嵌入式」 Rust实现的闹钟
+纯Rust打造的DIY液晶闹钟，很酷。 https://github.com/TeXitoi/rusty-clock
+
+「嵌入式Rust」用Rust实现电子纸名片
+
+

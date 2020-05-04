@@ -309,7 +309,7 @@ RUN \
     --vendor openresty.org \
     -a native \
     -p /root/ \
-    -d 'GeoIP,gd,jemalloc,libxslt,libxml2,gcc,unzip,luajit' \
+    -d 'GeoIP,gd,jemalloc,libxslt,libxml2,gcc,unzip,luajit,openssl-devel,git' \
     -C $PKG_ROOT \
     --description 'Scalable Web Platform by Extending NGINX with Lua' \
     --conflicts 'nginx,tengine,luarocks,kong' \

@@ -1,3 +1,4 @@
+dockerfile 见nginx/kong
 
 1.部署方式 ingress-kong-controller,提供ingress原生支持,无db
 kubectl apply -f https://bit.ly/kong-ingress-dbless
