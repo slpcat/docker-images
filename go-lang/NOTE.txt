@@ -6,8 +6,20 @@ https://docs.confluent.io/current/clients/confluent-kafka-go/index.html
 Golang audio/video library and streaming server
 https://github.com/nareix/joy4
 
+
+
 https://getqor.com/cn
 QOR是首个使用Go语言开发的电商系统、CMS的SDK
 http://www.open-open.com/lib/view/open1396063913278.html
 
 https://github.com/go-kit/kit
+
+日志库
+
+logrus是已知的Go语言日志库中在github中stars数最多的日志库，功能强大，性能也不错。另外值得一提的是logrus的一个fork库gogap/logrus，可以配置输出到文件和graylog日志系统，基础的level、调用链、行号，文件切分都有，特色是结构化日志可以被统计和索引，借助graylog就可以做日志分析，不过这个库很久没有维护了。
+
+zap是Go中一个快速，结构化，分级日志库，Uber出品。能够激活强大的ad-hoc分析, 灵活的仪表板, 其功能超过其他工具ELK, Splunk, 和 Sentry. 所有日志消息都是JSON-serialized。具体参考 Go高性能日志库zap详细分析 。
+
+zerolog也是一款性能相当好的日志库，有趣的是zerolog和zap都在自家的Github库首页中的性能对比数据里打败了对方，zerolog 是受到uber 的日志库zap 的启发，golang社区里，对高性能日志库的追求，引发了编译器团队对一些使用模式的优化。
+
+blog4go是高性能日志库。创新地使用“边解析边输出”方法进行日志输出，同时支持回调函数、日志淘汰和配置文件。可以解决高并发，调用日志函数频繁的情境下，日志库造成的性能问题。

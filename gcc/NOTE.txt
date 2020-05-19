@@ -1,0 +1,5 @@
+vcpkg C++ Library Manager for Windows, Linux, and MacOS https://github.com/microsoft/vcpkg
+Conan - The open-source C/C++ package manager https://conan.io
+buckaroo Buckaroo is a package manager for C/C++ https://buckaroo.pm/
+clib C package manager-ish https://github.com/clibs/clib
+cget conda  cpm cppan hunter

@@ -1,3 +1,13 @@
+https://www.influxdata.com/time-series-platform/telegraf/
+
+Telegraf 是收集和报告指标和数据的代理。
+
+Telegraf是TICK Stack的一部分，是一个插件驱动的服务器代理，用于收集和报告指标。
+
+Telegraf 集成了直接从其运行的容器和系统中提取各种指标，事件和日志，从第三方API提取指标，甚至通过StatsD和Kafka消费者服务监听指标。
+
+它还具有输出插件，可将指标发送到各种其他数据存储，服务和消息队列，包括InfluxDB，Graphite，OpenTSDB，Datadog，Librato，Kafka，MQTT，NSQ等等。
+
 telegraf常用的input plugins:
 收集docker相关的信息：https://github.com/influxdata/telegraf/tree/master/plugins/inputs/docker 主要是通过docker API调用相关监控
 收集相关redis的信息：https://github.com/influxdata/telegraf/tree/master/plugins/inputs/redis

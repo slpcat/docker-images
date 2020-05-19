@@ -17,7 +17,11 @@ Open-Falcon
 https://grafana.com/plugins/fastweb-openfalcon-datasource
 Prometheus AlertManager
 https://grafana.com/plugins/camptocamp-prometheus-alertmanager-datasource
+
+aliyun-cms-grafana数据源
+https://github.com/aliyun/aliyun-cms-grafana
+
 独立版
 推荐使用prometheus-operator
 
-docker run -d --restart=always --name=grafana -p 3000:3000 -v /data/grafana-data:/var/lib/grafana -v /data/grafana-config:/etc/grafana slpcat/grafana:6.5.2
+docker run -d --restart=always --name=grafana -p 3000:3000 -v /data/grafana-data:/var/lib/grafana -v /data/grafana-config:/etc/grafana slpcat/grafana:7.1.0

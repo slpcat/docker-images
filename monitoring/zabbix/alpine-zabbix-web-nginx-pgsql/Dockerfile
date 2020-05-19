@@ -1,6 +1,6 @@
 # Build a minimal distribution container
 # upstream https://github.com/gliderlabs/docker-alpine
-FROM zabbix/zabbix-web-nginx-pgsql:alpine-4.4.7
+FROM zabbix/zabbix-web-nginx-pgsql:alpine-5.0.0
 MAINTAINER 若虚 <slpcat@qq.com>
 
 # Container variables
@@ -10,6 +10,8 @@ ENV \
     LANGUAGE="zh_CN.UTF-8" \
     LC_ALL="zh_CN.UTF-8" \
     TIMEZONE="Asia/Shanghai"
+
+USER root
 
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/' /etc/apk/repositories
 
@@ -43,3 +45,5 @@ COPY nginx.conf /etc/nginx/nginx.conf
 COPY nginx-site.conf /etc/nginx/conf.d/nginx.conf
 
 RUN sed -i s/DejaVuSans/wqy-microhei/g  /usr/share/zabbix/include/defines.inc.php
+
+USER zabbix

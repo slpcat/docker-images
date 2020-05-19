@@ -113,7 +113,7 @@ docker run -d --restart=always --net=host --name timescaledb \
 -e TIMESCALEDB_TELEMETRY=off \
 -e TS_TUNE_MEMORY=4GB -e TS_TUNE_NUM_CPUS=4 \
 -e POSTGRES_USER=zabbix -e POSTGRES_DB=zabbix \
--e POSTGRES_PASSWORD=pg_password  timescale/timescaledb:latest-pg11
+-e POSTGRES_PASSWORD=pg_password  timescale/timescaledb:latest-pg12
 
 数据库配置参数调优(略)
 
@@ -139,7 +139,7 @@ docker run -d --restart=always --net=host --name zabbix-server \
 -v /data/zabbix-externalscripts:/usr/lib/zabbix/externalscripts \
 -v /data/zabbix-alertscripts:/usr/lib/zabbix/alertscripts \
 -v /data/zabbix-home:/var/lib/zabbix \
-slpcat/zabbix-server-pgsql:alpine-4.4.7
+slpcat/zabbix-server-pgsql:alpine-5.0.0
 
 web-ui
 docker run -d --restart=always --name zabbix-web \
@@ -147,7 +147,7 @@ docker run -d --restart=always --name zabbix-web \
 -e POSTGRES_DB=zabbix -e POSTGRES_USER=zabbix \
 -e POSTGRES_PASSWORD=pg_password -e PHP_TZ=Asia/Shanghai \
 -e ZBX_MAXEXECUTIONTIME=600 -e ZBX_MEMORYLIMIT=256M \
-slpcat/zabbix-web-nginx-pgsql:alpine-4.4.7
+slpcat/zabbix-web-nginx-pgsql:alpine-5.0.0
 
 proxy-mysql
 docker run -d --restart=always --net=host --name=zabbix-proxy \
@@ -170,7 +170,7 @@ docker run -d --restart=always --net=host --name=zabbix-proxy \
 -e ZBX_TRAPPERIMEOUT=300 -e ZBX_UNREACHABLEPERIOD=45 \
 -e ZBX_UNAVAILABLEDELAY=60 -e ZBX_UNREACHABLEDELAY=15 \
 -e ZBX_LOGSLOWQUERIES=3000 \
-slpcat/zabbix-proxy-mysql:alpine-4.4.7
+slpcat/zabbix-proxy-mysql:alpine-5.0.0
 
 proxy-pgsql (未实现)
 
@@ -194,7 +194,7 @@ docker run -d --restart=always --net=host --name=zabbix-proxy \
 -e ZBX_TRAPPERIMEOUT=300 -e ZBX_UNREACHABLEPERIOD=45 \
 -e ZBX_UNAVAILABLEDELAY=60 -e ZBX_UNREACHABLEDELAY=15 \
 -e ZBX_LOGSLOWQUERIES=3000 \
-zabbix/zabbix-proxy-pgsql:alpine-4.4.7
+zabbix/zabbix-proxy-pgsql:alpine-5.0.0
 
 美化相关：
 

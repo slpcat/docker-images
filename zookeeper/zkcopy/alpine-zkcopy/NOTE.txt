@@ -20,8 +20,8 @@ java -jar target/zkcopy.jar --source server:port/path --target server:port/path
 With [docker](https://hub.docker.com/r/ksprojects/zkcopy/), use following commands:
 
 ```bash
-docker pull ksprojects/zkcopy
-docker run --rm -it ksprojects/zkcopy --source server:port/path --target server:port/path
+docker pull slpcat/zkcopy
+docker run --rm -it slpcat/zkcopy --source server:port/path --target server:port/path
 ```
 
 ## Options

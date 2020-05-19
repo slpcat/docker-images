@@ -1,6 +1,6 @@
 # Build a minimal distribution container
 # upstream https://github.com/zabbix/zabbix-docker
-FROM zabbix/zabbix-proxy-mysql:alpine-4.4.7
+FROM zabbix/zabbix-proxy-mysql:alpine-5.0.0
 MAINTAINER 若虚 <slpcat@qq.com>
 
 # Container variables

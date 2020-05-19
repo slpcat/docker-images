@@ -1,6 +1,6 @@
 # Build a minimal distribution container
 # upstream https://github.com/gliderlabs/docker-alpine
-FROM zabbix/zabbix-server-pgsql:alpine-4.4.7
+FROM zabbix/zabbix-server-pgsql:alpine-5.0.0
 MAINTAINER 若虚 <slpcat@qq.com>
 
 # Container variables
