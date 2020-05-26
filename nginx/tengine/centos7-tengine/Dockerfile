@@ -75,7 +75,7 @@ RUN \
     && cd /usr/src
 
 #jemalloc is a general purpose malloc(3) implementation that emphasizes
-#fragmentation avoidance and scalable concurrency support.  
+#fragmentation avoidance and scalable concurrency support.
 #COPY jemalloc-$JEMALLOC_VERSION.tar.bz2 /
 
 #RUN \
@@ -116,13 +116,13 @@ RUN \
  && make install DESTDIR=$PKG_ROOT
 
 #OpenSSL – Supports the HTTPS protocol. Required by the NGINX SSL module and others.
-COPY openssl-$OPENSSL_VERSION.tar.gz /usr/src 
+COPY openssl-$OPENSSL_VERSION.tar.gz /usr/src
 
 RUN \
  #wget http://www.openssl.org/source/openssl-$OPENSSL_VERSION.tar.gz \
  #wget https://ftp.openssl.org/source/old/1.1.1/openssl-$OPENSSL_VERSION.tar.gz \
  tar -zxC /usr/src -f /usr/src/openssl-$OPENSSL_VERSION.tar.gz \
- && cd /usr/src/openssl-$OPENSSL_VERSION \
+ && cd /usr/src/openssl-OpenSSL_1_1_1g \
  && ./config --prefix=/usr/local \
  && make \
  && make install DESTDIR=$PKG_ROOT
@@ -198,117 +198,83 @@ RUN \
 ### Build nginx-opentracing modules
 ENV NGINX_OPENTRACING_VERSION=v0.9.0
 
-#RUN \
-#  cd "/usr/src" \
-#  && git clone -b $NGINX_OPENTRACING_VERSION https://github.com/opentracing-contrib/nginx-opentracing
 
-  #&& NGINX_VERSION=`nginx -v 2>&1` && NGINX_VERSION=${NGINX_VERSION#*nginx/} \
-  #&& echo "deb-src http://nginx.org/packages/mainline/debian/ stretch nginx" >> /etc/apt/sources.list \
-  #&& apt-get update \
-  #&& apt-get build-dep -y nginx \
-  #&& wget -O nginx-release-${NGINX_VERSION}.tar.gz https://github.com/nginx/nginx/archive/release-${NGINX_VERSION}.tar.gz \
-  #&& tar zxf nginx-release-${NGINX_VERSION}.tar.gz \
-  #&& auto/configure \
+ENV TENGINE_VERSION 2.3.2
 
-  #      --with-compat \
-  #      --add-dynamic-module=/src/opentracing \
-  #      --with-cc-opt="-I$HUNTER_INSTALL_DIR/include" \
-  #      --with-ld-opt="-L$HUNTER_INSTALL_DIR/lib" \
-  #      --with-debug \
-  #&& make modules \
-  #&& cp objs/ngx_http_opentracing_module.so $NGINX_MODULES_PATH/ \
-	# if we have leftovers from building, let's purge them (including extra, unnecessary build deps)
+# nginx: https://git.io/vSIyj
 
 
-#SkyWalking Nginx Agent provides the native tracing capability for Nginx powered by Nginx LUA module. 
-#https://github.com/apache/skywalking-nginx-lua
-
-#compile nginx
-ARG CONFIG="\
-        --user=nginx \
-        --group=nginx \
+ENV CONFIG "\
         --prefix=/etc/nginx \
         --sbin-path=/usr/sbin/nginx \
+        --modules-path=/usr/lib/nginx/modules \
         --conf-path=/etc/nginx/nginx.conf \
-        --lock-path=/var/lock/nginx.lock \
-        --pid-path=/var/run/nginx.pid \
         --error-log-path=/var/log/nginx/error.log \
         --http-log-path=/var/log/nginx/access.log \
+        --pid-path=/var/run/nginx.pid \
+        --lock-path=/var/run/nginx.lock \
         --http-client-body-temp-path=/var/cache/nginx/client_temp \
         --http-proxy-temp-path=/var/cache/nginx/proxy_temp \
         --http-fastcgi-temp-path=/var/cache/nginx/fastcgi_temp \
         --http-uwsgi-temp-path=/var/cache/nginx/uwsgi_temp \
         --http-scgi-temp-path=/var/cache/nginx/scgi_temp \
-        --with-threads \
-        #--with-md5=/usr/include/openssl \
-        --with-pcre=../pcre-$PCRE_VERSION \
-        --with-zlib=../zlib-$ZLIB_VERSION \
-        --with-openssl=../openssl-$OPENSSL_VERSION \
+        --user=nginx \
+        --group=nginx \
         --with-http_ssl_module \
-        --with-http_gzip_static_module \
-        --with-http_gunzip_module \
-        #--with-sha1-asm \
-        #--with-md5-asm \
-        --with-http_auth_request_module \
-        --with-http_image_filter_module \
-        --with-http_addition_module \
-        --with-http_dav_module \
         --with-http_realip_module \
-        --with-http_v2_module \
-        --with-http_stub_status_module \
+        --with-http_addition_module \
         --with-http_sub_module \
-        --with-http_xslt_module \
+        --with-http_dav_module \
         --with-http_flv_module \
         --with-http_mp4_module \
-        --with-http_degradation_module \
-        #--with-http_upstream_check_module \
-        #--with-http_upstream_consistent_hash_module \
-        #--with-http_upstream_ip_hash_module=shared \
-        #--with-http_upstream_least_conn_module=shared \
-        #--with-http_upstream_session_sticky_module=shared \
-        #--with-http_map_module=shared \
-        #--with-http_user_agent_module=shared \
-        #--with-http_split_clients_module=shared \
-        #--with-http_access_module=shared \
-        #--with-http_random_index_module \
-        #--with-http_secure_link_module \
-        #--with-http_auth_request_module \
-        #--with-ipv6 \
+        --with-http_gunzip_module \
+        --with-http_gzip_static_module \
+        --with-http_random_index_module \
+        --with-http_secure_link_module \
+        --with-http_stub_status_module \
+        --with-http_auth_request_module \
+        --with-http_xslt_module=dynamic \
+        --with-http_image_filter_module=dynamic \
+        --with-http_geoip_module=dynamic \
+        --with-threads \
+        --with-stream \
+        --with-stream_ssl_module \
+        --with-stream_ssl_preread_module \
+        --with-stream_realip_module \
+        --with-stream_geoip_module=dynamic \
+        --with-http_slice_module \
+        --with-mail \
+        --with-mail_ssl_module \
+        --with-compat \
         --with-file-aio \
-        #--with-mail \
-        #--with-mail_ssl_module \
-        --with-pcre \
-        --with-pcre-jit \
-        #--with-jemalloc \
-        --add-module=/usr/src/nginx-module-vts \
-        #--add-dynamic-module=/usr/src/nginx-opentracing/opentracing \
-        #--with-compat \
-        --with-cc-opt="-I$HUNTER_INSTALL_DIR/include" \
-        --with-ld-opt="-L$HUNTER_INSTALL_DIR/lib" \
-        #--with-ld-opt="-ljemalloc" \
-        " 
-RUN \
-    #wget "http://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz" -O nginx.tar.gz \
-    wget "http://mirrors.sohu.com/nginx/nginx-${NGINX_VERSION}.tar.gz" -O nginx.tar.gz \
-    && tar -zxC /usr/src -f nginx.tar.gz \
-    && rm nginx.tar.gz \
-    && cd /usr/src \
-    && git clone https://github.com/vozlt/nginx-module-vts.git \
-    #&& git clone https://github.com/Refinitiv/nginx-sticky-module-ng.git \
-    && cd /usr/src/nginx-$NGINX_VERSION \
-    && ./configure $CONFIG --with-debug \
-    && make \
-    && mv objs/nginx objs/nginx-debug \
-    && ./configure $CONFIG \
-    && make \
-    #&& make install \
-    && make install DESTDIR=$PKG_ROOT
+        --with-http_v2_module \
+        --add-module=modules/ngx_http_upstream_check_module \
+        --add-module=modules/headers-more-nginx-module-0.33 \
+	--add-module=modules/ngx_http_upstream_session_sticky_module \
+        "
 
-#install nginx 
+RUN     #addgroup -S nginx \
+        #&& adduser -D -S -h /var/cache/nginx -s /sbin/nologin -G nginx nginx \
+        #&& addgroup -g 82 -S www-data && adduser -u 82 -D -S -G www-data www-data \
+        curl -L "https://github.com/alibaba/tengine/archive/$TENGINE_VERSION.tar.gz" -o tengine.tar.gz \
+        && mkdir -p /usr/src \
+        && tar -zxC /usr/src -f tengine.tar.gz \
+        && rm tengine.tar.gz \
+        && cd /usr/src/tengine-$TENGINE_VERSION \
+        && curl -L "https://github.com/openresty/headers-more-nginx-module/archive/v0.33.tar.gz" -o more.tar.gz \
+        && tar -zxC /usr/src/tengine-$TENGINE_VERSION/modules -f more.tar.gz \
+	&& rm  more.tar.gz \
+	&& ls -l /usr/src/tengine-$TENGINE_VERSION/modules \
+        && ./configure $CONFIG \
+        && make \
+        #&& make install \
+        && make install DESTDIR=$PKG_ROOT
+
+#install nginx
 COPY nginx.* /
 
 RUN \
-    cd /usr/src/nginx-$NGINX_VERSION \
+    cd /usr/src/tengine-$TENGINE_VERSION \
     #&& rm -rf /usr/nginx-module-vts/ \
     #&& rm -rf /nginx-upsync-module \
     && rm -rf $PKG_ROOT/etc/nginx/html/ \
@@ -320,7 +286,7 @@ RUN \
     && install -m644 -D /nginx.service $PKG_ROOT/usr/lib/systemd/system/nginx.service \
     && install -m644 -D /nginx.logrotate $PKG_ROOT/etc/logrotate.d/nginx \
     && strip $PKG_ROOT/usr/sbin/nginx* \
-    && rm -rf /usr/src/nginx-$NGINX_VERSION 
+    && rm -rf /usr/src/tengine-$TENGINE_VERSION
     # forward request and error logs to docker log collector
     #&& ln -sf /dev/stdout /var/log/nginx/access.log \
     #&& ln -sf /dev/stderr /var/log/nginx/error.log
@@ -333,18 +299,18 @@ RUN wget -O - https://github.com/rnburn/zipkin-cpp-opentracing/releases/download
 
 RUN \
     fpm -f --verbose \
-    -n nginx-oss \ 
+    -n tengine-oss \
     -s dir \
     --iteration 2.el7 \
-    -v ${NGINX_VERSION} \
+    -v ${TENGINE_VERSION} \
     -t rpm \
-    -m nginx-inc \
-    --vendor nginx.org \
+    -m tengine-inc \
+    --vendor tengine.org \
     -a native \
     -p /root/ \
     -d 'geoip,gd,libxslt,libxml2' \
     -C $PKG_ROOT \
-    --description 'nginx oss' \
+    --description 'tengine oss' \
     #--conflicts 'nginx,tegine,openresty,kong' \
     --url 'http://nginx.org/en' \
     --before-install /before-install.sh \
@@ -353,11 +319,12 @@ RUN \
     --config-files /etc/nginx/nginx.conf
 
 FROM slpcat/centos:7
-COPY --from=builder /root/nginx-oss-1.17.9-2.el7.x86_64.rpm /root
-RUN yum install -y /root/nginx-oss-1.17.9-2.el7.x86_64.rpm 
+COPY --from=builder /root/tengine-oss-1.17.9-2.el7.x86_64.rpm /root
+RUN yum install -y /root/tengine-oss-1.17.9-2.el7.x86_64.rpm
 
 #COPY nginx.conf /etc/nginx/nginx.conf
 
 EXPOSE 80 443
 
 CMD ["nginx", "-g", "daemon off;"]
+
