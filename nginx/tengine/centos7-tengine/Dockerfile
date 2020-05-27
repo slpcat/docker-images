@@ -122,7 +122,7 @@ RUN \
  #wget http://www.openssl.org/source/openssl-$OPENSSL_VERSION.tar.gz \
  #wget https://ftp.openssl.org/source/old/1.1.1/openssl-$OPENSSL_VERSION.tar.gz \
  tar -zxC /usr/src -f /usr/src/openssl-$OPENSSL_VERSION.tar.gz \
- && cd /usr/src/openssl-OpenSSL_1_1_1g \
+ && cd /usr/src/openssl-$OPENSSL_VERSION \
  && ./config --prefix=/usr/local \
  && make \
  && make install DESTDIR=$PKG_ROOT \
