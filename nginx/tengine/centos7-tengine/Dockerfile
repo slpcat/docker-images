@@ -249,6 +249,11 @@ ENV CONFIG "\
         --with-compat \
         --with-file-aio \
         --with-http_v2_module \
+        --with-pcre=../pcre-$PCRE_VERSION \
+        --with-pcre-jit \
+        --with-zlib=../zlib-$ZLIB_VERSION \
+        --with-openssl=../openssl-$OPENSSL_VERSION \
+        --add-module=/usr/src/nginx-module-vts \
         --add-module=modules/ngx_http_upstream_check_module \
         --add-module=modules/headers-more-nginx-module-0.33 \
 	--add-module=modules/ngx_http_upstream_session_sticky_module \
@@ -307,7 +312,7 @@ RUN \
     --vendor tengine.org \
     -a native \
     -p /root/ \
-    -d 'geoip,gd,libxslt,libxml2' \
+    -d 'GeoIP,gd,libxslt,libxml2' \
     -C $PKG_ROOT \
     --description 'tengine oss' \
     #--conflicts 'nginx,tegine,openresty,kong' \
@@ -326,4 +331,3 @@ RUN yum install -y /root/tengine-oss-2.3.2-2.el7.x86_64.rpm
 EXPOSE 80 443
 
 CMD ["nginx", "-g", "daemon off;"]
-
