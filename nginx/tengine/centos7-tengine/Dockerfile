@@ -318,8 +318,8 @@ RUN \
     --config-files /etc/nginx/nginx.conf
 
 FROM slpcat/centos:7
-COPY --from=builder /root/tengine-oss-1.17.9-2.el7.x86_64.rpm /root
-RUN yum install -y /root/tengine-oss-1.17.9-2.el7.x86_64.rpm
+COPY --from=builder /root/tengine-oss-2.3.2-2.el7.x86_64.rpm /root
+RUN yum install -y /root/tengine-oss-2.3.2-2.el7.x86_64.rpm
 
 #COPY nginx.conf /etc/nginx/nginx.conf
 

@@ -88,6 +88,14 @@ kubernetes可视化管理工具: kubernetes-dashboard,weavescope,kubebox,kubedas
 kubernetes灾难恢复: ark
 kubernetes扩容:virtual-kubelet,cluster-capacity,hpa-operator
 
+Open Application Model （OAM)
+https://openappmodel.io
+
+微服务Protocol: RSocket
+
+ReactiveX
+http://reactivex.io/
+
 开发工具: Telepresence,Keel,Apollo,Deis Workflow,Kel,
 安全工具: anchore,clair,cert-manager,docker-bench-security,magic-namespace,notary,OpenSCAP,trireme,NeuVector,Deepfence,StackRox,Tenable,Cavirin,Kube-Bench,Sysdig Falco,Sysdig Secure,Kubesec.io;付费 Aquasec,flawcheck
 安全平台: Wazuh,

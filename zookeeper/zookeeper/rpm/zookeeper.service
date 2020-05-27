@@ -1,0 +1,27 @@
+[Unit]
+Description=Zookeeper service
+After=network.target
+
+[Service]
+Type=forking
+PIDFile=/var/run/zookeeper.pid
+#User=hadoop
+#Group=hadoop
+WorkingDirectory=/opt/zookeeper
+#EnvironmentFile=/etc/sysconfig/zookeeper
+Environment=ZOO_LOG4J_PROP=WARN,ROLLINGFILE
+Environment=ZOO_LOG_DIR=/opt/zookeeper/log
+Environment=ZOOPIDFILE=/var/run/zookeeper.pid
+ExecStart=/opt/zookeeper/bin/zkServer.sh start
+ExecStop=/opt/zookeeper/bin/zkServer.sh stop
+ExecReload=/opt/bin/zkServer.sh restart
+KillMode=process
+Restart=on-failure
+RestartSec=5s
+Restart=on-failure
+SyslogIdentifier=zookeeper
+LimitNPROC=65536
+LimitNOFILE=104800
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,1 @@
+docker run -d --restart=always --hostname=kafka-mgr -p 9000:9000 -e ZK_HOSTS="zk-0,zk-1,zk-0" -e KM_USERNAME=admin -e KM_PASSWORD=admin slpcat/kafka-manager:v2.0.0.2-alpine
