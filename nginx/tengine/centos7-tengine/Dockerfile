@@ -297,6 +297,10 @@ RUN \
     #&& ln -sf /dev/stdout /var/log/nginx/access.log \
     #&& ln -sf /dev/stderr /var/log/nginx/error.log
 
+#ngx_http_module
+RUN wget https://github.com/opentracing-contrib/nginx-opentracing/releases/download/v0.9.0/linux-amd64-nginx-$NGINX_VERSION-ngx_http_module.so.tgz \
+   && tar -zxf linux-amd64-nginx-$NGINX_VERSION-ngx_http_module.so.tgz -C $PKG_ROOT/usr/lib/nginx/modules/
+
 # Jaeger
 RUN wget https://github.com/jaegertracing/jaeger-client-cpp/releases/download/v0.4.2/libjaegertracing_plugin.linux_amd64.so -O $PKG_ROOT/usr/local/lib/libjaegertracing_plugin.so
 
