@@ -53,7 +53,7 @@ COPY *.sh /
 RUN \
     bash before-install.sh
 
-ARG NGINX_VERSION=1.17.9
+ARG NGINX_VERSION=1.17.3
 ARG JEMALLOC_VERSION=5.2.1
 ARG PCRE_VERSION=8.44
 ARG ZLIB_VERSION=1.2.11
@@ -253,7 +253,7 @@ ENV CONFIG "\
         --with-pcre-jit \
         --with-zlib=../zlib-$ZLIB_VERSION \
         --with-openssl=../openssl-$OPENSSL_VERSION \
-        --add-module=/usr/src/nginx-module-vts \
+        --add-module=modules/nginx-module-vts \
         --add-module=modules/ngx_http_upstream_check_module \
         --add-module=modules/headers-more-nginx-module-0.33 \
 	--add-module=modules/ngx_http_upstream_session_sticky_module \
@@ -264,6 +264,8 @@ RUN     \
         && mkdir -p /usr/src \
         && tar -zxC /usr/src -f tengine.tar.gz \
         && rm tengine.tar.gz \
+        && cd /usr/src/tengine-$TENGINE_VERSION/modules \
+        && git clone https://github.com/vozlt/nginx-module-vts.git \
         && cd /usr/src/tengine-$TENGINE_VERSION \
         && curl -L "https://github.com/openresty/headers-more-nginx-module/archive/v0.33.tar.gz" -o more.tar.gz \
         && tar -zxC /usr/src/tengine-$TENGINE_VERSION/modules -f more.tar.gz \
