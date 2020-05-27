@@ -9,8 +9,8 @@ RUN \
         autoconf \
         bzip2 \
         gcc \
-        geoip \
-        geoip-dev \
+        GeoIP \
+        GeoIP-devel \
         git \
         wget \
         #gcc-c++ \
@@ -20,7 +20,7 @@ RUN \
         #pcre \
         #pcre-devel \
         #openssl \
-        #openssl-devel \
+        openssl-devel \
         #openssl11 \
         #openssl11-devel \
         #zlib \
@@ -125,7 +125,8 @@ RUN \
  && cd /usr/src/openssl-OpenSSL_1_1_1g \
  && ./config --prefix=/usr/local \
  && make \
- && make install DESTDIR=$PKG_ROOT
+ && make install DESTDIR=$PKG_ROOT \
+ && ldconfig
 
 #curl
 ARG CURL_VERSION=7.69.1
@@ -136,7 +137,7 @@ RUN \
     cd /usr/src \
     && tar -zxC /usr/src -f /curl-$CURL_VERSION.tar.gz \
     && cd /usr/src/curl-$CURL_VERSION \
-    && ./configure --prefix=/usr/local \
+    && ./configure --prefix=/usr/local --with-ssl \
     && make \
     && make install \
     && make install DESTDIR=$PKG_ROOT
@@ -253,9 +254,7 @@ ENV CONFIG "\
 	--add-module=modules/ngx_http_upstream_session_sticky_module \
         "
 
-RUN     #addgroup -S nginx \
-        #&& adduser -D -S -h /var/cache/nginx -s /sbin/nologin -G nginx nginx \
-        #&& addgroup -g 82 -S www-data && adduser -u 82 -D -S -G www-data www-data \
+RUN     \
         curl -L "https://github.com/alibaba/tengine/archive/$TENGINE_VERSION.tar.gz" -o tengine.tar.gz \
         && mkdir -p /usr/src \
         && tar -zxC /usr/src -f tengine.tar.gz \
