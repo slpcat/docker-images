@@ -1,1 +1,6 @@
 https://guides.sonatype.com/repo3/technical-guides/go-dependencies-nxrm3/
+
+docker run -d -p 8081:8081 --name nexus3 --restart=always -v /data/nexus-data:/nexus-data sonatype/nexus3
+
+curl -u admin:admin123 http://localhost:8081/service/metrics/ping
+

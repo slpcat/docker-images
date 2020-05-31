@@ -500,3 +500,4 @@ ES_NODES为前面安装的es地址
 
  
 
+docker run -d --restart=always --net=host -e COLLECTOR_ZIPKIN_HTTP_PORT=9411 -e JAEGER_SERVICE_NAME=my-jeager-query -e JAEGER_PROPAGATION=b3  jaegertracing/all-in-one:latest

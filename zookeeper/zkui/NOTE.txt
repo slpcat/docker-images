@@ -1,7 +1,7 @@
 A UI dashboard that allows CRUD operations on Zookeeper.
 https://github.com/DeemOpen/zkui
 
-docker run -d --restart=always -e ZKLIST='10.2.11.202:2181' -p 9090:9090 slpcat/zkui
+docker run -d --restart=always -e ZKLIST='10.2.11.202:2181' -e OTA_EXPORTER_JAEGER_ENDPOINT=localhost:14250 -e OTA_EXPORTER_JAEGER_SERVICE_NAME=my-zookeeper-ui -p 9090:9090 slpcat/zkui
 
 All necessary files in
 

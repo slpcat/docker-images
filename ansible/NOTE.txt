@@ -1,3 +1,8 @@
+Ansible终极速度优化之--- Mitogen Plugin
+
+Ansible 插件 CMDB
+Github地址： https://github.com/fboender/ansible-cmdb
+
 ansible-galaxy install dj-wasabi.zabbix-agent
 
 ansible-galaxy install cloudalchemy.prometheus
@@ -17,3 +22,6 @@ ansible-galaxy install ansible-thoteam.nexus3-oss
 ansible UI
 
 ansible-semaphore, Ansible AWX
+
+https://github.com/ansible-community/ansible-consul
+https://github.com/ansible-community/ansible-nomad

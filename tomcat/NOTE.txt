@@ -6,7 +6,8 @@
 pinpoint/pinpoint-agent-attach-example/tomcat
 
 4.consul配置中心
-
+5.jaeger 全链路追踪
+tracing/telemetry/
 
 开启Tomcat JMX功能
 CATALINA_OPTS="$CATALINA_OPTS
