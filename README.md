@@ -31,7 +31,7 @@ docker基础镜像源：webdevops，bitnami,turnkey,distroless
 
 持续集成/发布: jenkins,jenkins-x,fabric8,spinnaker,gitlab-ci,drone,makisu,flagger,shipper,Hubot,Lita,Err,StackStorm,Netflix Winston,Tekton
 测试: chaos-monkey,chaoskube,k8s-testsuite,test-infra,sonobuoy,PowerfulSeal,twemperf(memcached),locust，selenium
-artifactory仓库: nexus2,nexus3,harbor,registry,quay,jfrog
+artifactory仓库: nexus2,nexus3,harbor,registry,quay,jfrog/Artifactory
 
 跳板机/堡垒机: jumpserver
 helm应用商店: chartmuseum,kubeapps
@@ -77,10 +77,10 @@ API网关/反向代理/ingress: kong,konga,kong-dashboard,fabio,traefik,envoy,Ap
 
 FAAS: fission,fnproject,funktion,kubeless,nuclio,open-lambda,openfaas,openwhisk,vmware-dispatch,Claudia
 日志集群: elastic-stack(elasticsearch+cerebro+kibana),Elassandra
-日志采集: logstash,filebeat,logtail,log-pilot,logspout,auditbeat,hangout
-监控: Argus,bosun,Collectd,cadvisor,cortex,heapster,kube-state-metrics,metrics-server,searchlight,prometheus,thanos,kubewatch,searchlight,Molten,sensu,telegraf(TICK),Alerta,zabbix,statsite,statsd,riemann, Wavefront,Honeycomb,Graphite,open-falcon,Xhprof/Xhgui,nightingale,CAT（Central Application Tracking）
+日志采集: logstash,filebeat,logtail,log-pilot,logspout,auditbeat,hangout,fluentd,fluent-bit
+监控: Argus,bosun,Collectd,cadvisor,cortex,heapster,kube-state-metrics,metrics-server,searchlight,prometheus,thanos,kubewatch,searchlight,Molten,sensu,telegraf(TICK),Alerta,zabbix,statsite,statsd,riemann, Wavefront,Honeycomb,Graphite,open-falcon,Xhprof/Xhgui,nightingale,CAT（Central Application Tracking）,netdata,
 动态性能追踪: bcc-tools,systemtap,sysdig
-APM/tracing: appdash,apm-server,pinpoint,jaeger,zipkin,skywalking,opentracing,opencensus,opentelemetry,Elastic APM(原Opbeat),Dapper(Google),StackDriver Trace (Google),鹰眼(taobao),谛听(盘古，阿里云云产品使用的Trace系统),云图(蚂蚁Trace系统),X-ray(aws),Datadog,AppDynamics,New Relic,ScienceLogic,SignalFx,Stackifya,Dynatrace,OneAPM,RichAPM,Instana
+APM/tracing: appdash,apm-server,pinpoint,jaeger,zipkin,skywalking,opentracing,opencensus,opentelemetry,Elastic APM(原Opbeat),Dapper(Google),StackDriver Trace (Google),鹰眼(taobao),谛听(盘古，阿里云云产品使用的Trace系统),云图(蚂蚁Trace系统),X-ray(aws),Datadog,AppDynamics,New Relic,ScienceLogic,SignalFx,Stackifya,Dynatrace,OneAPM,RichAPM,Instana,RapidSpike,IQLECT,Dynatrace,SolarWinds Server & Application Monitor,CloudMonix,Glowroot,2 Steps,inspectIT
 
 kubernetes集群安装/升级: kubespray
 Kubernetes发行版: Rancher,CoreOS Tectonic,Canonical Distribution of Kubernetes（CDK）,Heptio Kubernetes,Kontena Pharos,Pivotal 容器服务 (PKS),Red Hat OpenShift,Telekube,Microk8s,k3s,
@@ -109,7 +109,7 @@ PaaS:flynn,tsuru,service-catalog
 负载均衡: gimbal,metallb,porter,GLB Director,DPDK-LVS,Jupiter,Seesaw,LoadMaster by KEMP,HAProxy,Zevenet,PEN,Gobetween
 Routing: quagga,frr(荐),Zebra, bird, bgpd
 大数据集群管理: CDH,HDP,ambari
-商业智能BI: MS Power BI,Superset,Metabase,CBoard,JasperSoft, OpenReports,SpagoBI,Pentaho,knowage-suite,Helical Insight,Knime,Rapidminer,Reportserver,Seal Report,Spagobi,SQL Power Wabit,Tableau Public,Zoho Reports,QlikView,SAP Business Objects,IBM Cognos Analytics, Oracle Business Intelligence,Yellowfin,WebFOCUS,TIBCO Spotfire,SAS BI,Targit,Izenda Embedded BI & Analytics,MicroStrategy,Board,Sisense, Statsbot,Panorama-Necto,InetSoft,FineBI,BIRT,Jupyter Notebook,zeppelin,
+商业智能BI: MS Power BI,Superset,Metabase,CBoard,JasperSoft, OpenReports,SpagoBI,Pentaho,knowage-suite,Helical Insight,Knime,Rapidminer,Reportserver,Seal Report,Spagobi,SQL Power Wabit,Tableau Public,Zoho Reports,QlikView,SAP Business Objects,IBM Cognos Analytics, Oracle Business Intelligence,Yellowfin,WebFOCUS,TIBCO Spotfire,SAS BI,Targit,Izenda Embedded BI & Analytics,MicroStrategy,Board,Sisense, Statsbot,Panorama-Necto,InetSoft,FineBI,BIRT,Jupyter Notebook,zeppelin,metabase
 数据报表
 数据分析
 数据挖掘

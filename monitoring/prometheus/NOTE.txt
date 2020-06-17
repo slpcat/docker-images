@@ -145,6 +145,9 @@ karma: alert dashboard
 
 https://github.com/prymitive/karma
 
+kthxbye
+https://github.com/prymitive/kthxbye
+
 OpenMetrics
 https://openmetrics.io/
 https://github.com/OpenObservability
@@ -179,12 +182,26 @@ prome2click
 prometheus-timescaledb
 
 7. Elasticsearch
+prometheus-es-adapter
+https://github.com/pwillie/prometheus-es-adapter
+remote_write:
+- url: http://prometheus-es-adapter-service.kube-system.svc.cluster.local:8000/write
+  remote_timeout: 30s
+  queue_config:
+    capacity: 10000  # capacity设置为10000
+    max_shards: 1000
+    min_shards: 1
+    max_samples_per_send: 100
+    batch_send_deadline: 5s
+    min_backoff: 30ms
+    max_backoff: 100ms
+
 
 8. Graphite
 
 9. TiKV
 
-10. VictoriaMetrics(荐)
+10. VictoriaMetrics
 VictoriaMetrics is fast, cost-effective and scalable time-series database. 
 
 11. kafka pipeline 对接大数据平台

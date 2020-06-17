@@ -1,0 +1,10 @@
+非侵入式监控
+无需业务代码埋点，实现机制：jvm或者其他字节码注入，拦截c语言库函数，拦截内核函数，网络协议分析
+常用技术:dtrace,ebpf,systemtap,perf,sysdig
+
+侵入式监控
+业务代码埋点,业务开发在特定函数埋点输出监控数据
+常用技术:prometheus,statsd,jaeger,zipkin
+
+传输/上报协议
+zabbix，falcon,statsd/collectd，prometheus/opentsdb，jaeger/zipkin，weave scope

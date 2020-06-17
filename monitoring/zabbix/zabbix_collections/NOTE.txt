@@ -52,3 +52,6 @@ https://www.zabbix.com/integrations/prometheus
 https://git.zabbix.com/projects/ZBX/repos/zabbix/browse/templates/os/linux_prom
 
 
+grafana dashboard
+
+11209 Zabbix - Monitoring Linux servers v4.4.0

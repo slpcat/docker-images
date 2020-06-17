@@ -1,0 +1,5 @@
+{
+  "service_name": "nginx",
+  "collector_host": "zipkin",
+  "sample_rate": 0.5
+}

@@ -53,7 +53,14 @@ docker: Error response from daemon: could not get container for elasticsearch: N
 docker + collector安装
 若你安装的collector和elasticsearch是在同一台机器上，使用docker容易的--link命令就可以将collector和elasticsearch关联上，安装命令如下：
 
-docker run -d --name jaeger-collector --restart=always --link elasticsearch:elasticsearch -e SPAN_STORAGE_TYPE=elasticsearch -e ES_SERVER_URLS=http://elasticsearch:9200 -e ES_USERNAME=elastic -p 14267:14267 -p 14268:14268 -p 9411:9411 jaegertracing/jaeger-collector
+
+docker run -d --name jaeger-collector --restart=always \
+-e COLLECTOR_ZIPKIN_HTTP_PORT=9411 \
+-e SPAN_STORAGE_TYPE=elasticsearch -e ES_SERVER_URLS="http://es.elasticsearch.com:9200" \
+-e ES_USERNAME="elastic" -e ES_PASSWORD="password" \
+-e ES_INDEX_PREFIX=online -e ES_TAGS_AS_FIELDS=true \
+-p 14267:14267 -p 14268:14268 -p 9411:9411 -p 14250:14250 jaegertracing/jaeger-collector
+
 
 注意：
 
@@ -114,7 +121,12 @@ docker run -d --name jaeger-collector  --restart=always -e SPAN_STORAGE_TYPE=ela
 docker + query安装
 同collector一样，若你安装的collector和elasticsearch是在同一台机器上，使用docker容易的--link命令就可以将query和elasticsearch关联上，安装命令如下：
 
-docker run -d --name jaeger-query --restart=always --link elasticsearch:elasticsearch -e SPAN_STORAGE_TYPE=elasticsearch -e ES_SERVER_URLS=http://elasticsearch:9200 -e ES_USERNAME=elastic -e ES_PASSWORD=你的密码 -p 16686:16686/tcp jaegertracing/jaeger-query
+docker run -d --name jaeger-query --restart=always \
+-e JAEGER_SERVICE_NAME=my-jeager-query -e JAEGER_PROPAGATION=b3 -e JAEGER_AGENT_HOST=jaeger-agent.ip \
+-e SPAN_STORAGE_TYPE=elasticsearch -e ES_SERVER_URLS="http://es.elasticsearch.com:9200" \
+-e ES_USERNAME="elastic" -e ES_PASSWORD="password" \
+-e ES_INDEX_PREFIX=online \
+-p 16686:16686/tcp jaegertracing/jaeger-query
 
 其他对应的操作，你参考collector即可，到了这一步，如果你能将collector部署好，那么部署query也是一样的；
 
@@ -141,8 +153,8 @@ docker + agent安装
 
 docker安装agent命令如下：
 
-docker run   -d  --name jaeger-agent --restart=always -p 5775:5775/udp   -p 6831:6831/udp   -p 6832:6832/udp   -p 5778:5778/tcp   jaegertracing/jaeger-agent   /go/bin/agent-linux --collector.host-port=collector ip:14267
 
+docker run   -d  --name jaeger-agent --restart=always -p 5775:5775/udp   -p 6831:6831/udp   -p 6832:6832/udp   -p 5778:5778/tcp   jaegertracing/jaeger-agent --reporter.grpc.host-port=ip:14250
  
 
 如前文所述，你可能不止一个collector，你可能需要这样：
@@ -492,12 +504,20 @@ https://github.com/jaegertracing/spark-dependencies
 
 另外，你也可以使用docker执行：
 
- docker run  --rm  --name  spark-dependencies  --env STORAGE=elasticsearch --env ES_NODES=http://localhost:9200 jaegertracing/spark-dependencies
+docker run  --rm  --name  spark-dependencies \ 
+-e STORAGE=elasticsearch -e ES_NODES=http://localhost:9200 \
+-e ES_USERNAME=elastic -e ES_PASSWORD=password \
+-e ES_NODES_WAN_ONLY=true \
+jaegertracing/spark-dependencies
+
+
 
 ES_NODES为前面安装的es地址
 
 当然，至于docker怎么执行定时任务，或者Kubernetes怎么执行CronJob，你可以自行研究dokcer或Kubernetes相关的知识。当然，你可以crontab定时执行脚本。
 
+清理ES旧索引
+docker pull jaegertracing/jaeger-es-index-cleaner:1.18
  
 
 docker run -d --restart=always --net=host -e COLLECTOR_ZIPKIN_HTTP_PORT=9411 -e JAEGER_SERVICE_NAME=my-jeager-query -e JAEGER_PROPAGATION=b3  jaegertracing/all-in-one:latest

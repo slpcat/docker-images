@@ -1,0 +1,35 @@
+version: "3"
+services:
+  telegraf:
+    image: telegraf:1.14
+    container_name: telegraf
+    restart: always
+    ports:
+      - "8125:8125/udp"
+    links:
+      - influxdb
+    volumes:
+      - ./telegraf/conf/telegraf.conf:/etc/telegraf/telegraf.conf
+
+  influxdb:
+    image: influxdb:1.7.8
+    container_name: influxdb
+    restart: always
+    ports:
+      - "8386:8086"
+      - "8388:8088"
+    volumes:
+      - ./influxdb/data:/var/lib/influxdb
+      - ./influxdb/etc/influxdb.conf:/etc/influxdb/influxdb.conf
+
+#  grafana:
+#    image: grafana/grafana:7.0.3
+#    container_name: grafana
+#    restart: always
+#    user: "1002"
+#    ports:
+#      - "3000:3000"
+#    links:
+#      - influxdb
+#    volumes:
+#      - ./grafana/data:/var/lib/grafana

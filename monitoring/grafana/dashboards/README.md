@@ -55,6 +55,11 @@ ID: 4475 Traefik
 
 ID: 1443 telegraf
 
+ID: 7424 kong
+
+ID: 10990 Nginx VTS
+
+
 http://docs.grafana.org/alerting/notifications/#dingding-dingtalk
 
 worldping

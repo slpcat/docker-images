@@ -1,4 +1,3 @@
-#FROM slpcat/centos:7 AS builder
 FROM slpcat/gcc:v9.3.0-centos7 AS builder
 MAINTAINER 若虚 <slpcat@qq.com>
 #https://nginx.org/en/docs/configure.html
@@ -8,7 +7,7 @@ RUN \
         autogen \
         autoconf \
         bzip2 \
-        gcc \
+        #gcc \
         GeoIP \
         GeoIP-devel \
         git \
@@ -25,6 +24,7 @@ RUN \
         #openssl11-devel \
         #zlib \
         #zlib-devel \
+        which \
         libxslt \
         libxslt-devel \
         libxml2 \
@@ -40,13 +40,7 @@ RUN \
 ENV GO111MODULE=on \
     GOPROXY=https://goproxy.cn
 
-RUN ln -s /usr/bin/cmake3 /usr/bin/cmake \
-    && ln -sf /usr/bin/cc /usr/local/bin/gcc
-
-RUN \
-     yum -y install ruby ruby-devel rubygems \
-     && gem sources --add https://gems.ruby-china.com/ --remove https://rubygems.org/ \
-     && gem install fpm
+RUN ln -s /usr/bin/cmake3 /usr/bin/cmake 
 
 COPY *.sh /
 
@@ -146,28 +140,29 @@ RUN \
 #https://github.com/opentracing-contrib/nginx-opentracing#building-from-source
 
 ### Build opentracing-cpp
-#RUN \
-#  cd /usr/src \
-#  && git clone -b $OPENTRACING_CPP_VERSION https://github.com/opentracing/opentracing-cpp.git \
-#  && cd opentracing-cpp \
-#  && mkdir .build && cd .build \
-#  && cmake -DCMAKE_BUILD_TYPE=Release \
-#           -DBUILD_TESTING=OFF .. \
-#  && make \
-#  && make install \
-#  && make install DESTDIR=$PKG_ROOT
+RUN \
+  cd /usr/src \
+  && git clone -b $OPENTRACING_CPP_VERSION https://github.com/opentracing/opentracing-cpp.git \
+  && cd opentracing-cpp \
+  && mkdir .build && cd .build \
+  && cmake -DCMAKE_BUILD_TYPE=Release \
+           -DBUILD_TESTING=ON .. \
+  && make \
+  && make install \
+  && make install DESTDIR=$PKG_ROOT
 
 ### Build zipkin-cpp-opentracing
-#RUN \
-#  cd /usr/src \
-#  && git clone -b $ZIPKIN_CPP_VERSION https://github.com/rnburn/zipkin-cpp-opentracing.git \
-#  && cd zipkin-cpp-opentracing \
-#  && mkdir .build && cd .build \
-#  && cmake -DBUILD_SHARED_LIBS=1 -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF .. \
-#  && make \
-#  && make install \
-#  && make install DESTDIR=$PKG_ROOT \
-#  && cd $PKG_ROOT/usr/local/lib/ && ln -s libzipkin_opentracing.so libzipkin_opentracing_plugin.so
+RUN \
+  cd /usr/src \
+  && git clone -b $ZIPKIN_CPP_VERSION https://github.com/rnburn/zipkin-cpp-opentracing.git \
+  && cd zipkin-cpp-opentracing \
+  && mkdir .build && cd .build \
+  && cmake -DBUILD_SHARED_LIBS=1 -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF .. \
+  && make \
+  && make install \
+  && make install DESTDIR=$PKG_ROOT \
+  && cd $PKG_ROOT/usr/local/lib/ \
+  && ln -s libzipkin_opentracing.so libzipkin_opentracing_plugin.so 
 
 ### Build Jaeger cpp-client
 #RUN \
@@ -199,6 +194,13 @@ RUN \
 ### Build nginx-opentracing modules
 ENV NGINX_OPENTRACING_VERSION=v0.9.0
 
+COPY usr-local-lib.conf /etc/ld.so.conf.d/
+RUN mkdir -p $PKG_ROOT/etc/ld.so.conf.d/
+COPY usr-local-lib.conf $PKG_ROOT/etc/ld.so.conf.d/
+
+RUN ldconfig \
+    && ldconfig -p \
+    && ln -sf /usr/local/lib64/libstdc++.so.6 /lib64/libstdc++.so.6
 
 ENV TENGINE_VERSION 2.3.2
 
@@ -222,6 +224,7 @@ ENV CONFIG "\
         --user=nginx \
         --group=nginx \
         --with-http_ssl_module \
+        --with-http_v2_module \
         --with-http_realip_module \
         --with-http_addition_module \
         --with-http_sub_module \
@@ -248,12 +251,12 @@ ENV CONFIG "\
         --with-mail_ssl_module \
         --with-compat \
         --with-file-aio \
-        --with-http_v2_module \
         --with-pcre=../pcre-$PCRE_VERSION \
         --with-pcre-jit \
         --with-zlib=../zlib-$ZLIB_VERSION \
         --with-openssl=../openssl-$OPENSSL_VERSION \
         --add-module=modules/nginx-module-vts \
+        --add-module=modules/nginx-opentracing/opentracing \ 
         --add-module=modules/ngx_http_upstream_check_module \
         --add-module=modules/headers-more-nginx-module-0.33 \
 	--add-module=modules/ngx_http_upstream_session_sticky_module \
@@ -266,6 +269,7 @@ RUN     \
         && rm tengine.tar.gz \
         && cd /usr/src/tengine-$TENGINE_VERSION/modules \
         && git clone https://github.com/vozlt/nginx-module-vts.git \
+        && git clone https://github.com/opentracing-contrib/nginx-opentracing.git \
         && cd /usr/src/tengine-$TENGINE_VERSION \
         && curl -L "https://github.com/openresty/headers-more-nginx-module/archive/v0.33.tar.gz" -o more.tar.gz \
         && tar -zxC /usr/src/tengine-$TENGINE_VERSION/modules -f more.tar.gz \
@@ -298,39 +302,37 @@ RUN \
     #&& ln -sf /dev/stderr /var/log/nginx/error.log
 
 #ngx_http_module
-RUN wget https://github.com/opentracing-contrib/nginx-opentracing/releases/download/v0.9.0/linux-amd64-nginx-$NGINX_VERSION-ngx_http_module.so.tgz \
-   && tar -zxf linux-amd64-nginx-$NGINX_VERSION-ngx_http_module.so.tgz -C $PKG_ROOT/usr/lib/nginx/modules/
+#RUN wget https://github.com/opentracing-contrib/nginx-opentracing/releases/download/v0.9.0/linux-amd64-nginx-$NGINX_VERSION-ngx_http_module.so.tgz \
+#   && tar -zxf linux-amd64-nginx-$NGINX_VERSION-ngx_http_module.so.tgz -C $PKG_ROOT/usr/lib/nginx/modules/
 
 # Jaeger
-RUN wget https://github.com/jaegertracing/jaeger-client-cpp/releases/download/v0.4.2/libjaegertracing_plugin.linux_amd64.so -O $PKG_ROOT/usr/local/lib/libjaegertracing_plugin.so
+RUN \
+    wget https://github.com/jaegertracing/jaeger-client-cpp/releases/download/v0.4.2/libjaegertracing_plugin.linux_amd64.so -O $PKG_ROOT/usr/local/lib/libjaegertracing_plugin.so \
+    && chmod +x $PKG_ROOT/usr/local/lib/libjaegertracing_plugin.so
 
 # Zipkin
-RUN wget -O - https://github.com/rnburn/zipkin-cpp-opentracing/releases/download/v0.5.2/linux-amd64-libzipkin_opentracing_plugin.so.gz | gunzip -c > $PKG_ROOT/usr/local/lib/libzipkin_opentracing_plugin.so
+#RUN wget -O - https://github.com/rnburn/zipkin-cpp-opentracing/releases/download/v0.5.2/linux-amd64-libzipkin_opentracing_plugin.so.gz | gunzip -c > $PKG_ROOT/usr/local/lib/libzipkin_opentracing_plugin.so
+
+
+#install ruby 2.4
+COPY rvm-installer ruby_install.sh /
 
 RUN \
-    fpm -f --verbose \
-    -n tengine-oss \
-    -s dir \
-    --iteration 2.el7 \
-    -v ${TENGINE_VERSION} \
-    -t rpm \
-    -m tengine-inc \
-    --vendor tengine.org \
-    -a native \
-    -p /root/ \
-    -d 'GeoIP,gd,libxslt,libxml2' \
-    -C $PKG_ROOT \
-    --description 'tengine oss' \
-    #--conflicts 'nginx,tegine,openresty,kong' \
-    --url 'http://nginx.org/en' \
-    --before-install /before-install.sh \
-    --after-install /after-install.sh \
-    --after-remove /after-remove.sh \
-    --config-files /etc/nginx/nginx.conf
+    gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB \
+    #&& curl -sSL https://get.rvm.io | bash -s stable \
+    && bash -x /rvm-installer \
+    && bash -x /ruby_install.sh
+    #&& gem sources --add https://gems.ruby-china.com/ --remove https://rubygems.org/ \
+    #&& gem install fpm
+
+COPY fpm-pack.sh /
+
+RUN \
+    bash -x /fpm-pack.sh 
 
 FROM slpcat/centos:7
-COPY --from=builder /root/tengine-oss-2.3.2-2.el7.x86_64.rpm /root
-RUN yum install -y /root/tengine-oss-2.3.2-2.el7.x86_64.rpm
+COPY --from=builder /root/tengine-oss-2.3.2-4.el7.x86_64.rpm /root
+RUN yum install -y /root/tengine-oss-2.3.2-4.el7.x86_64.rpm
 
 #COPY nginx.conf /etc/nginx/nginx.conf
 

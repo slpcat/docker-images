@@ -1,0 +1,48 @@
+安装步骤
+
+1. 安装gcc9 yum install -y gcc9-9.3.0-1.el7.x86_64.rpm
+
+2. 安装tengine yum install -y tengine-oss-2.3.2-3.el7.x86_64.rpm
+
+3. 设置共享库路径
+cp usr-local-lib.conf /etc/ld.so.conf.d/
+
+4. 升级libstdc++ 
+ln -sf /usr/local/lib64/libstdc++.so.6 /lib64/libstdc++.so.6
+
+5. 检查确认生效 
+ldconfig && ldconfig -p
+
+nginx.conf 配置样例
+
+http字段
+http{
+
+
+  opentracing on;
+  opentracing_tag http_user_agent $http_user_agent;
+  opentracing_load_tracer /usr/local/lib/libjaegertracing_plugin.so /etc/nginx/jaeger-config.json;
+  #opentracing_load_tracer /usr/local/lib/libzipkin_opentracing_plugin.so /etc/nginx/zipkin-config.json;
+  #opentracing_operation_name nginx-$host;
+  opentracing_operation_name $uri;
+  #opentracing_tag request.id $request_id;
+  opentracing_location_operation_name $request;
+  opentracing_propagate_context;
+  opentracing_trace_locations on;
+  proxy_set_header X-Request-Id $request_id;
+
+  #vhost_traffic_status_zone;
+  vhost_traffic_status_filter on;
+  vhost_traffic_status_filter_max_node 5000 ;
+  vhost_traffic_status_zone shared:vhost_traffic_status:64m;
+  vhost_traffic_status_filter_by_set_key $uri uris::$server_name;
+  #vhost_traffic_status_filter_by_set_key $status $server_name;
+  #vhost_traffic_status_filter_by_set_key $remote_port client::ports::$server_name;
+  #vhost_traffic_status_filter_by_set_key $geoip_country_code country::$server_name;
+  vhost_traffic_status_dump /var/log/nginx/vts.db;
+
+.......
+}
+
+
+slpcat/tengine:v2.3.2-centos7

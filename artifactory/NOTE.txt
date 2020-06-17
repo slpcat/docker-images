@@ -1,0 +1,10 @@
+Artifactory 默认端口是8040，安装成功后访问：http://hostname:8040 即可登录（默认用户名 admin 密码 password）
+
+docker run --name artifactory -d \
+-v /data/artifactory:/var/opt/jfrog/artifactory \
+-p 8081:8081 -p 8082:8082 \
+docker.bintray.io/jfrog/artifactory-oss:7.5.7
+
+https://www.jfrog.com/confluence/display/JFROG/Installing+Artifactory
+
+

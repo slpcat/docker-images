@@ -8,11 +8,13 @@ https://blog.csdn.net/swcxy12315/article/details/86687151
 
 nginx-js: nginx 运行JavaScript
 
-
 opentracing 
 详见 tracing/nginx-opentracing-demo
 
 vts
+
+https://github.com/vozlt/nginx-module-vts
+
 修改nginx 配置
 http {
     vhost_traffic_status_zone;
@@ -96,6 +98,17 @@ cd /usr/local/nginx-vts-exporter-0.9.1.linux-amd64/
 端口为9913，查看数据：
 
 curl http://127.0.0.1:9913/metrics > nginx_data
+
+grpc 
+http {
+    # 设置超时和发包大小
+    client_max_body_size 4000M;
+    grpc_read_timeout 1d;
+    grpc_send_timeout 1d;
+    grpc_buffer_size 100M;
+
+    # 透传headers
+    underscores_in_headers on;
 
 grpc web gateway
 https://github.com/ysugimoto/lua-resty-grpc-gateway

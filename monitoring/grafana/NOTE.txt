@@ -24,5 +24,5 @@ https://github.com/aliyun/aliyun-cms-grafana
 独立版
 推荐使用prometheus-operator
 
-docker run -d --restart=always --name=grafana -e JAEGER_SERVICE_NAME=my-grafana -e JAEGER_RPC_METRICS=true -e JAEGER_AGENT_HOST=jaeger.ip -e GF_TRACING_JAEGER_ADDRESS=jaeger.ip:6831 -e GF_TRACING_JAEGER_ZIPKIN_PROPAGATION=true -p 3000:3000 -v /tol/data/grafana-data:/var/lib/grafana grafana/grafana:7.0.1
+docker run -d --restart=always --name=grafana -e JAEGER_SERVICE_NAME=my-grafana -e JAEGER_RPC_METRICS=true -e JAEGER_AGENT_HOST=jaeger.ip -e GF_TRACING_JAEGER_ADDRESS=jaeger.ip:6831 -e GF_TRACING_JAEGER_ZIPKIN_PROPAGATION=true -p 3000:3000 -v /tol/data/grafana-data:/var/lib/grafana grafana/grafana:7.0.3
 
