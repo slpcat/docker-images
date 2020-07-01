@@ -1,0 +1,78 @@
+Server 2016/2019 服务器操作系统上怎样安装 Linux 子系统
+
+1.打开功能支持 WSL
+以管理员权限打开 PowerShell 终端，执行以下指令
+Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux
+开启 Linux 子系统支持的功能。
+
+2.下载 Centos 7 的docker 镜像
+
+    可以参考 https://github.com/RoliSoft/WSL-Distribution-Switcher  或者 https://hub.docker.com/_/centos/ 来下载。
+
+    也可以直接下载 下面的链接给出的镜像（7.6.1810）。
+https://raw.githubusercontent.com/CentOS/sig-cloud-instance-images/7c2e214edced0b2f22e663ab4175a80fc93acaa9/docker/centos-7-docker.tar.xz
+
+推荐使用supervisord管理后台程序
+
+3.安装LxRunOffline
+
+非官方工具，指定Linux root
+
+下载地址
+https://github.com/DDoSolitary/LxRunOffline/releases
+
+使用 LxRunOffline 部署 Centos 到WSL
+
+CD C:\tools\lxrunoffline
+
+.\LxRunOffline.exe install -n centos -d C:\ProgramData\Microsoft\Windows\WSL\CentOS -f  C:\ProgramData\Microsoft\Windows\WSL\centos-7-docker.tar.xz
+
+    其中 -d 后面是要安装到的目录，-f 是前面下载的镜像， -n 用来指定名称。
+
+    然后使用  LxRunOffine 来开启 Centos
+
+LxRunOffline  run  -n centos
+
+    当然，如果你只安装了这一个WSL，那直接输入bash 也可以进行WSL.
+
+4. 设置开机启动
+
+进入任意 WSL 发行版中，创建并编辑文件：/etc/init.wsl
+
+#! /bin/sh
+/etc/init.d/cron $1
+/etc/init.d/ssh $1
+/etc/init.d/supervisor $1
+
+里面调用了我们希望启动的三个服务的启动脚本，设置权限为可执行，所有者为 root，这时候可以通过：
+
+sudo /etc/init.wsl [start|stop|restart]
+来启停我们需要的服务，在 Windows 中，开始-运行，输入：
+
+shell: startup
+
+按照你 WSL 使用的 Linux 发行版创建启动脚本，比如我创建的 Debian.vbs 文件：
+
+Set ws = CreateObject("Wscript.Shell")
+ws.run "wsl -d debian -u root /etc/init.wsl start", vbhide
+这个脚本就会在你登陆的时候自动在名字为 "debian" 的 wsl 发行版中执行 /etc/init.wsl 启动我们的服务了，如果你用的是 ubuntu18.04 的发行版，那么修改上面脚本里的 debian 为 ubuntu1804.vbs：
+
+Set ws = CreateObject("Wscript.Shell")
+ws.run "wsl -d Ubuntu-18.04 -u root /etc/init.wsl start", vbhide
+而如果你不知道自己的 WSL 发行版叫做什么名字，可以用 “wsl -l" 来查看。不管你用最初的 bash (ubuntu 16.04) 还是商店里下载的 debian/ubuntu1804 都能顺利启动服务了。
+
+WSL 中有很多有用的服务，你可以按需删改 /etc/init.wsl ，但没必要塞很多东西进去影响你的启动速度，比如 mysql/mongodb 这些重度服务，可以需要的时候再启动，用完就停了。
+
+我自己用的比较多的服务就三个：sshd（启动了以后支持终端软件登陆wsl，像远程服务器一样操作），supervisord（用于托管其他服务，比如 ssr），crond（crontab，自由定制定时任务），大部分时候，用上面三个足以。
+
+简化版本的 wsl -d 启动方案 supervisord。
+
+ws.run "wsl -d debian -u root /usr/bin/supervisord", vbhide
+
+5.卸载Linux
+
+在win10 LTSC 2019之前，卸载可以用lxrun工具，但是LTSC 2019抛弃了这个工具。因此你可以在别的地方看到很多说重装linux子系统要用lxrun的，这都是老黄历，不要采信。
+前面提了一句，这个所谓安装其实只是注册。因而卸载的时候只要解除注册就可以.解除注册还是用刚才提到的wslconfig因而卸载过程为:在命令行输入"wslconfig /u 发行版名",解除注册.然后删掉相应的文件夹即可。
+
+
+官方参考：https://docs.microsoft.com/zh-cn/windows/wsl/install-on-server

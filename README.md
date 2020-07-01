@@ -58,7 +58,7 @@ NewSQL数据库: TiDB,cockroachdb,VoltDB,Clustrix, NuoDB,TokuDB, MemSQL,Couchbas
 API查询语言: GraphQL,prisma.io
 API管理和测试: API Fortress,MockApi,APIJSON,Postman,Tyk,Swagger,RAP2,YApi,Eolinker,DOClever,Apizza,EasyAPI,CrapApi,apidoc,swagger
 时间序列数据库: influxdb,opentsdb,m3db,Heroic,TimeScaleDB,KairosDB,DolphinDB,Druid,Graphite,pipelinedb
-消息队列/流存储: rabbitmq,zeromq,memcacheq,rocketmq,pulsar,rocketmq-console-ng,kafka,kafka-manager
+消息队列/流存储: rabbitmq,zeromq,memcacheq,rocketmq,pulsar,rocketmq-console-ng,kafka,kafka-manager,nsq,nats
 配置管理: zookeeper,zkui,qconf,etcd,apollo,disconf,spring-cloud-config,nacos
 定时/任务管理: xxl-job,elasticjob,escalator,cronsun,
 聊天软件: Discourse,RocketChat,slack,Telegram,HipChat,
@@ -77,7 +77,7 @@ API网关/反向代理/ingress: kong,konga,kong-dashboard,fabio,traefik,envoy,Ap
 
 FAAS: fission,fnproject,funktion,kubeless,nuclio,open-lambda,openfaas,openwhisk,vmware-dispatch,Claudia
 日志集群: elastic-stack(elasticsearch+cerebro+kibana),Elassandra
-日志采集: logstash,filebeat,logtail,log-pilot,logspout,auditbeat,hangout,fluentd,fluent-bit
+日志采集: logstash,filebeat,logtail,log-pilot,logspout,auditbeat,hangout,fluentd,fluent-bit,loki/promtail
 监控: Argus,bosun,Collectd,cadvisor,cortex,heapster,kube-state-metrics,metrics-server,searchlight,prometheus,thanos,kubewatch,searchlight,Molten,sensu,telegraf(TICK),Alerta,zabbix,statsite,statsd,riemann, Wavefront,Honeycomb,Graphite,open-falcon,Xhprof/Xhgui,nightingale,CAT（Central Application Tracking）,netdata,
 动态性能追踪: bcc-tools,systemtap,sysdig
 APM/tracing: appdash,apm-server,pinpoint,jaeger,zipkin,skywalking,opentracing,opencensus,opentelemetry,Elastic APM(原Opbeat),Dapper(Google),StackDriver Trace (Google),鹰眼(taobao),谛听(盘古，阿里云云产品使用的Trace系统),云图(蚂蚁Trace系统),X-ray(aws),Datadog,AppDynamics,New Relic,ScienceLogic,SignalFx,Stackifya,Dynatrace,OneAPM,RichAPM,Instana,RapidSpike,IQLECT,Dynatrace,SolarWinds Server & Application Monitor,CloudMonix,Glowroot,2 Steps,inspectIT

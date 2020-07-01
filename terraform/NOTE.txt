@@ -1,0 +1,6 @@
+terraforming
+Export existing AWS resources to Terraform style (tf, tfstate)
+https://github.com/dtan4/terraforming
+http://terraforming.dtan4.net/
+
+https://github.com/radekg/terraform-provisioner-ansible

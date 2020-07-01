@@ -39,3 +39,27 @@ docker exec etcd-gcr-v3.4.7 /bin/sh -c "/usr/local/bin/etcdctl version"
 docker exec etcd-gcr-v3.4.7 /bin/sh -c "/usr/local/bin/etcdctl endpoint health"
 docker exec etcd-gcr-v3.4.7 /bin/sh -c "/usr/local/bin/etcdctl put foo bar"
 docker exec etcd-gcr-v3.4.7 /bin/sh -c "/usr/local/bin/etcdctl get foo"
+
+
+WebUI
+
+etcd-browser
+
+https://github.com/henszey/etcd-browser
+
+docker run --rm  -d --name etcd-browser \
+-p 8000:8000 \
+-e ETCD_HOST=10.211.55.25 \
+-e  ETCD_PORT=2379 \
+-e AUTH_USER=user \
+-e AUTH_PASS=password \
+-e SERVER_PORT=8000 \
+buddho/etcd-browser
+
+https://github.com/xiaowei520/e3w
+
+etcdkeeper
+
+docker run -it -d --name etcdkeeper \
+-p 8080:8080 \
+evildecay/etcdkeeper
