@@ -24,3 +24,8 @@ RUBY_GC_HEAP_OLDOBJECT_LIMIT_FACTOR=0.9
   </buffer>
   ...
 </match>
+
+
+Fluent OSS output plugin
+将数据缓存在本地，达到设定的条件后，将缓存的数据(压缩后，如果设置的话)上传到OSS
+
