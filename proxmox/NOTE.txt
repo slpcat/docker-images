@@ -1,0 +1,20 @@
+PROXMOX 6.0国内源设置
+vi /etc/apt/sources.list.d/pve-enterprise.list
+
+deb http://download.proxmox.wiki/debian/pve buster pve-no-subscription
+
+ 
+
+vi /etc/apt/sources.list
+
+deb http://mirrors.163.com/debian buster main contrib
+
+deb http://mirrors.163.com/debian buster-updates main contrib
+
+# security updates
+deb http://mirrors.163.com/debian-security/ buster/updates main contrib
+
+最后执行
+
+apt update
+apt dist-upgrade #如需升级pve，则执行该命令

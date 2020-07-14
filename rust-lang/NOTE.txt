@@ -102,3 +102,7 @@ https://github.com/Aardwolf-Social/aardwolf
 
 https://github.com/dessalines/lemmy
 
+高性能 WebAssembly 虚拟机 SSVM
+https://github.com/second-state/SSVM
+
+
