@@ -1,0 +1,2 @@
+XBMC,Kodi,OpenELEC,boxee,dakaiTV,plex等开源媒体中心
+Raspberry Pi上的XBMC独立系统(即开机即是XBMC界面)目前共有三种，分别是OpenELEC、Raspbmc和XBian

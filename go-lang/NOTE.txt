@@ -14,6 +14,16 @@ http://www.open-open.com/lib/view/open1396063913278.html
 
 https://github.com/go-kit/kit
 
+Github: https://github.com/tuneinc/truss
+https://github.com/metaverse/truss
+
+https://github.com/micro/go-micro
+
+Kite是用Go开发的一套RPC库，很适合作为分布式微服务的开发框架。
+
+https://github.com/koding/kite
+
+
 日志库
 
 logrus是已知的Go语言日志库中在github中stars数最多的日志库，功能强大，性能也不错。另外值得一提的是logrus的一个fork库gogap/logrus，可以配置输出到文件和graylog日志系统，基础的level、调用链、行号，文件切分都有，特色是结构化日志可以被统计和索引，借助graylog就可以做日志分析，不过这个库很久没有维护了。

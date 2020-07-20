@@ -1,0 +1,9 @@
+服务器BIOS 配置，略
+linux内核常规优化，略
+
+客户机配置
+cpu host
+磁盘 scsi --virtio-scsi muti-thread, discard, emu SSD
+
+网卡 virtio
+

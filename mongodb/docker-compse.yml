@@ -1,0 +1,13 @@
+services:
+  mongo-db:
+    image: vepo/mongo
+    container_name: mongo-db
+    ports:
+      - 27017:27017
+    environment:
+      - AUTH=yes
+      - ADMIN_USER=admin
+      - ADMIN_PASS=admin
+      - APPLICATION_DATABASE=backend
+      - APPLICATION_USER=backend
+      - APPLICATION_PASS=XXXXXXXXXXX

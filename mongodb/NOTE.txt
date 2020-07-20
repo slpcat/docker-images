@@ -1,0 +1,25 @@
+docker run -d --restart=always --name mongo -p 27017:27017 \
+-v /data/mongodb:/data/db \
+-e MONGO_INITDB_ROOT_USERNAME=root -e MONGO_INITDB_ROOT_PASSWORD=root \
+mongo --auth
+
+
+
+docker exec -it mongo mongo admin
+# 创建一个名为 admin，密码为 123456 的用户。
+>  db.createUser({ user:'admin',pwd:'123456',roles:[ { role:'userAdminAnyDatabase', db: 'admin'}]});
+# 尝试使用上面创建的用户信息进行连接。
+> db.auth('admin', '123456')
+
+
+docker run -d --restart=always --name mongo-express -p 8081:8081 \
+-e ME_CONFIG_MONGODB_ADMINUSERNAME='root' \
+-e ME_CONFIG_MONGODB_ADMINPASSWORD='123' \
+-e ME_CONFIG_BASICAUTH_USERNAME=admin \
+-e ME_CONFIG_BASICAUTH_PASSWORD=pass \
+-e ME_CONFIG_MONGODB_SERVER=127.0.0.1 \
+-e ME_CONFIG_MONGODB_PORT=27017 \
+mongo-express
+
+http://localhost:8081，
+在弹出的对话框中输入默认的用户名和密码User Name:admin,Password:pass

@@ -476,4 +476,11 @@ em-elasticsearch: eventmachine的elasticsearch库
 
 es2unix:通过unix命令行调用elasticsearchapi
 
- 
+https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html
+
+单节点 
+docker run -d --restart=always --name elasticsearch -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" docker.elastic.co/elasticsearch/elasticsearch:7.8.0
+
+three-node Elasticsearch cluster
+
+docker-compose.yml

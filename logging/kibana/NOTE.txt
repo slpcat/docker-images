@@ -1,0 +1,4 @@
+docker run -d --restart=always --name kibana \
+-e ELASTICSEARCH_HOSTS=http://172.18.48.165:9200 \
+-e XPACK_MONITORING_ENABLED=true \
+-p 5601:5601 kibana:7.8.0
