@@ -3,35 +3,71 @@ kind: Service
 metadata:
   annotations:
     #DOC https://yq.aliyun.com/articles/626066?spm=a2c4e.11153940.blogrightarea392170.16.599e1f50mZtQFv
+    #https://help.aliyun.com/document_detail/86531.html?spm=a2c4g.11186623.6.713.326e4280bwWmK3#title-0ok-mot-kuj
     #负载均衡实例的 ID。通过 loadbalancer-id 指定您已有的 SLB，已有 listener 会被覆盖， 删除 service 时该 SLB 不会被删除。
-    #service.beta.kubernetes.io/alicloud-loadbalancer-id: slb-id 
+    #service.beta.kubernetes.io/alibaba-cloud-loadbalancer-id: "${YOUR_LOADBALACER_ID}"
     #绑定已有负载均衡，并强制覆盖已有监听  
-    #service.beta.kubernetes.io/alicloud-loadbalancer-force-override-listeners: "true"
+    #service.beta.kubernetes.io/alibaba-cloud-loadbalancer-force-override-listeners: "true"
     #通过 label 指定 SLB 后端挂哪些节点。
-    #service.beta.kubernetes.io/alicloud-loadbalancer-backend-label: abc
+    #service.beta.kubernetes.io/alibaba-cloud-loadbalancer-backend-label: "failure-domain.beta.kubernetes.io/zone=ap-southeast-5a"
     #指定SLB的规格，如性能共享型还是独占型
-    service.beta.kubernetes.io/alicloud-loadbalancer-spec: slb.s2.small
+    service.beta.kubernetes.io/alibaba-cloud-loadbalancer-spec: "slb.s1.small"
     #地址类型:外网或者内网"internet" or "intranet"
-    service.beta.kubernetes.io/alicloud-loadbalancer-address-type: intranet
+    service.beta.kubernetes.io/alibaba-cloud-loadbalancer-address-type: "intranet"
     # 网络类型:经典或vpc "classic" or "vpc"
-    service.beta.kubernetes.io/alicloud-loadbalancer-SLBNetworkType: vpc
-    #service.beta.kubernetes.io/alicloud-loadbalancer-ProtocolPort: https:443,http:80
+    service.beta.kubernetes.io/alibaba-cloud-loadbalancer-network-type: "vpc" 
+    #HTTP及HTTPS协议的负载均衡实例 https:443,http:80
+    service.beta.kubernetes.io/alibaba-cloud-loadbalancer-protocol-port: "http:80"
     #计费方式:按流量或按带宽 "paybytraffic" or "paybybandwidth"
-    service.beta.kubernetes.io/alicloud-loadbalancer-ChargeType: paybytraffic
-    #负载均衡所在的地域
-    #service.beta.kubernetes.io/alicloud-loadbalancer-Region: cn-beijing
+    service.beta.kubernetes.io/alibaba-cloud-loadbalancer-charge-type: "paybytraffic"
+    #
     #负载均衡的带宽
-    service.beta.kubernetes.io/alicloud-loadbalancer-Bandwidth: "100"
-    #service.beta.kubernetes.io/alicloud-loadbalancer-CertID: ""
-    #service.beta.kubernetes.io/alicloud-loadbalancer-HealthCheckFlag: on
-    #service.beta.kubernetes.io/alicloud-loadbalancer-HealthCheckType:
-    #service.beta.kubernetes.io/alicloud-loadbalancer-HealthCheckURI:
-    #service.beta.kubernetes.io/alicloud-loadbalancer-HealthCheckConnectPort:
-    #service.beta.kubernetes.io/alicloud-loadbalancer-HealthyThreshold:
-    #service.beta.kubernetes.io/alicloud-loadbalancer-UnhealthyThreshold:
-    #service.beta.kubernetes.io/alicloud-loadbalancer-HealthCheckInterval:
-    #service.beta.kubernetes.io/alicloud-loadbalancer-HealthCheckConnectTimeout:
-    #service.beta.kubernetes.io/alicloud-loadbalancer-HealthCheckTimeout:
+    service.beta.kubernetes.io/alibaba-cloud-loadbalancer-bandwidth: "200"
+    #service.beta.kubernetes.io/alibaba-cloud-loadbalancer-cert-id: "${YOUR_CERT_ID}"
+    #设置TCP类型的健康检查
+    service.beta.kubernetes.io/alibaba-cloud-loadbalancer-health-check-type: "tcp"
+    service.beta.kubernetes.io/alibaba-cloud-loadbalancer-health-check-connect-timeout: "8"
+    service.beta.kubernetes.io/alibaba-cloud-loadbalancer-healthy-threshold: "4"
+    service.beta.kubernetes.io/alibaba-cloud-loadbalancer-unhealthy-threshold: "4"
+    service.beta.kubernetes.io/alibaba-cloud-loadbalancer-health-check-interval: "3"
+    #设置HTTP类型的健康检查
+    service.beta.kubernetes.io/alibaba-cloud-loadbalancer-health-check-flag: "on"
+    service.beta.kubernetes.io/alibaba-cloud-loadbalancer-health-check-type: "http"
+    service.beta.kubernetes.io/alibaba-cloud-loadbalancer-health-check-uri: "/test/index.html"
+    service.beta.kubernetes.io/alibaba-cloud-loadbalancer-healthy-threshold: "4"
+    service.beta.kubernetes.io/alibaba-cloud-loadbalancer-unhealthy-threshold: "4"
+    service.beta.kubernetes.io/alibaba-cloud-loadbalancer-health-check-timeout: "10"
+    service.beta.kubernetes.io/alibaba-cloud-loadbalancer-health-check-interval: "3"
+    service.beta.kubernetes.io/alibaba-cloud-loadbalancer-protocol-port: "http:80"
+    #为负载均衡设置调度算法: rr,wrr,wlc
+    service.beta.kubernetes.io/alibaba-cloud-loadbalancer-scheduler: "wlc"
+    #为负载均衡配置访问控制策略组
+    service.beta.kubernetes.io/alibaba-cloud-loadbalancer-acl-status: "on"
+    service.beta.kubernetes.io/alibaba-cloud-loadbalancer-acl-id: "${YOUR_ACL_ID}"
+    service.beta.kubernetes.io/alibaba-cloud-loadbalancer-acl-type: "white"
+
+    #为TCP类型的SLB配置会话保持SessionSticky,该参数仅对TCP监听起作用,如果service配置了多个TCP的监听端口，该会话保持默认应用到所有TCP监听端口.
+    service.beta.kubernetes.io/alibaba-cloud-loadbalancer-persistence-timeout: "1800"
+    #为HTTP&HTTPS类型的SLB配置会话保持SessionSticky（insert cookie）
+    service.beta.kubernetes.io/alibaba-cloud-loadbalancer-sticky-session: "on"
+    service.beta.kubernetes.io/alibaba-cloud-loadbalancer-sticky-session-type: "insert"
+    service.beta.kubernetes.io/alibaba-cloud-loadbalancer-cookie-timeout: "1800"
+    service.beta.kubernetes.io/alibaba-cloud-loadbalancer-protocol-port: "http:80"
+    #为HTTP&HTTPS类型的SLB配置会话保持SessionSticky（server cookie）
+    service.beta.kubernetes.io/alibaba-cloud-loadbalancer-sticky-session: "on"
+    service.beta.kubernetes.io/alibaba-cloud-loadbalancer-sticky-session-type: "server"
+    service.beta.kubernetes.io/alibaba-cloud-loadbalancer-cookie: "${YOUR_COOKIE}"
+    service.beta.kubernetes.io/alibaba-cloud-loadbalancer-protocol-port: "http:80"
+
+    #创建的SLB时，指定其主备可用区
+    service.beta.kubernetes.io/alibaba-cloud-loadbalancer-master-zoneid: "ap-southeast-5a"
+    service.beta.kubernetes.io/alibaba-cloud-loadbalancer-slave-zoneid: "ap-southeast-5a"
+    #从SLB后端移除被kubectl drain/cordon的节点
+    service.beta.kubernetes.io/alibaba-cloud-loadbalancer-remove-unscheduled-backend: "on"
+
+    #直接将Pod ENI挂载到SLB后端,支持在Terway网络模式
+    service.beta.kubernetes.io/backend-type: "eni"
+    
   labels:
     app: example-web
   name: example-web
