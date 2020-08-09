@@ -1,0 +1,19 @@
+https://github.com/cchildress/beegfs_ansible
+
+https://community.mellanox.com/s/article/howto-configure-and-test-beegfs-with-rdma
+
+On the server in /etc/beegfs/beegfs-storage.conf:
+
+tuneNumWorkers=24
+
+tuneBindToNumaZone=0
+
+On the client in /etc//beegfs/beegfs-client.conf:
+
+connRDMABufSize=32768
+
+connRDMABufNum=70
+
+connMaxInternodeNum=64
+
+tuneFileCacheType=native

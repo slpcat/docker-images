@@ -37,7 +37,7 @@ CMDB资产配置: OneCMDB、CMDBuild、ItopCMDB、Rapid OSS、ECDB、i-doit、iT
 开源DevOps平台: walle,gaia,BlueKing-cmdb,cds,cloudunit,hygieia,adminset
 跳板机/堡垒机: jumpserver
 helm应用商店: chartmuseum,kubeapps
-分布式存储: ceph,minio,openebs,glusterfs,EdgeFS
+分布式存储: ceph,minio,openebs,glusterfs,EdgeFS,moosefs,lizardfs,beegfs
 内存分布式管理系统: Alluxio,apache ignite,Apache arrow,Hazelcast,Oracle Coherence,GemFire
 大数据集群: hadoop(hdfs+yarn),hbase,spark,flink,Drill
 实时流计算: Spark （micro batch），Storm， Flink，Samza,Kafka Stream,StreamBase,Hangout,Amazon Kinesis,Apache Ignite

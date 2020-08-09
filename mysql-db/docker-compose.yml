@@ -1,0 +1,18 @@
+version: '3'
+services:
+  mysql:
+    image: mysql:5.7.16
+    container_name: 3346-mysql
+    volumes:
+      #mysql数据库挂载到host物理机目录/e/docker/mysql/data/db
+      - /home/docker/mysql/3346/data/db:/var/lib/mysql/
+      - /home/docker/var/run/mysql-3346.sock:/var/run/mysql.sock
+      - /home/docker/mysql/3346/data/conf:/etc/mysql/conf.d
+    ports:
+      - 3406:3306
+    command: --character-set-server=utf8 --collation-server=utf8_general_ci
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456 #root管理员用户密码
+      MYSQL_USER: dev   #创建test用户
+      MYSQL_PASSWORD: 11111111
+      TZ: Asia/Shanghai

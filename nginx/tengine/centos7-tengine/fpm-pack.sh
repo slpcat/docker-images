@@ -5,7 +5,7 @@ source  /etc/profile.d/rvm.sh
     fpm -f --verbose \
     -n tengine-oss \
     -s dir \
-    --iteration 4.el7 \
+    --iteration 5.el7 \
     -v ${TENGINE_VERSION} \
     -t rpm \
     -m tengine-inc \

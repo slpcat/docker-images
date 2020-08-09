@@ -239,6 +239,7 @@ ENV CONFIG "\
         --with-http_auth_request_module \
         --with-http_xslt_module=dynamic \
         --with-http_image_filter_module=dynamic \
+        --with-http_slice_module \
         --with-http_geoip_module=dynamic \
         --with-threads \
         --with-stream \
@@ -259,8 +260,11 @@ ENV CONFIG "\
         --add-module=modules/nginx-opentracing/opentracing \ 
         --add-module=modules/ngx_http_upstream_check_module \
         --add-module=modules/headers-more-nginx-module-0.33 \
+        --add-module=modules/ngx_cache_purge-2.3 \
+        --add-module=modules/ngx_slowfs_cache-1.10 \
 	--add-module=modules/ngx_http_upstream_session_sticky_module \
         "
+COPY  ngx_cache_purge-2.3.tar.gz ngx_slowfs_cache-1.10.tar.gz /tmp/
 
 RUN     \
         curl -L "https://github.com/alibaba/tengine/archive/$TENGINE_VERSION.tar.gz" -o tengine.tar.gz \
@@ -274,6 +278,8 @@ RUN     \
         && curl -L "https://github.com/openresty/headers-more-nginx-module/archive/v0.33.tar.gz" -o more.tar.gz \
         && tar -zxC /usr/src/tengine-$TENGINE_VERSION/modules -f more.tar.gz \
 	&& rm  more.tar.gz \
+        && tar -zxC /usr/src/tengine-$TENGINE_VERSION/modules -f /tmp/ngx_cache_purge-2.3.tar.gz \
+        && tar -zxC /usr/src/tengine-$TENGINE_VERSION/modules -f /tmp/ngx_slowfs_cache-1.10.tar.gz \
 	&& ls -l /usr/src/tengine-$TENGINE_VERSION/modules \
         && ./configure $CONFIG \
         && make \
@@ -331,8 +337,8 @@ RUN \
     bash -x /fpm-pack.sh 
 
 FROM slpcat/centos:7
-COPY --from=builder /root/tengine-oss-2.3.2-4.el7.x86_64.rpm /root
-RUN yum install -y /root/tengine-oss-2.3.2-4.el7.x86_64.rpm
+COPY --from=builder /root/tengine-oss-2.3.2-5.el7.x86_64.rpm /root
+RUN yum install -y /root/tengine-oss-2.3.2-5.el7.x86_64.rpm
 
 #COPY nginx.conf /etc/nginx/nginx.conf
 
