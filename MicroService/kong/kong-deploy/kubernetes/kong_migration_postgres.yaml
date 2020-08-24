@@ -10,7 +10,7 @@ spec:
     spec:
       containers:
       - name: kong-migration
-        image: slpcat/kong:0.14.1-alpine
+        image: slpcat/kong:2.0.2-alpine3.11
         env:
           - name: KONG_NGINX_DAEMON
             value: 'off'

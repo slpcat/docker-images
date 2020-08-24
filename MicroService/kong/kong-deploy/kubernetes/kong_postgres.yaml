@@ -122,7 +122,7 @@ spec:
           - name: net.ipv4.ip_unprivileged_port_start
             value: "0"
           - name: net.ipv4.tcp_tw_reuse
-            value: "2"
+            value: "1"
           - name: net.ipv4.tcp_fin_timeout
             value: "20"
           - name: net.ipv4.tcp_keepalive_intvl
