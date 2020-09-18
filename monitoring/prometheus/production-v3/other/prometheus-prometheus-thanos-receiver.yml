@@ -1,0 +1,67 @@
+apiVersion: monitoring.coreos.com/v1
+kind: Prometheus
+metadata:
+  labels:
+    prometheus: k8s
+  name: k8s
+  namespace: monitoring
+spec:
+  remoteWrite:
+  - url: http://thanos-receiver.monitoring.svc.cluster.local:19291/api/v1/receive
+    queueConfig:
+      batchSendDeadline: 20s
+      capacity: 20480
+      maxBackoff: 5s
+      maxSamplesPerSend: 10000
+      minBackoff: 100ms
+      minShards: 100
+  evaluationInterval: 10s
+  externalLabels:
+    cluster: a-cluster # 添加 cluster 标签区分集群
+    replica: $(POD_NAME)
+  retention: 14d
+  alerting:
+    alertmanagers:
+    - name: alertmanager-main
+      namespace: monitoring
+      port: web
+  image: quay.io/prometheus/prometheus:v2.20.0
+  nodeSelector:
+    kubernetes.io/os: linux
+  podMonitorNamespaceSelector:
+    matchLabels:
+      monitoring-role: system
+  podMonitorSelector: {}
+  probeNamespaceSelector: {}
+  probeSelector: {}
+  replicas: 1
+  resources:
+    requests:
+      cpu: 100m
+      memory: 400Mi
+    limits:
+      cpu: 4
+      memory: 8Gi
+  ruleSelector:
+    matchLabels:
+      prometheus: k8s
+      role: alert-rules
+  scrapeInterval: 10s
+  scrapeTimeout: 10s
+  securityContext:
+    fsGroup: 2000
+    runAsNonRoot: true
+    runAsUser: 1000
+  serviceAccountName: prometheus-k8s
+  serviceMonitorNamespaceSelector:
+    matchLabels:
+      monitoring-role: system
+  serviceMonitorSelector: {}
+  version: v2.20.0
+  storage:
+    volumeClaimTemplate:
+      spec:
+        #storageClassName: ssd
+        resources:
+          requests:
+            storage: 40Gi

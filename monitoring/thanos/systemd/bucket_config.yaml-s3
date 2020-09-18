@@ -1,0 +1,22 @@
+type: S3
+config:
+  bucket: "thanos"
+  endpoint: "oss-cn-hangzhou-internal.aliyuncs.com"
+  region: "us-east"
+  access_key: ""
+  insecure: true
+  signature_version2: false
+  secret_key: ""
+  put_user_metadata: {}
+  http_config:
+    idle_conn_timeout: 1m30s
+    response_header_timeout: 2m
+    insecure_skip_verify: false
+  trace:
+    enable: false
+  part_size: 134217728
+  sse_config:
+    type: ""
+    kms_key_id: ""
+    kms_encryption_context: {}
+    encryption_key: ""

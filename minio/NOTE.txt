@@ -7,3 +7,11 @@ mc
 s3fs bucket /mnt/path -o use_cache=/tmp/cache -o url=http://minio:9000 -o endpoint=us-east-1 -o use_path_request_style
 docker run --rm -v /mnt/#{SRC_BUCKET}:/mnt/#{SRC_BUCKET}:shared -v /usr/share/s3fs:/usr/share/s3fs --security-opt apparmor:unconfined --device=/dev/fuse --cap-add mknod --cap-add sys_admin slpcat/s3fs:alpine s3fs #{SRC_BUCKET} /mnt/#{SRC_BUCKET} -f -o dbglevel=info -o passwd_file=/usr/share/s3fs/passwd-s3fs -o ro -o allow_other
 s3fs 缓存不自动刷新
+
+docker run -p 9000:9000 --name minio \
+-d --restart=always \
+-e "MINIO_ACCESS_KEY=admin" \
+-e "MINIO_SECRET_KEY=admin123456" \
+-v /data/minio-data:/data \
+-v /data/minio-config:/root/.minio \
+minio/minio server /data

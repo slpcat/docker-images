@@ -1,0 +1,24 @@
+[Unit]
+Description=Thanos is a set of components that can be composed into a highly available metric system with unlimited storage capacity, which can be added seamlessly on top of existing Prometheus deployments.
+After=network.target
+
+[Service]
+Type=simple
+#User=prometheus
+
+ExecStart=/usr/local/bin/thanos rule \
+          --log.level=info \
+          --http-address=0.0.0.0:10902 \
+          --grpc-address=0.0.0.0:10901 \
+          --data-dir=/var/lib/thanos/store \
+          --objstore.config-file /etc/thanos/bucket_config.yaml \
+          --rule-file=/etc/thanos/rules/*rules.yaml \
+          --data-dir=/var/lib/thanos/rule \
+          --label=rule_replica="$(NAME)" \
+          --alert.label-drop="rule_replica" \
+          --query=dnssrv+_http._tcp.thanos-query.thanos.svc.cluster.local
+
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

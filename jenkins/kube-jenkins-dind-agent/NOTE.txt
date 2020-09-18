@@ -1,0 +1,7 @@
+jenkins-slave分类
+
+1.docker-slave
+2.docker-java-slave
+3.docker-golang-slave
+4.docker-c++/c-slave
+

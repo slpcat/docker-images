@@ -1,0 +1,25 @@
+[Unit]
+Description=Thanos is a set of components that can be composed into a highly available metric system with unlimited storage capacity, which can be added seamlessly on top of existing Prometheus deployments.
+After=network.target
+
+[Service]
+Type=simple
+#User=prometheus
+
+#NOTE: The compactor must be run as a singleton and must not run when manually modifying data in the bucket.
+ExecStart=/usr/local/bin/thanos compact \
+          --wait \
+          --debug.accept-malformed-index \
+          --log.level=info \
+          --http-address=0.0.0.0:10902 \
+          --data-dir=/var/lib/thanos/compact \
+          --consistencyDelay=30m \
+          --objstore.config-file /etc/thanos/bucket_config.yaml \
+          --retention.resolution-raw=90d \
+          --retention.resolution-5m=180d \
+          --retention.resolution-1h=360d
+
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

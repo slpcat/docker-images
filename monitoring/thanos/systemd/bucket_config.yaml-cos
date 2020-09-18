@@ -1,0 +1,7 @@
+type: COS
+config:
+  bucket: ""
+  region: ""
+  app_id: ""
+  secret_key: ""
+  secret_id: ""

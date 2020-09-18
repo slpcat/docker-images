@@ -1,11 +1,11 @@
-apiVersion: autoscaling/v2beta1
+apiVersion: autoscaling/v2beta2
 kind: HorizontalPodAutoscaler
 metadata:
   name: example-app-hpa
   namespace: default
 spec:
   scaleTargetRef:
-    apiVersion: extensions/v1beta1
+    apiVersion: extensions/v1beta2
     kind: Deployment
     name: example-app
   minReplicas: 1

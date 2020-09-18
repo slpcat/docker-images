@@ -5,6 +5,9 @@ metadata:
   annotations:
     security.alpha.kubernetes.io/sysctls: 'net.*,kernel.msg*'
 spec:
+  allowedUnsafeSysctls:
+  - kernel.msg*
+  - net.*
   seLinux:
     rule: RunAsAny
   supplementalGroups:
@@ -14,7 +17,7 @@ spec:
   fsGroup:
     rule: RunAsAny
   hostPorts:
-  - min: 1024
+  - min: 0
     max: 65535
   volumes:
   - '*'

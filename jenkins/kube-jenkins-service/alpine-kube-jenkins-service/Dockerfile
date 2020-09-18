@@ -211,7 +211,6 @@ RUN /usr/local/bin/install-plugins.sh       \
   kerberos-sso:latest            \
   kpp-management-plugin:latest   \
   kubernetes:latest              \
-  kubernetes-ci:latest           \
   kubernetes-cd:latest           \
   ldap:latest                    \
   mailer:latest                  \

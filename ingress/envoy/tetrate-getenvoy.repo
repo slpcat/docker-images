@@ -1,0 +1,15 @@
+[tetrate-getenvoy-stable]
+name=Tetrate GetEnvoy - Stable
+baseurl=https://tetrate.bintray.com/getenvoy-rpm/centos/$releasever/$basearch/stable/
+enabled=1
+gpgkey=https://getenvoy.io/gpg
+gpgcheck=0
+repo_gpgcheck=1
+
+[tetrate-getenvoy-nightly]
+name=Tetrate GetEnvoy - Nightly
+baseurl=https://tetrate.bintray.com/getenvoy-rpm/centos/$releasever/$basearch/nightly/
+enabled=0
+gpgkey=https://getenvoy.io/gpg
+gpgcheck=0
+repo_gpgcheck=1

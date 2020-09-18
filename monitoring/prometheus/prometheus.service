@@ -1,0 +1,13 @@
+[Unit]
+Description=Prometheus monitoring and alerting 
+After=network.target
+
+[Service]
+Type=simple
+User=prometheus
+ExecStart=/usr/local/bin/prometheus --config.file=/etc/prometheus/prometheus.yml --storage.tsdb.path=/var/lib/prometheus --storage.tsdb.retention.time=30d --web.route-prefix=/ \
+          --web.enable-lifecycle --storage.tsdb.min-block-duration=2h --storage.tsdb.max-block-duration=2h --log.level=debug
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

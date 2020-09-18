@@ -18,8 +18,10 @@ spec:
         effect: NoSchedule
       containers:
       - name: log-pilot
-        image: registry.cn-hangzhou.aliyuncs.com/acs/log-pilot:0.9.5-filebeat
+        image: slpcat/log-pilot:0.9.7-filebeat
         env:
+          - name: "PILOT_LOG_PREFIX"
+            value: "aliyun,custom"
           - name: "LOGGING_OUTPUT"
             value: "kafka"
           - name: "KAFKA_BROKERS"
@@ -34,14 +36,28 @@ spec:
           #  value: ""
           #- name: "KAFKA_PARTITION"
           #  value: ""
+          - name: "KAFKA_WORKER"
+            value: "4"
           - name: "KAFKA_CLIENT_ID"
             value: "beats"
           - name: "KAFKA_BROKER_TIMEOUT"
             value: "60"
-          #- name: "KAFKA_KEEP_ALIVE"
-          #  value: "10m"
+          - name: "KAFKA_KEEP_ALIVE"
+            value: "10m"
           - name: "KAFKA_REQUIRE_ACKS"
             value: "0"
+          - name: "KAFKA_BULK_MAX_SIZE"
+            value: "16384"
+          - name: "KAFKA_CHANNEL_BUFFER_SIZE"
+            value: "4096"
+          - name: "KAFKA_MAX_MESSAGE_BYTES"
+            value: "10000000"
+          - name: "KAFKA_COMPRESSION"
+            value: "lz4"
+          - name: "FILEBEAT_MAX_PROCS"
+            value: "2"
+          - name: "FILEBEAT_LOG_LEVEL"
+            value: "info"
           - name: "NODE_NAME"
             valueFrom:
               fieldRef:

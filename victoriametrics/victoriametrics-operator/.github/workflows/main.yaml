@@ -1,0 +1,68 @@
+name: Build and Test
+
+# This workflow will run on master branch and on any pull requests targeting master
+on:
+  push:
+    branches:
+      - '*'
+
+jobs:
+  build:
+    name: test and build
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Inject slug/short variables
+        uses: rlespinasse/github-slug-action@v2.x
+      - name: Setup Go
+        uses: actions/setup-go@master
+        with:
+          go-version: 1.15
+        id: go
+      - name: Dependencies
+        env:
+          GO111MODULE: on
+        run: |
+          go get  golang.org/x/lint/golint
+          go get github.com/kisielk/errcheck
+          go get  github.com/golangci/golangci-lint/cmd/golangci-lint@v1.27.0
+          curl -L -o operator-sdk "https://github.com/operator-framework/operator-sdk/releases/download/v1.0.0/operator-sdk-v0.19.0-x86_64-linux-gnu"
+          chmod +x operator-sdk
+          sudo mv operator-sdk /bin/
+      - name: setup KIND for e2e tests
+        uses: engineerd/setup-kind@v0.4.0
+        with:
+          version: "v0.7.0"
+          image: kindest/node:v1.16.4
+      - name: Code checkout
+        uses: actions/checkout@master
+      - name: build binary
+        env:
+          GO111MODULE: on
+          TAG:   ${{ env.GITHUB_REF_SLUG }}
+        run: |
+          export PATH=$PATH:$(go env GOPATH)/bin # temporary fix. See https://github.com/actions/setup-go/issues/14
+          make lint
+          make test
+          make build
+      - name: run e2e tests
+        run: |
+          kubectl cluster-info
+          kubectl get pods -n kube-system
+          echo "current-context:" $(kubectl config current-context)
+          echo "environment-kubeconfig:" ${KUBECONFIG}
+          make e2e-local
+
+      - name: build docker image and push
+        uses: docker/build-push-action@v1
+        with:
+          username: ${{secrets.REPO_USER}}
+          password: ${{secrets.REPO_KEY}}
+          repository: victoriametrics/operator
+          tag_with_ref: true
+          dockerfile: Dockerfile
+      - name: build crosscompile and push to remote registry
+        env:
+          TAG:   ${{ env.GITHUB_REF_SLUG }}
+        run: |
+          echo ${{secrets.REPO_KEY}} | docker login --username ${{secrets.REPO_USER}} --password-stdin
+          make docker-operator-push-crosscompile

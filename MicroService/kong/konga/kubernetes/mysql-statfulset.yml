@@ -128,4 +128,4 @@ spec:
       #storageClassName: openebs-standard
       resources:
         requests:
-          storage: "16Gi"
+          storage: "20Gi"

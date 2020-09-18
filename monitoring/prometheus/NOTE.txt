@@ -68,25 +68,30 @@ https://github.com/mgxian/k8s-monitor.git
 
 https://github.com/coreos/prometheus-operator
 
-监控安装
-3个组件: prometheus-operator k8s-prometheus-adapter custom-metrics-apiserver
+kubernetes监控安装
 https://github.com/coreos/kube-prometheus
-production-v2 兼容rancher
 
+主要组件: prometheus-operator 包含k8s-prometheus-adapter custom-metrics-apiserver
 
-实践建议: 每个部门1-N个prometheus实例，监控本部门的所有服务/pod
+production-v3
+
+实践建议: prometheus多集群部署，每个部门1-N个prometheus，按照namespace划分，监控本部门的所有服务/pod
 1.pod 内置exporter或者sidecar exporter 多个namespace
 production/example-app
 自定义路径 /metrics
 自定义端口 metrics
+
 2.prometheus-operator收集监控 namespace:monitoring
-后端存储推荐使用m3db
+修改prometheus-roleBindingSpecificNamespaces.yaml
+后端存储推荐使用thanos
 注意启用存储
+
 3.核心指标core metrics:prometheus-adapter指标转换 namespace:monitoring metrics.k8s.io/v1beta1
-推荐metrics-server
+现在可以替代metrics-server
 external.metrics.k8s.io 外部监控指标
+
 4.自定义指标non-core metrics:custom-metrics-apiserver指标对接hpa namespace:monitoring custom.metrics.k8s.io/v1beta1
-custom-metrics-apiserver
+不再单独安装custom-metrics-apiserver
 需要挂一个secret存储卷，secret名为"cm-adapter-serving-certs"，这个secret是一个证书，因此这里需要创建相应的证书和key，这个证书必须由k8s的kube-apiserver信任的CA签发，因此直接用k8s的CA签发。
 
 生成证书：
@@ -111,7 +116,7 @@ $ kubectl create secret generic cm-adapter-serving-certs --from-file=serving.crt
 secret/cm-adapter-serving-certs created
 
 $ kubectl get secrets -n monitoring 
-kubectl apply -f ./production/custom-metrics-apiserver
+# 不再需要 kubectl apply -f ./production/custom-metrics-apiserver
 
 
 todo: 与rancher整合
@@ -138,6 +143,7 @@ prometheus-roleBindingSpecificNamespaces.yaml
 加入kong openebs ceph
 kubends->coredns
 去掉prometheus-adapter
+
 报警规则
 
 Promgen: Web UI and configuration generator for Prometheus and Alertmanager

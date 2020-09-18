@@ -32,6 +32,9 @@ max.poll.records=20000
 
 #set receive buffer from default 64kB to 512kb
 receive.buffer.bytes=524288
+partition.assignment.strategy=org.apache.kafka.clients.consumer.RoundRobinAssignor
+#fetch.min.bytes=65536
+fetch.max.bytes=524288
  
 #set max amount of data per partition to override default 1048576
 max.partition.fetch.bytes=5248576
@@ -55,6 +58,9 @@ request.timeout.ms=10000
 #security.protocol=SASL_SSL
 #sasl.jaas.config=org.apache.kafka.common.security.plain.PlainLoginModule required username="$DST_KAFKA_USERNAME" password="$DST_KAFKA_PASSWORD";
 
+max.in.flight.requests.per.connection=1024
+#linger.ms=2000
+batch.size=65536
 
 # specify the compression codec for all data generated: none, gzip, snappy, lz4.
 # the old config values work as well: 0, 1, 2, 3 for none, gzip, snappy, lz4, respectively

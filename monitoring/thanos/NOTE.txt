@@ -1,0 +1,11 @@
+https://github.com/thanos-io/thanos
+https://github.com/thanos-io/kube-thanos
+https://github.com/banzaicloud/thanos-operator
+
+https://github.com/thanos-io/thanos/blob/master/docs/components/receive.md
+
+helm repo add bitnami https://charts.bitnami.com/bitnami
+helm install my-release bitnami/thanos
+
+helm repo add banzaicloud-stable https://kubernetes-charts.banzaicloud.com
+

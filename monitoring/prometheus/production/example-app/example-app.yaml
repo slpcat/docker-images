@@ -14,7 +14,7 @@ spec:
     port: 8080
     targetPort: web
 ---
-apiVersion: extensions/v1beta1
+apiVersion: extensions/v1beta2
 kind: Deployment
 metadata:
   name: example-app
