@@ -1,7 +1,10 @@
 jenkins-slave分类
 
 1.docker-slave
-2.docker-java-slave
+2.docker-mvn-slave
 3.docker-golang-slave
 4.docker-c++/c-slave
+
+https://github.com/jenkinsci/docker-inbound-agent
+docker run --init jenkins/inbound-agent -url http://jenkins-server:port <secret> <agent name>
 

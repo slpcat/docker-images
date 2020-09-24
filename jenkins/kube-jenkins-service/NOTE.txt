@@ -2,3 +2,6 @@ https://github.com/jenkinsci/kubernetes-operator.git
 插件:
 Active Choices Plugin
 
+Scaling Docker with Kubernetes
+https://plugins.jenkins.io/kubernetes/
+https://www.infoq.com/articles/scaling-docker-with-kubernetes/

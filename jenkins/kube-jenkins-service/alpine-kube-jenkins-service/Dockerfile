@@ -1,5 +1,5 @@
 #upstream: https://github.com/jenkinsci/docker
-FROM slpcat/jdk:alpine
+FROM slpcat/jdk:v1.8-alpine
 MAINTAINER 若虚 <slpcat@qq.com>
 
 RUN apk add --no-cache git openssh-client curl unzip bash ttf-dejavu coreutils tini docker
@@ -138,8 +138,7 @@ RUN /usr/local/bin/install-plugins.sh       \
   blueocean-web:${BLUEOCEAN_VERSION}        \
   blueocean:${BLUEOCEAN_VERSION}            \
   ace-editor:latest              \
-  android-emulator:latest        \
-  android-lint:latest            \
+  #android-emulator:latest        \
   ant:latest                     \
   ansible:latest                 \
   ansicolor:latest               \
@@ -151,7 +150,6 @@ RUN /usr/local/bin/install-plugins.sh       \
   azure-vm-agents:latest         \
   bouncycastle-api:latest        \
   branch-api:latest              \
-  build-failure-analyzer:latest  \
   build-name-setter:latest       \
   build-pipeline-plugin:latest   \
   build-timeout:latest           \
@@ -163,7 +161,7 @@ RUN /usr/local/bin/install-plugins.sh       \
   conditional-buildstep:latest   \
   config-file-provider:latest    \
   copyartifact:latest            \
-  cvs:latest                     \
+  #cvs:latest                     \
   dashboard-view:latest          \
   delivery-pipeline-plugin:latest \
   description-setter:latest      \
@@ -188,7 +186,6 @@ RUN /usr/local/bin/install-plugins.sh       \
   github-branch-source:latest    \
   github-issues:latest           \
   github-oauth:latest            \
-  github-organization-folder:latest \
   github-pullrequest:latest      \
   github-pr-coverage-status:latest \
   gitlab:latest                  \
@@ -208,35 +205,34 @@ RUN /usr/local/bin/install-plugins.sh       \
   job-dsl:latest                 \
   jquery:latest                  \
   junit:latest                   \
-  kerberos-sso:latest            \
+  #kerberos-sso:latest            \
   kpp-management-plugin:latest   \
   kubernetes:latest              \
   kubernetes-cd:latest           \
   ldap:latest                    \
   mailer:latest                  \
   mapdb-api:latest               \
-  marathon:latest                \
+  #marathon:latest                \
   matrix-auth:latest             \
   matrix-project:latest          \
   maven-plugin:latest            \
-  mercurial:latest               \
-  mesos:latest                   \
+  #mercurial:latest               \
+  #mesos:latest                   \
   metrics:latest                 \
   momentjs:latest                \
   monitoring:latest              \
-  msbuild:latest                 \
+  #msbuild:latest                 \
   nant:latest                    \
   node-iterator-api:latest       \
   oauth-credentials:latest       \
   oic-auth:latest                \
-  openshift-login:latest         \
+  #openshift-login:latest         \
   pam-auth:latest                \
   parameterized-trigger:latest   \
   performance:latest             \
   pipeline-build-step:latest     \
   pipeline-github-lib:latest     \
   pipeline-githubnotify-step:latest \
-  pipeline-graph-analysis:latest \
   pipeline-input-step:latest     \
   pipeline-milestone-step:latest \
   pipeline-model-api:latest      \
@@ -279,7 +275,7 @@ RUN /usr/local/bin/install-plugins.sh       \
   url-auth-sso:latest            \
   variant:latest                 \
   view-job-filters:latest        \
-  windows-slaves:latest          \
+  #windows-slaves:latest          \
   workflow-aggregator:latest     \
   workflow-api:latest            \
   workflow-basic-steps:latest    \
