@@ -15,4 +15,4 @@ USER jenkins
 RUN \
     #curl -s -S -L https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer|bash \
     bash -x /gvm-installer \
-    && /go_install.sh
+    && bash -x go_install.sh
