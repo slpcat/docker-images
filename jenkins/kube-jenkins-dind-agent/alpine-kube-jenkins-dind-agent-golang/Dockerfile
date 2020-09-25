@@ -4,7 +4,7 @@ MAINTAINER 若虚 <slpcat@qq.com>
 
 USER root
 
-RUN apk add git mercurial binutils bison gcc make go musl-dev openssl
+RUN apk add git mercurial binutils bison gcc make go musl-dev openssl tree
 
 #install gvm
 COPY go_install.sh /go_install.sh
