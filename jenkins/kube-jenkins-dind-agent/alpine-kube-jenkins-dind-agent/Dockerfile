@@ -1,5 +1,5 @@
 #upstream https://github.com/jenkinsci/docker-jnlp-slave
-FROM slpcat/jdk:v1.8-alpine
+FROM slpcat/jdk:alpine
 MAINTAINER 若虚 <slpcat@qq.com>
 
 RUN apk update              \
