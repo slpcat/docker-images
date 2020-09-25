@@ -36,9 +36,6 @@ RUN curl --create-dirs -sSLo /usr/share/jenkins/agent.jar https://repo.jenkins-c
   && chmod 755 /usr/share/jenkins \
   && chmod 644 /usr/share/jenkins/agent.jar
 
-ENV AGENT_WORKDIR=${AGENT_WORKDIR}
-RUN mkdir /home/jenkins/.jenkins && mkdir -p ${AGENT_WORKDIR}
-
 ARG user=jenkins
 
 USER root
@@ -46,6 +43,10 @@ USER root
 COPY jenkins-agent /usr/local/bin/jenkins-agent
 RUN chmod +x /usr/local/bin/jenkins-agent &&\
     ln -s /usr/local/bin/jenkins-agent /usr/local/bin/jenkins-slave
+
 USER ${user}
+
+ENV AGENT_WORKDIR=${AGENT_WORKDIR}
+RUN mkdir /home/jenkins/.jenkins && mkdir -p ${AGENT_WORKDIR}
 
 ENTRYPOINT ["jenkins-agent"]
