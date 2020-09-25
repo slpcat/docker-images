@@ -23,7 +23,7 @@ COPY daemon.json /etc/docker/daemon.json
 ENV HOME /home/jenkins
 
 RUN groupadd -g 10000 jenkins \
-    && useradd -c "Jenkins user" -d $HOME -u 10000 -g 10000 -m jenkins \
+    && useradd -c "Jenkins user" -d $HOME -u 10000 -g 10000 -m jenkins -s /bin/bash \
     && usermod -a -G docker jenkins \
     && sed -i '/^root/a\jenkins    ALL=(ALL:ALL) NOPASSWD:ALL' /etc/sudoers
 
