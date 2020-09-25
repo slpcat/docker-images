@@ -1,5 +1,5 @@
 #upstream https://github.com/jenkinsci/docker-jnlp-slave
-FROM slpcat/jdk:alpine
+FROM slpcat/jdk:v1.8-alpine
 MAINTAINER 若虚 <slpcat@qq.com>
 
 RUN apk update              \
@@ -29,7 +29,7 @@ RUN groupadd -g 10000 jenkins \
 
 LABEL Description="This is a base image, which provides the Jenkins agent executable (slave.jar)" Vendor="Jenkins project" Version="3.20"
 
-ARG VERSION=4.3
+ARG VERSION=4.5
 ARG AGENT_WORKDIR=/home/jenkins/agent
 
 RUN curl --create-dirs -sSLo /usr/share/jenkins/agent.jar https://repo.jenkins-ci.org/public/org/jenkins-ci/main/remoting/${VERSION}/remoting-${VERSION}.jar \
