@@ -37,7 +37,7 @@
 # * JENKINS_PROTOCOLS:         Specify the remoting protocols to attempt when instanceIdentity is provided.
 
 
-sudo /usr/bin/dockerd >/var/log/docker.log &
+sudo /usr/bin/dockerd >/tmp/docker.log &
 
 if [ $# -eq 1 ]; then
 
