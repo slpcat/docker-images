@@ -6,8 +6,6 @@ USER root
 
 RUN apk add git mercurial binutils bison gcc make go musl-dev openssl tree rsync
 
-RUN ln -sf /bin/bash /bin/sh
-
 #install gvm
 COPY go_install.sh /go_install.sh
 COPY gvm-installer /gvm-installer
