@@ -314,5 +314,12 @@ ENV JAVA_OPTS="-server -Djava.awt.headless=true -XX:MetaspaceSize=128m \
          -XX:G1MixedGCCountTarget=16 -XX:G1MixedGCLiveThresholdPercent=90 \
          -XX:InitiatingHeapOccupancyPercent=35 -XX:G1HeapRegionSize=32m \
          -XX:-ResizePLAB -Djenkins.install.runSetupWizard=false -Dhudson.udp=-1 \
+         -Dhudson.model.LoadStatistics.clock=2000 \
+         -Dhudson.model.LoadStatistics.decay=0.5 \
+         -Dhudson.slaves.NodeProvisioner.recurrencePeriod=5000 \
+         -Dhudson.slaves.NodeProvisioner.initialDelay=0 \
+         -Dhudson.slaves.NodeProvisioner.MARGIN=50 \
+         -Dhudson.slaves.NodeProvisioner.MARGIN0=0.85 \
          -Dhudson.DNSMultiCast.disabled=true"
+
 ENV JENKINS_OPTS="--webroot=${JENKINS_FOLDER}/war --httpListenAddress=0.0.0.0"
