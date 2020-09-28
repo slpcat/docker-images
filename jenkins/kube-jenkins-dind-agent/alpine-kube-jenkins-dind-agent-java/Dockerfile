@@ -1,4 +1,4 @@
-#upstream https://github.com/jenkinsci/docker-jnlp-slave
+#upstream https://github.com/jenkinsci/docker-inbound-agent
 FROM slpcat/kube-jenkins-dind-agent
 MAINTAINER 若虚 <slpcat@qq.com>
 
