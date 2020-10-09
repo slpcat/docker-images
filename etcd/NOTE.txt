@@ -1,45 +1,44 @@
 https://github.com/etcd-io/etcd/blob/master/Documentation/op-guide/configuration.md
 
 etcd 内置metrics，prometheus直接获取
-export NODE1=192.168.1.21
-docker run \
-  --net=host \
-  --volume=${DATA_DIR}:/etcd-data \
-  --name etcd quay.io/coreos/etcd:v3.3.13 \
-  /usr/local/bin/etcd \
-  --data-dir=/etcd-data --name node1 \
-  --initial-advertise-peer-urls http://${NODE1}:2380 --listen-peer-urls http://${NODE1}:2380 \
-  --advertise-client-urls http://${NODE1}:2379 --listen-client-urls http://${NODE1}:2379 \
-  --initial-cluster node1=http://${NODE1}:2380
 
-rm -rf /tmp/etcd-data.tmp && mkdir -p /tmp/etcd-data.tmp && \
-  docker rmi gcr.io/etcd-development/etcd:v3.4.7 || true && \
-  docker run \
-  -p 2379:2379 \
-  -p 2380:2380 \
-  --mount type=bind,source=/tmp/etcd-data.tmp,destination=/etcd-data \
-  --name etcd-gcr-v3.4.7 \
-  gcr.io/etcd-development/etcd:v3.4.7 \
+docker run \
+  -d --restart=always \
+  --net=host \
+  --name etcd-v3.4.13 \
+  -v /data/etcd-data:/etcd-data \
+  slpcat/etcd:v3.4.13 \
   /usr/local/bin/etcd \
-  --name s1 \
+  --name node1 \
   --data-dir /etcd-data \
   --listen-client-urls http://0.0.0.0:2379 \
   --advertise-client-urls http://0.0.0.0:2379 \
   --listen-peer-urls http://0.0.0.0:2380 \
   --initial-advertise-peer-urls http://0.0.0.0:2380 \
-  --initial-cluster s1=http://0.0.0.0:2380 \
-  --initial-cluster-token tkn \
+  --initial-cluster "node1=http://192.168.99.106:2380,node2=http://192.168.99.107:2380,node3=http://192.168.99.108:2380" \
+  --initial-cluster-token etcd-token01 \
   --initial-cluster-state new \
+  --auto-compaction-retention=1 \
+  --max-request-bytes=33554432 \
+  --quota-backend-bytes=8589934592 \
+  --heartbeat-interval=500 \
+  --election-timeout=5000 \
+  --snapshot-count=50000 \
   --log-level info \
   --logger zap \
   --log-outputs stderr
 
-docker exec etcd-gcr-v3.4.7 /bin/sh -c "/usr/local/bin/etcd --version"
-docker exec etcd-gcr-v3.4.7 /bin/sh -c "/usr/local/bin/etcdctl version"
-docker exec etcd-gcr-v3.4.7 /bin/sh -c "/usr/local/bin/etcdctl endpoint health"
-docker exec etcd-gcr-v3.4.7 /bin/sh -c "/usr/local/bin/etcdctl put foo bar"
-docker exec etcd-gcr-v3.4.7 /bin/sh -c "/usr/local/bin/etcdctl get foo"
+docker exec etcd-v3.4.13 /bin/sh -c "/usr/local/bin/etcd --version"
+docker exec etcd-v3.4.13 /bin/sh -c "/usr/local/bin/etcdctl version"
+docker exec etcd-v3.4.13 /bin/sh -c "/usr/local/bin/etcdctl endpoint health"
+docker exec etcd-v3.4.13 /bin/sh -c "/usr/local/bin/etcdctl put foo bar"
+docker exec etcd-v3.4.13 /bin/sh -c "/usr/local/bin/etcdctl get foo"
 
+ETCDCTL_API=3 etcdctl  member list
+ETCDCTL_API=3 etcdctl cluster-health
+
+恢复
+etcdctl snapshot restore snapshot.db.2019-05-21-10-02 -data-dir /home/www/server/etcd
 
 WebUI
 
@@ -62,4 +61,5 @@ etcdkeeper
 
 docker run -it -d --name etcdkeeper \
 -p 8080:8080 \
+-e ETCD_HOST=192.168.2.11 -e ETCD_PORT=2379 -e AUTH_PASS=doe \
 evildecay/etcdkeeper
