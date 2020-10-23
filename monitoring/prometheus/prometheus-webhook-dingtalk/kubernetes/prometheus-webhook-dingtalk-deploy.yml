@@ -87,12 +87,14 @@ spec:
       containers:
       - name: prometheus-webhook-dingtalk
         #image: registry.cn-beijing.aliyuncs.com/example/example_web:${BUILD_NUMBER}
-        image: slpcat/prometheus-webhook-dingtalk
+        image: slpcat/prometheus-webhook-dingtalk:v1.4.0
         imagePullPolicy: Always
-        command:
-        - sh
-        - -c
-        - 'prometheus-webhook-dingtalk --ding.profile="webhook1=https://oapi.dingtalk.com/robot/send?access_token=xxxxxxxxxxxx" --ding.profile="webhook2=https://oapi.dingtalk.com/robot/send?access_token=yyyyyyyyyyy" --log.level=info'
+        args:
+            - --web.listen-address=:8060
+            - --config.file=/config/config.yaml
+            - --web.enable-ui
+            - --web.enable-lifecycle
+            - --log.level=info
         #livenessProbe: #kubernetes认为该pod是存活的,不存活则需要重启
         #  httpGet:
         #    path: /
@@ -122,6 +124,13 @@ spec:
         env:
           - name: aliyun_logs_access
             value: "stdout"
+        volumeMounts:
+          - name: config
+            mountPath: /config
         ports:
           - name: http
             containerPort: 8060
+      volumes:
+        - name: config
+          configMap:
+            name: prometheus-webhook-dingtalk-configmap

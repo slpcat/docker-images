@@ -1,0 +1,53 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-webhook-dingtalk-configmap
+  namespace: monitoring
+data:
+  config.yaml: |-
+    ## Request timeout
+    # timeout: 5s
+    
+    ## Customizable templates path
+    #此处进行告警模板的指定，不要时使用 --template.file= 进行指定，否则会报错，只会识别tempaltefile 而不去识别指定dingdingwebhook的 配置文件
+    # templates:       
+    #   - contrib/templates/legacy/template.tmpl
+    
+    ## You can also override default template using `default_message`
+    ## The following example to use the 'legacy' template from v0.3.0
+    # default_message:
+    #   title: '{{ template "legacy.title" . }}'
+    #   text: '{{ template "legacy.content" . }}'
+    
+    ## Targets, previously was known as "profiles"
+    targets:
+      webhook1:
+        url: https://oapi.dingtalk.com/robot/send?access_token=xxxxxxxxxxxx
+        # secret for signature
+        secret: SEC000000000000000000000
+      webhook2:
+        url: https://oapi.dingtalk.com/robot/send?access_token=xxxxxxxxxxxx
+      webhook_legacy:
+        url: https://oapi.dingtalk.com/robot/send?access_token=xxxxxxxxxxxx
+        # Customize template content
+        message:
+          # Use legacy template
+          title: '{{ template "legacy.title" . }}'
+          text: '{{ template "legacy.content" . }}'
+      webhook_mention_all:
+        url: https://oapi.dingtalk.com/robot/send?access_token=xxxxxxxxxxxx
+        mention:
+          all: true
+      webhook_mention_users:
+        url: https://oapi.dingtalk.com/robot/send?access_token=xxxxxxxxxxxx
+        mention:
+          mobiles: ['156xxxx8827', '189xxxx8325']
+
+  template.tmpl: |-
+    {{/*
+    
+    Here you can add your customized templates.
+    
+    See: https://github.com/timonwong/prometheus-webhook-dingtalk/blob/master/template/default.tmpl
+    
+    */}}
