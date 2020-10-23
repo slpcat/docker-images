@@ -44,9 +44,9 @@ COPY executors.groovy /usr/share/jenkins/ref/init.groovy.d/executors.groovy
 # Can be used to customize where jenkins.war get downloaded from
 #http://mirrors.jenkins.io/war-stable/latest/jenkins.war
 #ARG JENKINS_URL=https://repo.jenkins-ci.org/public/org/jenkins-ci/main/jenkins-war/${JENKINS_VERSION}/jenkins-war-${JENKINS_VERSION}.war
-#ARG JENKINS_URL=http://mirrors.jenkins.io/war-stable/latest/jenkins.war
+ARG JENKINS_URL=http://mirrors.jenkins.io/war-stable/latest/jenkins.war
 
-ARG JENKINS_URL=https://mirrors.tuna.tsinghua.edu.cn/jenkins/war-stable/latest/jenkins.war
+#ARG JENKINS_URL=https://mirrors.tuna.tsinghua.edu.cn/jenkins/war-stable/latest/jenkins.war
 
 # could use ADD but this one does not check Last-Modified header neither does it allow to control checksum
 # see https://github.com/docker/docker/issues/8331
