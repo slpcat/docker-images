@@ -6,7 +6,8 @@ https://docs.confluent.io/current/clients/confluent-kafka-go/index.html
 Golang audio/video library and streaming server
 https://github.com/nareix/joy4
 
-
+使用gin+vue进行极速开发的全栈后台管理系统
+https://www.gin-vue-admin.com/
 
 https://getqor.com/cn
 QOR是首个使用Go语言开发的电商系统、CMS的SDK

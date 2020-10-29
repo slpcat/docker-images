@@ -23,7 +23,8 @@ spec:
         - --port=8081
         - --telemetry-host=127.0.0.1
         - --telemetry-port=8082
-        image: quay.io/coreos/kube-state-metrics:v1.9.7
+        #image: quay.io/coreos/kube-state-metrics:v1.9.7
+        image: slpcat/kube-state-metrics:v1.9.7
         name: kube-state-metrics
         securityContext:
           runAsUser: 65534
@@ -44,7 +45,8 @@ spec:
         - --secure-listen-address=:9443
         - --tls-cipher-suites=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305,TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305
         - --upstream=http://127.0.0.1:8082/
-        image: quay.io/brancz/kube-rbac-proxy:v0.6.0
+        #image: quay.io/brancz/kube-rbac-proxy:v0.6.0
+        image: slpcat/kube-rbac-proxy:v0.6.0
         name: kube-rbac-proxy-self
         ports:
         - containerPort: 9443

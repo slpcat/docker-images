@@ -2,8 +2,10 @@
 FROM slpcat/kube-jenkins-dind-agent
 MAINTAINER 若虚 <slpcat@qq.com>
 
+USER root
+
 ARG MAVEN_VERSION=3.5.4
-ARG USER_HOME_DIR="/root"
+ARG USER_HOME_DIR="/homse/jenkins"
 ARG SHA=ce50b1c91364cb77efe3776f756a6d92b76d9038b0a0782f7d53acf1e997a14d
 #ARG BASE_URL=https://apache.osuosl.org/maven/maven-3/${MAVEN_VERSION}/binaries
 ARG BASE_URL=http://mirrors.tuna.tsinghua.edu.cn/apache/maven/maven-3/${MAVEN_VERSION}/binaries
@@ -21,3 +23,4 @@ ENV MAVEN_CONFIG "$USER_HOME_DIR/.m2"
 COPY mvn-entrypoint.sh /usr/local/bin/mvn-entrypoint.sh
 COPY settings-docker.xml /usr/share/maven/ref/
 
+USER jenkins
