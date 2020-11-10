@@ -48,6 +48,10 @@ setup.template.pattern: "${FILEBEAT_INDEX:-filebeat}-*"
 processors:
   - add_host_metadata:
       netinfo.enabled: true
+      when.not.contains.tags: forwarded
+  - add_cloud_metadata: ~
+  - add_docker_metadata: ~
+  - add_kubernetes_metadata: ~
 EOF
 }
 
