@@ -19,7 +19,7 @@
       {{end}}
   tail_files: false
   close_inactive: 2h
-  close_eof: true
+  close_eof: false
   close_removed: true
   clean_removed: true
   close_renamed: true
