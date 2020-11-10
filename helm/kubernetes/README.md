@@ -27,6 +27,7 @@ helm ls
 #helm repo add stable https://kubernetes-charts.storage.googleapis.com
 #helm repo add incubator https://kubernetes-charts-incubator.storage.googleapis.com
 helm repo add apphub https://apphub.aliyuncs.com
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 helm repo add incubator http://storage.googleapis.com/kubernetes-charts-incubator
 helm repo add gresearch https://g-research.github.io/charts/
 helm repo add stable http://mirror.azure.cn/kubernetes/charts

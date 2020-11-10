@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: clickhouse-exporter-001
+  namespace: monitoring
+  labels:
+    k8s-app: clickhouse-exporter-001
+spec:
+  selector:
+    matchLabels:
+      k8s-app: clickhouse-exporter-001
+  template:
+    metadata:
+      labels:
+        k8s-app: clickhouse-exporter-001
+    spec:
+      containers:
+      - name: clickhouse-exporter-001
+        image: f1yegor/clickhouse-exporter:latest
+        args: ["-scrape_uri=http://clickhouse:8123/"]
+        env:
+          - name: CLICKHOUSE_USER
+            value: "default"
+          - name: CLICKHOUSE_PASSWORD
+            value: "123456"
+        ports:
+        - containerPort: 9116
+          name: metrics
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 9116
+          initialDelaySeconds: 5

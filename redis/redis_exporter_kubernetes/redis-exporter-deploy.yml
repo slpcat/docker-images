@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis-exporter-001
+  namespace: monitoring
+  labels:
+    k8s-app: redis-exporter-001
+spec:
+  selector:
+    matchLabels:
+      k8s-app: redis-exporter-001
+  template:
+    metadata:
+      labels:
+        k8s-app: redis-exporter-001
+    spec:
+      containers:
+      - name: redis-exporter-001
+        image: oliver006/redis_exporter:latest
+        args: ["-redis.addr", "redis://192.168.122.7:6379", "-redis.password", "123456"]
+        env:
+          - name: REDIS_EXPORTER_EXPORT_CLIENT_LIST
+            value: "true"
+        ports:
+        - containerPort: 9121
+          name: metrics
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 9121
+          initialDelaySeconds: 5

@@ -1,4 +1,4 @@
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
   name: example-web
@@ -6,6 +6,13 @@ metadata:
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
+  tls:
+  - hosts:
+    - first-domain
+    secretName: first-secret-name
+  - hosts:
+    - second-domain
+    secretName: second-secret-name
   rules:
   - host: www.example.com
     http:

@@ -19,6 +19,7 @@ kubectl label namespace kube-public monitoring-role=system
 kubectl label namespace kube-system monitoring-role=system
 kubectl label namespace monitoring monitoring-role=system
 kubectl label namespace kong monitoring-role=system
+kubectl label namespace weave monitoring-role=system
 
 删除operator原有的prometheus
 prometheus-prometheus.yaml

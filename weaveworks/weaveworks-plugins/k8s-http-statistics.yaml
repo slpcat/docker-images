@@ -1,11 +1,15 @@
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   labels:
     app: weavescope
     weavescope-component: weavescope-http-statistics-plugin
   name: weavescope-http-statistics-plugin
+  namespace: weave
 spec:
+  selector:
+    matchLabels:
+      app: weavescope
   template:
     metadata:
       labels:
@@ -41,3 +45,4 @@ spec:
         - name: sys-kernel-debug
           hostPath:
             path: /sys/kernel/debug
+

@@ -6,7 +6,7 @@
   scan_frequency: 10s
   fields_under_root: true
   {{if .Stdout}}
-  #docker-json: true
+  docker-json: true
   {{end}}
   {{if eq .Format "json"}}
   json.keys_under_root: true
@@ -20,10 +20,10 @@
       {{end}}
   tail_files: false
   close_inactive: 2h
-  close_eof: false
+  close_eof: true
   close_removed: true
   clean_removed: true
-  close_renamed: false
+  close_renamed: true
   harvester_buffer_size: 32768
   backoff: 4s
   max_backoff: 32s

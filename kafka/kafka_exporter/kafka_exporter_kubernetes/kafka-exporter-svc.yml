@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    k8s-app: kafka-exporter-001
+  name: kafka-exporter-001
+  namespace: monitoring
+spec:
+  ports:
+  - name: metrics
+    port: 9308
+    targetPort: metrics
+  selector:
+    k8s-app: kafka-exporter-001

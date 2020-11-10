@@ -18,8 +18,14 @@ https://grafana.com/plugins/fastweb-openfalcon-datasource
 Prometheus AlertManager
 https://grafana.com/plugins/camptocamp-prometheus-alertmanager-datasource
 
+阿里云监控对接Grafana
+https://www.alibabacloud.com/help/zh/doc-detail/109434.htm
 aliyun-cms-grafana数据源
 https://github.com/aliyun/aliyun-cms-grafana
+
+阿里云日志对接Grafana
+https://help.aliyun.com/document_detail/60952.html
+https://github.com/aliyun/aliyun-log-grafana-datasource-plugin
 
 独立版
 推荐使用prometheus-operator

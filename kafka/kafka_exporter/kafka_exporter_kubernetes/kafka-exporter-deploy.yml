@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafka-exporter-001
+  namespace: monitoring
+  labels:
+    k8s-app: kafka-exporter-001
+spec:
+  selector:
+    matchLabels:
+      k8s-app: kafka-exporter-001
+  template:
+    metadata:
+      labels:
+        k8s-app: kafka-exporter-001
+    spec:
+      containers:
+      - name: kafka-exporter-001
+        image: danielqsj/kafka-exporter
+        command:
+        - kafka_exporter
+        - "--kafka.server=my-kafka-broker-1:9092"
+        - "--kafka.server=my-kafka-broker-2:9092"
+        ports:
+          - name: metrics
+            containerPort: 9308
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 9308
+          initialDelaySeconds: 5

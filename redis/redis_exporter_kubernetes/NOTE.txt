@@ -1,0 +1,1 @@
+每个redis实例对应一个exporter

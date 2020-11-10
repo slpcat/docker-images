@@ -1,18 +1,21 @@
 kind: Service
 apiVersion: v1
 metadata:
-name: mongo
+  name: mysql-production
+  namespace: ms
 spec:
-ports:
-– port: 27017
-targetPort: 49763
-—
+  ports:
+    - port: 3306
+      protocol: TCP
+      targetPort: 3306
+—--
 kind: Endpoints
 apiVersion: v1
 metadata:
-name: mongo
+  name: mysql-production
+  namespace: ms
 subsets:
-– addresses:
-– ip: 35.188.8.12
-ports:
-– port: 49763
+  - addresses:
+      - ip: 10.255.20.176
+    ports:
+      - port: 3306

@@ -9,6 +9,8 @@ ID: alexanderzobnin-zabbix-datasource
 
 ID: 1860 Node Exporter Full
 
+ID: 882 Clickhouse metrics
+
 ID: 6876 Analysis by Namespace
 
 ID: 6873 Analysis by Cluster
@@ -46,8 +48,8 @@ ID: 3742 AAA Postgres_exporter
 ID: 9628 PostgreSQL Database 推荐
 
 ID: 763 Redis Dashboard for Prometheus Redis Exporter
-
-ID: 7958 Kafka Exporter Overview
+ 
+ID: 12165 Prometheus Operator Redis
 
 ID: 6248 Minio
 

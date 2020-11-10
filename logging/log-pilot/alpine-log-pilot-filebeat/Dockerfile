@@ -39,7 +39,7 @@ RUN \
 
 COPY config.filebeat filebeat.tpl /pilot/
 
-FROM slpcat/alpine:3.10
+FROM slpcat/alpine:3.12
 MAINTAINER 若虚 <slpcat@qq.com>
 
 RUN apk update && \ 

@@ -15,6 +15,9 @@ http://www.open-open.com/lib/view/open1396063913278.html
 
 https://github.com/go-kit/kit
 
+go-zero
+https://github.com/tal-tech/go-zero
+
 Github: https://github.com/tuneinc/truss
 https://github.com/metaverse/truss
 
