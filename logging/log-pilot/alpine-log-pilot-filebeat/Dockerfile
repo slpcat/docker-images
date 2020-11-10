@@ -43,7 +43,7 @@ FROM slpcat/alpine:3.12
 MAINTAINER 若虚 <slpcat@qq.com>
 
 RUN apk update && \ 
-    apk add python && \
+    apk add python2 && \
     apk add ca-certificates && \
     update-ca-certificates 
 
