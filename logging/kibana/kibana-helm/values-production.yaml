@@ -314,7 +314,7 @@ configuration:
 ## Prometheus metrics (requires the kibana-prometheus-exporter plugin)
 ##
 metrics:
-  enabled: false
+  enabled: true
   service:
     annotations:
       prometheus.io/scrape: "true"

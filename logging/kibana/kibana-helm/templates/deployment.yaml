@@ -1,238 +1,200 @@
-apiVersion: apps/v1beta1
+{{- if and .Values.elasticsearch.hosts .Values.elasticsearch.port -}}
+apiVersion: {{ template "kibana.deployment.apiVersion" . }}
 kind: Deployment
 metadata:
-  labels:
-    app: {{ template "kibana.name" . }}
-    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
-    heritage: {{ .Release.Service }}
-    release: {{ .Release.Name }}
-  name: {{ template "kibana.fullname" . }}
-{{- if .Values.deployment.annotations }}
-  annotations:
-{{ toYaml .Values.deployment.annotations | indent 4 }}
-{{- end }}
+  name: {{ include "kibana.fullname" . }}
+  labels: {{- include "kibana.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
-  revisionHistoryLimit: {{ .Values.revisionHistoryLimit }}
+  {{- if .Values.updateStrategy }}
+  strategy: {{- tpl (toYaml .Values.updateStrategy) $ | nindent 4 }}
+  {{- end }}
+  selector:
+    matchLabels: {{- include "kibana.matchLabels" . | nindent 6 }}
   template:
     metadata:
-      annotations:
-        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
-{{- if .Values.podAnnotations }}
-{{ toYaml .Values.podAnnotations | indent 8 }}
-{{- end }}
-      labels:
-        app: {{ template "kibana.name" . }}
-        release: "{{ .Release.Name }}"
-{{- if .Values.podLabels }}
-{{ toYaml .Values.podLabels | indent 8 }}
-{{- end }}
-    spec:
-      serviceAccountName: {{ template "kibana.serviceAccountName" . }}
-      {{- if .Values.priorityClassName }}
-      priorityClassName: "{{ .Values.priorityClassName }}"
+      {{- if .Values.podAnnotations }}
+      annotations: {{- include "kibana.tplValue" (dict "value" .Values.podAnnotations "context" $) | nindent 8 }}
       {{- end }}
-{{- if or (.Values.initContainers) (.Values.dashboardImport.enabled) (.Values.plugins.enabled) }}
-      initContainers:
-{{- if .Values.initContainers }}
-{{- range $key, $value := .Values.initContainers }}
-      - name: "{{ $key }}"
-{{ toYaml $value | indent 8 }}
-{{- end }}
-{{- end }}
-{{- if .Values.dashboardImport.enabled }}
-      - name: {{ .Chart.Name }}-dashboardimport
-        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-        imagePullPolicy: {{ .Values.image.pullPolicy }}
-        command: ["/bin/bash"]
-        args:
-          - "-c"
-          - "/tmp/dashboardImport.sh"
-{{- if .Values.commandline.args }}
-{{ toYaml .Values.commandline.args | indent 10 }}
-{{- end }}
-        env:
-        {{- range $key, $value := .Values.env }}
-        - name: "{{ $key }}"
-          value: "{{ $value }}"
+      labels: {{- include "kibana.labels" . | nindent 8 }}
+        app: kibana
+        {{- if .Values.podLabels }}
+        {{- include "kibana.tplValue" (dict "value" .Values.podLabels "context" $) | nindent 8 }}
         {{- end }}
-        volumeMounts:
-        - name: {{ template "kibana.fullname" . }}-dashboards
-          mountPath: "/kibanadashboards"
-        - name: {{ template "kibana.fullname" . }}-importscript
-          mountPath: "/tmp/dashboardImport.sh"
-          subPath: dashboardImport.sh
-        {{- range $configFile := (keys .Values.files) }}
-        - name: {{ template "kibana.name" $ }}
-          mountPath: "/usr/share/kibana/config/{{ $configFile }}"
-          subPath: {{ $configFile }}
-        {{- end }}
-{{- end }}
-{{- if .Values.plugins.enabled}}
-      - name: {{ .Chart.Name }}-plugins-install
-        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-        imagePullPolicy: {{ .Values.image.pullPolicy }}
-        command:
-          - /bin/bash
-          - "-c"
-          - |
-            set -e
-            rm -rf plugins/lost+found
-            plugins=(
-            {{- range .Values.plugins.values }}
-            {{ . }}
-            {{- end }}
-            )
-            if {{ .Values.plugins.reset }}
-            then
-              for p in $(./bin/kibana-plugin list | cut -d "@" -f1)
-              do
-                ./bin/kibana-plugin remove ${p}
-              done
-            fi
-            for i in "${plugins[@]}"
-            do
-              IFS=',' read -ra PLUGIN <<< "$i"
-              pluginInstalledCheck=$(./bin/kibana-plugin list | grep "${PLUGIN[0]}" | cut -d '@' -f1 || true)
-              pluginVersionCheck=$(./bin/kibana-plugin list | grep "${PLUGIN[0]}" | cut -d '@' -f2 || true)
-              if [ "${pluginInstalledCheck}" = "${PLUGIN[0]}" ]
-              then
-                if [ "${pluginVersionCheck}" != "${PLUGIN[1]}" ]
-                then
-                  ./bin/kibana-plugin remove "${PLUGIN[0]}"
-                  ./bin/kibana-plugin install "${PLUGIN[2]}"
-                fi
-              else
-                ./bin/kibana-plugin install "${PLUGIN[2]}"
-              fi
-            done
-        env:
-        {{- range $key, $value := .Values.env }}
-        - name: "{{ $key }}"
-          value: "{{ $value }}"
-        {{- end }}
-        volumeMounts:
-        - name: plugins
-          mountPath: /usr/share/kibana/plugins
-        {{- range $configFile := (keys .Values.files) }}
-        - name: {{ template "kibana.name" $ }}
-          mountPath: "/usr/share/kibana/config/{{ $configFile }}"
-          subPath: {{ $configFile }}
-        {{- end }}
-{{- if .Values.securityContext.enabled }}
-        securityContext:
-          allowPrivilegeEscalation: {{ .Values.securityContext.allowPrivilegeEscalation }}
-{{- end }}
-{{- end }}
-{{- end }}
-      containers:
-      - name: {{ .Chart.Name }}
-        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-        imagePullPolicy: {{ .Values.image.pullPolicy }}
-        {{- if .Values.commandline.args }}
-        args:
-          - "/bin/bash"
-          - "/usr/local/bin/kibana-docker"
-{{ toYaml .Values.commandline.args | indent 10 }}
-        {{- end }}
-        env:
-        {{- range $key, $value := .Values.env }}
-        - name: "{{ $key }}"
-          value: "{{ $value }}"
-        {{- end }}
-{{- if (not .Values.authProxyEnabled) }}
-        ports:
-        - containerPort: {{ .Values.service.internalPort }}
-          name: {{ template "kibana.name" . }}
-          protocol: TCP
-{{- end }}
-{{- if .Values.livenessProbe.enabled }}
-        livenessProbe:
-          httpGet:
-            path: /status
-            port: {{ .Values.service.internalPort }}
-          initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
-          timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds }}
-{{- end }}
-{{- if .Values.readinessProbe.enabled }}
-        readinessProbe:
-          httpGet:
-            path: /status
-            port: {{ .Values.service.internalPort }}
-          initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
-          timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
-          successThreshold: {{ .Values.readinessProbe.successThreshold }}
-          periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
-{{- end }}
-        resources:
-{{ toYaml .Values.resources | indent 10 }}
-        volumeMounts:
-        {{- range $configFile := (keys .Values.files) }}
-        - name: {{ template "kibana.name" $ }}
-          mountPath: "/usr/share/kibana/config/{{ $configFile }}"
-          subPath: {{ $configFile }}
-        {{- end }}
-{{- if .Values.extraVolumeMounts }}
-{{ toYaml .Values.extraVolumeMounts | indent 8 }}
-{{- end }}
-{{- if .Values.plugins.enabled}}
-        - name: plugins
-          mountPath: /usr/share/kibana/plugins
-{{- end }}
-{{- with .Values.extraContainers }}
-{{ tpl . $ | indent 6 }}
-{{- end }}
-{{- range .Values.extraConfigMapMounts }}
-        - name: {{ .name }}
-          mountPath: {{ .mountPath }}
-          subPath: {{ .subPath }}
-{{- end }}
-    {{- if .Values.image.pullSecrets }}
-      imagePullSecrets:
-{{ toYaml .Values.image.pullSecrets | indent 8 }}
-    {{- end }}
-    {{- if .Values.affinity }}
-      affinity:
-{{ toYaml .Values.affinity | indent 8 }}
-    {{- end }}
-    {{- if .Values.nodeSelector }}
-      nodeSelector:
-{{ toYaml .Values.nodeSelector | indent 8 }}
-    {{- end }}
-      tolerations:
-{{ toYaml .Values.tolerations | indent 8 }}
-{{- if .Values.securityContext.enabled }}
+    spec:
+      {{- include "kibana.imagePullSecrets" . | nindent 6 }}
+      {{- if .Values.nodeSelector }}
+      nodeSelector: {{- include "kibana.tplValue" (dict "value" .Values.nodeSelector "context" $) | nindent 8 }}
+      {{- end }}
+      {{- if .Values.affinity }}
+      affinity: {{- include "kibana.tplValue" (dict "value" .Values.affinity "context" $) | nindent 8 }}
+      {{- end }}
+      {{- if .Values.tolerations }}
+      tolerations: {{- include "kibana.tplValue" (dict "value" .Values.tolerations "context" $) | nindent 8 }}
+      {{- end }}
+      {{- if .Values.schedulerName }}
+      schedulerName: {{ .Values.schedulerName | quote }}
+      {{- end }}
+      {{- if .Values.securityContext.enabled }}
       securityContext:
-        runAsUser: {{ .Values.securityContext.runAsUser }}
         fsGroup: {{ .Values.securityContext.fsGroup }}
-{{- end }}
-      volumes:
-        - name: {{ template "kibana.name" . }}
-          configMap:
-            name: {{ template "kibana.fullname" . }}
-{{- if .Values.plugins.enabled}}
-        - name: plugins
-          {{- if .Values.persistentVolumeClaim.enabled }}
-          persistentVolumeClaim:
-            claimName: {{ template "kibana.fullname" . }}
-          {{- else }}
-          emptyDir: {}
+      {{- end }}
+      {{- if or .Values.initContainers (and .Values.volumePermissions.enabled .Values.persistence.enabled) }}
+      initContainers:
+      {{- if and .Values.volumePermissions.enabled .Values.persistence.enabled }}
+        - name: volume-permissions
+          image: "{{ template "kibana.volumePermissions.image" . }}"
+          imagePullPolicy: {{ default "" .Values.volumePermissions.image.pullPolicy | quote }}
+          command: ["chown", "-R", "{{ .Values.securityContext.runAsUser }}:{{ .Values.securityContext.fsGroup }}", "/bitnami/kibana"]
+          securityContext:
+            runAsUser: 0
+          resources: {{ toYaml .Values.volumePermissions.resources | nindent 12 }}
+          volumeMounts:
+          - name: kibana-data
+            mountPath: /bitnami/kibana
+        {{- end }}
+        {{- if .Values.initContainers }}
+        {{- include "kibana.tplValue" (dict "value" .Values.initContainers "context" $) | nindent 10 }}
+        {{- end }}
+      {{- end }}
+      containers:
+        - name: kibana
+          image: {{ include "kibana.image" . }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- if .Values.securityContext.enabled }}
+          securityContext:
+            runAsUser: {{ .Values.securityContext.runAsUser }}
           {{- end }}
-{{- end }}
-{{- if .Values.dashboardImport.enabled }}
-        - name: {{ template "kibana.fullname" . }}-dashboards
+          env:
+            - name: KIBANA_ELASTICSEARCH_URL
+              value: {{ include "kibana.elasticsearch.url" . | quote }}
+            - name: KIBANA_ELASTICSEARCH_PORT
+              value: {{ include "kibana.elasticsearch.port" . | quote }}
+            - name: KIBANA_FORCE_INITSCRIPTS
+              value: {{ .Values.forceInitScripts | quote }}
+          {{- if .Values.extraEnvVars }}
+          {{- include "kibana.tplValue" (dict "value" .Values.extraEnvVars "context" $) | nindent 12 }}
+          {{- end }}
+          {{- if or .Values.extraEnvVarsCM .Values.extraEnvVarsSecret }}
+          envFrom:
+            {{- if .Values.extraEnvVarsCM }}
+            - configMapRef:
+                name: {{ .Values.extraEnvVarsCM }}
+            {{- end }}
+            {{- if .Values.extraEnvVarsSecret }}
+            - secretRef:
+                name: {{ .Values.extraEnvVarsSecret }}
+            {{- end }}
+          {{- end }}
+          ports:
+            - name: http
+              containerPort: 5601
+              protocol: TCP
+          {{- if .Values.livenessProbe.enabled }}
+          livenessProbe:
+            httpGet:
+            {{- if .Values.configuration.server.rewriteBasePath }}
+              path: {{ .Values.configuration.server.basePath }}/app/kibana
+            {{- else }}
+              path: /app/kibana
+            {{- end }}
+              port: http
+            initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds }}
+            successThreshold: {{ .Values.livenessProbe.successThreshold }}
+            failureThreshold: {{ .Values.livenessProbe.failureThreshold }}
+          {{- end }}
+          {{- if .Values.readinessProbe.enabled }}
+          readinessProbe:
+            httpGet:
+            {{- if .Values.configuration.server.rewriteBasePath }}
+              path: {{ .Values.configuration.server.basePath }}/app/kibana
+            {{- else }}
+              path: /app/kibana
+            {{- end }}
+              port: http
+            initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
+            successThreshold: {{ .Values.readinessProbe.successThreshold }}
+            failureThreshold: {{ .Values.readinessProbe.failureThreshold }}
+          {{- end }}
+          {{- if .Values.resources }}
+          resources: {{- include "kibana.tplValue" (dict "value" .Values.resources "context" $) | nindent 12 }}
+          {{- end }}
+          volumeMounts:
+            - name: kibana-data
+              mountPath: /bitnami/kibana
+            - name: kibana-config
+              mountPath: /bitnami/kibana/conf
+            {{- if .Values.plugins }}
+            - name: plugins-init-scripts
+              mountPath: /docker-entrypoint-initdb.d/plugin-install
+            {{- end }}
+            {{- if (include "kibana.importSavedObjects" .) }}
+            - name: saved-objects-init-scripts
+              mountPath: /docker-entrypoint-initdb.d/saved-objects-import
+            {{- end }}
+            {{- if .Values.savedObjects.configmap }}
+            - name: saved-objects-configmap
+              mountPath: /bitnami/kibana/saved-objects
+            {{- end }}
+            {{- if .Values.initScriptsCM }}
+            - name: custom-init-scripts-cm
+              mountPath: /docker-entrypoint-initdb.d/cm
+            {{- end }}
+            {{- if .Values.initScriptsSecret }}
+            - name: custom-init-scripts-secret
+              mountPath: /docker-entrypoint-initdb.d/secret
+            {{- end }}
+            {{- if .Values.extraVolumeMounts }}
+            {{- include "kibana.tplValue" (dict "value" .Values.extraVolumeMounts "context" $) | nindent 12 }}
+            {{- end }}
+      {{- if .Values.sidecars }}
+      {{- include "kibana.tplValue" (dict "value" .Values.sidecars "context" $) | nindent 8 }}
+      {{- end }}
+      volumes:
+        - name: kibana-data
+        {{- if .Values.persistence.enabled }}
+          persistentVolumeClaim:
+            claimName: {{ include "kibana.pvc" . }}
+        {{- else }}
+          emptyDir: {}
+        {{ end }}
+        - name: kibana-config
           configMap:
-            name: {{ template "kibana.fullname" . }}-dashboards
-        - name: {{ template "kibana.fullname" . }}-importscript
+            name: {{ include "kibana.configurationCM" . }}
+        {{- if (include "kibana.importSavedObjects" .) }}
+        - name: saved-objects-init-scripts
           configMap:
-            name: {{ template "kibana.fullname" . }}-importscript
-            defaultMode: 0777
-{{- end }}
-{{- range .Values.extraConfigMapMounts }}
-        - name: {{ .name }}
+            name: {{ include "kibana.fullname" . }}-saved-objects
+            defaultMode: 0755
+        {{- end }}
+        {{- if .Values.plugins }}
+        - name: plugins-init-scripts
           configMap:
-            name: {{ .configMap }}
-{{- end }}
-{{- if .Values.extraVolumes }}
-{{ toYaml .Values.extraVolumes | indent 8 }}
+            name: {{ include "kibana.fullname" . }}-plugins
+            defaultMode: 0755
+        {{- end }}
+        {{- if .Values.initScriptsCM }}
+        - name: custom-init-scripts-cm
+          configMap:
+            name: {{ template "kibana.initScriptsCM" . }}
+            defaultMode: 0755
+        {{- end }}
+        {{- if .Values.initScriptsSecret }}
+        - name: custom-init-scripts-secret
+          secret:
+            name: {{ template "kibana.initScriptsSecret" . }}
+            defaultMode: 0755
+        {{- end }}
+        {{- if .Values.savedObjects.configmap }}
+        - name: saved-objects-configmap
+          configMap:
+            name: {{ template "kibana.savedObjectsCM" . }}
+        {{- end }}
+        {{- if .Values.extraVolumes }}
+        {{- include "kibana.tplValue" (dict "value" .Values.extraVolumes "context" $) | nindent 8 }}
+        {{- end }}
 {{- end }}

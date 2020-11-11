@@ -12,13 +12,25 @@ spec:
     metadata:
       labels:
         k8s-app: log-pilot
+      annotations:
+        scheduler.alpha.kubernetes.io/critical-pod: ''
     spec:
+      # 是否允许部署到Master节点上tolerations。
       tolerations:
       - key: node-role.kubernetes.io/master
         effect: NoSchedule
+      #serviceAccount: log-pilot
       containers:
       - name: log-pilot
         image: slpcat/log-pilot:0.9.7-filebeat
+        resources:
+          # keep request = limit to keep this container in guaranteed class
+          requests:
+            cpu: 500m
+            memory: 512Mi
+          limits:
+            cpu: 4
+            memory: 8Gi
         env:
           - name: "PILOT_LOG_PREFIX"
             value: "aliyun,custom"
@@ -72,8 +84,15 @@ spec:
         - name: root
           mountPath: /host
           readOnly: true
-        - name: localtime
-          mountPath: /etc/localtime
+        livenessProbe:
+          failureThreshold: 3
+          exec:
+            command:
+            - /pilot/healthz
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 2
         securityContext:
           capabilities:
             add:
@@ -86,12 +105,11 @@ spec:
       - name: logs
         hostPath:
           path: /var/log/filebeat
+          type: DirectoryOrCreate
       - name: state
         hostPath:
           path: /var/lib/filebeat
+          type: DirectoryOrCreate
       - name: root
         hostPath:
           path: /
-      - name: localtime
-        hostPath:
-          path: /etc/localtime

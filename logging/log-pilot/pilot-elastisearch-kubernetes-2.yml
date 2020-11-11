@@ -19,6 +19,14 @@ spec:
       containers:
       - name: log-pilot
         image: registry.cn-hangzhou.aliyuncs.com/acs/log-pilot:0.9.5-filebeat
+        resources:
+          # keep request = limit to keep this container in guaranteed class
+          requests:
+            cpu: 500m
+            memory: 512Mi
+          limits:
+            cpu: 4
+            memory: 8Gi
         env:
           - name: "LOGGING_OUTPUT"
             value: "elasticsearch"

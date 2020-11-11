@@ -17,7 +17,7 @@ If release name contains chart name it will be used as a full name.
 {{- else -}}
 {{- $name := default .Chart.Name .Values.nameOverride -}}
 {{- if contains $name .Release.Name -}}
-{{- printf .Release.Name | trunc 63 | trimSuffix "-" -}}
+{{- .Release.Name | trunc 63 | trimSuffix "-" -}}
 {{- else -}}
 {{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
@@ -25,16 +25,263 @@ If release name contains chart name it will be used as a full name.
 {{- end -}}
 
 {{/*
-Create the name of the service account to use
+Return the proper Docker Image Registry Secret Names
 */}}
-{{- define "kibana.serviceAccountName" -}}
-{{- if .Values.serviceAccount.create -}}
-{{ default (include "kibana.fullname" .) .Values.serviceAccount.name }}
-{{- else -}}
-{{- if .Values.serviceAccountName -}}
-{{- .Values.serviceAccountName }}
-{{- else -}}
-{{ default "default" .Values.serviceAccount.name }}
+{{- define "kibana.imagePullSecrets" -}}
+{{- $imagePullSecrets := coalesce .Values.global.imagePullSecrets .Values.image.pullSecrets .Values.volumePermissions.image.pullSecrets -}}
+{{- if $imagePullSecrets }}
+imagePullSecrets:
+{{- range $imagePullSecrets }}
+  - name: {{ . }}
 {{- end -}}
 {{- end -}}
+{{- end -}}
+
+{{/*
+Return true if the deployment should include dashboards
+*/}}
+{{- define "kibana.importSavedObjects" -}}
+{{- if or .Values.savedObjects.configmap .Values.savedObjects.urls }}
+    {{- true -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return the proper Kibana image name
+*/}}
+{{- define "kibana.image" -}}
+{{- $registryName := .Values.image.registry -}}
+{{- $repositoryName := .Values.image.repository -}}
+{{- $tag := .Values.image.tag | toString -}}
+{{/*
+Helm 2.11 supports the assignment of a value to a variable defined in a different scope,
+but Helm 2.9 and 2.10 doesn't support it, so we need to implement this if-else logic.
+Also, we can't use a single if because lazy evaluation is not an option
+*/}}
+{{- if .Values.global }}
+    {{- if .Values.global.imageRegistry }}
+        {{- printf "%s/%s:%s" .Values.global.imageRegistry $repositoryName $tag -}}
+    {{- else -}}
+        {{- printf "%s/%s:%s" $registryName $repositoryName $tag -}}
+    {{- end -}}
+{{- else -}}
+    {{- printf "%s/%s:%s" $registryName $repositoryName $tag -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Create chart name and version as used by the chart label.
+*/}}
+{{- define "kibana.chart" -}}
+{{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+
+{{/*
+Set Elasticsearch URL.
+*/}}
+{{- define "kibana.elasticsearch.url" -}}
+{{- if .Values.elasticsearch.hosts -}}
+{{- $totalHosts := len .Values.elasticsearch.hosts -}}
+{{- range $i, $hostTemplate := .Values.elasticsearch.hosts -}}
+{{- $host := tpl $hostTemplate $ }}
+{{- printf "http://%s:%s" $host (include "kibana.elasticsearch.port" $) -}}
+{{- if (lt ( add1 $i ) $totalHosts ) }}{{- printf "," -}}{{- end }}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Set Elasticsearch Port.
+*/}}
+{{- define "kibana.elasticsearch.port" -}}
+{{- .Values.elasticsearch.port -}}
+{{- end -}}
+
+{{/*
+Set Elasticsearch PVC.
+*/}}
+{{- define "kibana.pvc" -}}
+{{- .Values.persistence.existingClaim | default (include "kibana.fullname" .) -}}
+{{- end -}}
+
+{{/*
+Get the initialization scripts Secret name.
+*/}}
+{{- define "kibana.initScriptsSecret" -}}
+{{- printf "%s" (tpl .Values.initScriptsSecret $) -}}
+{{- end -}}
+
+{{/*
+Get the initialization scripts configmap name.
+*/}}
+{{- define "kibana.initScriptsCM" -}}
+{{- printf "%s" (tpl .Values.initScriptsCM $) -}}
+{{- end -}}
+
+{{/*
+Return the proper image name (for the init container volume-permissions image)
+*/}}
+{{- define "kibana.volumePermissions.image" -}}
+{{- $registryName := .Values.volumePermissions.image.registry -}}
+{{- $repositoryName := .Values.volumePermissions.image.repository -}}
+{{- $tag := .Values.volumePermissions.image.tag | toString -}}
+{{/*
+Helm 2.11 supports the assignment of a value to a variable defined in a different scope,
+but Helm 2.9 and 2.10 doesn't support it, so we need to implement this if-else logic.
+Also, we can't use a single if because lazy evaluation is not an option
+*/}}
+{{- if .Values.global }}
+    {{- if .Values.global.imageRegistry }}
+        {{- printf "%s/%s:%s" .Values.global.imageRegistry $repositoryName $tag -}}
+    {{- else -}}
+        {{- printf "%s/%s:%s" $registryName $repositoryName $tag -}}
+    {{- end -}}
+{{- else -}}
+    {{- printf "%s/%s:%s" $registryName $repositoryName $tag -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Get the saved objects configmap name.
+*/}}
+{{- define "kibana.savedObjectsCM" -}}
+{{- printf "%s" (tpl .Values.savedObjects.configmap $) -}}
+{{- end -}}
+
+{{/*
+Set Elasticsearch Port.
+*/}}
+{{- define "kibana.configurationCM" -}}
+{{- .Values.configurationCM | default (printf "%s-conf" (include "kibana.fullname" .)) -}}
+{{- end -}}
+
+{{/*
+Common labels
+*/}}
+{{- define "kibana.labels" -}}
+app.kubernetes.io/name: {{ include "kibana.name" . }}
+helm.sh/chart: {{ include "kibana.chart" . }}
+app.kubernetes.io/instance: {{ .Release.Name }}
+{{- if .Chart.AppVersion }}
+app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+{{- end }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- end -}}
+
+{{/*
+Match labels
+*/}}
+{{- define "kibana.matchLabels" -}}
+app.kubernetes.io/name: {{ include "kibana.name" . }}
+app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end -}}
+
+{{/*
+Return  the proper Storage Class
+*/}}
+{{- define "kibana.storageClass" -}}
+{{/*
+Helm 2.11 supports the assignment of a value to a variable defined in a different scope,
+but Helm 2.9 and 2.10 does not support it, so we need to implement this if-else logic.
+*/}}
+{{- if .Values.global -}}
+    {{- if .Values.global.storageClass -}}
+        {{- if (eq "-" .Values.global.storageClass) -}}
+            {{- printf "storageClassName: \"\"" -}}
+        {{- else }}
+            {{- printf "storageClassName: %s" .Values.global.storageClass -}}
+        {{- end -}}
+    {{- else -}}
+        {{- if .Values.persistence.storageClass -}}
+              {{- if (eq "-" .Values.persistence.storageClass) -}}
+                  {{- printf "storageClassName: \"\"" -}}
+              {{- else }}
+                  {{- printf "storageClassName: %s" .Values.persistence.storageClass -}}
+              {{- end -}}
+        {{- end -}}
+    {{- end -}}
+{{- else -}}
+    {{- if .Values.persistence.storageClass -}}
+        {{- if (eq "-" .Values.persistence.storageClass) -}}
+            {{- printf "storageClassName: \"\"" -}}
+        {{- else }}
+            {{- printf "storageClassName: %s" .Values.persistence.storageClass -}}
+        {{- end -}}
+    {{- end -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Compile all warnings into a single message, and call fail.
+*/}}
+{{- define "kibana.validateValues" -}}
+{{- $messages := list -}}
+{{- $messages := append $messages (include "kibana.validateValues.noElastic" .) -}}
+{{- $messages := append $messages (include "kibana.validateValues.configConflict" .) -}}
+{{- $messages := append $messages (include "kibana.validateValues.extraVolumes" .) -}}
+{{- $messages := without $messages "" -}}
+{{- $message := join "\n" $messages -}}
+
+{{- if $message -}}
+{{-   printf "\nVALUES VALIDATION:\n%s" $message | fail -}}
+{{- end -}}
+{{- end -}}
+
+{{/* Validate values of Kibana - must provide an ElasticSearch */}}
+{{- define "kibana.validateValues.noElastic" -}}
+{{- if and (not .Values.elasticsearch.hosts) (not .Values.elasticsearch.port) -}}
+kibana: no-elasticsearch
+    You did not specify an external Elasticsearch instance.
+    Please set elasticsearch.hosts and elasticsearch.port
+{{- else if and (not .Values.elasticsearch.hosts) .Values.elasticsearch.port }}
+kibana: missing-es-settings-host
+    You specified the external Elasticsearch port but not the host. Please
+    set elasticsearch.hosts
+{{- else if and .Values.elasticsearch.hosts (not .Values.elasticsearch.port) }}
+kibana: missing-es-settings-port
+    You specified the external Elasticsearch hosts but not the port. Please
+    set elasticsearch.port
+{{- end -}}
+{{- end -}}
+
+{{/* Validate values of Kibana - configuration conflict */}}
+{{- define "kibana.validateValues.configConflict" -}}
+{{- if and (.Values.extraConfiguration) (.Values.configurationCM) -}}
+kibana: conflict-configuration
+    You specified a ConfigMap with kibana.yml and a set of settings to be added
+    to the default kibana.yml. Please only set either extraConfiguration or configurationCM
+{{- end -}}
+{{- end -}}
+
+{{/* Validate values of Kibana - Incorrect extra volume settings */}}
+{{- define "kibana.validateValues.extraVolumes" -}}
+{{- if and (.Values.extraVolumes) (not .Values.extraVolumeMounts) -}}
+kibana: missing-extra-volume-mounts
+    You specified extra volumes but not mount points for them. Please set
+    the extraVolumeMounts value
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return the appropriate apiVersion for deployment.
+*/}}
+{{- define "kibana.deployment.apiVersion" -}}
+{{- if semverCompare "<1.14-0" .Capabilities.KubeVersion.GitVersion -}}
+{{- print "extensions/v1beta1" -}}
+{{- else -}}
+{{- print "apps/v1" -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Renders a value that contains template.
+Usage:
+{{ include "kibana.tplValue" ( dict "value" .Values.path.to.the.Value "context" $) }}
+*/}}
+{{- define "kibana.tplValue" -}}
+    {{- if typeIs "string" .value }}
+        {{- tpl .value .context }}
+    {{- else }}
+        {{- tpl (.value | toYaml) .context }}
+    {{- end }}
 {{- end -}}

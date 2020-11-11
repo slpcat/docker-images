@@ -8,7 +8,7 @@ ENV \
     LANGUAGE="en_US.UTF-8" \
     LC_ALL="en_US.UTF-8" \
     TIMEZONE="Asia/Shanghai" \
-    FILEBEAT_VERSION="7.6.3"
+    FILEBEAT_VERSION="7.9.3"
 
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/' /etc/apk/repositories
 
@@ -43,7 +43,6 @@ FROM slpcat/alpine:3.12
 MAINTAINER 若虚 <slpcat@qq.com>
 
 RUN apk update && \ 
-    apk add python2 && \
     apk add ca-certificates && \
     update-ca-certificates 
 
