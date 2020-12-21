@@ -31,6 +31,7 @@ data:
         Host            ${KAFKA_REST_HOST}
         Port            ${KAFKA_REST_PORT}
         Time_Key        @timestamp
+        Timestamp_Format  iso8601
         Tag_Key         _fluent-tag
         Include_Tag_Key On
         Tag_Key         My_Tag_Key

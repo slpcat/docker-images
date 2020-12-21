@@ -1,23 +1,36 @@
-apiVersion: extensions/v1beta1
+apiVersion: policy/v1beta1
 kind: PodSecurityPolicy
 metadata:
-  name: permissive
   annotations:
-    security.alpha.kubernetes.io/sysctls: 'net.*,kernel.msg*'
+    kubernetes.io/description: privileged allows full unrestricted access to pod features,
+      as if the PodSecurityPolicy controller was not enabled.
+    seccomp.security.alpha.kubernetes.io/allowedProfileNames: '*'
+    security.alpha.kubernetes.io/sysctls: net.*,kernel.msg*
+  labels:
+    ack.alicloud.com/component: pod-security-policy
+    kubernetes.io/cluster-service: "true"
+  name: pod-psp
 spec:
+  allowPrivilegeEscalation: true
+  allowedCapabilities:
+  - '*'
   allowedUnsafeSysctls:
   - kernel.msg*
   - net.*
+  fsGroup:
+    rule: RunAsAny
+  hostIPC: true
+  hostNetwork: true
+  hostPID: true
+  hostPorts:
+  - max: 65535
+    min: 0
+  privileged: true
+  runAsUser:
+    rule: RunAsAny
   seLinux:
     rule: RunAsAny
   supplementalGroups:
     rule: RunAsAny
-  runAsUser:
-    rule: RunAsAny
-  fsGroup:
-    rule: RunAsAny
-  hostPorts:
-  - min: 0
-    max: 65535
   volumes:
   - '*'

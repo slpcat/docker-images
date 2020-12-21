@@ -13,3 +13,10 @@ docker run -d --name=netdata \
   netdata/netdata
 
 curl -s https://packagecloud.io/install/repositories/netdata/netdata/script.rpm.sh | sudo bash
+
+
+helm 
+
+https://github.com/netdata/helmchart
+
+

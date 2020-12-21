@@ -1,0 +1,196 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: packetbeat-dynamic-config
+  namespace: kube-system
+  labels:
+    k8s-app: packetbeat-dynamic
+    kubernetes.io/cluster-service: "true"
+data:
+  packetbeat.yml: |-
+    packetbeat.interfaces.device: any
+    packetbeat.interfaces.snaplen: 65536
+    packetbeat.interfaces.type: pf_ring
+    packetbeat.interfaces.buffer_size_mb: 100
+    #packetbeat.interfaces.auto_promisc_mode: true
+      
+    packetbeat.protocols:
+    - type: dns
+      ports: [53]
+      include_authorities: true
+      include_additionals: true
+    - type: icmp
+      enabled: true
+    - type: http
+      ports: [80, 8000, 8080, 9200]
+      #hide_keywords: ["pass", "password", "passwd"]
+      #send_headers: ["User-Agent", "Cookie", "Set-Cookie"]
+      send_all_headers: true
+      split_cookie: true
+      real_ip_header: "X-Forwarded-For"
+      decode_body: true
+      send_request: true
+      send_response: true
+      transaction_timeout: 10
+    - type: tls
+      ports: [443, 993, 995, 5223, 8443, 8883, 9243]
+      send_certificates: true
+      include_raw_certificates: false
+      include_detailed_fields: true
+      fingerprints: [ md5, sha1, sha256 ]
+    - type: mysql
+      ports: [3306]
+      max_rows: 30
+      max_row_length: 2048
+      statement_timeout: 1h
+    - type: redis
+      ports: [6379]
+      queue_max_bytes: 1048576
+      queue_max_messages: 20000
+    - type: pgsql:
+      ports: [5432]
+    - type: memcache:
+      ports: [11211]
+    - type: thrift:
+      ports: [9090]
+    - type: mongodb
+      ports: [3717]
+      send_request: true
+      send_response: true
+      max_docs: 0
+      max_doc_length: 0
+    packetbeat.flows:
+      timeout: 30s
+      period: 10s
+    processors:
+      - add_cloud_metadata:
+      - add_kubernetes_metadata:
+          host: ${HOSTNAME}
+          indexers:
+          - ip_port:
+          matchers:
+          - field_format:
+              format: '%{[ip]}:%{[port]}'
+    #setup.kibana.host: kibana:5601
+    queue.mem:
+      events: 4096
+      flush.min_events: 512
+      flush.timeout: 5s
+
+    output.kafka:
+      # initial brokers for reading cluster metadata
+      hosts: ["192.168.100.201:9092"]
+      version: "0.10.2.1"      # Kafka的对应版本
+      # message topic selection + partitioning
+      topic: 'downgrade'
+      worker: 8
+      partition.round_robin:
+      reachable_only: false
+      required_acks: 0
+      compression: lz4
+      compression_level: 4
+      max_message_bytes: 1000000
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: packetbeat-dynamic
+  namespace: kube-system
+  labels:
+    k8s-app: packetbeat-dynamic
+    kubernetes.io/cluster-service: "true"
+spec:
+  selector:
+    matchLabels:
+      k8s-app: packetbeat-dynamic
+      kubernetes.io/cluster-service: "true"
+  template:
+    metadata:
+      labels:
+        k8s-app: packetbeat-dynamic
+        kubernetes.io/cluster-service: "true"
+    spec:
+      serviceAccountName: packetbeat-dynamic
+      terminationGracePeriodSeconds: 30
+      hostNetwork: true
+      containers:
+      - name: packetbeat-dynamic
+        image: docker.elastic.co/beats/packetbeat:7.10.0
+        imagePullPolicy: Always
+        args: [
+          "-c", "/etc/packetbeat.yml",
+          "-e",
+        ]
+        securityContext:
+          runAsUser: 0
+          capabilities:
+            add:
+            - NET_ADMIN
+        env:
+        - name: ELASTICSEARCH_HOST
+          value: elasticsearch
+        - name: ELASTICSEARCH_PORT
+          value: "9200"
+        - name: ELASTICSEARCH_USERNAME
+          value: elastic
+        - name: ELASTICSEARCH_PASSWORD
+          value: changeme
+        - name: CLOUD_ID
+          value:
+        - name: ELASTIC_CLOUD_AUTH
+          value:
+        - name: KIBANA_HOST
+          value: kibana
+        - name: KIBANA_PORT
+          value: "5601"
+        volumeMounts:
+        - name: config
+          mountPath: /etc/packetbeat.yml
+          readOnly: true
+          subPath: packetbeat.yml
+        - name: data
+          mountPath: /usr/share/packetbeat/data
+      volumes:
+      - name: config
+        configMap:
+          defaultMode: 0600
+          name: packetbeat-dynamic-config
+      - name: data
+        emptyDir: {}
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
+metadata:
+  name: packetbeat-dynamic
+subjects:
+- kind: ServiceAccount
+  name: packetbeat-dynamic
+  namespace: kube-system
+roleRef:
+  kind: ClusterRole
+  name: packetbeat-dynamic
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRole
+metadata:
+  name: packetbeat-dynamic
+  labels:
+    k8s-app: packetbeat-dynamic
+rules:
+- apiGroups: [""] # "" indicates the core API group
+  resources:
+  - namespaces
+  - pods
+  verbs:
+  - get
+  - watch
+  - list
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: packetbeat-dynamic
+  namespace: kube-system
+  labels:
+    k8s-app: packetbeat-dynamic

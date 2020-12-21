@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  namespace: monitoring
+  name:  pushgateway
+  labels:
+    app:  pushgateway
+  #annotations:
+  #  prometheus.io/scrape: "true"
+  #  prometheus.io/port: "8080"
+spec:
+  replicas: 1
+  serviceName: pushgateway
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app:  pushgateway
+  template:
+    metadata:
+      name:  pushgateway
+      labels:
+        app:  pushgateway
+    spec:
+      containers:
+        - name:  pushgateway
+          image: prom/pushgateway:v1.3.0
+          args:
+          - --web.listen-address=0.0.0.0:9091
+          - --web.telemetry-path=/metrics
+          - --web.enable-lifecycle
+          - --persistence.file=/pushgateway/pushgateway.db
+          - --persistence.interval=5m
+          - --log.level=info
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            initialDelaySeconds: 600
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 10
+            httpGet:
+              path: /
+              port: 9091
+          ports:
+            - name: "app-port"
+              containerPort: 9091
+          resources:
+            limits:
+              memory: "1000Mi"
+              cpu: 1
+            requests:
+              memory: "1000Mi"
+              cpu: 1
+          volumeMounts:
+          - name: pushgateway-data
+            mountPath: /pushgateway
+  volumeClaimTemplates:
+  - metadata:
+      name: pushgateway-data
+    spec:
+      accessModes:
+        - "ReadWriteOnce"
+      #storageClassName: openebs-standard
+      resources:
+        requests:
+          storage: "20Gi"

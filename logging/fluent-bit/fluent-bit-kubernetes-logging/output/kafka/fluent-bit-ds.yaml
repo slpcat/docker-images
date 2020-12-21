@@ -43,8 +43,8 @@ spec:
             cpu: 5m
             memory: 10Mi
           limits:
-            cpu: 2
-            memory: 2Gi
+            cpu: 8
+            memory: 4Gi
         volumeMounts:
         - name: varlog
           mountPath: /var/log

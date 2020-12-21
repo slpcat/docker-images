@@ -1,0 +1,19 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: pushgateway
+  namespace: monitoring
+  labels:
+    k8s-app: pushgateway
+spec:
+  selector:
+    matchLabels:
+      app: pushgateway
+  jobLabel: k8s-app
+  endpoints:
+  - port: pushgateway
+    interval: 10s
+    path: /metrics
+  namespaceSelector:
+    matchNames:
+      - monitoring

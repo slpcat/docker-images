@@ -1,0 +1,29 @@
+apiVersion: rbac.authorization.k8s.io/v1
+items:
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: RoleBinding
+  metadata:
+    name: fluent-bit-sidecar-read
+    namespace: default
+  roleRef:
+    apiGroup: rbac.authorization.k8s.io
+    kind: Role
+    name: fluent-bit-sidecar-read
+  subjects:
+  - kind: ServiceAccount
+    name: fluent-bit-sidecar
+    namespace: default
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: RoleBinding
+  metadata:
+    name: fluent-bit-sidecar-read
+    namespace: app01
+  roleRef:
+    apiGroup: rbac.authorization.k8s.io
+    kind: Role
+    name: fluent-bit-sidecar-read
+  subjects:
+  - kind: ServiceAccount
+    name: fluent-bit-sidecar
+    namespace: default
+kind: RoleBindingList

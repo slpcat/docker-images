@@ -58,6 +58,17 @@ spec:
       terminationGracePeriodSeconds: 60 #k8s将会给应用发送SIGTERM信号，可以用来正确、优雅地关闭应用,默认为30秒
       #imagePullSecrets:
       #- name: registrykey-ali-ext
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: "app"
+                    operator: In
+                    values:
+                    - zk
+              topologyKey: "kubernetes.io/hostname"
+      priorityClassName: high-priority # 这里指定高优先的 PriorityClass
       securityContext:
         sysctls:
           #kubernetes >= v1.11 and kernel version >= 4.15 needed

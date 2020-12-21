@@ -1,0 +1,848 @@
+---
+# Source: netdata/templates/psp.yaml
+apiVersion: policy/v1beta1
+kind: PodSecurityPolicy
+metadata:
+  name: netdata-psp
+  namespace: monitoring
+  labels:
+    heritage: Helm
+    release: netdata
+    chart: netdata-2.0.15
+spec:
+  allowPrivilegeEscalation: true
+  allowedCapabilities:
+  - '*'
+  fsGroup:
+    rule: RunAsAny
+  hostIPC: true
+  hostNetwork: true
+  hostPID: true
+  hostPorts:
+  - max: 65535
+    min: 0
+  privileged: true
+  runAsUser:
+    rule: RunAsAny
+  seLinux:
+    rule: RunAsAny
+  supplementalGroups:
+    rule: RunAsAny
+  volumes:
+  - '*'
+---
+# Source: netdata/templates/serviceaccount.yaml
+kind: ServiceAccount
+apiVersion: v1
+metadata:
+  labels:
+    app: netdata
+    chart: netdata-2.0.15
+    release: netdata
+    heritage: Helm
+  name: netdata
+  namespace: monitoring
+---
+# Source: netdata/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: netdata-conf-parent
+  namespace: monitoring
+  labels:
+    app: netdata
+    chart: netdata-2.0.15
+    release: netdata
+    heritage: Helm
+data:
+  health:     |
+      SEND_EMAIL="NO"
+      SEND_SLACK="YES"
+      SLACK_WEBHOOK_URL=""
+      DEFAULT_RECIPIENT_SLACK=""
+      role_recipients_slack[sysadmin]="${DEFAULT_RECIPIENT_SLACK}"
+      role_recipients_slack[domainadmin]="${DEFAULT_RECIPIENT_SLACK}"
+      role_recipients_slack[dba]="${DEFAULT_RECIPIENT_SLACK}"
+      role_recipients_slack[webmaster]="${DEFAULT_RECIPIENT_SLACK}"
+      role_recipients_slack[proxyadmin]="${DEFAULT_RECIPIENT_SLACK}"
+      role_recipients_slack[sitemgr]="${DEFAULT_RECIPIENT_SLACK}"
+  netdata:     |
+      [global]
+        memory mode = save
+    
+      [plugins]
+        cgroups = no
+        tc = no
+        enable running new plugins = no
+        check for new plugins every = 72000
+        python.d = no
+        charts.d = no
+        go.d = no
+        node.d = no
+        apps = no
+        proc = no
+        idlejitter = no
+        diskspace = no
+  stream:     |
+      [11111111-2222-3333-4444-555555555555]
+        enabled = yes
+        history = 3600
+        default memory mode = save
+        health enabled by default = auto
+        allow from = *
+---
+# Source: netdata/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: netdata-conf-child
+  namespace: monitoring
+  labels:
+    app: netdata
+    chart: netdata-2.0.15
+    release: netdata
+    heritage: Helm
+data:
+  go.d:     |
+      modules:
+        pulsar: no
+        prometheus: yes
+  kubelet:     |
+      update_every: 1
+      autodetection_retry: 0
+      jobs:
+        - url: http://127.0.0.1:10255/metrics
+        - url: https://localhost:10250/metrics
+          tls_skip_verify: yes
+  kubeproxy:     |
+      update_every: 1
+      autodetection_retry: 0
+      jobs:
+        - url: http://127.0.0.1:10249/metrics
+  netdata:     |
+      [global]
+        memory mode = none
+      [health]
+        enabled = no
+  stream:     |
+      [stream]
+        enabled = yes
+        destination = netdata:19999
+        api key = 11111111-2222-3333-4444-555555555555
+        timeout seconds = 60
+        buffer size bytes = 1048576
+        reconnect delay seconds = 5
+        initial clock resync iterations = 60
+---
+# Source: netdata/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: netdata-child-sd-config-map
+  namespace: monitoring
+  labels:
+    app: netdata
+    chart: netdata-2.0.15
+    release: netdata
+    heritage: Helm
+data:
+  config.yml: |
+    name: kubernetes
+    discovery:
+      k8s:
+        - tags: unknown
+          role: pod
+          local_mode: true
+    tag:
+      - name: "Control-Plane"
+        selector: unknown
+        tags: -unknown control_plane
+        match:
+          - tags: kube_scheduler
+            expr: '{{ glob .Image "k8s.gcr.io/kube-scheduler:*" }}'
+          - tags: kube_controller_manager
+            expr: '{{ glob .Image "k8s.gcr.io/kube-controller-manager:*" }}'
+      - name: "Applications"
+        selector: unknown
+        tags: -unknown applications
+        match:
+          - tags: activemq
+            expr: '{{ and (eq .Port "8161") (glob .Image "**/activemq*") }}'
+          - tags: apache
+            expr: '{{ and (eq .Port "80" "8080") (glob .Image "httpd*" "**/httpd*") }}'
+          - tags: bind
+            expr: '{{ and (eq .Port "8653") (glob .Image "**/bind*") }}'
+          - tags: cockroachdb
+            expr: '{{ and (eq .Port "8080") (glob .Image "**/cockroach*") }}'
+          - tags: consul
+            expr: '{{ and (eq .Port "8500") (glob .Image "consul*" "**/consul*") }}'
+          - tags: coredns
+            expr: '{{ and (eq .Port "9153") (glob .Image "**/coredns*") }}'
+          - tags: elasticsearch
+            expr: '{{ and (eq .Port "9200") (glob .Image "elasticsearch:*" "**/elasticsearch:*") }}'
+          - tags: fluentd
+            expr: '{{ and (eq .Port "24220") (glob .Image "fluentd*" "**/fluentd*") }}'
+          - tags: freeradius
+            expr: '{{ and (eq .Port "18121") (glob .Image "**/freeradius*") }}'
+          - tags: hdfs
+            expr: '{{ and (eq .Port "50070") (glob .Image "**/hdfs*") }}'
+          - tags: lighttpd
+            expr: '{{ and (eq .Port "80" "8080") (glob .Image "**/lighttpd*") }}'
+          - tags: lighttpd2
+            expr: '{{ and (eq .Port "80" "8080") (glob .Image "**/lighttpd2*") }}'
+          - tags: logstash
+            expr: '{{ and (eq .Port "9600") (glob .Image "logstash*" "**/logstash*") }}'
+          - tags: mysql
+            expr: '{{ and (eq .Port "3306") (glob .Image "mysql*" "**/mysql*" "mariadb*" "**/mariadb*") }}'
+          - tags: nginx
+            expr: '{{ and (eq .Port "80" "8080") (glob .Image "nginx*" "**/nginx*") }}'
+          - tags: openvpn
+            expr: '{{ and (eq .Port "7505") (glob .Image "**/openvpn") }}'
+          - tags: phpfpm
+            expr: '{{ and (eq .Port "80" "8080") (glob .Image "**/phpfpm*" "**/php-fpm*") }}'
+          - tags: rabbitmq
+            expr: '{{ and (eq .Port "15672") (glob .Image "rabbitmq*" "**/rabbitmq*") }}'
+          - tags: solr
+            expr: '{{ and (eq .Port "8983") (glob .Image "solr*" "**/solr*") }}'
+          - tags: tengine
+            expr: '{{ and (eq .Port "80" "8080") (glob .Image "**/tengine*") }}'
+          - tags: unbound
+            expr: '{{ and (eq .Port "8953") (glob .Image "**/unbound*") }}'
+          - tags: vernemq
+            expr: '{{ and (eq .Port "8888") (glob .Image "**/vernemq*") }}'
+          - tags: zookeeper
+            expr: '{{ and (eq .Port "2181") (glob .Image "zookeeper*" "**/zookeeper*") }}'
+      - name: "Prometheus Generic Applications"
+        selector: unknown
+        tags: -unknown prometheus_generic
+        match:
+          - tags: prometheus_generic
+            expr: |
+              {{ $scrapeOK := eq (get .Annotations "prometheus.io/scrape") "true" -}}
+              {{ $portOK := eq (default .Port (get .Annotations "prometheus.io/port")) .Port -}}
+              {{ $imageOK := not (glob .Image "netdata/netdata*" "**pulsar*" "**telegraf*") -}}
+              {{ and $scrapeOK $portOK $imageOK }}
+    build:
+      - name: "Control-Plane"
+        selector: '!unknown control_plane'
+        tags: file
+        apply:
+          - selector: kube_scheduler
+            template: |
+              - module: prometheus
+                name: prometheus-{{.TUID}}
+                url: http://{{.PodIP}}:{{default "10251" .Port}}/metrics
+                update_every: 10
+                max_time_series: 1000
+          - selector: kube_controller_manager
+            template: |
+              - module: prometheus
+                name: prometheus-{{.TUID}}
+                url: http://{{.PodIP}}:{{default "10252" .Port}}/metrics
+                update_every: 10
+                max_time_series: 2000
+      - name: "Prometheus Generic Applications"
+        selector: '!unknown prometheus_generic'
+        tags: file
+        apply:
+          - selector: prometheus_generic
+            template: |
+              {{ $path := default "/metrics" (get .Annotations "prometheus.io/path") -}}
+              - module: prometheus
+                name: prometheus-{{.TUID}}
+                url: http://{{.Address}}{{$path}}
+                update_every: 10
+                max_time_series: 1000
+      - name: "Applications"
+        selector: '!unknown applications'
+        tags: file
+        apply:
+          - selector: activemq
+            template: |
+              - module: activemq
+                name: activemq-{{.TUID}}
+                url: http://{{.Address}}
+          - selector: apache
+            template: |
+              - module: apache
+                name: apache-{{.TUID}}
+                url: http://{{.Address}}/server-status?auto
+          - selector: bind
+            template: |
+              - module: bind
+                name: bind-{{.TUID}}
+                url: http://{{.Address}}/json/v1
+          - selector: cockroachdb
+            template: |
+              - module: cockroachdb
+                name: cockroachdb-{{.TUID}}
+                url: http://{{.Address}}/_status/vars
+          - selector: consul
+            template: |
+              - module: consul
+                name: consul-{{.TUID}}
+                url: http://{{.Address}}
+          - selector: coredns
+            template: |
+              - module: coredns
+                name: coredns-{{.TUID}}
+                url: http://{{.Address}}/metrics
+          - selector: elasticsearch
+            template: |
+              - module: elasticsearch
+                name: elasticsearch-{{.TUID}}
+                url: http://{{.Address}}
+          - selector: fluentd
+            template: |
+              - module: fluentd
+                name: fluentd-{{.TUID}}
+                url: http://{{.Address}}
+          - selector: freeradius
+            template: |
+              - module: freeradius
+                name: freeradius-{{.TUID}}
+                address: {{.PodIP}}
+                port: {{.Port}}
+          - selector: hdfs
+            template: |
+              - module: hdfs
+                name: hdfs-{{.TUID}}
+                url: http://{{.Address}}/jmx
+          - selector: lighttpd
+            template: |
+              - module: lighttpd
+                name: lighttpd-{{.TUID}}
+                url: http://{{.Address}}/server-status?auto
+          - selector: lighttpd2
+            template: |
+              - module: lighttpd2
+                name: lighttpd2-{{.TUID}}
+                url: http://{{.Address}}/server-status?format=plain
+          - selector: logstash
+            template: |
+              - module: logstash
+                name: logstash-{{.TUID}}
+                url: http://{{.Address}}
+          - selector: mysql
+            template: |
+              - module: mysql
+                name: mysql-{{.TUID}}
+                dsn: 'netdata@tcp({{.Address}})/'
+          - selector: nginx
+            template: |
+              - module: nginx
+                name: nginx-{{.TUID}}
+                url: http://{{.Address}}/stub_status
+          - selector: openvpn
+            template: |
+              - module: openvpn
+                name: openvpn-{{.TUID}}
+                address: {{.Address}}
+          - selector: phpfpm
+            template: |
+              - module: phpfpm
+                name: phpfpm-{{.TUID}}
+                url: http://{{.Address}}/status?full&json
+          - selector: rabbitmq
+            template: |
+              - module: rabbitmq
+                name: rabbitmq-{{.TUID}}
+                url: http://{{.Address}}
+          - selector: solr
+            template: |
+              - module: solr
+                name: solr-{{.TUID}}
+                url: http://{{.Address}}
+          - selector: tengine
+            template: |
+              - module: tengine
+                name: tengine-{{.TUID}}
+                url: http://{{.Address}}/us
+          - selector: unbound
+            template: |
+              - module: unbound
+                name: unbound-{{.TUID}}
+                address: {{.Address}}
+                use_tls: false
+          - selector: vernemq
+            template: |
+              - module: vernemq
+                name: vernemq-{{.TUID}}
+                url: http://{{.Address}}/metrics
+          - selector: zookeeper
+            template: |
+              - module: zookeeper
+                name: zookeeper-{{.TUID}}
+                address: {{.Address}}
+    export:
+      file:
+        - selector: file
+          filename: "/export/go.d.yml"
+---
+# Source: netdata/templates/persistentvolumeclaim.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: netdata-parent-database
+  namespace: monitoring
+  labels:
+    app: netdata
+    chart: netdata-2.0.15
+    release: netdata
+    heritage: Helm
+    role: parent
+spec:
+  accessModes: [ "ReadWriteOnce" ]
+  resources:
+    requests:
+      storage: 20Gi
+---
+# Source: netdata/templates/persistentvolumeclaim.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: netdata-parent-alarms
+  namespace: monitoring
+  labels:
+    app: netdata
+    chart: netdata-2.0.15
+    release: netdata
+    heritage: Helm
+    role: parent
+spec:
+  accessModes: [ "ReadWriteOnce" ]
+  resources:
+    requests:
+      storage: 20Gi
+---
+# Source: netdata/templates/clusterrole.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: netdata
+  namespace: monitoring
+  labels:
+    app: netdata
+    chart: netdata-2.0.15
+    release: netdata
+    heritage: Helm
+rules:
+  - apiGroups: [""]
+    resources:
+      - "nodes"
+      - "pods"
+      - "services"
+      - "endpoints"
+      - "configmaps"
+      - "secrets"
+      - "events"
+      - "componentstatuses"
+      - "nodes/proxy"
+    verbs:
+      - "get"
+      - "list"
+      - "watch"
+  - apiGroups: [""]
+    resources:
+      - "resourcequotas"
+    verbs:
+      - "get"
+      - "list"
+  - apiGroups: [""]
+    resources:
+      - "nodes/metrics"
+      - "nodes/spec"
+    verbs:
+      - "get"
+  - apiGroups: ["extensions"]
+    resources:
+      - "ingresses"
+    verbs:
+      - "get"
+      - "list"
+      - "watch"
+  - nonResourceURLs: ["/version", "/healthz", "/metrics"]
+    verbs:
+      - "get"
+---
+# Source: netdata/templates/psp-clusterrole.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: netdata-psp
+  namespace: monitoring
+  labels:
+    app: netdata
+    chart: netdata-2.0.15
+    release: netdata
+    heritage: Helm
+rules:
+- apiGroups: ['policy']
+  resources: ['podsecuritypolicies']
+  verbs:     ['use']
+  resourceNames:
+  - netdata-psp
+---
+# Source: netdata/templates/clusterrolebinding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: netdata
+  namespace: monitoring
+  labels:
+    app: netdata
+    chart: netdata-2.0.15
+    release: netdata
+    heritage: Helm
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: netdata
+subjects:
+- kind: ServiceAccount
+  name: netdata
+  namespace: monitoring
+---
+# Source: netdata/templates/psp-clusterrolebinding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: netdata-psp
+  namespace: monitoring
+  labels:
+    app: netdata
+    chart: netdata-2.0.15
+    release: netdata
+    heritage: Helm
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: netdata-psp
+subjects:
+- kind: ServiceAccount
+  name: netdata
+  namespace: monitoring
+---
+# Source: netdata/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: netdata
+  namespace: monitoring
+  labels:
+    app: netdata
+    chart: netdata-2.0.15
+    release: netdata
+    heritage: Helm
+    role: parent
+spec:
+  type: ClusterIP
+  ports:
+    - port: 19999
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app: netdata
+    release: netdata
+    role: parent
+---
+# Source: netdata/templates/daemonset.yaml
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: netdata-child
+  namespace: monitoring
+  labels:
+    app: netdata
+    chart: netdata-2.0.15
+    release: netdata
+    heritage: Helm
+    role: child
+spec:
+  selector:
+    matchLabels:
+      app: netdata
+      release: netdata
+      role: child
+  template:
+    metadata:
+      annotations:
+        container.apparmor.security.beta.kubernetes.io/netdata: unconfined
+        checksum/config: d8fad56d7f580e72e9a0936f03676757940069bec6c5e8a36cc3cef6ba55136c
+      labels:
+        app: netdata
+        release: netdata
+        role: child
+    spec:
+      serviceAccountName: netdata
+      restartPolicy: Always
+      hostPID: true
+      hostIPC: true
+      hostNetwork: true
+      initContainers:
+        - name: init-nodeuid
+          image: "netdata/wget:latest"
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: nodeuid
+              mountPath: "/nodeuid"
+          env:
+            - name: MY_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+          command:
+            - "/bin/sh"
+          args:
+            - "-c"
+            - '
+            TOKEN=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token);
+            URL="https://${KUBERNETES_SERVICE_HOST}:${KUBERNETES_SERVICE_PORT}/api/v1/nodes/${MY_NODE_NAME}";
+            HEADER="Authorization: Bearer ${TOKEN}";
+
+            DATA=$(wget -q -T 5 --no-check-certificate --header "${HEADER}" -O - "${URL}");
+            [ -z "${DATA}" ] && exit 1;
+
+            UID=$(echo "${DATA}" | grep -m 1 uid | grep -o ":.*" | tr -d ": \",");
+            [ -z "${UID}" ] && exit 1;
+
+            echo -n "${UID}" > /nodeuid/netdata.public.unique.id;
+            '
+      containers:
+        - name: netdata
+          image: "netdata/netdata:v1.26.0"
+          imagePullPolicy: Always
+          env:
+            - name: MY_POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: MY_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            - name: MY_POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: NETDATA_LISTENER_PORT
+              value: '19999'
+            - name: NETDATA_PLUGINS_GOD_WATCH_PATH
+              value: "/etc/netdata/go.d/sd/go.d.yml"
+          ports:
+            - name: http
+              containerPort: 19999
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /api/v1/info
+              port: http
+            failureThreshold: 3
+            periodSeconds: 30
+            successThreshold: 1
+            timeoutSeconds: 1
+          readinessProbe:
+            httpGet:
+              path: /api/v1/info
+              port: http
+            failureThreshold: 3
+            periodSeconds: 30
+            successThreshold: 1
+            timeoutSeconds: 1
+          volumeMounts:
+            - name: proc
+              readOnly: true
+              mountPath: /host/proc
+            - name: run
+              mountPath: /var/run/docker.sock
+            - name: sys
+              mountPath: /host/sys
+            - name: config
+              mountPath: /etc/netdata/go.d.conf
+              subPath: go.d
+            - name: config
+              mountPath: /etc/netdata/go.d/k8s_kubelet.conf
+              subPath: kubelet
+            - name: config
+              mountPath: /etc/netdata/go.d/k8s_kubeproxy.conf
+              subPath: kubeproxy
+            - name: config
+              mountPath: /etc/netdata/netdata.conf
+              subPath: netdata
+            - name: config
+              mountPath: /etc/netdata/stream.conf
+              subPath: stream
+            - name: nodeuid
+              mountPath: "/var/lib/netdata/registry/"
+            - name: sd-shared
+              mountPath: "/etc/netdata/go.d/sd/"
+          securityContext:
+            capabilities:
+              add:
+                - SYS_PTRACE
+                - SYS_ADMIN
+          resources:
+            {}
+        - name: sd
+          image: "netdata/agent-sd:v0.2.1"
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: sd-shared
+              mountPath: "/export/"
+          resources:
+            {}
+          env:
+            - name: NETDATA_SD_CONFIG_MAP
+              value: "netdata-child-sd-config-map:config.yml"
+            - name: MY_POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: MY_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+      tolerations:
+        - effect: NoSchedule
+          operator: Exists
+      terminationGracePeriodSeconds: 30
+      volumes:
+        - name: proc
+          hostPath:
+            path: /proc
+        - name: run
+          hostPath:
+            path: /var/run/docker.sock
+        - name: sys
+          hostPath:
+            path: /sys
+        - name: config
+          configMap:
+            name: netdata-conf-child
+        - name: nodeuid
+          emptyDir: {}
+        - name: sd-shared
+          emptyDir: {}
+      dnsPolicy: ClusterFirstWithHostNet
+---
+# Source: netdata/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: netdata-parent
+  namespace: monitoring
+  labels:
+    app: netdata
+    chart: netdata-2.0.15
+    release: netdata
+    heritage: Helm
+    role: parent
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: netdata
+      release: netdata
+      role: parent
+  template:
+    metadata:
+      labels:
+        app: netdata
+        release: netdata
+        role: parent
+      annotations:
+        checksum/config: d8fad56d7f580e72e9a0936f03676757940069bec6c5e8a36cc3cef6ba55136c
+    spec:
+      securityContext:
+        fsGroup: 201
+      serviceAccountName: netdata
+      initContainers:
+      containers:
+        - name: netdata
+          image: "netdata/netdata:v1.26.0"
+          imagePullPolicy: Always
+          env:
+            - name: MY_POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: MY_POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: NETDATA_LISTENER_PORT
+              value: '19999'
+          ports:
+            - name: http
+              containerPort: 19999
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /api/v1/info
+              port: http
+            failureThreshold: 3
+            periodSeconds: 30
+            successThreshold: 1
+            timeoutSeconds: 1
+          readinessProbe:
+            httpGet:
+              path: /api/v1/info
+              port: http
+            failureThreshold: 3
+            periodSeconds: 30
+            successThreshold: 1
+            timeoutSeconds: 1
+          volumeMounts:
+            - name: config
+              mountPath: /etc/netdata/health_alarm_notify.conf
+              subPath: health
+            - name: config
+              mountPath: /etc/netdata/netdata.conf
+              subPath: netdata
+            - name: config
+              mountPath: /etc/netdata/stream.conf
+              subPath: stream
+            - name: database
+              mountPath: /var/cache/netdata
+            - name: alarms
+              mountPath: /var/lib/netdata
+          resources:
+            {}
+      terminationGracePeriodSeconds: 300
+      volumes:
+        - name: config
+          configMap:
+            name: netdata-conf-parent
+        - name: database
+          persistentVolumeClaim:
+            claimName: netdata-parent-database
+        - name: alarms
+          persistentVolumeClaim:
+            claimName: netdata-parent-alarms
+---
+# Source: netdata/templates/ingress.yaml
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: netdata
+  namespace: monitoring
+  labels:
+    app: netdata
+    chart: netdata-2.0.15
+    release: netdata
+    heritage: Helm
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    kubernetes.io/tls-acme: "true"
+spec:
+  rules:
+    - host: netdata.k8s.local
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: netdata
+              servicePort: http

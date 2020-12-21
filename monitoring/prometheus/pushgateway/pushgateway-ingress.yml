@@ -1,0 +1,16 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: pushgateway-ingress
+  namespace: monitoring
+  annotations:
+    kubernetes.io/ingress.class: nginx
+spec:
+  rules:
+  - host: push-prometheus.example.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: pushgateway
+          servicePort: 9091

@@ -1,0 +1,3 @@
+https://grafana.com/oss/metrictank/?plcmt=footer
+
+Metrictank is a multi-tenant timeseries platform for Graphite developed by Grafana Labs. Metrictank powers Grafana Cloud’s Metrics Graphite platform, and monitoring/observability systems at companies such as Bloomberg and Expedia.

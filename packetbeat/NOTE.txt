@@ -1,0 +1,18 @@
+run_the_packetbeat_setup
+
+Running Packetbeat with the setup command will create the index pattern and load visualizations , dashboards, and machine learning jobs. Run this command:
+docker run \
+--cap-add=NET_ADMIN \
+docker.elastic.co/beats/packetbeat:7.10.0 \
+setup -E setup.kibana.host=kibana:5601 \
+-E output.elasticsearch.hosts=["elasticsearch:9200"]
+
+
+docker run \
+  --name=packetbeat \
+  --cap-add="NET_RAW" \
+  --cap-add=NET_ADMIN \
+  --network=host \
+  docker.elastic.co/beats/packetbeat:7.10.0 \
+  --strict.perms=false -e \
+  -E output.elasticsearch.hosts=["elasticsearch:9200"]

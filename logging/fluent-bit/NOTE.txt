@@ -5,6 +5,7 @@ https://github.com/iyacontrol/fluent-bit-clickhouse
 
 https://github.com/kubeup/fluent-bit-aliyun
 
+daemonset方式从宿主机采集日志
 https://github.com/fluent/fluent-bit-kubernetes-logging
 
 安装
@@ -20,4 +21,8 @@ $ kubectl create -f https://raw.githubusercontent.com/fluent/fluent-bit-kubernet
 输出到kafka
 $ kubectl create -f https://raw.githubusercontent.com/fluent/fluent-bit-kubernetes-logging/master/output/kafka/fluent-bit-configmap.yaml
 $ kubectl create -f https://raw.githubusercontent.com/fluent/fluent-bit-kubernetes-logging/master/output/kafka/fluent-bit-ds.yaml
+
+sidecar方式从pod采集日志
+
+https://github.com/leahnp/fluentbit-sidecar
 

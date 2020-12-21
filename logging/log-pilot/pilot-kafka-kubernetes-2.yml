@@ -1,4 +1,4 @@
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: log-pilot
@@ -6,6 +6,9 @@ metadata:
   labels:
     k8s-app: log-pilot
 spec:
+  selector:
+    matchLabels:
+      k8s-app: log-pilot
   updateStrategy:
     type: RollingUpdate
   template:

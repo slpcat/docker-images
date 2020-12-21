@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: fluent-bit-config
-  namespace: logging
+  name: fluent-bit-sidecar-config
+  namespace: default
   labels:
-    k8s-app: fluent-bit
+    k8s-app: fluent-bit-sidecar
 data:
   # Configuration files: server, input, filters and output
   # ======================================================
@@ -26,9 +26,9 @@ data:
     [INPUT]
         Name              tail
         Tag               kube.*
-        Path              /var/log/containers/*.log
+        Path              /app/log/*.log
         Parser            docker
-        DB                /var/log/flb_kube.db
+        DB                /dev/shm/flb_kube.db
         Buffer_Chunk_Size 512k
         Buffer_Max_Size   30MB
         Mem_Buf_Limit     32MB
@@ -56,7 +56,6 @@ data:
         Brokers        bootstrap.kafka:9092
         Topics         ops.kube-logs-fluentbit.stream.json.001
         Timestamp_Key  @timestamp
-        Timestamp_Format  iso8601
         Retry_Limit    false
         # hides errors "Receive failed: Disconnected" when kafka kills idle connections
         rdkafka.log.connection.close false

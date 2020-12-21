@@ -7,6 +7,8 @@ metadata:
   labels:
     app: tomcat8
 spec:
+  #保留历史版本数量
+  revisionHistoryLimit: 3
   replicas: 1
   selector:
     matchLabels:
@@ -29,6 +31,16 @@ spec:
       terminationGracePeriodSeconds: 60 ##k8s将会给应用发送SIGTERM信号，可以用来正确、优雅地关闭应用,默认为30秒
       #imagePullSecrets:
       #- name: registrykey-ali-ext
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: "app"
+                    operator: In
+                    values:
+                    - tomcat8
+              topologyKey: "kubernetes.io/hostname"
       securityContext:
         sysctls:
           #kubernetes >= v1.11 and kernel version >= 4.15 needed

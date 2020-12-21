@@ -2,18 +2,16 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   #命名规范:应用名称-版本
-  name: tomcat8-v1
+  name: tomcat8-v2
   namespace: default
   labels:
     app: tomcat8
 spec:
-  #保留历史版本数量
-  revisionHistoryLimit: 3
   replicas: 1
   selector:
     matchLabels:
       app: tomcat8
-      version: v1
+      version: v2
 #  minReadySeconds: 60     #滚动升级时60s后认为该pod就绪
   strategy:
     rollingUpdate:  ##由于replicas为3,则整个升级,pod个数在2-4个之间
@@ -23,7 +21,7 @@ spec:
     metadata:
       labels:
         app: tomcat8
-        version: v1
+        version: v2
       annotations:
         #enable istio sidecar injection
         sidecar.istio.io/inject: "true"
@@ -31,17 +29,9 @@ spec:
       terminationGracePeriodSeconds: 60 ##k8s将会给应用发送SIGTERM信号，可以用来正确、优雅地关闭应用,默认为30秒
       #imagePullSecrets:
       #- name: registrykey-ali-ext
-      affinity:
-        podAntiAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            - labelSelector:
-                matchExpressions:
-                  - key: "app"
-                    operator: In
-                    values:
-                    - tomcat8
-              topologyKey: "kubernetes.io/hostname"
       securityContext:
+        runAsUser: 0
+        runAsGroup: 0
         sysctls:
           #kubernetes >= v1.11 and kernel version >= 4.15 needed
           #- name: kernel.msgmax
@@ -96,10 +86,11 @@ spec:
             value: "1"
           - name: net.ipv4.fwmark_reflect
             value: "1"
+      #serviceAccountName: fluent-bit-sidecar
       containers:
       - name: tomcat8
         #image: registry.cn-beijing.aliyuncs.com/example/example_web:${BUILD_NUMBER}
-        image: slpcat/tomcat8:alpine-8.0
+        image: slpcat/tomcat8:alpine-8.5
         imagePullPolicy: Always
         livenessProbe: #kubernetes认为该pod是存活的,不存活则需要重启
           httpGet:
@@ -129,7 +120,7 @@ spec:
             memory: 8Gi
         env:
           - name: JAVA_OPTS
-            value: "-server -Djava.awt.headless=true -Djava.nio.channels.spi.SelectorProvider=sun.nio.ch.EPollSelectorProvider -Dorg.apache.tomcat.sendfile.support=true -Xverify:none -XX:MetaspaceSize=128m -XX:+UseNUMA -XX:+UseNUMAInterleaving -XX:NUMAInterleaveGranularity=65536 -XX:+UseLargePages -XX:+UseCompressedOops -XX:MaxMetaspaceSize=512m -XX:ReservedCodeCacheSize=240M -XX:MaxRAMFraction=2 -XshowSettings:vm -XX:+AggressiveOpts -Djute.maxbuffer=41943040 -XX:-UseBiasedLocking -XX:+UseFastAccessorMethods -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:+UseG1GC -XX:+ExplicitGCInvokesConcurrent -XX:SoftRefLRUPolicyMSPerMB=0 -XX:G1ReservePercent=25 -XX:G1NewSizePercent=10 -XX:G1MaxNewSizePercent=25 -XX:MaxGCPauseMillis=20 -XX:-OmitStackTraceInFastThrow -XX:+ParallelRefProcEnabled -XX:ParallelGCThreads=8 -XX:MaxTenuringThreshold=1 -XX:G1HeapWastePercent=10 -XX:SurvivorRatio=8 -XX:G1MixedGCCountTarget=16 -XX:G1MixedGCLiveThresholdPercent=90 -XX:InitiatingHeapOccupancyPercent=35 -XX:G1HeapRegionSize=32m -XX:+PerfDisableSharedMem -XX:-ResizePLAB"
+            value: "-server -Djava.awt.headless=true -Djava.nio.channels.spi.SelectorProvider=sun.nio.ch.EPollSelectorProvider -Dorg.apache.tomcat.sendfile.support=true -Xverify:none -XX:MetaspaceSize=128m -XX:+UseNUMA -XX:+UseNUMAInterleaving -XX:NUMAInterleaveGranularity=65536 -XX:+UseLargePages -XX:+UseCompressedOops -XX:MaxMetaspaceSize=512m -XX:ReservedCodeCacheSize=240M -XX:MaxRAMFraction=2 -XshowSettings:vm -XX:+AggressiveOpts -Djute.maxbuffer=41943040 -XX:-UseBiasedLocking -XX:+UseFastAccessorMethods -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:+UseCompressedOops -XX:+CMSClassUnloadingEnabled  -XX:+CMSScavengeBeforeRemark -XX:+DisableExplicitGC -XX:+UseG1GC -XX:+ExplicitGCInvokesConcurrent -XX:SoftRefLRUPolicyMSPerMB=0 -XX:G1ReservePercent=25 -XX:G1NewSizePercent=10 -XX:G1MaxNewSizePercent=25 -XX:MaxGCPauseMillis=20 -XX:-OmitStackTraceInFastThrow -XX:+ParallelRefProcEnabled -XX:ParallelGCThreads=8 -XX:MaxTenuringThreshold=1 -XX:G1HeapWastePercent=10 -XX:SurvivorRatio=8 -XX:G1MixedGCCountTarget=16 -XX:G1MixedGCLiveThresholdPercent=90 -XX:InitiatingHeapOccupancyPercent=35 -XX:G1HeapRegionSize=32m -XX:+PerfDisableSharedMem -XX:-ResizePLAB"
           - name: aliyun_logs_catalina
             value: "stdout"
           - name: aliyun_logs_access
@@ -141,6 +132,25 @@ spec:
           - name: log
             mountPath: /usr/local/tomcat/logs
            #mountPropagation: HostToContainer
+      - name: sidecar-log-collector
+        image: fluent/fluent-bit:1.6
+        imagePullPolicy: Always
+        resources:
+          requests:
+            cpu: 50m
+            memory: 100Mi
+          limits:
+            cpu: 2
+            memory: 1Gi
+        volumeMounts:
+        - name: log
+          readOnly: true
+          mountPath: /app/log
+        - name: fluent-bit-sidecar-config
+          mountPath: /fluent-bit/etc/
       volumes:
       - name: log
         emptyDir: {}
+      - name: fluent-bit-sidecar-config
+        configMap:
+          name: fluent-bit-sidecar-config

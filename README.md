@@ -31,6 +31,7 @@ docker基础镜像源：webdevops，bitnami,turnkey,distroless
 
 持续集成/发布: jenkins,jenkins-x,fabric8,spinnaker,gitlab-ci,drone,makisu,flagger,shipper,Hubot,Lita,Err,StackStorm,Netflix Winston,Tekton,CDS,gaia,FlyWayDB,LiquiBase,Flocker,
 测试: chaos-monkey,chaoskube,k8s-testsuite,test-infra,sonobuoy,PowerfulSeal,twemperf(memcached),locust，selenium,Cucumber,LoadRunner,SoapUI,
+混沌工程: kube-monkey,powerfulseal,chaostoolkit-kubernetes
 artifactory仓库: nexus2,nexus3,harbor,registry,quay,jfrog/Artifactory
 
 CMDB资产配置: OneCMDB、CMDBuild、ItopCMDB、Rapid OSS、ECDB、i-doit、iTop
@@ -87,8 +88,8 @@ APM/tracing: appdash,apm-server,pinpoint,jaeger,zipkin,skywalking,opentracing,op
 
 kubernetes集群安装/升级: kubespray
 Kubernetes发行版: Rancher,CoreOS Tectonic,Canonical Distribution of Kubernetes（CDK）,Heptio Kubernetes,Kontena Pharos,Pivotal 容器服务 (PKS),Red Hat OpenShift,Telekube,Microk8s,k3s,
-kubernetes可视化管理工具: kubernetes-dashboard,weavescope,kubebox,kubedash,kube-ops-view,cabin,wayne(360),KubeSphere,openshift,rancher,Kuboard,lensapp/lens
-kubernetes灾难恢复: ark
+kubernetes可视化管理工具: kubernetes-dashboard,weavescope,kubebox,kubedash,kube-ops-view,cabin,wayne(360),KubeSphere,openshift,rancher,Kuboard,lensapp/lens,karbon,instana
+kubernetes灾难恢复: ark/Velero
 kubernetes扩容:virtual-kubelet,cluster-capacity,hpa-operator
 
 Open Application Model （OAM)
@@ -185,6 +186,12 @@ kafka-operator: Banzai Cloud(荐),Krallistic,Strimzi,Confluent
 https://commons.openshift.org/sig/operators.html
 
 开源协作办公: OwnCloud Documents,OnlyOffice,ResourceSpace,Pydio
+
+https://www.cisecurity.org/benchmark/kubernetes/
+
+https://github.com/dev-sec/cis-kubernetes-benchmark
+
+https://github.com/coinbase/salus
 
 桌面服务(DaaS)
 ubuntu-xfce-vnc

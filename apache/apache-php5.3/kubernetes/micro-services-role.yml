@@ -1,0 +1,27 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  labels:
+    app: go-micro-config
+  name: micro-config
+  namespace: defautl
+rules:
+#- apiGroups:
+#  - ""
+#  resources:
+#  - configmaps
+#  - pods
+#  verbs:
+#  - get
+#  - update
+#  - patch
+#  - list
+#  - watch
+- apiGroups:
+  - policy
+  resourceNames:
+  - pod-psp
+  resources:
+  - podsecuritypolicies
+  verbs:
+  - use

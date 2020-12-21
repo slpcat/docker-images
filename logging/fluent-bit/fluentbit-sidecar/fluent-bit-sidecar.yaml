@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: log-app
+  labels:
+    app: log-app
+spec:
+	
+  containers:
+  - name: log-app
+    image: quay.io/leahnp/leah_log_app:latest
+    ports:
+    - containerPort: 8080
+    volumeMounts:
+    - name: log
+      mountPath: /var/log
+  - name: sidecar-log-collector
+    image: fluent/fluent-bit:1.6
+    imagePullPolicy: Always
+    resources:
+      requests:
+        cpu: 50m
+        memory: 100Mi
+      limits:
+        cpu: 2
+        memory: 1Gi
+    volumeMounts:
+    - name: log
+      readOnly: true
+      mountPath: /app/log
+  volumes:
+  - name: log
+    emptyDir: {}
