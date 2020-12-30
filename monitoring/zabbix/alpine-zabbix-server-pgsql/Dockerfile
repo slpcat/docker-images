@@ -1,6 +1,6 @@
 # Build a minimal distribution container
 # upstream https://github.com/gliderlabs/docker-alpine
-FROM zabbix/zabbix-server-pgsql:alpine-5.0.0
+FROM zabbix/zabbix-server-pgsql:alpine-5.2.2
 MAINTAINER 若虚 <slpcat@qq.com>
 
 # Container variables
@@ -39,7 +39,7 @@ COPY pip.conf /etc/pip.conf
 
 #python2
 RUN \
-    apk add python  py-pip \
+    apk add python2  py-pip \
     && pip install requests
 
 #python3

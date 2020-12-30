@@ -28,6 +28,7 @@ spec:
     port: 80
     targetPort: 80
   type: NodePort
+  #publishNotReadyAddresses: true
   selector:
     app: example-web
     #version: v1

@@ -96,7 +96,7 @@ ARG CURL_RETRY_MAX_TIME=900
 RUN \
     apk update    \
     && apk add    \
-       python     \
+       python2     \
        jq         \
        git        \
        bzip2                \

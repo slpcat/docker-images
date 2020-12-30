@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: log-pilot
-  namespace: kube-system
+  namespace: logging
   labels:
     k8s-app: log-pilot
 spec:
@@ -57,8 +57,8 @@ spec:
             value: "beats"
           - name: "KAFKA_BROKER_TIMEOUT"
             value: "60"
-          - name: "KAFKA_KEEP_ALIVE"
-            value: "10m"
+          #- name: "KAFKA_KEEP_ALIVE"
+          #  value: "10m"
           - name: "KAFKA_REQUIRE_ACKS"
             value: "0"
           - name: "KAFKA_BULK_MAX_SIZE"
@@ -70,7 +70,7 @@ spec:
           - name: "KAFKA_COMPRESSION"
             value: "lz4"
           - name: "FILEBEAT_MAX_PROCS"
-            value: "2"
+            value: "4"
           - name: "FILEBEAT_LOG_LEVEL"
             value: "info"
           - name: "NODE_NAME"

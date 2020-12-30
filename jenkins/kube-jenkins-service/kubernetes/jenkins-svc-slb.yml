@@ -3,19 +3,21 @@ kind: Service
 metadata:
   annotations:
     service.beta.kubernetes.io/alibaba-cloud-loadbalancer-address-type: intranet
+    service.beta.kubernetes.io/alibaba-cloud-loadbalancer-id: "lb-xxxxxxxxxx"
+    service.beta.kubernetes.io/alibaba-cloud-loadbalancer-force-override-listeners: "true"
     service.beta.kubernetes.io/alibaba-cloud-loadbalancer-bandwidth: "200"
     service.beta.kubernetes.io/alibaba-cloud-loadbalancer-charge-type: paybytraffic
     service.beta.kubernetes.io/alibaba-cloud-loadbalancer-health-check-connect-timeout: "8"
     service.beta.kubernetes.io/alibaba-cloud-loadbalancer-health-check-interval: "3"
     service.beta.kubernetes.io/alibaba-cloud-loadbalancer-health-check-type: tcp
     service.beta.kubernetes.io/alibaba-cloud-loadbalancer-healthy-threshold: "4"
-    service.beta.kubernetes.io/alibaba-cloud-loadbalancer-master-zoneid: cn-beijing-g
+    #service.beta.kubernetes.io/alibaba-cloud-loadbalancer-master-zoneid: cn-beijing-g
     service.beta.kubernetes.io/alibaba-cloud-loadbalancer-network-type: vpc
     service.beta.kubernetes.io/alibaba-cloud-loadbalancer-persistence-timeout: "1800"
     service.beta.kubernetes.io/alibaba-cloud-loadbalancer-protocol-port: tcp:80
     service.beta.kubernetes.io/alibaba-cloud-loadbalancer-remove-unscheduled-backend: "on"
     service.beta.kubernetes.io/alibaba-cloud-loadbalancer-scheduler: wrr
-    service.beta.kubernetes.io/alibaba-cloud-loadbalancer-slave-zoneid: cn-beijing-h
+    #service.beta.kubernetes.io/alibaba-cloud-loadbalancer-slave-zoneid: cn-beijing-h
     service.beta.kubernetes.io/alibaba-cloud-loadbalancer-spec: slb.s1.small
     service.beta.kubernetes.io/alibaba-cloud-loadbalancer-unhealthy-threshold: "4"
   labels:
@@ -25,7 +27,7 @@ metadata:
 spec:
   externalTrafficPolicy: Cluster
   ports:
-  - port: 8080
+  - port: 80
     targetPort: 8080
     name: web
   - port: 50000

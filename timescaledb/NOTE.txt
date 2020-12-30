@@ -2,15 +2,14 @@ TimescaleDB 是基于 PostgreSQL 数据库开发的一款时序数据库，以�
 https://blog.timescale.com/sql-nosql-data-storage-for-prometheus-devops-monitoring-postgresql-timescaledb-time-series-3cde27fd1e07/
 https://blog.timescale.com/1-0-enterprise-production-ready-time-series-database-open-source-d32395a10cbf/
 
-      - name: POSTGRES_USER
-          value: pgsql
-        - name: POSTGRES_PASSWORD
-          value: password
-        - name: POSTGRES_DB
-          value: pgsqldb
-        - name: PGDATA
-          value: /var/lib/postgres/data
-
 timescale/timescaledb-postgis
 timescale/pg_prometheus
 
+docker run -d --restart=always --net=host --name timescaledb \
+-v /tol/data/zabbix-db:/var/lib/postgresql/data \
+-e TIMESCALEDB_TELEMETRY=off \
+-e TS_TUNE_MEMORY=32GB -e TS_TUNE_NUM_CPUS=16 \
+-e POSTGRES_USER=zabbix -e POSTGRES_DB=zabbix \
+-e POSTGRES_PASSWORD=pg_password \
+-e PGDATA=/var/lib/postgresql/data \
+  timescale/timescaledb:2.0.0-pg12

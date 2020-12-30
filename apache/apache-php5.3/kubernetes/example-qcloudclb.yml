@@ -1,0 +1,23 @@
+kind: Service
+apiVersion: v1
+metadata:
+  annotations:
+    #https://cloud.tencent.com/document/product/457/51258
+    service.cloud.tencent.com/direct-access: true ##开启直连 Pod 模式
+    service.kubernetes.io/tke-existed-lbid: lb-6swtxxxxx
+    #通过 Label 指定一小部分节点作为后端，缓解健康检查带来的压力。
+    service.kubernetes.io/qcloud-loadbalancer-backends-label: "group=access-layer"
+    service.cloud.tencent.com/specify-protocol: {"80":{"protocol":["TCP_SSL"],"tls":"cert-secret"}}
+    service.kubernetes.io/local-svc-only-bind-node-with-pod:
+    service.kubernetes.io/service.extensiveParameters:
+    service.kubernetes.io/qcloud-loadbalancer-internal-subnetid:
+  namespace: default
+  name: my-service
+spec:
+  selector:
+    app: MyApp
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 9376
+  type: LoadBalancer

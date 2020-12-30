@@ -1,6 +1,6 @@
 # Build a minimal distribution container
 # upstream https://github.com/zabbix/zabbix-docker
-FROM zabbix/zabbix-proxy-mysql:alpine-5.0.0
+FROM zabbix/zabbix-proxy-mysql:alpine-5.2.2
 MAINTAINER 若虚 <slpcat@qq.com>
 
 # Container variables
@@ -29,7 +29,7 @@ RUN set -ex \
            su-exec \
            gzip \
            tar \
-           python \
+           python2 \
            py-pip \
            wget \
            openssh \

@@ -4,6 +4,7 @@ metadata:
   annotations:
     #DOC https://yq.aliyun.com/articles/626066?spm=a2c4e.11153940.blogrightarea392170.16.599e1f50mZtQFv
     #https://help.aliyun.com/document_detail/86531.html?spm=a2c4g.11186623.6.713.326e4280bwWmK3#title-0ok-mot-kuj
+    #https://help.aliyun.com/document_detail/27604.html?spm=a2c4g.11186623.6.715.6d165fddbgHqju
     #负载均衡实例的 ID。通过 loadbalancer-id 指定您已有的 SLB，已有 listener 会被覆盖， 删除 service 时该 SLB 不会被删除。
     #service.beta.kubernetes.io/alibaba-cloud-loadbalancer-id: "${YOUR_LOADBALACER_ID}"
     #绑定已有负载均衡，并强制覆盖已有监听  
@@ -39,8 +40,9 @@ metadata:
     service.beta.kubernetes.io/alibaba-cloud-loadbalancer-health-check-timeout: "10"
     service.beta.kubernetes.io/alibaba-cloud-loadbalancer-health-check-interval: "3"
     service.beta.kubernetes.io/alibaba-cloud-loadbalancer-protocol-port: "http:80"
-    #为负载均衡设置调度算法: rr,wrr,wlc
+    #为负载均衡设置调度算法: rr,wrr,wlc,tch/sch (tch 四元组hash/sch ip hash)
     service.beta.kubernetes.io/alibaba-cloud-loadbalancer-scheduler: "wlc"
+    #
     #为负载均衡配置访问控制策略组
     service.beta.kubernetes.io/alibaba-cloud-loadbalancer-acl-status: "on"
     service.beta.kubernetes.io/alibaba-cloud-loadbalancer-acl-id: "${YOUR_ACL_ID}"

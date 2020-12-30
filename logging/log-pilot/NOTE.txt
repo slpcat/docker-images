@@ -25,7 +25,14 @@ docker run -d --restart=always --net=host \
     --cap-add SYS_ADMIN \
     registry.cn-hangzhou.aliyuncs.com/acs/log-pilot:0.9.5-filebeat
 
+版本列表
+registry.cn-hangzhou.aliyuncs.com/acs/log-pilot:0.9.5-filebeat
+registry.cn-hangzhou.aliyuncs.com/acs/log-pilot:0.9.7-filebeat
+
 kafka 2.2 slpcat/log-pilot:0.9.7-filebeat
+slpcat/log-pilot:0.9.7-filebeat-7.9.3
+slpcat/log-pilot:0.9.7-filebeat-7.10.0
+
 
 ### Run applications whose logs need to be collected
 
