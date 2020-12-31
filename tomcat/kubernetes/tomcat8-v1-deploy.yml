@@ -133,7 +133,7 @@ spec:
           - name: aliyun_logs_catalina
             value: "stdout"
           - name: aliyun_logs_access
-            value: "/usr/local/tomcat/logs/localhost_access_log.*.txt"
+            value: "/usr/local/tomcat/logs/localhost_access_log*.txt"
         ports:
           - name: http
             containerPort: 8080

@@ -40,8 +40,8 @@ spec:
             port: 2020
         resources:
           requests:
-            cpu: 5m
-            memory: 10Mi
+            cpu: 200m
+            memory: 100Mi
           limits:
             cpu: 8
             memory: 4Gi

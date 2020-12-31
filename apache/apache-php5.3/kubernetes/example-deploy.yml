@@ -4,6 +4,9 @@ metadata:
   #命名规范:应用名称-版本
   name: example-web-v1
   namespace: default
+  annotations:
+    #Reloader can watch changes in ConfigMap and Secret and do rolling upgrades
+    configmap.reloader.stakater.com/reload: "foo-configmap,bar-configmap,baz-configmap"
   labels:
     app: example-web
 spec:

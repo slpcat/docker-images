@@ -63,7 +63,7 @@ API查询语言: GraphQL,prisma.io
 API管理和测试: API Fortress,MockApi,APIJSON,Postman,Tyk,Swagger,RAP2,YApi,Eolinker,DOClever,Apizza,EasyAPI,CrapApi,apidoc,swagger
 时间序列数据库: influxdb,opentsdb,m3db,Heroic,TimeScaleDB,KairosDB,DolphinDB,Druid,Graphite,pipelinedb,VictoriaMetrics
 消息队列/流存储: rabbitmq,zeromq,memcacheq,rocketmq,pulsar,rocketmq-console-ng,kafka,kafka-manager,nsq,nats
-配置管理: zookeeper,zkui,qconf,etcd,apollo,disconf,spring-cloud-config,nacos
+配置管理: zookeeper,zkui,qconf,etcd,apollo,disconf,spring-cloud-config,nacos,stakater/Reloader,ConfigmapController
 定时/任务管理: xxl-job,elasticjob,escalator,cronsun,
 聊天软件: Discourse,RocketChat,slack,Telegram,HipChat,
 培训管理: Canvas LMS,
