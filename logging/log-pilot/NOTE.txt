@@ -31,7 +31,7 @@ registry.cn-hangzhou.aliyuncs.com/acs/log-pilot:0.9.7-filebeat
 
 kafka 2.2 slpcat/log-pilot:0.9.7-filebeat
 slpcat/log-pilot:0.9.7-filebeat-7.9.3
-slpcat/log-pilot:0.9.7-filebeat-7.10.0
+slpcat/log-pilot:0.9.7-filebeat-7.10.1
 
 
 ### Run applications whose logs need to be collected

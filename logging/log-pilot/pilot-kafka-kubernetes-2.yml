@@ -25,7 +25,7 @@ spec:
       #serviceAccount: log-pilot
       containers:
       - name: log-pilot
-        image: slpcat/log-pilot:0.9.7-filebeat
+        image: slpcat/log-pilot:0.9.7-filebeat-7.10.1
         resources:
           # keep request = limit to keep this container in guaranteed class
           requests:
