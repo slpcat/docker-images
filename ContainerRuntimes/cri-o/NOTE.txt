@@ -1,0 +1,31 @@
+https://cri-o.io/
+
+Add repository to CentOS 8:
+VERSION=1.17
+sudo dnf -y install 'dnf-command(copr)'
+sudo dnf -y copr enable rhcontainerbot/container-selinux
+sudo curl -L -o /etc/yum.repos.d/devel:kubic:libcontainers:stable.repo https://download.opensuse.org/repositories/devel:kubic:libcontainers:stable/CentOS_8/devel:kubic:libcontainers:stable.repo
+sudo curl -L -o /etc/yum.repos.d/devel:kubic:libcontainers:stable:cri-o:${VERSION}.repo https://download.opensuse.org/repositories/devel:kubic:libcontainers:stable:cri-o:${VERSION}/CentOS_8/devel:kubic:libcontainers:stable:cri-o:${VERSION}.repo
+
+Add repository to CentOS 7:
+VERSION=1.17
+sudo curl -L -o /etc/yum.repos.d/devel:kubic:libcontainers:stable.repo https://download.opensuse.org/repositories/devel:kubic:libcontainers:stable/CentOS_7/devel:kubic:libcontainers:stable.repo
+sudo curl -L -o /etc/yum.repos.d/devel:kubic:libcontainers:stable:cri-o:${VERSION}.repo https://download.opensuse.org/repositories/devel:kubic:libcontainers:stable:cri-o:${VERSION}/CentOS_7/devel:kubic:libcontainers:stable:cri-o:${VERSION}.repo
+
+sudo yum install cri-o
+sudo systemctl enable --now cri-o
+
+https://github.com/cri-o/cri-o/blob/master/tutorials/crictl.md
+https://github.com/kubernetes-sigs/cri-tools/releases
+
+安装 CRI 客户端 crictl
+VERSION="v1.19.0"
+wget https://github.com/kubernetes-sigs/cri-tools/releases/download/$VERSION/crictl-$VERSION-linux-amd64.tar.gz
+sudo tar zxvf crictl-$VERSION-linux-amd64.tar.gz -C /usr/local/bin
+rm -f crictl-$VERSION-linux-amd64.tar.gz
+echo "runtime-endpoint: unix:///run/containerd/containerd.sock" > /etc/crictl.yaml
+
+https://github.com/cri-o/cri-o/blob/master/contrib/cni/README.md
+
+In addition, you need to install the CNI plugins necessary into /opt/cni/bin (or the directories specified by crio.network.plugin_dir). The two plugins necessary for the example CNI configurations are loopback and bridge. Below is a tutorial on downloading and setting up the CNI plugins.
+

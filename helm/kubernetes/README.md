@@ -63,4 +63,5 @@ helm repo add bitnami https://charts.bitnami.com/bitnami
 #helm install --name kubeapps --namespace kubeapps bitnami/kubeapps
 #helm repo add aliyun https://kubernetes.oss-cn-hangzhou.aliyuncs.com/charts
 helm install --name wordpress-test --set "persistence.enabled=false,mariadb.persistence.enabled=false" stable/wordpress
-https://kubeapps.com/ 你可以寻找和发现已有的Charts
+#https://kubeapps.com/ 你可以寻找和发现已有的Charts
+helm repo add cilium https://helm.cilium.io/

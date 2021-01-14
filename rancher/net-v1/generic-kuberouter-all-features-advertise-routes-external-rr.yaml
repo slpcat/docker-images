@@ -81,6 +81,7 @@ spec:
         - "--advertise-external-ip=true"
         - "--advertise-loadbalancer-ip=true"
         - "--advertise-pod-cidr=true"
+        - "--bgp-graceful-restart=true"
         - "--nodes-full-mesh=false"
         - "--enable-pod-egress=true"
         - "--enable-ibgp=true"

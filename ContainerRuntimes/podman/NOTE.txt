@@ -1,0 +1,5 @@
+Podman 是一个无守护进程的容器引擎，用于在 Linux 系统上进行开发、管理和运行 OCI Containers。 Containers 能以 root 模式运行，也能以非 root 模式运行。
+
+切换为 cgroupv2：
+
+将 /etc/default/grub 文件中的 GRUB_CMDLINE_LINUX 字段内容中添加 systemd.unified_cgroup_hierarchy=1，然后 sudo update-grub，重启电脑
