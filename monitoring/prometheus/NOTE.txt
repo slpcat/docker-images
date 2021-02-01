@@ -224,4 +224,28 @@ docker run  -d \
    -p 9090:9090 \
    -v /etc/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml  \
    -v /data/prometheus:/prometheus \
-   prom/prometheus
+   prom/prometheus \
+   --config.file=/etc/prometheus/prometheus.yml \
+   --web.listen-address="0.0.0.0:9090" \
+   --storage.tsdb.path=/var/lib/prometheus \
+   --storage.tsdb.retention.time=15d \
+   --storage.tsdb.retention.size=40GB \
+   --storage.tsdb.wal-compression \
+   --web.read-timeout=5m \
+   --web.max-connections=512 \
+   --web.external-url=http://example.com \
+   --web.route-prefix=/ \
+   --web.page-title="Prometheus Time Series Collection and Processing Server" \
+   --web.enable-lifecycle \
+   --storage.remote.read-concurrent-limit=32 \
+   --storage.tsdb.min-block-duration=1h \
+   --storage.tsdb.max-block-duration=2h \
+   --rules.alert.for-outage-tolerance=1h \
+   --rules.alert.for-grace-period=10m \
+   --rules.alert.resend-delay=1m \
+   --query.lookback-delta=5m \
+   --query.max-samples=50000000 \
+   --query.timeout=2m \
+   --query.max-concurrency=20 \
+   --log.level=info \
+   --log.format=logfmt

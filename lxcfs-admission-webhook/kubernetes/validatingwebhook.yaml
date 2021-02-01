@@ -1,0 +1,23 @@
+apiVersion: admissionregistration.k8s.io/v1beta1
+kind: ValidatingWebhookConfiguration
+metadata:
+  name: validation-lxcfs-admission-webhook-cfg
+  namespace: kube-system
+  labels:
+    app: lxcfs-admission-webhook
+webhooks:
+  - name: validation.lxcfs-admission-webhook.aliyun.com
+    clientConfig:
+      service:
+        name: lxcfs-admission-webhook-svc
+        namespace: kube-system
+        path: "/validate"
+      caBundle: ${CA_BUNDLE}
+    rules:
+      - operations: [ "CREATE" ]
+        apiGroups: ["pod", ""]
+        apiVersions: ["v1"]
+        resources: ["pods"]
+    namespaceSelector:
+      matchLabels:
+        lxcfs-admission-webhook: enabled

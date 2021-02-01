@@ -1,0 +1,14 @@
+Kubernetes 中利用 LXCFS 控制容器资源可见性
+
+https://cloud.tencent.com/developer/article/1645542
+
+注意 
+lxcfs 使用systemd管理 不用daemon-set
+
+安装lxcfs-admission-webhook注入工具
+
+deployment/install.sh
+
+在指定namespace启用注入
+
+kubectl label namespace default lxcfs-admission-webhook=enabled

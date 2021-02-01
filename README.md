@@ -31,7 +31,7 @@ docker基础镜像源：webdevops，bitnami,turnkey,distroless
 
 持续集成/发布: jenkins,jenkins-x,fabric8,spinnaker,gitlab-ci,drone,makisu,flagger,shipper,Hubot,Lita,Err,StackStorm,Netflix Winston,Tekton,CDS,gaia,FlyWayDB,LiquiBase,Flocker,
 测试: chaos-monkey,chaoskube,k8s-testsuite,test-infra,sonobuoy,PowerfulSeal,twemperf(memcached),locust，selenium,Cucumber,LoadRunner,SoapUI,
-混沌工程: kube-monkey,powerfulseal,chaostoolkit-kubernetes
+混沌工程: kube-monkey,powerfulseal,chaostoolkit-kubernetes,ChaosMesh
 artifactory仓库: nexus2,nexus3,harbor,registry,quay,jfrog/Artifactory
 
 CMDB资产配置: OneCMDB、CMDBuild、ItopCMDB、Rapid OSS、ECDB、i-doit、iTop
@@ -81,7 +81,7 @@ API网关/反向代理/ingress: kong,konga,kong-dashboard,fabio,traefik,envoy,Ap
 微服务框架/组件: istio,naftis,dubbo,dubbokeeper,consul,openlambda,linkerd2/Conduit,registrator,Containous,Maesh,Backyards,SOFAMesh,kuma,nameko,gokit.io,netramesh,solo.io
 
 FAAS: fission,fnproject,funktion,kubeless,nuclio,open-lambda,openfaas,openwhisk,vmware-dispatch,Claudia
-日志集群: elastic-stack(elasticsearch+cerebro+kibana),Elassandra
+日志集群: elastic-stack(elasticsearch+cerebro+kibana),Elassandra,sonic
 日志采集: logstash,filebeat,logtail,log-pilot,logspout,auditbeat,hangout,fluentd,fluent-bit,loki/promtail
 监控: Argus,bosun,Collectd,cadvisor,cortex,heapster,kube-state-metrics,metrics-server,searchlight,prometheus,thanos,kubewatch,searchlight,Molten,sensu,telegraf(TICK),Alerta,zabbix,statsite,statsd,riemann, Wavefront,Honeycomb,Graphite,open-falcon,Xhprof/Xhgui,nightingale,CAT（Central Application Tracking）,netdata,
 动态性能追踪: bcc-tools,systemtap,sysdig,kubectl-trace,bpftrace

@@ -12,10 +12,16 @@ logstash配置
 
 https://www.elastic.co/guide/en/logstash/current/docker-config.html#_settings
 
-docker run --rm -it 
-PIPELINE_WORKERS
-LOG_LEVEL
-XPACK_MONITORING_ENABLED
+docker run -d --restart=always --name logstash \
+-e PIPELINE_WORKERS=16 \
+-e PIPELINE_BATCH_SIZE=3000 \
+-e PIPELINE_BATCH_DELAY=50 \
+-e QUEUE_TYPE=memory \
+-e LOG_FORMAT=plain \
+-e LOG_LEVEL=info \
+-e MONITORING_ENABLED=false \
+logstash:7.10.2
+
 
 -v ./logstash.yml:/usr/share/logstash/config/logstash.yml 
 /usr/share/logstash/data
@@ -29,7 +35,6 @@ docker run --rm -it    -v /tmp/pipeline/messages:/usr/share/logstash/config/mess
 /usr/share/logstash/pipeline/test.conf -v /tmp/pipeline/logstash.yml:/usr/share/logstash/config/logstash.yml
 logstash:7.4.2
 
-docker run -d --restart=always --name logstash logstash:7.8.0
 
 https://github.com/aliyun/logstash-output-oss
 
