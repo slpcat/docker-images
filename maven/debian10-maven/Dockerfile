@@ -1,7 +1,7 @@
-MAINTAINER 若虚 <slpcat@qq.com>
-
 #FROM openjdk:11-jdk
 FROM slpcat/openjdk:11-buster
+
+MAINTAINER 若虚 <slpcat@qq.com>
 
 ARG MAVEN_VERSION=3.6.3
 ARG USER_HOME_DIR="/root"
@@ -23,4 +23,3 @@ COPY settings-docker.xml /usr/share/maven/ref/
 
 ENTRYPOINT ["/usr/local/bin/mvn-entrypoint.sh"]
 CMD ["mvn"]
-
