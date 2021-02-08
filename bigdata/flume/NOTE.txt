@@ -30,6 +30,8 @@ flume-ng agent -n agent -f $FLUME_HOME/conf/kafka2hdfs.conf &
   # 在Linux后台执行命令
   flume-ng agent -n agent -f $FLUME_HOME/conf/kafka2hbase.conf &
 
+flume 输入输出插件
+
 插件支持阿里云sls日志 输入和输出
 flume-clickhouse-sink
-
+https://github.com/ctck1995/flume-ng-clickhouse-sink

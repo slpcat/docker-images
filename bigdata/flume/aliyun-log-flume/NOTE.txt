@@ -2,3 +2,7 @@ https://github.com/aliyun/aliyun-log-flume
 插件支持阿里云sls日志 输入和输出
 
 FLUME_JAVA_OPTS="-Xms100m -Xmx2000m -Dcom.sun.management.jmxremote"
+
+docker run -d --name fume \
+-e FLUME_JAVA_OPTS="-Xms100m -Xmx2000m -Dcom.sun.management.jmxremote" \
+slpcat/aliyun-log-flume:v1.5

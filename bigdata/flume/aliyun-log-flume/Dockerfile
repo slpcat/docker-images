@@ -16,7 +16,7 @@ MAINTAINER 若虚 <slpcat@qq.com>
 
 ADD flume-example.conf /var/tmp/flume-example.conf
 
-COPY --from=builder /opt/apache-flume-1.9.0-bin /opt/
+COPY --from=builder /opt/apache-flume-1.9.0-bin /opt/apache-flume-1.9.0-bin
 RUN ln -s /opt/apache-flume-1.9.0-bin /opt/apache-flume
 
 WORKDIR /opt/apache-flume

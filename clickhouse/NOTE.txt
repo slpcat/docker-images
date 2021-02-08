@@ -1,5 +1,11 @@
 redash和superset(荐),metabase等大数据可视化平台对Clickhouse 有很好的支持
 可视化的连接工具DBeaver https://dbeaver.jkiss.org/download/
+Loghouse-dashboard
+https://github.com/flant/loghouse
+Loghouse-dashboard 是 loghouse 中的一个专门针对Clickhouse作为日志存储的日志展示项目
+
+https://github.com/Altinity/clicktail
+可以采用clicktail 这个神器。它是Altinity公司基于honeytail开发的一个Go语言的日志解析、传输工具，可以直接解析MySQL慢查询日志、Nginx日志、PG以及MongoDB日志，直接写入Clickhouse，用于后期的分析。
 
 docker run -d --name clickhouse-server --ulimit nofile=262144:262144 -p 9000:9000 -p 8123:8123 -v /data/clickhouse-conf/config.xml:/etc/clickhouse-server/config.xml -v /data/clickhouse-data:/var/lib/clickhouse yandex/clickhouse-server 
 
