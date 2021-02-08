@@ -28,7 +28,7 @@ data:
         Tag               kube.*
         Path              /var/log/containers/*.log
         Parser            docker
-        DB                /var/log/flb_kube.db
+        #DB                /var/log/flb_kube.db
         Buffer_Chunk_Size 512k
         Buffer_Max_Size   30MB
         Mem_Buf_Limit     32MB

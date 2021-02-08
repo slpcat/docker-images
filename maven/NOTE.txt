@@ -1,0 +1,5 @@
+https://hub.docker.com/_/maven
+
+debian10 + openjdk11+ maven 3.6
+
+3.6-openjdk-11

@@ -1,0 +1,1 @@
+https://github.com/banzaicloud/logging-operator-docs/blob/master/docs/faq.md

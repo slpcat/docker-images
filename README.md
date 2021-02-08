@@ -29,7 +29,7 @@ ipvlan需要内核版本>=4.19
 编译器: numba,Emscripten
 docker基础镜像源：webdevops，bitnami,turnkey,distroless
 
-持续集成/发布: jenkins,jenkins-x,fabric8,spinnaker,gitlab-ci,drone,makisu,flagger,shipper,Hubot,Lita,Err,StackStorm,Netflix Winston,Tekton,CDS,gaia,FlyWayDB,LiquiBase,Flocker,
+持续集成/发布: jenkins,jenkins-x,fabric8,spinnaker,gitlab-ci,drone,makisu,flagger,shipper,Hubot,Lita,Err,StackStorm,Netflix Winston,Tekton,CDS,gaia,FlyWayDB,LiquiBase,Flocker,ArgoCD,
 测试: chaos-monkey,chaoskube,k8s-testsuite,test-infra,sonobuoy,PowerfulSeal,twemperf(memcached),locust，selenium,Cucumber,LoadRunner,SoapUI,
 混沌工程: kube-monkey,powerfulseal,chaostoolkit-kubernetes,ChaosMesh
 artifactory仓库: nexus2,nexus3,harbor,registry,quay,jfrog/Artifactory
@@ -79,6 +79,8 @@ API管理和测试: API Fortress,MockApi,APIJSON,Postman,Tyk,Swagger,RAP2,YApi,E
 微服务管理与持续发布: fabric8,jenkins-x,draft,knative,service-fabric
 API网关/反向代理/ingress: kong,konga,kong-dashboard,fabio,traefik,envoy,Apache APISIX
 微服务框架/组件: istio,naftis,dubbo,dubbokeeper,consul,openlambda,linkerd2/Conduit,registrator,Containous,Maesh,Backyards,SOFAMesh,kuma,nameko,gokit.io,netramesh,solo.io
+流媒体服务器: SRS,Licode,Jitsi,Kurento,mediasoup,Janus,red5pro,Ant-Media-Server,Asterisk,FreeSWITCH, RestComm,BigBlueButton,NextRTC,OpenBroadcaster,
+QUIC服务端: caddy,快手kQUIC,nginx-quic,
 
 FAAS: fission,fnproject,funktion,kubeless,nuclio,open-lambda,openfaas,openwhisk,vmware-dispatch,Claudia
 日志集群: elastic-stack(elasticsearch+cerebro+kibana),Elassandra,sonic
@@ -123,6 +125,9 @@ https://github.com/thenaturalist/awesome-business-intelligence
 物联网开源平台: FIWARE
 机器学习: OpenNLP,Theano,Lasagne,TensorFlow,Keras,MXNet,PyTorch,Caffe,CNTK,Neon,arena
 
+边缘计算平台
+EdgeXFoundry,ApacheEdgent,CORD,Akraino EdgeStack,AWSGreengrass ,Azure IoT Edge,
+
 蜜罐软件: Honeyd,Nepenthes,Honeytrap,HoneyBot,Opencanary,Kippo,T-Pot,Dionaea,MHN(Modern Honey Network),Conpot,HoneyDrive
 
 PXE装机: fai-project,Cobbler,kickstart
@@ -133,7 +138,7 @@ GPU计算: gpushare-device-plugin,gpushare-scheduler-extender,NVIDIA GPU Operato
 
 云原生（CloudNative）应用
 分布式存储: rook-ceph,rook-minio,openebs
-虚拟化: kubevirt
+虚拟化: kubevirt,virtlet,rancher/vm,Harvester
 监控: prometheus-operator,jaeger-operator
 配置管理: etcd-operator
 operator-sdk
@@ -157,6 +162,7 @@ kong-operator
 m3db-operator
 minio-operator
 https://github.com/banzaicloud/logging-operator
+thanos-operator
 nexus-operator
 openebs-operator
 redis-operator
@@ -213,8 +219,17 @@ Graphics Processing Unit (GPU) plugin
 Field Programmable Gate Array (FPGA) plugin
 Intel® QuickAssist Technology (QAT) plugin
 
+基于Kubernetes的容器和云计算操作系统
+https://banzaicloud.com/
+
+基于Kubernetes容器编排平台的安全平台
+Portshift
+
 开发原则和模式
 云原生规范 Cloud Native Definition
 https://github.com/cncf/toc/blob/master/DEFINITION.md
 微服务十二要素 The Twelve Factors
 https://12factor.net/
+
+不可变基础设施
+容器root不可写，普通用户权限运行，仅仅写入volume

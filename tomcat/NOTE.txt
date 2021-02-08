@@ -9,6 +9,8 @@ pinpoint/pinpoint-agent-attach-example/tomcat
 5.jaeger 全链路追踪
 tracing/telemetry/
 
+debian10 + openjdk11
+
 开启Tomcat JMX功能
 CATALINA_OPTS="$CATALINA_OPTS
 -Dcom.sun.management.jmxremote

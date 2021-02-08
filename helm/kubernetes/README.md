@@ -40,6 +40,7 @@ helm repo add gitlab https://charts.gitlab.io
 # Add Helm StackStorm repository
 helm repo add stackstorm https://helm.stackstorm.com/
 helm repo add jenkins-x	https://chartmuseum.build.cd.jenkins-x.io
+helm repo add jenkinsci https://charts.jenkins.io
 helm repo add openfaas https://openfaas.github.io/faas-netes
 helm repo add monocular https://kubernetes-helm.github.io/monocular
 helm repo add rook-beta https://charts.rook.io/beta
@@ -50,7 +51,8 @@ helm repo add m3db https://s3.amazonaws.com/m3-helm-charts-repository/stable
 helm repo add kong https://charts.konghq.com
 helm repo add jetstack https://charts.jetstack.io
 helm repo add vm https://victoriametrics.github.io/helm-charts/
-helm repo add banzaicloud-stable http://kubernetes-charts.banzaicloud.com/branch/master
+helm repo add banzaicloud-stable https://kubernetes-charts.banzaicloud.com
+
 # Add Helm StackStorm repository
 helm repo add stackstorm https://helm.stackstorm.com/
 helm repo add presslabs https://presslabs.github.io/charts

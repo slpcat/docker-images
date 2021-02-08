@@ -1,0 +1,7 @@
+阿里云日志服务 + Flume + Kafka 
+https://help.aliyun.com/document_detail/123446.html#title-4jc-gkl-7nq
+
+阿里云日志服务sls的Flume插件安装
+https://github.com/aliyun/aliyun-log-flume
+
+见bigdata/flume/aliyun-log-flume

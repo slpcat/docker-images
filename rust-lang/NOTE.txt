@@ -25,6 +25,8 @@ actix-web， 基于Actor库Actix的Web框架，最近发布了1.0-alpha版本。
 Deno，Node.js之父的新坑，TypeScript运行时，完全兼容浏览器API。
 Xi-editor，试图使用Rust和现代软件工程构建的高质量文本编辑器。所有的操作都在16md内提交和绘制，永远不会让你等待任何事情。主要开发者是Google前员工Raph Levien，目前他还在为Xi-editior一直做贡献。
 
+Web框架: actix-web/actix-extras,rocket,tide,warp,
+
 ripgrep
 一个文本搜索工具，应该算是Rust的Cli杀手级应用了，搜索性能超强，最近Atom编辑器新版本默认使用了该库
 

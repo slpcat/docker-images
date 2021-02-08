@@ -1,1 +1,3 @@
 https://github.com/frekele/oracle-java/releases/
+
+openjdk 11 长期支持

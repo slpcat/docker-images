@@ -61,6 +61,10 @@ ID: 7424 kong
 
 ID: 10990 Nginx VTS
 
+ID: 13474 Alibaba Cloud Monitor For SLB Dashboard
+
+Clock Panel可以用来显示当前（各国）时间或用于倒计时，并支持每秒更新一次。
+grafana-cli plugins install grafana-clock-panel
 
 http://docs.grafana.org/alerting/notifications/#dingding-dingtalk
 
