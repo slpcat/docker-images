@@ -14,8 +14,10 @@ RUN \
     git checkout $PINPOINT_VERSION \
     #patch APPLICATION_NAME_MAX_LEN=128 AGENT_NAME_MAX_LEN=128
     && sed -i s/24/128/ commons/src/main/java/com/navercorp/pinpoint/common/PinpointConstants.java \
+    #change Hbase version
     #&& ./mvnw package install -Prelease -DskipTests=true
-    && mvn package install -Dmaven.test.skip=true -Prelease
+    #&& mvn package install -Dmaven.test.skip=true -Prelease
+    && mvn clean install -Dhbase.shaded.client.version=2.1.1 -DskipTests=true
 
 FROM slpcat/tomcat8:alpine-8.5
 MAINTAINER 若虚 <slpcat@qq.com>
