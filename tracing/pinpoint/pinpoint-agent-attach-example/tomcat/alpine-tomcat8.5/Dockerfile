@@ -35,9 +35,8 @@ RUN \
 
 COPY --from=builder /pinpoint/agent/target/pinpoint-agent-${PINPOINT_VERSION}.tar.gz /pinpoint-agent/pinpoint-agent.tar.gz
 RUN \
-    tar -zxf pinpoint-agent.tar -C /pinpoint-agent \
-    && rm pinpoint-agent.tar \
-    && apk del curl \
+    tar -zxf /pinpoint-agent/pinpoint-agent.tar.gz -C /pinpoint-agent \
+    && rm /pinpoint-agent/pinpoint-agent.tar.gz \
     && rm /var/cache/apk/*
 
 EXPOSE 8080
