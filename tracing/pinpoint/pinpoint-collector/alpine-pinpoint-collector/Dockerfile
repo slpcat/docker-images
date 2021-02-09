@@ -1,7 +1,7 @@
 FROM  slpcat/maven:centos7-all AS builder
 MAINTAINER 若虚 <slpcat@qq.com>
 
-ARG PINPOINT_VERSION=${PINPOINT_VERSION:-2.2.1}
+ARG PINPOINT_VERSION=${PINPOINT_VERSION:-v2.2.1}
 
 RUN yum update -y && yum install -y  git libstdc++ nodejs npm nodejs-devel 
 
@@ -20,7 +20,7 @@ RUN \
 FROM slpcat/tomcat8:alpine-8.5
 MAINTAINER 若虚 <slpcat@qq.com>
 
-ARG PINPOINT_VERSION=${PINPOINT_VERSION:-2.2.1}
+ARG PINPOINT_VERSION=${PINPOINT_VERSION:-v2.2.1}
 COPY --from=builder /pinpoint/collector/target/pinpoint-collector-${PINPOINT_VERSION}.war /pinpoint-collector-${PINPOINT_VERSION}.war
 RUN \
     rm -rf /usr/local/tomcat/webapps \
