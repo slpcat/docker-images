@@ -33,10 +33,11 @@ COPY configure-agent.sh /usr/local/bin/
 RUN \
     chmod a+x /usr/local/bin/configure-agent.sh
 
-COPY --from=builder /pinpoint/agent/target/pinpoint-agent-${PINPOINT_VERSION}.tar.gz /pinpoint-agent/pinpoint-agent.tar.gz
+COPY --from=builder /pinpoint/agent/target/pinpoint-agent-${PINPOINT_VERSION}.tar.gz /tmp/pinpoint-agent.tar.gz
 RUN \
-    tar -zxf /pinpoint-agent/pinpoint-agent.tar.gz -C /pinpoint-agent \
-    && rm /pinpoint-agent/pinpoint-agent.tar.gz \
+    tar -zxf /tmp/pinpoint-agent.tar.gz -C / \
+    && rm /tmp/pinpoint-agent.tar.gz \
+    && mv /pinpoint-agent-${PINPOINT_VERSION} /pinpoint-agent
     && rm /var/cache/apk/*
 
 EXPOSE 8080
