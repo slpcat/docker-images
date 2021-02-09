@@ -29,13 +29,11 @@ RUN \
     && mkdir -p /pinpoint-agent \
     && chmod -R o+x /pinpoint-agent
 
+COPY configure-agent.sh /usr/local/bin/
 RUN \
     chmod a+x /usr/local/bin/configure-agent.sh
 
-
-COPY configure-agent.sh /usr/local/bin/
 COPY --from=builder /pinpoint/agent/target/pinpoint-agent-${PINPOINT_VERSION}.tar.gz /pinpoint-agent/pinpoint-agent.tar.gz
-
 RUN \
     tar -zxf pinpoint-agent.tar -C /pinpoint-agent \
     && rm pinpoint-agent.tar \
