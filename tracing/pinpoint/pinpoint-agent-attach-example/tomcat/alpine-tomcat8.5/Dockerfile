@@ -37,7 +37,7 @@ COPY --from=builder /pinpoint/agent/target/pinpoint-agent-${PINPOINT_VERSION}.ta
 RUN \
     tar -zxf /tmp/pinpoint-agent.tar.gz -C / \
     && rm /tmp/pinpoint-agent.tar.gz \
-    && mv /pinpoint-agent-${PINPOINT_VERSION} /pinpoint-agent
+    && mv /pinpoint-agent-${PINPOINT_VERSION} /pinpoint-agent \
     && rm /var/cache/apk/*
 
 EXPOSE 8080
