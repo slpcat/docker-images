@@ -24,7 +24,7 @@ FROM openjdk:8-jdk-alpine
 MAINTAINER 若虚 <slpcat@qq.com>
 
 ARG PINPOINT_VERSION=${PINPOINT_VERSION:-2.2.1}
-ARG INSTALL_URL=https://github.com/naver/pinpoint/releases/download/v${PINPOINT_VERSION}/pinpoint-collector-boot-${PINPOINT_VERSION}.jar
+#ARG INSTALL_URL=https://github.com/naver/pinpoint/releases/download/v${PINPOINT_VERSION}/pinpoint-collector-boot-${PINPOINT_VERSION}.jar
 
 RUN mkdir -p /pinpoint/config \
     && mkdir -p /pinpoint/scripts
@@ -36,6 +36,6 @@ COPY start-collector.sh /pinpoint/scripts/
 
 RUN \
     chmod a+x /pinpoint/scripts/start-collector.sh \
-    && chmod a+x /pinpoint/config/pinpoint-collector.properties \
+    && chmod a+x /pinpoint/config/pinpoint-collector.properties
 
 ENTRYPOINT ["sh", "/pinpoint/scripts/start-collector.sh"]
