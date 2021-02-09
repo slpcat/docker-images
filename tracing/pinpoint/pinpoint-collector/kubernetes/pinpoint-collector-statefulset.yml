@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: pinpoint-collector
-  namespace: default
+  namespace: tracing
   labels:
     app: pinpoint-collector
 spec:

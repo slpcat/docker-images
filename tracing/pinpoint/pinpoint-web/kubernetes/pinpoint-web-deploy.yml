@@ -1,5 +1,5 @@
 apiVersion: apps/v1
-kind: StatefulSet
+kind: Deployment
 metadata:
   name: pinpoint-web
   namespace: tracing
@@ -10,8 +10,6 @@ spec:
   selector:
     matchLabels:
       app: pinpoint-web
-#  minReadySeconds: 60     #滚动升级时60s后认为该pod就绪
-  serviceName: pinpoint-web
   template:
     metadata:
       labels:

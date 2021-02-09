@@ -4,3 +4,10 @@ live demo
 http://125.209.240.10:10123/
 
 https://github.com/pinpoint-apm/pinpoint-docker
+
+编译组件 生产环境使用
+hbase 2.1.x
+
+pinpoint-agent-attach-example
+pinpoint-collector
+pinpoint-web

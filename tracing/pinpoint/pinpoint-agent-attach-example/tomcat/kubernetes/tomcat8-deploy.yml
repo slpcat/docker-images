@@ -115,7 +115,7 @@ spec:
             memory: 8Gi
         env:
           - name: PINPOINT_VERSION
-            value: "1.7.3"
+            value: "2.2.1"
           - name: AGENT_ID
             value: "k8s-tomcat"
           - name: APP_NAME

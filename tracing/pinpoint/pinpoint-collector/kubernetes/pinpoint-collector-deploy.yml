@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: pinpoint-collector
-  namespace: default
+  namespace: tracing
   labels:
     app: pinpoint-collector
 spec:
@@ -81,7 +81,7 @@ spec:
             value: "1"
       containers:
       - name: pinpoint-collector
-        image: slpcat/pinpoint-collector:alpine
+        image: slpcat/pinpoint-collector:v2.2.1-alpine
         imagePullPolicy: Always
         resources:
           requests:
