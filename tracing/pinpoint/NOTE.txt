@@ -9,5 +9,8 @@ https://github.com/pinpoint-apm/pinpoint-docker
 hbase 2.1.x
 
 pinpoint-agent-attach-example
+java 直接启动 --> collector
+php --> Collector-Agent --> collector
+
 pinpoint-collector
 pinpoint-web

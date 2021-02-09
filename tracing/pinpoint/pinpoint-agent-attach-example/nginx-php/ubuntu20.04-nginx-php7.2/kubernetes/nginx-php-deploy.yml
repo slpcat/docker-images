@@ -1,0 +1,114 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-php
+  namespace: default
+  labels:
+    app: nginx-php
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx-php
+#  minReadySeconds: 60     #滚动升级时60s后认为该pod就绪
+  strategy:
+    rollingUpdate:  #由于replicas为3,则整个升级,pod个数在2-4个之间
+      maxSurge: 1      #滚动升级时会先启动1个pod
+      maxUnavailable: 1 #滚动升级时允许的最大Unavailable的pod个数
+  template:
+    metadata:
+      labels:
+        app: nginx-php
+      annotations:
+        #net.ipv4.tcp_syncookies=0 need kernel version 4.4 or newer
+        security.alpha.kubernetes.io/sysctls: "net.ipv4.tcp_syncookies=0,net.ipv4.ip_local_port_range=10000 65535"
+        #kernel version 4.15 needed
+        security.alpha.kubernetes.io/unsafe-sysctls: "net.core.somaxconn=65535,net.ipv4.ip_unprivileged_port_start=0,net.ipv4.tcp_tw_reuse=1,net.ipv4.tcp_fin_timeout=30,net.ipv4.tcp_keepalive_intvl=10,net.ipv4.tcp_keepalive_probes=2,net.ipv4.tcp_keepalive_time=120,net.ipv4.tcp_ecn=1,net.ipv4.tcp_max_syn_backlog=65535,net.ipv4.tcp_rfc1337=1,net.ipv4.tcp_slow_start_after_idle=0,net.ipv4.tcp_fack=1,net.ipv4.tcp_max_tw_buckets=262144,net.ipv4.tcp_fastopen=3,net.ipv4.icmp_ratelimit=100,net.ipv4.tcp_abort_on_overflow=1,net.ipv4.tcp_adv_win_scale=2,net.ipv4.tcp_retries2=8,net.ipv4.tcp_syn_retries=3,net.ipv4.tcp_synack_retries=2,net.unix.max_dgram_qlen=512,net.ipv4.tcp_fwmark_accept=1,net.ipv4.fwmark_reflect=1,net.ipv4.tcp_no_metrics_save=1,net.netfilter.nf_conntrack_helper=1,net.netfilter.nf_conntrack_max=1048576,net.netfilter.nf_conntrack_tcp_timeout_close_wait=60,net.netfilter.nf_conntrack_tcp_timeout_established=120,net.netfilter.nf_conntrack_tcp_timeout_fin_wait=30,net.netfilter.nf_conntrack_tcp_timeout_last_ack=30,net.netfilter.nf_conntrack_tcp_timeout_time_wait=60"
+    spec:
+      #nodeName: k8s.node1 #指定调度节点为k8s.node1
+      #nodeSelector:  #调度特定的节点
+      #  env: test-team
+      terminationGracePeriodSeconds: 60 ##k8s将会给应用发送SIGTERM信号，可以用来正确、优雅地关闭应用,默认为30秒
+      #imagePullSecrets:
+      #- name: registrykey-ali-ext
+      containers:
+      - name: nginx-php
+        image: slpcat/nginx-php7.1:debian9
+        imagePullPolicy: Always
+        livenessProbe: #kubernetes认为该pod是存活的,不存活则需要重启
+          httpGet:
+            path: /
+            port: 80
+            scheme: HTTP
+          initialDelaySeconds: 60 ## equals to the maximum startup time of the application + couple of seconds
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 5
+        readinessProbe: #kubernetes认为该pod是启动成功的
+          httpGet:
+            path: /
+            port: 80
+            scheme: HTTP
+          initialDelaySeconds: 30 ## equals to minimum startup time of the application
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 5
+        resources:
+          requests:
+            cpu: 50m
+            memory: 64Mi
+          limits:
+            cpu: 2
+            #nvidia.com/gpu: 1
+            memory: 2Gi
+        securityContext:
+          capabilities: {}
+          privileged: false
+        env:
+          - name: PROFILE
+            value: "test"
+        ports:
+          - name: http
+            containerPort: 80
+        volumeMounts:
+          - name: nginx-etc
+            mountPath: "/etc/nginx/nginx.conf"
+            subPath: nginx.conf
+          - name: nginx-vhost
+            mountPath: "/opt/docker/etc/nginx/vhost.conf"
+            subPath: vhost.conf
+          - name: php-etc
+            mountPath: "/opt/docker/etc/php/php.webdevops.ini"
+            subPath: php.webdevops.ini
+          - name: php-fpm-pool-etc
+            mountPath: "/opt/docker/etc/php/fpm/pool.d/docker.conf"
+            subPath: docker.conf
+      volumes:
+        - name: nginx-etc
+          configMap:
+            name: nginx-php-configmap
+            #Add ConfigMap data to a specific path in the Volume
+            items:
+            - key: nginx.conf
+              path: nginx.conf
+        - name: nginx-vhost
+          configMap:
+            name: nginx-php-configmap
+            #Add ConfigMap data to a specific path in the Volume
+            items:
+            - key: vhost.conf
+              path: vhost.conf
+        - name: php-etc
+          configMap:
+            name: nginx-php-configmap
+            #Add ConfigMap data to a specific path in the Volume
+            items:
+            - key: php.webdevops.ini
+              path: php.webdevops.ini
+        - name: php-fpm-pool-etc
+          configMap:
+            name: nginx-php-configmap
+            #Add ConfigMap data to a specific path in the Volume
+            items:
+            - key: docker.conf
+              path: docker.conf
