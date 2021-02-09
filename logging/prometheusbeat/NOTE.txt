@@ -1,0 +1,3 @@
+Prometheusbeat is an elastic beat that can receive Prometheus metrics via the remote write feature. It will create a clean git history for each major step. Note that you can always rewrite the history if you wish before pushing your changes.
+
+https://github.com/infonova/prometheusbeat

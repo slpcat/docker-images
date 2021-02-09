@@ -2,3 +2,5 @@ https://github.com/naver/pinpoint
 
 live demo
 http://125.209.240.10:10123/
+
+https://github.com/pinpoint-apm/pinpoint-docker

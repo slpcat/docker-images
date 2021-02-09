@@ -10,16 +10,19 @@
 
 4. 业务命名空间设置默认cpu mem限制
 
-5. prometheus-operator监控
+5. 宿主机安装lxcfs
+
+6. prometheus-operator监控
 k8s 系统/集群/基础监控
 
 app 业务监控
 
-6.日志采集
+7.日志采集
 
-log-pilot
+log-pilot,logtail,fluent-bit
 
-7. 控制台UI
+8. 控制台UI
 kubernetes-dashboard
+lens ui
 
-8. 性能追踪 kubectl-trace
+9. 性能追踪 kubectl-trace

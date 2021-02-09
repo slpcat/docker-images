@@ -27,6 +27,14 @@ https://github.com/aliyun/aliyun-cms-grafana
 https://help.aliyun.com/document_detail/60952.html
 https://github.com/aliyun/aliyun-log-grafana-datasource-plugin
 
+腾讯云监控对接 Grafana
+https://cloud.tencent.com/document/product/248/48529
+https://github.com/TencentCloud/tencentcloud-monitor-grafana-app/
+
+腾讯云日志CLS 对接 Grafana
+https://cloud.tencent.com/document/product/614/52102
+https://github.com/TencentCloud/cls-grafana-datasource
+
 独立版
 推荐使用prometheus-operator
 
