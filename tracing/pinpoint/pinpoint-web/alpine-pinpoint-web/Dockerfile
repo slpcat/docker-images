@@ -38,9 +38,3 @@ RUN \
     && chmod a+x /pinpoint/config/pinpoint-web.properties
 
 ENTRYPOINT ["sh", "/pinpoint/scripts/start-web.sh"]
-
-    && unzip /pinpoint-web-${PINPOINT_VERSION}.war -d /usr/local/tomcat/webapps/ROOT \
-    && rm /pinpoint-web-${PINPOINT_VERSION}.war
-
-COPY start-web.sh /usr/local/bin/
-ENTRYPOINT ["/usr/local/bin/start-web.sh"]
