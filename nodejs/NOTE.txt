@@ -1,0 +1,2 @@
+docker run -d -p 8080:8080 -e "NODE_ENV=production" slpcat/node-web-app
+https://github.com/nodejs/docker-node/blob/master/docs/BestPractices.md
