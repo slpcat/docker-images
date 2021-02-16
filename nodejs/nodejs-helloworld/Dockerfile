@@ -36,6 +36,8 @@ ENV PATH=$PATH:/home/node/.npm-global/bin
 # Create app directory
 WORKDIR /usr/src/app
 
+RUN chown -R node:node /usr/src/app
+
 USER node
 
 # Install app dependencies

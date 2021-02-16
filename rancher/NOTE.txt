@@ -29,6 +29,11 @@ https://rancher.com/docs/rancher/v2.x/en/quick-start-guide/deployment/quickstart
 
 docker run -d --restart=always --privileged -v /data/rancher:/var/lib/rancher/ -p 80:80 -p 443:443 rancher/rancher:v2.5.5
 高可用安装需要独立kubernetes集群和负载均衡器
+helm repo add rancher-stable https://releases.rancher.com/server-charts/stable
+
+helm fetch rancher-latest/rancher
+helm fetch rancher-stable/rancher --version=v2.5.5
+
 
 内核参数
 systemd.unified_cgroup_hierarchy=0
