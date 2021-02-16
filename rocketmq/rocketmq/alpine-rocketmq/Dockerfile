@@ -28,7 +28,7 @@ RUN \
     wget https://mirrors.tuna.tsinghua.edu.cn/apache/rocketmq/${ROCKETMQ_VERSION}/rocketmq-all-${ROCKETMQ_VERSION}-bin-release.zip && \
     unzip rocketmq-all-${ROCKETMQ_VERSION}-bin-release.zip && \
     rm -rf rocketmq-all-${ROCKETMQ_VERSION}-bin-release.zip && \
-    mv rocketmq-all-${ROCKETMQ_VERSION} rocketmq && \
+    mv rocketmq-all-${ROCKETMQ_VERSION}-bin-release rocketmq && \
     chown -R rocketmq:rocketmq /opt/rocketmq
 
 USER rocketmq
