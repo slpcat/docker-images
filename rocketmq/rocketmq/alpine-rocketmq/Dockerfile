@@ -25,7 +25,7 @@ RUN set -ex && \
 # install from binary
 RUN \
     cd /opt && \
-    wget https://mirrors.tuna.tsinghua.edu.cn/apache/rocketmq/${ROCKETMQ_VERSION}-incubating/rocketmq-all-${ROCKETMQ_VERSION}-incubating-bin-release.zip && \
+    wget https://mirrors.tuna.tsinghua.edu.cn/apache/rocketmq/${ROCKETMQ_VERSION}/rocketmq-all-${ROCKETMQ_VERSION}-bin-release.zip && \
     unzip rocketmq-all-${ROCKETMQ_VERSION}-incubating-bin-release.zip && \
     rm -rf rocketmq-all-${ROCKETMQ_VERSION}-incubating-bin-release.zip && \
     mv rocketmq-all-${ROCKETMQ_VERSION}-incubating rocketmq && \
