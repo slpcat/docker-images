@@ -26,9 +26,9 @@ RUN set -ex && \
 RUN \
     cd /opt && \
     wget https://mirrors.tuna.tsinghua.edu.cn/apache/rocketmq/${ROCKETMQ_VERSION}/rocketmq-all-${ROCKETMQ_VERSION}-bin-release.zip && \
-    unzip rocketmq-all-${ROCKETMQ_VERSION}-incubating-bin-release.zip && \
-    rm -rf rocketmq-all-${ROCKETMQ_VERSION}-incubating-bin-release.zip && \
-    mv rocketmq-all-${ROCKETMQ_VERSION}-incubating rocketmq && \
+    unzip rocketmq-all-${ROCKETMQ_VERSION}-bin-release.zip && \
+    rm -rf rocketmq-all-${ROCKETMQ_VERSION}-bin-release.zip && \
+    mv rocketmq-all-${ROCKETMQ_VERSION} rocketmq && \
     chown -R rocketmq:rocketmq /opt/rocketmq
 
 USER rocketmq
