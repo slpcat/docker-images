@@ -24,7 +24,6 @@ RUN set -ex && \
 #cd distribution/target/apache-rocketmq
 # install from binary
 RUN \
-    mkdir /opt && \
     cd /opt && \
     wget https://mirrors.tuna.tsinghua.edu.cn/apache/rocketmq/${ROCKETMQ_VERSION}-incubating/rocketmq-all-${ROCKETMQ_VERSION}-incubating-bin-release.zip && \
     unzip rocketmq-all-${ROCKETMQ_VERSION}-incubating-bin-release.zip && \
