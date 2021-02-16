@@ -85,7 +85,7 @@ spec:
             mountPath: /opt/rocketmq/store
       containers:
       - name: rocketmq
-        image: slpcat/rocketmq
+        image: slpcat/rocketmq:v4.8.0
         command:
         - sh
         - -c
