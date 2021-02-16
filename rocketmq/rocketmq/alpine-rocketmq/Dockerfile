@@ -7,7 +7,11 @@ ENV ROCKETMQ_VERSION="4.8.0"
 ENV ROCKETMQ_HOME="/opt/rocketmq"
 ENV JAVA_OPT=" -Duser.home=/opt/rocketmq"
 
-RUN groupadd rocketmq && \
+RUN set -ex && \
+    apk update && \
+    apk upgrade && \
+    apk add shadow &&\
+    groupadd rocketmq && \
     useradd -g rocketmq -s /bin/bash -c RocketMQ rocketmq  && \
     mkdir -p /home/rocketmq && \
     chown -R rocketmq:rocketmq /home/rocketmq
