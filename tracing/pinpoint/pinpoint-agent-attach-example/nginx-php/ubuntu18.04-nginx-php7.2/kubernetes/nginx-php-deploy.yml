@@ -6,7 +6,7 @@ metadata:
   labels:
     app: nginx-php
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: nginx-php
@@ -30,24 +30,24 @@ spec:
       - name: nginx-php
         image: slpcat/php-nginx:pinpoint-ubuntu-18.04
         imagePullPolicy: Always
-        livenessProbe: #kubernetes认为该pod是存活的,不存活则需要重启
-          httpGet:
-            path: /
-            port: 80
-            scheme: HTTP
-          initialDelaySeconds: 60 ## equals to the maximum startup time of the application + couple of seconds
-          timeoutSeconds: 5
-          successThreshold: 1
-          failureThreshold: 5
-        readinessProbe: #kubernetes认为该pod是启动成功的
-          httpGet:
-            path: /
-            port: 80
-            scheme: HTTP
-          initialDelaySeconds: 30 ## equals to minimum startup time of the application
-          timeoutSeconds: 5
-          successThreshold: 1
-          failureThreshold: 5
+        #livenessProbe: #kubernetes认为该pod是存活的,不存活则需要重启
+        #  httpGet:
+        #    path: /
+        #    port: 80
+        #    scheme: HTTP
+        #  initialDelaySeconds: 60 ## equals to the maximum startup time of the application + couple of seconds
+        #  timeoutSeconds: 5
+        #  successThreshold: 1
+        #  failureThreshold: 5
+        #readinessProbe: #kubernetes认为该pod是启动成功的
+        #  httpGet:
+        #    path: /
+        #    port: 80
+        #    scheme: HTTP
+        #  initialDelaySeconds: 30 ## equals to minimum startup time of the application
+        #  timeoutSeconds: 5
+        #  successThreshold: 1
+        #  failureThreshold: 5
         resources:
           requests:
             cpu: 50m
@@ -72,12 +72,12 @@ spec:
           - name: nginx-vhost
             mountPath: "/opt/docker/etc/nginx/vhost.conf"
             subPath: vhost.conf
-          - name: php-etc
-            mountPath: "/opt/docker/etc/php/php.webdevops.ini"
-            subPath: php.webdevops.ini
-          - name: php-fpm-pool-etc
-            mountPath: "/opt/docker/etc/php/fpm/pool.d/docker.conf"
-            subPath: docker.conf
+          #- name: php-etc
+          #  mountPath: "/opt/docker/etc/php/php.webdevops.ini"
+          #  subPath: php.webdevops.ini
+          #- name: php-fpm-pool-etc
+          #  mountPath: "/opt/docker/etc/php/fpm/pool.d/docker.conf"
+          #  subPath: docker.conf
       volumes:
         - name: nginx-etc
           configMap:
@@ -93,17 +93,17 @@ spec:
             items:
             - key: vhost.conf
               path: vhost.conf
-        - name: php-etc
-          configMap:
-            name: nginx-php-configmap
-            #Add ConfigMap data to a specific path in the Volume
-            items:
-            - key: php.webdevops.ini
-              path: php.webdevops.ini
-        - name: php-fpm-pool-etc
-          configMap:
-            name: nginx-php-configmap
-            #Add ConfigMap data to a specific path in the Volume
-            items:
-            - key: docker.conf
-              path: docker.conf
+        #- name: php-etc
+        #  configMap:
+        #    name: nginx-php-configmap
+        #    #Add ConfigMap data to a specific path in the Volume
+        #    items:
+        #    - key: php.webdevops.ini
+        #      path: php.webdevops.ini
+        #- name: php-fpm-pool-etc
+        #  configMap:
+        #    name: nginx-php-configmap
+        #    #Add ConfigMap data to a specific path in the Volume
+        #    items:
+        #    - key: docker.conf
+        #      path: docker.conf

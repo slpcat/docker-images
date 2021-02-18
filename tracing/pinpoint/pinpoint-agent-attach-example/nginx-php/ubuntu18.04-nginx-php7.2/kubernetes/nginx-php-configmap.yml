@@ -5,7 +5,7 @@ metadata:
   namespace: default
 data:
   nginx.conf: |-
-    user  nginx;
+    user  www-data;
     worker_processes  4;
     worker_cpu_affinity auto;
     worker_rlimit_nofile 90000;
