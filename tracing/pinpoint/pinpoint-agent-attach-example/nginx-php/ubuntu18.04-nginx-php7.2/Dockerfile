@@ -66,8 +66,8 @@ COPY --from=builder /pinpoint-c-agent/modules/pinpoint_php.so /usr/lib/php/20170
 COPY pinpoint.ini /etc/php/7.2/mods-available/pinpoint.ini
 
 RUN \
-    ln -s /etc/php/7.2/mods-available/pinpoint.ini /etc/php/7.0/fpm/conf.d/pinpoint.ini \
-    && ln -s /etc/php/7.2/mods-available/pinpoint.ini /etc/php/7.0/cli/conf.d/pinpoint.ini
+    ln -s /etc/php/7.2/mods-available/pinpoint.ini /etc/php/7.2/fpm/conf.d/pinpoint.ini \
+    && ln -s /etc/php/7.2/mods-available/pinpoint.ini /etc/php/7.2/cli/conf.d/pinpoint.ini
 
 #RUN cp /pinpoint-c-agent/quickstart/config/pinpoint_agent.conf.example  /etc/pinpoint_agent.conf
 #install pinpoint plugins
