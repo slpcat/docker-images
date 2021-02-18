@@ -65,7 +65,10 @@ RUN \
 
 # Install required packages
 RUN \
-    apt-get dist-upgrade -y 
+    apt-get dist-upgrade -y \
+    && apt-get install -y python3 python3-pip \
+    && composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/ \
+    && composer selfupdate
 
 ENV WEB_DOCUMENT_ROOT=/app \
     WEB_DOCUMENT_INDEX=index.php \
@@ -86,6 +89,12 @@ ENV AGENT_ID="k8s-php" \
     LOGFILE_ROOTPATH="\/tmp" \
     PLUGIN_ROOTDIR="\/app\/pinpoint_plugins"
 
+#install pinpoint-collector-agent
+COPY --from=builder /pinpoint-c-agent/collector-agent /opt/collector-agent
+RUN \
+    cd /opt/collector-agent \
+    && pip3 install -r requirements.txt
+
 #install pinpoint php module
 COPY --from=builder /pinpoint-c-agent/modules/pinpoint_php.so /usr/lib/php/20170718/pinpoint_php.so
 #COPY 10-pinpoint.sh /opt/docker/provision/entrypoint.d/
@@ -96,6 +105,7 @@ RUN \
     && ln -s /etc/php/7.2/mods-available/pinpoint.ini /etc/php/7.2/cli/conf.d/pinpoint.ini
 
 #RUN cp /pinpoint-c-agent/quickstart/config/pinpoint_agent.conf.example  /etc/pinpoint_agent.conf
+
 #install pinpoint plugins
 #RUN mkdir -p /app/pinpoint_plugins && cp /pinpoint-c-agent/quickstart/php/web/plugins/* /app/pinpoint_plugins
 #patch
