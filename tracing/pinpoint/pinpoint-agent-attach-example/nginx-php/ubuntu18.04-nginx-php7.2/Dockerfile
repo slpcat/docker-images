@@ -81,19 +81,31 @@ COPY conf/* /opt/docker/
 ENV AGENT_ID="k8s-php" \
     AGENT_TYPE="PHP" \
     APP_NAME="php-demo" \
-    COLLECTOR_IP="pinpoint-collector-headless" \
-    COLLECTOR_TCP_PORT="9994" \
-    COLLECTOR_STAT_PORT="9995" \
-    COLLECTOR_SPAN_PORT="9996" \
-    LOGLEVEL="INFO" \
-    LOGFILE_ROOTPATH="\/tmp" \
-    PLUGIN_ROOTDIR="\/app\/pinpoint_plugins"
+    COLLECTOR_CONFIG=/opt/pinpoint-collector-agent/conf/collector.conf \
+    # pinpoint collector span ip
+    PP_COLLECTOR_AGENT_SPAN_IP=pinpoint-collector \
+    # pinpoint collector span port
+    PP_COLLECTOR_AGENT_SPAN_PORT=9993 \
+    # pinpoint collector agent IP
+    PP_COLLECTOR_AGENT_AGENT_IP=pinpoint-collector \
+    # pinpoint collector agent port
+    PP_COLLECTOR_AGENT_AGENT_PORT=9991 \
+    # pinpoint collector stat ip
+    PP_COLLECTOR_AGENT_STAT_IP=pinpoint-collector \
+    # pinpoint collector stat port
+    PP_COLLECTOR_AGENT_STAT_PORT=9992 \
+    # mark all agent a docker
+    PP_COLLECTOR_AGENT_ISDOCKER=true \
+    PP_LOG_DIR=/tmp/ \
+    PP_Log_Level=ERROR
 
 #install pinpoint-collector-agent
-COPY --from=builder /pinpoint-c-agent/collector-agent /opt/collector-agent
+COPY --from=builder /pinpoint-c-agent/collector-agent /opt/pinpoint-collector-agent
+COPY init_python_env.sh /opt/pinpoint-collector-agent/init_python_env.sh
 RUN \
-    cd /opt/collector-agent \
-    && pip3 install -r requirements.txt
+    cd /opt/pinpoint-collector-agent \
+    && pip3 install -r requirements.txt \
+    && bash -x init_python_env.sh
 
 #install pinpoint php module
 COPY --from=builder /pinpoint-c-agent/modules/pinpoint_php.so /usr/lib/php/20170718/pinpoint_php.so
