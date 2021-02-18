@@ -1,4 +1,4 @@
-FROM webdevops/php-nginx:ubuntu-18.04
+FROM webdevops/php-nginx:ubuntu-18.04 AS builder
 MAINTAINER 若虚 <slpcat@qq.com>
 
 # Container variables
@@ -25,17 +25,29 @@ RUN \
 
 # Install required packages
 RUN \
-    apt-get dist-upgrade -y
+    apt-get dist-upgrade -y \
+    && apt-get install -y php-dev libjsoncpp-dev cmake
+#make pinpoint_php.so
+
+RUN \
+    git clone https://github.com/naver/pinpoint-c-agent.git \
+    && cd pinpoint-c-agent/ \
+    && phpize \
+    && ./configure \
+    && make -j2 \
+    && make test TESTS=src/PHP/tests/
+#result: /pinpoint-c-agent/modules/pinpoint_php.so
+
+FROM webdevops/php-nginx:ubuntu-18.04
+MAINTAINER 若虚 <slpcat@qq.com>
+
 ENV WEB_DOCUMENT_ROOT=/app \
     WEB_DOCUMENT_INDEX=index.php \
     WEB_ALIAS_DOMAIN=*.vm \
     WEB_PHP_TIMEOUT=600 \
-    WEB_PHP_SOCKET=""
-ENV WEB_PHP_SOCKET=127.0.0.1:9000
+    WEB_PHP_SOCKET=127.0.0.1:9000
 
 COPY conf/* /opt/docker/
-
-RUN git clone https://github.com/naver/pinpoint-c-agent.git
 
 ENV AGENT_ID="k8s-php" \
     AGENT_TYPE="PHP" \
@@ -49,24 +61,26 @@ ENV AGENT_ID="k8s-php" \
     PLUGIN_ROOTDIR="\/app\/pinpoint_plugins"
 
 #install pinpoint php module
-#COPY --from=build  /root/pinpoint-c-agent/pinpoint_php/modules/pinpoint.so /usr/lib64/php/modules/
-COPY 10-pinpoint.sh /opt/docker/provision/entrypoint.d/
-COPY pinpoint-ubuntu16.04-php-7.0.30.so /usr/lib/php/20151012/pinpoint.so
-COPY lib.tgz /lib.tgz
-RUN tar -zxf /lib.tgz -C /usr/lib && rm /lib.tgz
-RUN echo 'extension=pinpoint.so' > /etc/php/7.0/mods-available/pinpoint.ini \
-    && echo 'pinpoint_agent.config_full_name=/etc/pinpoint_agent.conf' >> /etc/php/7.0/mods-available/pinpoint.ini \
-    && ln -s /etc/php/7.0/mods-available/pinpoint.ini /etc/php/7.0/fpm/conf.d/pinpoint.ini \
-    && ln -s /etc/php/7.0/mods-available/pinpoint.ini /etc/php/7.0/cli/conf.d/pinpoint.ini
+COPY --from=builder /pinpoint-c-agent/modules/pinpoint_php.so /usr/lib/php/20170718/pinpoint_php.so
+#COPY 10-pinpoint.sh /opt/docker/provision/entrypoint.d/
+COPY pinpoint.ini /etc/php/7.2/mods-available/pinpoint.ini
 
-RUN cp /pinpoint-c-agent/quickstart/config/pinpoint_agent.conf.example  /etc/pinpoint_agent.conf
+RUN \
+    ln -s /etc/php/7.2/mods-available/pinpoint.ini /etc/php/7.0/fpm/conf.d/pinpoint.ini \
+    && ln -s /etc/php/7.2/mods-available/pinpoint.ini /etc/php/7.0/cli/conf.d/pinpoint.ini
+
+#RUN cp /pinpoint-c-agent/quickstart/config/pinpoint_agent.conf.example  /etc/pinpoint_agent.conf
 #install pinpoint plugins
-RUN mkdir -p /app/pinpoint_plugins && cp /pinpoint-c-agent/quickstart/php/web/plugins/* /app/pinpoint_plugins
+#RUN mkdir -p /app/pinpoint_plugins && cp /pinpoint-c-agent/quickstart/php/web/plugins/* /app/pinpoint_plugins
 #patch
-RUN wget https://raw.githubusercontent.com/naver/pinpoint-c-agent/master/quickstart/php/web/plugins/curl_plugin.php \
-    && mv curl_plugin.php /app/pinpoint_plugins/
+#RUN wget https://raw.githubusercontent.com/naver/pinpoint-c-agent/master/quickstart/php/web/plugins/curl_plugin.php \
+#    && mv curl_plugin.php /app/pinpoint_plugins/
 #copy sample website source code
-RUN cp /pinpoint-c-agent/quickstart/php/web/*.php /app
+#RUN cp /pinpoint-c-agent/quickstart/php/web/*.php /app
+RUN \
+    wget -O wordpress.tar.gz  https://cn.wordpress.org/latest-zh_CN.tar.gz \
+    && tar -zxf wordpress.tar.gz -C /tmp \
+    && mv /tmp/wordpress/* /app/
 
 RUN set -x \
     # Install nginx
