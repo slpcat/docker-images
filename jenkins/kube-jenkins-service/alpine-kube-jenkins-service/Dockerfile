@@ -154,13 +154,16 @@ RUN /usr/local/bin/install-plugins.sh       \
   bouncycastle-api:latest        \
   branch-api:latest              \
   build-name-setter:latest       \
+  built-on-column:latest         \
   build-pipeline-plugin:latest   \
   build-timeout:latest           \
   build-token-root:latest        \
-  cloudbees-folder:latest        \
+  build-with-parameters:latest   \
   credentials:latest             \
   credentials-binding:latest     \
   cloverphp:latest               \
+  cloudbees-folder:latest        \
+  command-launcher:latest        \
   conditional-buildstep:latest   \
   config-file-provider:latest    \
   copyartifact:latest            \
@@ -169,14 +172,17 @@ RUN /usr/local/bin/install-plugins.sh       \
   delivery-pipeline-plugin:latest \
   description-setter:latest      \
   dingding-notifications:latest  \
+  dingding-json-pusher:latest    \
   display-url-api:latest         \
   docker-commons:latest          \
+  docker-compose-build-step:latest \
   docker-build-publish:latest    \
   docker-workflow:latest         \
   durable-task:latest            \
   ec2:latest                     \
   email-ext:latest               \
   embeddable-build-status:latest \
+  envinject:latest            \
   external-monitor-job:latest    \
   favorite:latest                \
   ghprb:latest                   \
@@ -209,19 +215,20 @@ RUN /usr/local/bin/install-plugins.sh       \
   job-dsl:latest                 \
   jquery:latest                  \
   junit:latest                   \
-  #kerberos-sso:latest            \
+  #kerberos-sso:latest           \
   kpp-management-plugin:latest   \
   kubernetes:latest              \
   kubernetes-cd:latest           \
   ldap:latest                    \
+  localization-zh-cn:latest      \
   mailer:latest                  \
   mapdb-api:latest               \
-  #marathon:latest                \
+  #marathon:latest               \
   matrix-auth:latest             \
   matrix-project:latest          \
   maven-plugin:latest            \
-  #mercurial:latest               \
-  #mesos:latest                   \
+  #mercurial:latest              \
+  #mesos:latest                  \
   metrics:latest                 \
   momentjs:latest                \
   monitoring:latest              \
@@ -257,6 +264,8 @@ RUN /usr/local/bin/install-plugins.sh       \
   publish-over-ssh:latest        \
   pubsub-light:latest            \
   puppet:latest                  \ 
+  python:latest                  \
+  python-wrapper:latest          \
   rebuild:latest                 \
   resource-disposer:latest       \
   role-strategy:latest           \
