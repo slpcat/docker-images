@@ -180,6 +180,7 @@ RUN /usr/local/bin/install-plugins.sh       \
   git:latest                     \
   git-client:latest              \
   git-changelog:latest           \
+  git-parameter:latest           \
   git-server:latest              \
   github:latest                  \
   github-api:latest              \
