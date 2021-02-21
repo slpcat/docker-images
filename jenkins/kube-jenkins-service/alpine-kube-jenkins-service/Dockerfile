@@ -138,7 +138,8 @@ RUN /usr/local/bin/install-plugins.sh       \
   blueocean-rest:${BLUEOCEAN_VERSION}       \
   blueocean-web:${BLUEOCEAN_VERSION}        \
   blueocean:${BLUEOCEAN_VERSION}            \
-  ace-editor:latest              \
+  ace-editor:latest                         \
+  aliyun-oss-uploader:latest                \
   #android-emulator:latest        \
   ant:latest                     \
   ansible:latest                 \
@@ -148,6 +149,7 @@ RUN /usr/local/bin/install-plugins.sh       \
   audit-trail:latest             \
   authentication-tokens:latest   \
   azure-credentials:latest       \
+  azure-container-registry-tasks \
   azure-vm-agents:latest         \
   bouncycastle-api:latest        \
   branch-api:latest              \
@@ -225,13 +227,16 @@ RUN /usr/local/bin/install-plugins.sh       \
   monitoring:latest              \
   #msbuild:latest                 \
   nant:latest                    \
+  nexus-artifact-uploader:latest \
   node-iterator-api:latest       \
+  nodejs:latest                  \
   oauth-credentials:latest       \
   oic-auth:latest                \
   #openshift-login:latest         \
   pam-auth:latest                \
   parameterized-trigger:latest   \
   performance:latest             \
+  pipeline-aws:latest            \
   pipeline-build-step:latest     \
   pipeline-github-lib:latest     \
   pipeline-githubnotify-step:latest \
@@ -256,6 +261,7 @@ RUN /usr/local/bin/install-plugins.sh       \
   resource-disposer:latest       \
   role-strategy:latest           \
   run-condition:latest           \
+  run-selector:latest            \
   s3:latest                      \
   saferestart:latest             \
   saml:latest                    \
