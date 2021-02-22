@@ -77,7 +77,7 @@ spec:
           - name: net.ipv4.fwmark_reflect
             value: "1"
       containers:
-      - image: slpcat/kube-jenkins-service
+      - image: slpcat/kube-jenkins-service:2.280
         imagePullPolicy: Always
         livenessProbe:
           failureThreshold: 3

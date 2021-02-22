@@ -15,7 +15,41 @@ RUN apk update              \
        openssh-client       \
        shadow               \
        unzip                \
-       zip                  
+       zip                  \
+       libffi               \
+       groff                \
+       python3
+
+#packer
+RUN \
+    wget https://releases.hashicorp.com/packer/1.7.0/packer_1.7.0_linux_amd64.zip \
+    && unzip packer_1.7.0_linux_amd64.zip \
+    && mv packer /usr/local/bin/ \
+    && rm packer_1.7.0_linux_amd64.zip
+
+#aliyun-cli
+RUN \
+    wget https://aliyuncli.alicdn.com/aliyun-cli-linux-3.0.60-amd64.tgz \
+    && tar -zxvf aliyun-cli-linux-3.0.60-amd64.tgz \
+    && mv aliyun /usr/local/bin \
+    && rm aliyun-cli-linux-3.0.60-amd64.tgz
+
+#terraform
+RUN \
+   wget https://releases.hashicorp.com/terraform/0.14.7/terraform_0.14.7_linux_amd64.zip \
+   && unzip terraform_0.14.7_linux_amd64.zip \
+   && mv terraform /usr/local/bin/ \
+   && rm terraform_0.14.7_linux_amd64.zip
+
+#awscli
+RUN \
+    wget https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip \
+    && unzip awscli-exe-linux-x86_64.zip \
+    && ./aws/install \
+    && rm -rf aws*
+
+#tccli 
+RUN pip3 install tccli
 
 COPY daemon.json /etc/docker/daemon.json
 

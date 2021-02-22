@@ -1,3 +1,6 @@
+公共组件
+packer,terraform
+
 jenkins-slave分类
 
 1.docker-slave
@@ -9,3 +12,4 @@ https://github.com/jenkinsci/docker-inbound-agent
 docker run --init jenkins/inbound-agent -url http://jenkins-server:port <secret> <agent name>
 
 https://github.com/jenkinsci/kubernetes-plugin/tree/master/examples
+

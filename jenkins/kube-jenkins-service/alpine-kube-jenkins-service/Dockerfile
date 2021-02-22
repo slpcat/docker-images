@@ -261,6 +261,7 @@ RUN /usr/local/bin/install-plugins.sh       \
   oauth-credentials:latest       \
   oic-auth:latest                \
   #openshift-login:latest         \
+  packer:latest                  \
   pam-auth:latest                \
   parameterized-trigger:latest   \
   performance:latest             \
@@ -307,6 +308,7 @@ RUN /usr/local/bin/install-plugins.sh       \
   sonar:latest                   \
   structs:latest                 \
   subversion:latest              \
+  terraform-plugin:latest        \
   timestamper:latest             \
   thinBackup:latest              \
   token-macro:latest             \
