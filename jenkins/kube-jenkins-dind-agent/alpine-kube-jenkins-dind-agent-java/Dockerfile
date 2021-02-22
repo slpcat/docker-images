@@ -4,7 +4,7 @@ MAINTAINER 若虚 <slpcat@qq.com>
 
 USER root
 
-ARG MAVEN_VERSION=3.5.4
+ARG MAVEN_VERSION=3.6.3
 ARG USER_HOME_DIR="/home/jenkins"
 ARG SHA=ce50b1c91364cb77efe3776f756a6d92b76d9038b0a0782f7d53acf1e997a14d
 #ARG BASE_URL=https://apache.osuosl.org/maven/maven-3/${MAVEN_VERSION}/binaries

@@ -5,4 +5,5 @@ gvm install go1.12
 gvm install go1.13
 gvm install go1.14
 gvm install go1.15
+gvm install go1.16
 gvm use go1.15 --default
