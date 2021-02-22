@@ -139,20 +139,28 @@ RUN /usr/local/bin/install-plugins.sh       \
   blueocean-web:${BLUEOCEAN_VERSION}        \
   blueocean:${BLUEOCEAN_VERSION}            \
   ace-editor:latest                         \
+  active-directory:latest                   \
   aliyun-oss-uploader:latest                \
+  alibabacloud-credentials:latest           \
+  alibabacloud-ecs:latest                   \
+  amazon-ecr:latest                         \
   #android-emulator:latest        \
   ant:latest                     \
   ansible:latest                 \
   ansicolor:latest               \
   antisamy-markup-formatter:latest \
   artifactory:latest             \
+  artifact-qr-code-plugin:latest   \
   audit-trail:latest             \
   authentication-tokens:latest   \
+  azure-acs:latest               \
   azure-credentials:latest       \
   azure-container-registry-tasks \
   azure-vm-agents:latest         \
+  bootstrap4-api:latest          \
   bouncycastle-api:latest        \
   branch-api:latest              \
+  build-monitor-plugin:latest    \
   build-name-setter:latest       \
   built-on-column:latest         \
   build-pipeline-plugin:latest   \
@@ -162,12 +170,15 @@ RUN /usr/local/bin/install-plugins.sh       \
   credentials:latest             \
   credentials-binding:latest     \
   cloverphp:latest               \
+  cloud-stats:latest             \
   cloudbees-folder:latest        \
   command-launcher:latest        \
   conditional-buildstep:latest   \
   config-file-provider:latest    \
+  configurationslicing:latest    \
+  copy-to-slave:latest           \
   copyartifact:latest            \
-  #cvs:latest                     \
+  #cvs:latest                    \
   dashboard-view:latest          \
   delivery-pipeline-plugin:latest \
   description-setter:latest      \
@@ -180,11 +191,16 @@ RUN /usr/local/bin/install-plugins.sh       \
   docker-workflow:latest         \
   durable-task:latest            \
   ec2:latest                     \
+  echarts-api:latest             \
   email-ext:latest               \
   embeddable-build-status:latest \
-  envinject:latest            \
+  envinject:latest               \
   external-monitor-job:latest    \
+  extended-choice-parameter:latest \
+  extensible-choice-parameter:latest \
   favorite:latest                \
+  font-awesome-api:latest        \
+  gerrit-trigger:latest          \
   ghprb:latest                   \
   git:latest                     \
   git-client:latest              \
@@ -207,11 +223,14 @@ RUN /usr/local/bin/install-plugins.sh       \
   gravatar:latest                \
   greenballs:latest              \
   handlebars:latest              \
-  icon-shim:latest               \
+  huaweicloud-credentials:latest \
+  #icon-shim:latest               \
   ivy:latest                     \
   jackson2-api:latest            \
   javadoc:latest                 \
+  jira-trigger:latest            \
   jenkins-multijob-plugin:latest \
+  jobConfigHistory:latest        \
   job-dsl:latest                 \
   jquery:latest                  \
   junit:latest                   \
@@ -220,7 +239,9 @@ RUN /usr/local/bin/install-plugins.sh       \
   kubernetes:latest              \
   kubernetes-cd:latest           \
   ldap:latest                    \
+  localization-support:latest    \
   localization-zh-cn:latest      \
+  mac:latest                     \
   mailer:latest                  \
   mapdb-api:latest               \
   #marathon:latest               \
@@ -283,15 +304,18 @@ RUN /usr/local/bin/install-plugins.sh       \
   ssh-slaves:latest              \
   ssh2easy:latest                \
   slave-setup:latest             \
+  sonar:latest                   \
   structs:latest                 \
   subversion:latest              \
   timestamper:latest             \
+  thinBackup:latest              \
   token-macro:latest             \
   translation:latest             \
   uno-choice:latest              \
   url-auth-sso:latest            \
   variant:latest                 \
   view-job-filters:latest        \
+  warnings-ng:latest             \
   #windows-slaves:latest          \
   workflow-aggregator:latest     \
   workflow-api:latest            \
