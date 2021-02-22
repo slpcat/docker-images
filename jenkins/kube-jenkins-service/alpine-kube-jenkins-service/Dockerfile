@@ -150,7 +150,7 @@ RUN /usr/local/bin/install-plugins.sh       \
   ansicolor:latest               \
   antisamy-markup-formatter:latest \
   artifactory:latest             \
-  artifact-qr-code-plugin:latest   \
+  #artifact-qr-code-plugin:latest   \
   audit-trail:latest             \
   authentication-tokens:latest   \
   azure-acs:latest               \
@@ -176,7 +176,7 @@ RUN /usr/local/bin/install-plugins.sh       \
   conditional-buildstep:latest   \
   config-file-provider:latest    \
   configurationslicing:latest    \
-  copy-to-slave:latest           \
+  #copy-to-slave:latest           \
   copyartifact:latest            \
   #cvs:latest                    \
   dashboard-view:latest          \
@@ -308,7 +308,7 @@ RUN /usr/local/bin/install-plugins.sh       \
   sonar:latest                   \
   structs:latest                 \
   subversion:latest              \
-  terraform-plugin:latest        \
+  #terraform-plugin:latest        \
   timestamper:latest             \
   thinBackup:latest              \
   token-macro:latest             \
