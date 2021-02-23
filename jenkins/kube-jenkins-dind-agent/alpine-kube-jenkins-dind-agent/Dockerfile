@@ -27,6 +27,12 @@ RUN \
     && mv kubectl /usr/local/bin/
 
 #helm
+ARG VERIFY_CHECKSUM=false
+RUN \
+    curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 \
+    && bash get_helm.sh \
+    && rm get_helm.sh
+
 #istioctl
 ARG ISTIO_VERSION=1.9.0
 RUN \
