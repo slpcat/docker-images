@@ -2,7 +2,26 @@
 FROM slpcat/jdk:v1.8-alpine
 MAINTAINER 若虚 <slpcat@qq.com>
 
-RUN apk add --no-cache git openssh-client curl unzip bash ttf-dejavu coreutils tini docker
+RUN apk add --no-cache       \
+        git                  \
+        openssh-client       \
+        curl                 \
+        unzip                \
+        bash                 \
+        ttf-dejavu           \
+        coreutils            \
+        tini                 \
+        docker               \
+        libffi               \
+        groff                \
+        python3
+
+#awscli
+RUN \
+    wget https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip \
+    && unzip awscli-exe-linux-x86_64.zip \
+    && ./aws/install \
+    && rm -rf aws*
 
 ARG user=jenkins
 ARG group=jenkins
@@ -312,7 +331,7 @@ RUN /usr/local/bin/install-plugins.sh       \
   timestamper:latest             \
   thinBackup:latest              \
   token-macro:latest             \
-  translation:latest             \
+  #translation:latest             \
   uno-choice:latest              \
   url-auth-sso:latest            \
   variant:latest                 \
@@ -357,6 +376,7 @@ ENV JAVA_OPTS="-server -Djava.awt.headless=true -XX:MetaspaceSize=128m \
          -XX:G1MixedGCCountTarget=16 -XX:G1MixedGCLiveThresholdPercent=90 \
          -XX:InitiatingHeapOccupancyPercent=35 -XX:G1HeapRegionSize=32m \
          -XX:-ResizePLAB -Djenkins.install.runSetupWizard=false -Dhudson.udp=-1 \
+         -Dorg.csanchez.jenkins.plugins.kubernetes.clients.cacheExpiration=60 \
          -Dhudson.model.LoadStatistics.clock=2000 \
          -Dhudson.model.LoadStatistics.decay=0.5 \
          -Dhudson.slaves.NodeProvisioner.recurrencePeriod=5000 \
