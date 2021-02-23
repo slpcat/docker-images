@@ -20,26 +20,43 @@ RUN apk update              \
        groff                \
        python3
 
-#packer
+#kubectl
 RUN \
-    wget https://releases.hashicorp.com/packer/1.7.0/packer_1.7.0_linux_amd64.zip \
-    && unzip packer_1.7.0_linux_amd64.zip \
+    curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" \
+    && chmod +x kubectl \
+    && mv kubectl /usr/local/bin/
+
+#helm
+#istioctl
+ARG ISTIO_VERSION=1.9.0
+RUN \
+    curl -L https://istio.io/downloadIstio | sh - \
+    && mv istio-${ISTIO_VERSION}/bin/istioctl /usr/local/bin \
+    && rm -rf  istio-${ISTIO_VERSION}
+
+#packer
+ARG PACKER_VERSION=1.7.0
+RUN \
+    wget https://releases.hashicorp.com/packer/${PACKER_VERSION}/packer_${PACKER_VERSION}_linux_amd64.zip \
+    && unzip packer_${PACKER_VERSION}_linux_amd64.zip \
     && mv packer /usr/local/bin/ \
-    && rm packer_1.7.0_linux_amd64.zip
+    && rm packer_${PACKER_VERSION}_linux_amd64.zip
 
 #aliyun-cli
+ARG ALIYUN_CLI_VERSION=3.0.60
 RUN \
-    wget https://aliyuncli.alicdn.com/aliyun-cli-linux-3.0.60-amd64.tgz \
-    && tar -zxvf aliyun-cli-linux-3.0.60-amd64.tgz \
+    wget https://aliyuncli.alicdn.com/aliyun-cli-linux-${ALIYUN_CLI_VERSION}-amd64.tgz \
+    && tar -zxvf aliyun-cli-linux-${ALIYUN_CLI_VERSION}-amd64.tgz \
     && mv aliyun /usr/local/bin \
-    && rm aliyun-cli-linux-3.0.60-amd64.tgz
+    && rm aliyun-cli-linux-${ALIYUN_CLI_VERSION}-amd64.tgz
 
 #terraform
+ARG TERRAFORM_VERSION=0.14.7
 RUN \
-   wget https://releases.hashicorp.com/terraform/0.14.7/terraform_0.14.7_linux_amd64.zip \
-   && unzip terraform_0.14.7_linux_amd64.zip \
+   wget https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip \
+   && unzip terraform_${TERRAFORM_VERSION}_linux_amd64.zip \
    && mv terraform /usr/local/bin/ \
-   && rm terraform_0.14.7_linux_amd64.zip
+   && rm terraform_${TERRAFORM_VERSION}_linux_amd64.zip
 
 #awscli
 RUN \
