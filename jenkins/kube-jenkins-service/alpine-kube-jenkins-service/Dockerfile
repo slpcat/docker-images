@@ -258,7 +258,7 @@ RUN /usr/local/bin/install-plugins.sh       \
   kubernetes:latest              \
   kubernetes-cd:latest           \
   ldap:latest                    \
-  localization-support:latest    \
+  #localization-support:latest    \
   localization-zh-cn:latest      \
   mac:latest                     \
   mailer:latest                  \
@@ -331,7 +331,7 @@ RUN /usr/local/bin/install-plugins.sh       \
   timestamper:latest             \
   thinBackup:latest              \
   token-macro:latest             \
-  #translation:latest             \
+  translation:latest             \
   uno-choice:latest              \
   url-auth-sso:latest            \
   variant:latest                 \
