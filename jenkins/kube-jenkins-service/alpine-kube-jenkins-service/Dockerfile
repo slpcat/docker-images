@@ -252,7 +252,7 @@ RUN /usr/local/bin/install-plugins.sh       \
   jobConfigHistory:latest        \
   job-dsl:latest                 \
   jquery:latest                  \
-  junit:latest                   \
+  #junit:latest                   \
   #kerberos-sso:latest           \
   kpp-management-plugin:latest   \
   kubernetes:latest              \
