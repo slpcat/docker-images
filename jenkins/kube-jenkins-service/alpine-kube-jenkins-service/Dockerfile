@@ -229,7 +229,7 @@ RUN /usr/local/bin/install-plugins.sh       \
   github:latest                  \
   github-api:latest              \
   github-branch-source:latest    \
-  github-checks-plugin:latest    \
+  #github-checks-plugin:latest    \
   github-issues:latest           \
   github-oauth:latest            \
   github-pullrequest:latest      \
