@@ -196,9 +196,10 @@ RUN /usr/local/bin/install-plugins.sh       \
   conditional-buildstep:latest   \
   config-file-provider:latest    \
   configurationslicing:latest    \
-  #copy-to-slave:latest           \
+  #copy-to-slave:latest          \
   copyartifact:latest            \
   #cvs:latest                    \
+  dark-theme:latest              \
   dashboard-view:latest          \
   delivery-pipeline-plugin:latest \
   description-setter:latest      \
