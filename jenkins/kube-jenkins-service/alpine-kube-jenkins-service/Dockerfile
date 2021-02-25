@@ -229,6 +229,7 @@ RUN /usr/local/bin/install-plugins.sh       \
   github:latest                  \
   github-api:latest              \
   github-branch-source:latest    \
+  github-checks-plugin:latest    \
   github-issues:latest           \
   github-oauth:latest            \
   github-pullrequest:latest      \
@@ -252,7 +253,7 @@ RUN /usr/local/bin/install-plugins.sh       \
   jobConfigHistory:latest        \
   job-dsl:latest                 \
   jquery:latest                  \
-  #junit:latest                   \
+  junit:latest                   \
   #kerberos-sso:latest           \
   kpp-management-plugin:latest   \
   kubernetes:latest              \
@@ -299,6 +300,7 @@ RUN /usr/local/bin/install-plugins.sh       \
   pipeline-stage-view:latest     \ 
   pipeline-utility-steps:latest  \
   plain-credentials:latest       \
+  plugin-util-api:latest         \
   postbuildscript:latest         \
   publish-over-cifs:latest       \
   publish-over-ftp:latest        \
