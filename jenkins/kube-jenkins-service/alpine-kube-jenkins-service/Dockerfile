@@ -162,6 +162,7 @@ RUN /usr/local/bin/install-plugins.sh       \
   aliyun-oss-uploader:latest                \
   alibabacloud-credentials:latest           \
   alibabacloud-ecs:latest                   \
+  allure-jenkins-plugin:latest              \
   amazon-ecr:latest                         \
   #android-emulator:latest        \
   ant:latest                     \
