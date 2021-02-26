@@ -195,6 +195,7 @@ RUN /usr/local/bin/install-plugins.sh       \
   command-launcher:latest        \
   conditional-buildstep:latest   \
   config-file-provider:latest    \
+  configuration-as-code:latest   \
   configurationslicing:latest    \
   #copy-to-slave:latest          \
   copyartifact:latest            \
@@ -209,6 +210,7 @@ RUN /usr/local/bin/install-plugins.sh       \
   docker-commons:latest          \
   docker-compose-build-step:latest \
   docker-build-publish:latest    \
+  docker-build-step:latest       \
   docker-workflow:latest         \
   durable-task:latest            \
   ec2:latest                     \
@@ -222,6 +224,7 @@ RUN /usr/local/bin/install-plugins.sh       \
   favorite:latest                \
   font-awesome-api:latest        \
   gerrit-trigger:latest          \
+  generic-webhook-trigger:latest \
   ghprb:latest                   \
   git:latest                     \
   git-client:latest              \
@@ -244,6 +247,8 @@ RUN /usr/local/bin/install-plugins.sh       \
   gradle:latest                  \
   gravatar:latest                \
   greenballs:latest              \
+  groovy:latest                  \
+  groovy-postbuild:latest        \
   handlebars:latest              \
   huaweicloud-credentials:latest \
   #icon-shim:latest               \
@@ -254,6 +259,7 @@ RUN /usr/local/bin/install-plugins.sh       \
   jenkins-multijob-plugin:latest \
   jobConfigHistory:latest        \
   job-dsl:latest                 \
+  job-import-plugin:latest       \
   jquery:latest                  \
   junit:latest                   \
   #kerberos-sso:latest           \
@@ -270,6 +276,7 @@ RUN /usr/local/bin/install-plugins.sh       \
   matrix-auth:latest             \
   matrix-project:latest          \
   maven-plugin:latest            \
+  maven-release-plugin:latest    \
   #mercurial:latest              \
   #mesos:latest                  \
   metrics:latest                 \
@@ -293,9 +300,11 @@ RUN /usr/local/bin/install-plugins.sh       \
   pipeline-githubnotify-step:latest \
   pipeline-input-step:latest     \
   pipeline-milestone-step:latest \
+  pipeline-multibranch-defaults:latest \
   pipeline-model-api:latest      \
   pipeline-model-definition:latest \
   pipeline-model-extensions:latest \
+  pipeline-maven:latest          \
   pipeline-rest-api:latest       \
   pipeline-stage-step:latest     \
   pipeline-stage-tags-metadata:latest \
@@ -304,6 +313,7 @@ RUN /usr/local/bin/install-plugins.sh       \
   plain-credentials:latest       \
   plugin-util-api:latest         \
   postbuildscript:latest         \
+  postbuild-task:latest          \
   publish-over-cifs:latest       \
   publish-over-ftp:latest        \
   publish-over-ssh:latest        \
@@ -321,19 +331,23 @@ RUN /usr/local/bin/install-plugins.sh       \
   saml:latest                    \
   saltstack:latest               \
   scm-api:latest                 \
+  scp:latest                     \
   script-security:latest         \
+  ssh:latest                     \
   sse-gateway:latest             \
   ssh-agent:latest               \
   ssh-credentials:latest         \
   ssh-slaves:latest              \
+  ssh-steps:latest               \
   ssh2easy:latest                \
   slave-setup:latest             \
   sonar:latest                   \
   structs:latest                 \
   subversion:latest              \
-  #terraform-plugin:latest        \
+  #terraform-plugin:latest       \
   timestamper:latest             \
   thinBackup:latest              \
+  throttle-concurrents:latest    \
   token-macro:latest             \
   translation:latest             \
   uno-choice:latest              \
@@ -379,7 +393,8 @@ ENV JAVA_OPTS="-server -Djava.awt.headless=true -XX:MetaspaceSize=128m \
          -XX:MaxTenuringThreshold=1 -XX:G1HeapWastePercent=10 -XX:SurvivorRatio=8 \
          -XX:G1MixedGCCountTarget=16 -XX:G1MixedGCLiveThresholdPercent=90 \
          -XX:InitiatingHeapOccupancyPercent=35 -XX:G1HeapRegionSize=32m \
-         -XX:-ResizePLAB -Djenkins.install.runSetupWizard=false -Dhudson.udp=-1 \
+         -XX:-ResizePLAB -Djenkins.install.runSetupWizard=false \
+         -Dhudson.udp=-1 -Dfile.encoding=UTF-8 \
          -Dorg.csanchez.jenkins.plugins.kubernetes.clients.cacheExpiration=60 \
          -Dhudson.model.LoadStatistics.clock=2000 \
          -Dhudson.model.LoadStatistics.decay=0.5 \
