@@ -276,7 +276,7 @@ RUN /usr/local/bin/install-plugins.sh       \
   matrix-auth:latest             \
   matrix-project:latest          \
   maven-plugin:latest            \
-  maven-release-plugin:latest    \
+  #maven-release-plugin:latest    \
   #mercurial:latest              \
   #mesos:latest                  \
   metrics:latest                 \
