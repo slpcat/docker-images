@@ -331,10 +331,10 @@ RUN /usr/local/bin/install-plugins.sh       \
   saml:latest                    \
   saltstack:latest               \
   scm-api:latest                 \
-  scp:latest                     \
+  #scp:latest                     \
   script-security:latest         \
-  ssh:latest                     \
   sse-gateway:latest             \
+  ssh:latest                     \
   ssh-agent:latest               \
   ssh-credentials:latest         \
   ssh-slaves:latest              \
