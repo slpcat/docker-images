@@ -244,6 +244,9 @@ RUN /usr/local/bin/install-plugins.sh       \
   gitlab-merge-request-jenkins:latest \
   gitlab-oauth:latest            \
   gitlab-plugin:latest           \
+  global-build-stats:latest      \
+  global-post-script:latest      \
+  global-pre-script:latest       \
   gradle:latest                  \
   gravatar:latest                \
   greenballs:latest              \
@@ -288,6 +291,7 @@ RUN /usr/local/bin/install-plugins.sh       \
   node-iterator-api:latest       \
   nodejs:latest                  \
   nomad:latest                   \
+  nomad-pipeline:latest          \
   oauth-credentials:latest       \
   oic-auth:latest                \
   #openshift-login:latest         \
@@ -345,7 +349,7 @@ RUN /usr/local/bin/install-plugins.sh       \
   sonar:latest                   \
   structs:latest                 \
   subversion:latest              \
-  #terraform-plugin:latest       \
+  terraform:latest               \
   timestamper:latest             \
   thinBackup:latest              \
   throttle-concurrents:latest    \
@@ -354,9 +358,12 @@ RUN /usr/local/bin/install-plugins.sh       \
   uno-choice:latest              \
   url-auth-sso:latest            \
   variant:latest                 \
+  view-cloner:latest             \
   view-job-filters:latest        \
   warnings-ng:latest             \
+  webhook-step:latest            \
   #windows-slaves:latest          \
+  windows-cloud:latest           \
   workflow-aggregator:latest     \
   workflow-api:latest            \
   workflow-basic-steps:latest    \
@@ -368,7 +375,8 @@ RUN /usr/local/bin/install-plugins.sh       \
   workflow-scm-step:latest       \
   workflow-step-api:latest       \
   workflow-support:latest        \
-  ws-cleanup:latest
+  ws-cleanup:latest              \
+  xcode-plugin:latest
 
 # copy custom built plugins
 #COPY plugins/*.hpi /usr/share/jenkins/ref/plugins/
