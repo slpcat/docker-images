@@ -1,0 +1,49 @@
+Seata 是一款开源的分布式事务解决方案，致力于在微服务架构下提供高性能和简单易用的分布式事务服务。
+https://github.com/seata/seata
+https://seata.io/zh-cn/
+
+https://seata.io/zh-cn/docs/ops/deploy-by-docker.html
+https://seata.io/zh-cn/blog/seata-ha-practice.html
+
+https://github.com/seata/seata/tree/develop/script/config-center
+
+docker run -d --name seata-server -p 8091:8091 seataio/seata-server:latest
+
+docker run --name seata-server \
+        -p 8091:8091 \
+        -e SEATA_IP=192.168.1.1 \
+        -e SEATA_PORT=8091 \
+        seataio/seata-server
+
+SEATA_PORT=8091
+      - STORE_MODE=file
+
+-e SEATA_CONFIG_NAME=file:/root/seata-config/registry \
+
+SEATA_IP
+STORE_MODE
+SERVER_NODE
+SEATA_ENV
+SEATA_CONFIG_NAME
+
+
+高可用部署
+Nacos 配置中心 + mysql 数据库
+1. 准备数据库
+https://github.com/seata/seata/tree/develop/script/server/db
+server-mysql.sql at-mysql.sql
+2.将以下配置添加到 Nacos 配置中心
+
+nacos-config.sh
+
+service.vgroupMapping.my_test_tx_group=default
+store.mode=db
+store.db.datasource=druid
+store.db.dbType=mysql
+store.db.driverClassName=com.mysql.jdbc.Driver
+store.db.url=jdbc:mysql://192.168.199.2:30060/seata?useUnicode=true
+store.db.user=root
+store.db.password=123456
+
+3.部署 seata-server 到 Kubernetes
+seata-server-ha.yaml

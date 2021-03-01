@@ -1,0 +1,129 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: seata-server
+  namespace: default
+  labels:
+    app: seata-server
+spec:
+  revisionHistoryLimit: 3
+  replicas: 3
+  strategy:
+    rollingUpdate:  ##由于replicas为3,则整个升级,pod个数在2-4个之间
+      maxSurge: 1      #滚动升级时会先启动1个pod
+      maxUnavailable: 1 #滚动升级时允许的最大Unavailable的pod个数
+  selector:
+    matchLabels:
+      app: seata-server
+  template:
+    metadata:
+      labels:
+        app: seata-server
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: "app"
+                    operator: In
+                    values:
+                    - seata-server
+              topologyKey: "kubernetes.io/hostname"
+      containers:
+        - name: seata-server
+          image: dzero.com/base/seata-server:1 
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: SEATA_CONFIG_NAME
+              value: file:/root/seata-config/registry
+          ports:
+            - name: http
+              containerPort: 8091
+              protocol: TCP
+          volumeMounts:
+            - name: seata-config
+              mountPath: /root/seata-config
+            - name: seata-file
+              mountPath: /root/seata-config-file
+      volumes:
+        - name: seata-config
+          configMap:
+            name: seata-server-config
+        - name: seata-file
+          configMap:
+            name: seata-server-file
+      imagePullSecrets:
+        - name: myregistrykey
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: seata-server-config
+  namespace: default
+data:
+  registry.conf: |
+    registry {
+        type = "nacos"
+        nacos {
+          application = "seata-server"
+          serverAddr = "nacos地址"
+        }
+    }
+    config {
+      type = "file"
+        file {
+          name = "/root/seata-config-file/file.conf"
+        }
+    }
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: seata-server-file
+  namespace: default
+data:
+  file.conf: |
+    store {
+        mode = "db"
+        file {
+            dir = "sessionStore"
+            maxBranchSessionSize = 16384
+            maxGlobalSessionSize = 512
+            fileWriteBufferCacheSize = 16384
+            sessionReloadReadSize = 100
+            flushDiskMode = async
+        }
+        db {
+            datasource = "druid"
+            dbType = "postgresql"
+            driverClassName = "org.postgresql.Driver"
+            url = "jdbc:postgresql://数据库地址/数据库?stringtype=unspecified"
+            user = "账户"
+            password = "密码"
+            minConn = 5
+            maxConn = 30
+            globalTable = "global_table"
+            branchTable = "branch_table"
+            lockTable = "lock_table"
+            queryLimit = 100
+            maxWait = 5000
+        }
+    }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: seata-server
+  namespace: default
+  labels:
+    app: seata-server
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8091
+    targetPort: 8091
+    protocol: TCP
+  selector:
+    app: seata-server
