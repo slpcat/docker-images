@@ -29,7 +29,8 @@ ENV JAVA_OPTS="-javaagent:/pinpoint-agent/pinpoint-bootstrap-${PINPOINT_VERSION}
 #ARG INSTALL_URL=https://github.com/naver/pinpoint/releases/download/${PINPOINT_VERSION}/pinpoint-agent-${PINPOINT_VERSION}.tar.gz
 
 RUN \
-    apk add --update curl bash \
+    apt-get update -q \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y curl bash \
     && mkdir -p /pinpoint-agent \
     && chmod -R o+x /pinpoint-agent
 
