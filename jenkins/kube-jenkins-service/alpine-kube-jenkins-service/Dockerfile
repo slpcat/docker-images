@@ -287,6 +287,7 @@ RUN /usr/local/bin/install-plugins.sh       \
   nexus-artifact-uploader:latest \
   node-iterator-api:latest       \
   nodejs:latest                  \
+  nomad:latest                   \
   oauth-credentials:latest       \
   oic-auth:latest                \
   #openshift-login:latest         \
