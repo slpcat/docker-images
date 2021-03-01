@@ -1,0 +1,8 @@
+pinpoint客户端配置文件
+将pinpoint客户端放到要监控的服务器下，然后修改配置文件，将ip指向服务器端
+vim pinpoint.config 
+profiler.transport.grpc.collector.ip=服务器端ip
+有的文章写的是修改profiler.collector.ip这个选项，不过我试了发现不成功，不知道是不是版本的原因
+如果是springboot项目要在配置文件中加上下面这句
+
+profiler.applicationservertype=SPRING_BOOT

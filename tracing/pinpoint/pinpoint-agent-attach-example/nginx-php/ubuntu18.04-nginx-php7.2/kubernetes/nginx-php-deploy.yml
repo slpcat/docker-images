@@ -60,8 +60,24 @@ spec:
           capabilities: {}
           privileged: false
         env:
-          - name: PROFILE
-            value: "test"
+          - name: PP_COLLECTOR_AGENT_SPAN_IP
+            value: "pinpoint-collector.tracing"
+          - name: PP_COLLECTOR_AGENT_SPAN_PORT
+            value: "9993"
+          - name: PP_COLLECTOR_AGENT_AGENT_IP
+            value: "pinpoint-collector.tracing"
+          - name: PP_COLLECTOR_AGENT_AGENT_PORT
+            value: "9991"
+          - name: PP_COLLECTOR_AGENT_STAT_IP
+            value: "pinpoint-collector.tracing"
+          - name: PP_COLLECTOR_AGENT_STAT_PORT
+            value: "9992"
+          - name: PP_LOG_DIR
+            value: "/tmp/"
+          - name: PP_Log_Level
+            value: "ERROR"
+          - name: PP_ADDRESS
+            value: "0.0.0.0@9999"
         ports:
           - name: http
             containerPort: 80

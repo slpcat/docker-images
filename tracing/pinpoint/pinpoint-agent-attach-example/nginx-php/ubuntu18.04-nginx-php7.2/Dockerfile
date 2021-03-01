@@ -76,7 +76,7 @@ ENV WEB_DOCUMENT_ROOT=/app \
     WEB_PHP_TIMEOUT=600 \
     WEB_PHP_SOCKET=127.0.0.1:9000
 
-COPY conf/* /opt/docker/
+COPY conf/ /opt/docker/
 
 ENV AGENT_ID="k8s-php" \
     AGENT_TYPE="PHP" \
