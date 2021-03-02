@@ -1,0 +1,16 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nacos-svc
+  namespace: default
+  labels:
+    app: nacos-svc
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8848
+      name: server
+      targetPort: 8848
+  selector:
+    app: nacos

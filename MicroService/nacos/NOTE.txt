@@ -2,3 +2,9 @@ https://github.com/alibaba/nacos.git
 
 https://github.com/nacos-group/nacos-docker.git
 
+kubernetes
+1.准备storageclass
+2.mysql-master mysql-slave
+https://github.com/alibaba/nacos/edit/master/config/src/main/resources/META-INF/nacos-db.sql
+3.nacos集群
+默认的账号密码都是 nacos
