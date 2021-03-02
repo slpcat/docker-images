@@ -132,6 +132,19 @@ spec:
               value: "serverIdentity"
             - name: NACOS_AUTH_IDENTITY_VALUE
               value: "security"
+          volumeMounts:
+          - name: nacos-data
+            mountPath: /home/nacos/data
+  volumeClaimTemplates:
+  - metadata:
+      name: nacos-data
+    spec:
+      accessModes:
+        - "ReadWriteOnce"
+      #storageClassName: openebs-standard
+      resources:
+        requests:
+          storage: "20Gi"
 
 ---
 # ------------------- App Ingress ------------------- #
