@@ -9,8 +9,11 @@ RUN \
 
 WORKDIR /xxl-job
 RUN \
-    git checkout v2.2.0 \
-    && mvn -Dmaven.test.skip=true clean package install
+    git checkout v2.2.0
+
+COPY pom.xml .
+
+RUN  mvn -Dmaven.test.skip=true clean package install
 
 FROM openjdk:8-jre-slim
 MAINTAINER 若虚 <slpcat@qq.com>
@@ -43,6 +46,10 @@ RUN \
 
 ENV PARAMS=""
 
-COPY --from=build /xxl-job/xxl-job-admin/target/xxl-job-admin-2.2.0.jar /app.jar
+RUN mkdir -p /opt/xxl-job-admin/config
 
-ENTRYPOINT ["sh","-c","java -jar $JAVA_OPTS /app.jar $PARAMS"]
+COPY --from=build /xxl-job/xxl-job-admin/target/xxl-job-admin-2.2.0.jar /opt/xxl-job-admin/xxl-job-admin-2.2.0.jar
+
+WORKDIR /opt/xxl-job-admin/
+
+ENTRYPOINT ["sh","-c","java -jar $JAVA_OPTS xxl-job-admin-2.2.0.jar $PARAMS"]

@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: xxl-job-admin
+  namespace: default
+spec:
+  revisionHistoryLimit: 3
+  replicas: 3
+  strategy:
+    rollingUpdate:  ##由于replicas为3,则整个升级,pod个数在2-4个之间
+      maxSurge: 1      #滚动升级时会先启动1个pod
+      maxUnavailable: 1 #滚动升级时允许的最大Unavailable的pod个数
+  selector:
+    matchLabels:
+      app: xxl-job-admin
+  template:
+    metadata:
+      labels:
+        app: xxl-job-admin
+    spec:
+      terminationGracePeriodSeconds: 60 ##k8s将会给应用发送SIGTERM信号，可以用来正确、优雅地关闭应用,默认为30秒
+      #imagePullSecrets:
+      #- name: registrykey-ali-ext
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: "app"
+                    operator: In
+                    values:
+                    - xxl-job-admin
+              topologyKey: "kubernetes.io/hostname"
+      containers:
+      - name: xxl-job-admin
+        image: slpcat/xxl-job-admin:v2.2.0
+        ports:
+        - containerPort: 8080
+        env:
+        #- name: PARAMS
+        #  value: "--spring.datasource.url=jdbc:mysql://mysql-server:3306/xxl_job?Unicode=true&characterEncoding=UTF-8&useSSL=false --spring.datasource.username=root --spring.datasource.password=root_password --spring.mail.username=xxxxxx@qq.com --spring.mail.password=xxxxxx"
+        - name: JAVA_OPTS
+          value: "-server -Djava.awt.headless=true -Xverify:none -XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=512m -XX:ReservedCodeCacheSize=240M -XX:MaxRAMFraction=2 -XshowSettings:vm -XX:+AggressiveOpts -XX:-UseBiasedLocking -XX:+UseFastAccessorMethods -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:+UseG1GC -XX:+ExplicitGCInvokesConcurrent -XX:SoftRefLRUPolicyMSPerMB=0 -XX:G1ReservePercent=25 -XX:G1NewSizePercent=10 -XX:G1MaxNewSizePercent=25 -XX:MaxGCPauseMillis=20 -XX:-OmitStackTraceInFastThrow -XX:+ParallelRefProcEnabled -XX:ParallelGCThreads=8 -XX:MaxTenuringThreshold=1 -XX:G1HeapWastePercent=10 -XX:SurvivorRatio=8 -XX:G1MixedGCCountTarget=16 -XX:G1MixedGCLiveThresholdPercent=90 -XX:InitiatingHeapOccupancyPercent=35 -XX:G1HeapRegionSize=32m -XX:+PerfDisableSharedMem -XX:-ResizePLAB"
+        resources:
+          # keep request = limit to keep this container in guaranteed class
+          requests:
+            cpu: 500m
+            memory: 512Mi
+          limits:
+            cpu: 4
+            memory: 8Gi
+        ports:
+          - name: http
+            containerPort: 8080
+        volumeMounts:
+          - name: application
+            mountPath: "/opt/xxl-job-admin/config/application.properties"
+            subPath: application.properties
+      volumes:
+      - name: application
+        configMap:
+          name: xxl-job-admin-configmap
+          #Add ConfigMap data to a specific path in the Volume
+          items:
+          - key: application.properties
+            path: application.properties
