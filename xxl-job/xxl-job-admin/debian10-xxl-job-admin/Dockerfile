@@ -11,7 +11,8 @@ WORKDIR /xxl-job
 RUN \
     git checkout v2.2.0
 
-COPY pom.xml .
+COPY pom.xml xxl-job-admin/pom.xml
+COPY application.properties xxl-job-admin/src/main/resources/application.properties
 
 RUN  mvn -Dmaven.test.skip=true clean package install
 
