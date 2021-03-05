@@ -354,7 +354,7 @@ RUN /usr/local/bin/install-plugins.sh       \
   thinBackup:latest              \
   throttle-concurrents:latest    \
   token-macro:latest             \
-  translation:latest             \
+  #translation:latest             \
   uno-choice:latest              \
   url-auth-sso:latest            \
   variant:latest                 \
