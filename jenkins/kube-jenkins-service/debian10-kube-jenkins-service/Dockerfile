@@ -106,7 +106,7 @@ ARG CURL_RETRY=20
 ARG CURL_RETRY_MAX_TIME=900
 
 # Override the default property for DNS lookup caching
-RUN echo 'networkaddress.cache.ttl=60' >> ${JAVA_HOME}/jre/lib/security/java.security
+#RUN echo 'networkaddress.cache.ttl=60' >> ${JAVA_HOME}/jre/lib/security/java.security
 
 RUN mkdir -p "$JENKINS_HOME" "${JENKINS_FOLDER}/war"
 
