@@ -27,6 +27,7 @@ RUN \
 RUN \
     apt-get dist-upgrade -y \
     && apt-get install -y php-dev libjsoncpp-dev cmake
+
 #make pinpoint_php.so
 
 RUN \
@@ -66,9 +67,19 @@ RUN \
 # Install required packages
 RUN \
     apt-get dist-upgrade -y \
-    && apt-get install -y python3 python3-pip \
+    && apt-get install -y python3 python3-pip curl gnupg2 ca-certificates lsb-release\
     && composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/ \
     && composer selfupdate
+
+#install nginx
+RUN \
+    echo "deb http://nginx.org/packages/mainline/ubuntu `lsb_release -cs` nginx"     | tee /etc/apt/sources.list.d/nginx.list \
+    && echo -e "Package: *\nPin: origin nginx.org\nPin: release o=nginx\nPin-Priority: 900\n"  | tee /etc/apt/preferences.d/99nginx \
+    && curl -o /tmp/nginx_signing.key https://nginx.org/keys/nginx_signing.key \
+    && gpg --dry-run --quiet --import --import-options show-only /tmp/nginx_signing.key \
+    && mv /tmp/nginx_signing.key /etc/apt/trusted.gpg.d/nginx_signing.asc \
+    && apt update -y \
+    && apt install -y nginx 
 
 ENV WEB_DOCUMENT_ROOT=/app \
     WEB_DOCUMENT_INDEX=index.php \
@@ -131,10 +142,7 @@ RUN \
     && mv /tmp/wordpress/* /app/
 
 RUN set -x \
-    # Install nginx
-    && apt-install \
-        nginx \
     && docker-run-bootstrap \
     && docker-image-cleanup
 
-EXPOSE 80 443
+EXPOSE 80
