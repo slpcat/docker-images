@@ -82,8 +82,7 @@ USER ${user}
 
 COPY jenkins-support /usr/local/bin/jenkins-support
 COPY jenkins.sh /usr/local/bin/jenkins.sh
-COPY tini-shim.sh /bin/tini
-ENTRYPOINT ["/sbin/tini", "--", "/usr/local/bin/jenkins.sh"]
+ENTRYPOINT ["/usr/bin/tini", "--", "/usr/local/bin/jenkins.sh"]
 
 # from a derived Dockerfile, can use `RUN plugins.sh active.txt` to setup /usr/share/jenkins/ref/plugins from a support bundle
 COPY plugins.sh /usr/local/bin/plugins.sh
@@ -374,8 +373,8 @@ COPY src/main/docker/master-executors.groovy /usr/share/jenkins/ref/init.groovy.
 # ENV JAVA_OPTS="-Djava.util.logging.config.file=/var/jenkins_home/log.properties"
 ENV JAVA_OPTS="-server -Djava.awt.headless=true -XX:MetaspaceSize=128m \
          -XX:MaxMetaspaceSize=512m -XX:ReservedCodeCacheSize=240M \
-         -XX:MaxRAMFraction=2 -XshowSettings:vm -XX:+AggressiveOpts \
-         -XX:-UseBiasedLocking -XX:+UseFastAccessorMethods -XX:+UnlockExperimentalVMOptions \
+         -XshowSettings:vm \
+         -XX:-UseBiasedLocking -XX:+UnlockExperimentalVMOptions \
          -XX:+UseCGroupMemoryLimitForHeap -XX:-UseLargePages -XX:+UseG1GC \
          -XX:SoftRefLRUPolicyMSPerMB=0 -XX:+DisableExplicitGC -XX:G1ReservePercent=25 \
          -XX:G1NewSizePercent=10 -XX:G1MaxNewSizePercent=25 -XX:MaxGCPauseMillis=20 \
