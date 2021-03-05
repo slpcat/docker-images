@@ -375,7 +375,7 @@ ENV JAVA_OPTS="-server -Djava.awt.headless=true -XX:MetaspaceSize=128m \
          -XX:MaxMetaspaceSize=512m -XX:ReservedCodeCacheSize=240M \
          -XshowSettings:vm \
          -XX:-UseBiasedLocking -XX:+UnlockExperimentalVMOptions \
-         -XX:+UseCGroupMemoryLimitForHeap -XX:-UseLargePages -XX:+UseG1GC \
+         -XX:-UseLargePages -XX:+UseG1GC \
          -XX:SoftRefLRUPolicyMSPerMB=0 -XX:+DisableExplicitGC -XX:G1ReservePercent=25 \
          -XX:G1NewSizePercent=10 -XX:G1MaxNewSizePercent=25 -XX:MaxGCPauseMillis=20 \
          -XX:-OmitStackTraceInFastThrow -XX:+ParallelRefProcEnabled -XX:ParallelGCThreads=8 \
