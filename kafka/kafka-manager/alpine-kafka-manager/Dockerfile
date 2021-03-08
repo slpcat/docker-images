@@ -2,8 +2,8 @@
 FROM slpcat/jdk:v1.8-alpine as builder
 MAINTAINER 若虚 <slpcat@qq.com>
 
-ENV SBT_VERSION 1.2.8
-ENV SCALA_VERSION 2.12.8
+ENV SBT_VERSION 1.3.8
+ENV SCALA_VERSION 2.12.10
 ENV SCALA_HOME /usr/local/share/scala
 RUN export PATH=$PATH:${SCALA_HOME}/bin
 
@@ -29,8 +29,8 @@ RUN sbt compile
 
 ENV \
     ZK_HOSTS=localhost:2181 \
-    KM_VERSION=2.0.0.2 \
-    KM_REVISION=9f82c0fe5a9c74278bd4fce7feecfca538002028 \
+    KM_VERSION=3.0.0.5 \
+    KM_REVISION=eba0b95ac4e4469b536a36c8ee2c46cfde2278a4 \
     KM_CONFIGFILE="conf/application.conf"
 
 ADD start-kafka-manager.sh /kafka-manager-${KM_VERSION}/start-kafka-manager.sh
@@ -39,7 +39,8 @@ RUN \
     apk add git && \
     mkdir -p /tmp && \
     cd /tmp && \
-    git clone https://github.com/yahoo/kafka-manager && \
+    #git clone https://github.com/yahoo/kafka-manager && \
+    git clone https://github.com/yahoo/CMAK.git && \
     cd /tmp/kafka-manager && \
     git checkout ${KM_REVISION} && \
     #echo 'scalacOptions ++= Seq("-Xmax-classfile-name", "200")' >> build.sbt && \
