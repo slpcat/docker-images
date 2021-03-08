@@ -41,7 +41,7 @@ RUN \
     cd /tmp && \
     #git clone https://github.com/yahoo/kafka-manager && \
     git clone https://github.com/yahoo/CMAK.git && \
-    cd /tmp/kafka-manager && \
+    cd /tmp/CMAK && \
     git checkout ${KM_REVISION} && \
     #echo 'scalacOptions ++= Seq("-Xmax-classfile-name", "200")' >> build.sbt && \
     sbt clean dist && \
