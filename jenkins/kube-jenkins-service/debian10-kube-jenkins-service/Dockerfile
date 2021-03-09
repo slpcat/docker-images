@@ -217,10 +217,10 @@ RUN /usr/local/bin/install-plugins.sh       \
   #github-checks-plugin:latest    \
   github-issues:latest           \
   github-oauth:latest            \
-  github-pullrequest:latest      \
+  #github-pullrequest:latest      \
   github-pr-coverage-status:latest \
   gitlab:latest                  \
-  gitlab-hook:latest             \
+  #gitlab-hook:latest             \
   gitlab-merge-request-jenkins:latest \
   gitlab-oauth:latest            \
   gitlab-plugin:latest           \
@@ -307,6 +307,7 @@ RUN /usr/local/bin/install-plugins.sh       \
   python:latest                  \
   python-wrapper:latest          \
   rebuild:latest                 \
+  report-info:latest             \
   resource-disposer:latest       \
   role-strategy:latest           \
   run-condition:latest           \
