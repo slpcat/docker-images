@@ -2,10 +2,10 @@
 FROM slpcat/openjdk:11-buster as builder
 MAINTAINER 若虚 <slpcat@qq.com>
 
-ENV SBT_VERSION 1.3.8 \
-    SCALA_VERSION 2.12.10 \
-    CMAK_VERSION 3.0.0.5 \
-    ZK_HOSTS=localhost:2181 \
+ENV SBT_VERSION=1.3.8 \
+    SCALA_VERSION=2.12.10 \
+    CMAK_VERSION=3.0.0.5 \
+    ZK_HOSTS=localhost:2181
 
 #install scala and sbt
 RUN set -xe \
