@@ -10,7 +10,7 @@ ENV SBT_VERSION=1.3.8 \
 #install scala and sbt
 RUN set -xe \
     && apt-get update -y \
-    && apt-get dist-upgrade -y && \
+    && apt-get dist-upgrade -y \
     && apt-get install -y openjdk-11-jre-headless curl wget \
     && wget -q https://downloads.lightbend.com/scala/$SCALA_VERSION/scala-$SCALA_VERSION.deb -O scala.deb \
     && wget -q https://dl.bintray.com/sbt/debian/sbt-$SBT_VERSION.deb -O sbt.deb \
