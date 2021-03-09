@@ -2,54 +2,36 @@
 FROM slpcat/openjdk:11-buster as builder
 MAINTAINER 若虚 <slpcat@qq.com>
 
-ENV SBT_VERSION 1.3.8
-ENV SCALA_VERSION 2.12.10
-ENV SCALA_HOME /usr/local/share/scala
-RUN export PATH=$PATH:${SCALA_HOME}/bin
+ENV SBT_VERSION 1.3.8 \
+    SCALA_VERSION 2.12.10 \
+    CMAK_VERSION 3.0.0.5 \
+    ZK_HOSTS=localhost:2181 \
 
 #install scala and sbt
-RUN wget http://downloads.typesafe.com/scala/${SCALA_VERSION}/scala-${SCALA_VERSION}.tgz && \
-    #wget http://repo.typesafe.com/typesafe/ivy-releases/org.scala-sbt/sbt-launch/${SBT_VERSION}/sbt-launch.jar && \
-    wget https://dl.bintray.com/sbt/maven-releases/org/scala-sbt/sbt-launch/${SBT_VERSION}/sbt-launch.jar && \
-    mkdir -p ~/bin && touch ~/bin/sbt && \
-    echo '#!/bin/sh' | tee -a ~/bin/sbt && \
-    echo 'SBT_OPTS="-Xms512M -Xmx1536M -Xss1M -XX:+CMSClassUnloadingEnabled"' | tee -a ~/bin/sbt && \
-    echo 'java $SBT_OPTS -jar /sbt-launch.jar "$@"' | tee -a ~/bin/sbt && \
-    chmod +x ~/bin/sbt && \
-    ln -s ~/bin/sbt /usr/local/bin/sbt && \
-    tar xvzf scala-${SCALA_VERSION}.tgz && \
-    mv scala-${SCALA_VERSION} ${SCALA_HOME} && \
-    rm -f scala-${SCALA_VERSION}.tgz
+RUN set -xe \
+    && apt update \
+    && apt install -y curl wget \
+    && wget -q https://downloads.lightbend.com/scala/$SCALA_VERSION/scala-$SCALA_VERSION.deb -O scala.deb \
+    && wget -q https://dl.bintray.com/sbt/debian/sbt-$SBT_VERSION.deb -O sbt.deb \
+    && dpkg -i scala.deb sbt.deb \
+    && rm scala.deb sbt.deb \
+    && rm -rf /var/lib/apt/lists/*
 
 #change sbt repo
 COPY repositories /root/.sbt/repositories
 
-# compile a non-existent project to pre-download sbt dependencies
-RUN sbt compile
+WORKDIR /opt/cmak
 
-ENV \
-    ZK_HOSTS=localhost:2181 \
-    KM_VERSION=3.0.0.5 \
-    KM_REVISION=eba0b95ac4e4469b536a36c8ee2c46cfde2278a4 \
-    KM_CONFIGFILE="conf/application.conf"
-
-ADD start-kafka-manager.sh /kafka-manager-${KM_VERSION}/start-kafka-manager.sh
-
-RUN \
-    apt-get update -y && apt-get install -y git unzip && \
-    mkdir -p /tmp && \
-    cd /tmp && \
-    #git clone https://github.com/yahoo/kafka-manager && \
-    git clone https://github.com/yahoo/CMAK.git && \
-    cd /tmp/CMAK && \
-    git checkout ${KM_REVISION} && \
-    #echo 'scalacOptions ++= Seq("-Xmax-classfile-name", "200")' >> build.sbt && \
-    sbt clean dist && \
-    unzip  -d / ./target/universal/kafka-manager-${KM_VERSION}.zip && \
-    rm -fr /tmp/* /root/.sbt /root/.ivy2 && \
-    chmod +x /kafka-manager-${KM_VERSION}/start-kafka-manager.sh
-
-WORKDIR /kafka-manager-${KM_VERSION}
+RUN set -xe \
+    && mkdir src \
+    && curl -sSL https://github.com/yahoo/CMAK/archive/$CMAK_VERSION.tar.gz | tar xz --strip 1 -C src \
+    && cd src \
+    && sbt clean universal:packageZipTarball \
+    && cd .. \
+    && tar xzf src/target/universal/cmak-$CMAK_VERSION.tgz --strip 1 \
+    && rm -rf src
 
 EXPOSE 9000
-ENTRYPOINT ["./start-kafka-manager.sh"]
+
+ENTRYPOINT ["bin/cmak"]
+CMD ["-Dconfig.file=conf/application.conf", "-Dhttp.port=9000", "-Dpidfile.path=/dev/null"]
