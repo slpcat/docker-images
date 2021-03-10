@@ -30,6 +30,8 @@ RUN \
     tar -zxf /tmp/canal.admin-1.1.5-SNAPSHOT.tar.gz -C /opt/canal-admin && \
     rm -r /tmp/canal.admin-1.1.5-SNAPSHOT.tar.gz
 
+COPY startup.sh /opt/canal-admin/bin/startup.sh
+
 WORKDIR /opt/canal-admin
 
 CMD ["sh", "-c", "./bin/startup.sh"]
