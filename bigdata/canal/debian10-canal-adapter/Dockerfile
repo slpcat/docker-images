@@ -30,6 +30,8 @@ RUN \
     tar -zxf /tmp/canal.adapter-1.1.5-SNAPSHOT.tar.gz -C /opt/canal-adapter && \
     rm -r /tmp/canal.adapter-1.1.5-SNAPSHOT.tar.gz
 
+COPY startup.sh /opt/canal-adapter/bin/startup.sh
+
 WORKDIR /opt/canal-adapter
 
 CMD ["sh", "-c", "./bin/startup.sh"]
