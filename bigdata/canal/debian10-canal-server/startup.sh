@@ -2,15 +2,15 @@
 #生成配置文件
 
 cat << EOF > ./conf/canal.properties
-canal.ip = ${canal.ip}
-canal.register.ip = ${canal.pod.name}.${canal.service.name}.${canal.namespace}
-canal.admin.manager = ${canal.admin.manager}
-canal.admin.port = ${canal.admin.port}
-canal.admin.user = ${canal.admin.useradmin}
-canal.admin.passwd = ${canal.admin.passwd}
+canal.ip = ${POD_IP}
+canal.register.ip = ${POD_NAME}.${SERVICE_NAME}.${NAMESPACE}
+canal.admin.manager = ${CANAL_ADMIN_MANAGER}
+canal.admin.port = ${CANAL_ADMIN_PORT}
+canal.admin.user = ${CANAL_ADMIN_USER}
+canal.admin.passwd = ${CANAL_ADMIN_PASSWORD}
 canal.admin.register.auto = true
-canal.admin.register.cluster =  ${canal.admin.register.cluster}
-canal.zkServers = ${canal.zkServers}
+canal.admin.register.cluster =  ${CANAL_ADMIN_CLUSTER}
+canal.zkServers = ${CANAL_ZOOKEEPER}
 EOF
 
 current_path=`pwd`

@@ -391,42 +391,37 @@ spec:
           imagePullPolicy: Always
           env:
             # tcp bind ip
-            - name: "canal.ip"
-              valueFrom:
-                fieldRef:
-                  fieldPath: status.podIP
-            # register ip to zookeeper
-            - name: "canal.register.ip"
+            - name: "POD_IP"
               valueFrom:
                 fieldRef:
                   fieldPath: status.podIP
             # podName + serviceName + namespace = hostname
-            - name: "canal.pod.name"
+            - name: "POD_NAME"
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
-            - name: "canal.service.name"
+            - name: "SERVICE_NAME"
               value: "canal-server-hs"
-            - name: "canal.namespace"
+            - name: "NAMESPACE"
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
             # canal-admin的地址
-            - name: "canal.admin.manager"
+            - name: "CANAL_ADMIN_MANAGER"
               value: "canal-admin:8089"
             # canal-admin的tcp端口号
-            - name: "canal.admin.port"
+            - name: "CANAL_ADMIN_PORT"
               value: "11110"
             # canal-admin的账号
-            - name: "canal.admin.user"
+            - name: "CANAL_ADMIN_USER"
               value: "admin"
             # canal-admin的密码(数据库加密后的密文)
-            - name: "canal.admin.passwd"
+            - name: "CANAL_ADMIN_PASSWORD"
               value: "4ACFE3202A5FF5CF467898FC58AAB1D615029441"
             # 自动注册至对应的集群
-            - name: "canal.admin.register.cluster"
+            - name: "CANAL_ADMIN_CLUSTER"
               value: "default"
-            - name: "canal.zkServers"
+            - name: "CANAL_ZOOKEEPER"
               value: "zk-cs:2181"
           resources:
             requests:
