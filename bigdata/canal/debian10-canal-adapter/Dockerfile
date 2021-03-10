@@ -12,6 +12,8 @@ RUN \
     cd canal && \
     git checkout canal-1.1.5-alpha-2
 
+WORKDIR /opt/canal
+
 COPY pom.xml .
 
 RUN \
