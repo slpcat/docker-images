@@ -23,13 +23,13 @@ FROM slpcat/openjdk:11-buster
 
 RUN apt-get install -y file
 
-COPY --from=build /opt/canal/target/canal.adapter-1.1.5-SNAPSHOT.tar.gz  /tmp/
+COPY --from=build /opt/canal/target/canal.deployer-1.1.5-SNAPSHOT.tar.gz  /tmp/
 
 RUN \
-    mkdir -p /opt/canal-adapter && \
-    tar -zxf /tmp/canal.adapter-1.1.5-SNAPSHOT.tar.gz -C /opt/canal-adapter && \
-    rm -r /tmp/canal.adapter-1.1.5-SNAPSHOT.tar.gz
+    mkdir -p /opt/canal-server && \
+    tar -zxf /tmp/canal.deployer-1.1.5-SNAPSHOT.tar.gz -C /opt/canal-server && \
+    rm -r /tmp/canal.deployer-1.1.5-SNAPSHOT.tar.gz
 
-WORKDIR /opt/canal-adapter
+WORKDIR /opt/canal-server
 
 CMD ["sh", "-c", "./bin/startup.sh"]

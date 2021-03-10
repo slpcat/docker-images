@@ -1,0 +1,534 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: zk-hs
+  namespace: canal
+  labels:
+    k8s-app: zk
+spec:
+  ports:
+    - port: 2888
+      name: server
+    - port: 3888
+      name: leader-election
+  clusterIP: None
+  selector:
+    k8s-app: zk
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: zk-cs
+  namespace: canal
+  labels:
+    k8s-app: zk
+spec:
+  ports:
+    - port: 2181
+      name: client
+  selector:
+    k8s-app: zk
+---
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  name: zk-pdb
+  namespace: canal
+spec:
+  selector:
+    matchLabels:
+      k8s-app: zk
+  maxUnavailable: 1
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: zk
+  namespace: canal
+spec:
+  selector:
+    matchLabels:
+      k8s-app: zk
+  serviceName: zk-hs
+  replicas: 3
+  updateStrategy:
+    type: RollingUpdate
+  podManagementPolicy: Parallel
+  template:
+    metadata:
+      labels:
+        k8s-app: zk
+    spec:
+      affinity:
+        podAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: "k8s-app"
+                    operator: In
+                    values:
+                      - zk
+              topologyKey: "kubernetes.io/hostname"
+      restartPolicy: Always
+      securityContext:
+        runAsUser: 1000
+        fsGroup: 1000
+      containers:
+        - name: zookeeper
+          imagePullPolicy: Always
+          image: "registry.cn-hangzhou.aliyuncs.com/yalong_lee_release/zookeeper:v3.4.10"
+          resources:
+            requests:
+              cpu: 250m
+              memory: 500Mi
+          ports:
+            - containerPort: 2181
+              name: client
+            - containerPort: 2888
+              name: server
+            - containerPort: 3888
+              name: leader-election
+          command:
+            - sh
+            - -c
+            - "start-zookeeper \
+          --servers=1 \
+          --data_dir=/var/lib/zookeeper/data \
+          --data_log_dir=/var/lib/zookeeper/data/log \
+          --conf_dir=/opt/zookeeper/conf \
+          --client_port=2181 \
+          --election_port=3888 \
+          --server_port=2888 \
+          --tick_time=2000 \
+          --init_limit=10 \
+          --sync_limit=5 \
+          --heap=512M \
+          --max_client_cnxns=60 \
+          --snap_retain_count=3 \
+          --purge_interval=12 \
+          --max_session_timeout=40000 \
+          --min_session_timeout=4000 \
+          --log_level=INFO"
+          readinessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - "zookeeper-ready 2181"
+            initialDelaySeconds: 10
+            timeoutSeconds: 5
+          livenessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - "zookeeper-ready 2181"
+            initialDelaySeconds: 10
+            timeoutSeconds: 5
+          volumeMounts:
+          - name: datadir
+            mountPath: /var/lib/zookeeper
+  volumeClaimTemplates:
+  - metadata:
+      name: datadir
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 20Gi
+
+######################################################################################################################
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: mysql-hs
+  namespace: canal
+  labels:
+    k8s-app: mysql
+spec:
+  ports:
+    - port: 3306
+      name: client
+  selector:
+    k8s-app: mysql
+  clusterIP: None
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql
+  namespace: canal
+  labels:
+    k8s-app: mysql
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      k8s-app: mysql
+  serviceName: mysql-hs
+  template:
+    metadata:
+      labels:
+        k8s-app: mysql
+    spec:
+      affinity:
+        podAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: "k8s-app"
+                    operator: In
+                    values:
+                      - mysql
+              topologyKey: "kubernetes.io/hostname"
+      restartPolicy: Always
+      containers:
+        - name: mysql
+          #image: registry.cn-hangzhou.aliyuncs.com/yalong_lee_release/mysql:v5.7
+          image: mysql:5.7
+          imagePullPolicy: Always
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: "root_password"
+            - name: "HOST_IP"
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+          resources:
+            requests:
+              cpu: 250m
+              memory: 500Mi
+          livenessProbe:
+            exec:
+              command: ["mysqladmin", "-ucanal", "-pcanal", "ping"]
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+          readinessProbe:
+            exec:
+              command: ["mysql", "-hlocalhost", "-ucanal", "-pcanal", "-euse mysql;select 1"]
+            initialDelaySeconds: 20
+            periodSeconds: 2
+            timeoutSeconds: 1
+          ports:
+            - containerPort: 3306
+              name: client
+          volumeMounts:
+          - name: config
+            mountPath: /etc/mysql
+          - name: mysql-data
+            mountPath: /var/lib/mysql
+      volumes:
+      - name: config
+        configMap:
+          name: mysql-etc-configmap
+  volumeClaimTemplates:
+  - metadata:
+      name: mysql-data
+    spec:
+      accessModes:
+        - "ReadWriteOnce"
+      #storageClassName: openebs-standard
+      resources:
+        requests:
+          storage: "20Gi"
+######################################################################################################################
+---
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  labels:
+    k8s-app: canal-admin
+  name: canal-admin-ingress
+  namespace: canal
+spec:
+  rules:
+    - host: canal.yalonglee.cn
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: canal-admin
+              servicePort: 8089
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: canal-admin
+  namespace: canal
+  labels:
+    k8s-app: canal-admin
+spec:
+  ports:
+    - port: 8089
+      name: admin-port
+  selector:
+    k8s-app: canal-admin
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: canal-admin
+  namespace: canal
+  labels:
+    k8s-app: canal-admin
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      k8s-app: canal-admin
+  template:
+    metadata:
+      labels:
+        k8s-app: canal-admin
+    spec:
+      containers:
+        - name: canal-admin
+          image: registry.cn-hangzhou.aliyuncs.com/yalong_lee_release/canal-admin:v1.1.4
+          imagePullPolicy: Always
+          env:
+            - name: "canal.adminUser"
+              value: "admin"
+            - name: "canal.adminPasswd"
+              value: "admin"
+            - name: "server.port"
+              value: "8089"
+          resources:
+            requests:
+              cpu: 500m
+              memory: 1Gi
+          ports:
+            - containerPort: 8089
+              name: admin-port
+      initContainers:
+        - name: init-db
+          image: registry.cn-hangzhou.aliyuncs.com/yalong_lee_release/busybox:1.28.4
+          command: ['sh', '-c', 'until nslookup mysql-0.mysql-hs; do echo waiting for mysql-0.mysql-hs; sleep 2; done;']
+      restartPolicy: Always
+######################################################################################################################
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: canal-server-hs
+  namespace: canal
+  labels:
+    k8s-app: canal-server
+spec:
+  ports:
+    - port: 11110
+      name: canal-admin-port
+    - port: 11111
+      name: canal-server-port
+    - port: 11112
+      name: metrics-port
+  selector:
+    k8s-app: canal-server
+  clusterIP: None
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: canal-server
+  namespace: canal
+  labels:
+    k8s-app: canal-server
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      k8s-app: canal-server
+  serviceName: canal-server-hs
+  template:
+    metadata:
+      labels:
+        k8s-app: canal-server
+    spec:
+      affinity:
+        podAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: "k8s-app"
+                    operator: In
+                    values:
+                      - canal-server
+              topologyKey: "kubernetes.io/hostname"
+      containers:
+        - name: canal-server
+          image: registry.cn-hangzhou.aliyuncs.com/yalong_lee_release/canal-server:v1.1.4
+          imagePullPolicy: Always
+          env:
+            # tcp bind ip
+            - name: "canal.ip"
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            # register ip to zookeeper
+            - name: "canal.register.ip"
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            # podName + serviceName + namespace = hostname
+            - name: "canal.pod.name"
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: "canal.service.name"
+              value: "canal-server-hs"
+            - name: "canal.namespace"
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            # canal-admin的端口号
+            - name: "canal.admin.port"
+              value: "11110"
+            # canal-server的tcp端口号
+            - name: "canal.port"
+              value: "11111"
+            # canal-admin的账号
+            - name: "canal.admin.user"
+              value: "admin"
+            # canal-admin的密码(数据库加密后的密文)
+            - name: "canal.admin.passwd"
+              value: "4ACFE3202A5FF5CF467898FC58AAB1D615029441"
+            # 是否自动向canal-admin进行注册
+            - name: "canal.admin.register.auto"
+              value: "true"
+            # 自动注册至对应的集群
+            - name: "canal.admin.register.cluster"
+              value: "default"
+          resources:
+            requests:
+              cpu: 500m
+              memory: 2Gi
+          ports:
+            - containerPort: 11110
+              name: admin-port
+            - containerPort: 11111
+              name: canal-port
+            - containerPort: 11112
+              name: metrics-port
+      initContainers:
+        - name: init-zk
+          image: registry.cn-hangzhou.aliyuncs.com/yalong_lee_release/busybox:1.28.4
+          command: ['sh', '-c', 'until nslookup zk-cs; do echo waiting for zk-hs; sleep 2; done;']
+        - name: init-canal-admin
+          image: registry.cn-hangzhou.aliyuncs.com/yalong_lee_release/busybox:1.28.4
+          command: ['sh', '-c', 'until nslookup canal-admin; do echo waiting for zk-hs; sleep 2; done;']
+      restartPolicy: Always
+######################################################################################################################
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: prometheus
+  namespace: canal
+  labels:
+    k8s-app: prometheus
+spec:
+  ports:
+    - port: 9090
+      name: prometheus-port
+  selector:
+    k8s-app: prometheus
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: prometheus
+  namespace: canal
+  labels:
+    k8s-app: prometheus
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      k8s-app: prometheus
+  template:
+    metadata:
+      name: prometheus
+      labels:
+        k8s-app: prometheus
+    spec:
+      containers:
+        - name: prometheus
+          image: registry.cn-hangzhou.aliyuncs.com/yalong_lee_release/prometheus:v2.14.0
+          imagePullPolicy: Always
+          resources:
+            requests:
+              cpu: 250m
+              memory: 500Mi
+          ports:
+            - containerPort: 9090
+              name: prometheus-port
+      restartPolicy: Always
+      securityContext:
+        runAsUser: 0
+        fsGroup: 0
+######################################################################################################################
+---
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: grafana
+  namespace: canal
+  labels:
+    k8s-app: grafana
+spec:
+  rules:
+    - host: grafana.yalonglee.cn
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: grafana
+              servicePort: 3000
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: grafana
+  namespace: canal
+  labels:
+    k8s-app: grafana
+spec:
+  ports:
+    - port: 3000
+      name: grafana-port
+  selector:
+    k8s-app: grafana
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: grafana
+  namespace: canal
+  labels:
+    k8s-app: grafana
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      k8s-app: grafana
+  template:
+    metadata:
+      name: grafana
+      labels:
+        k8s-app: grafana
+    spec:
+      containers:
+        - name: grafana
+          image: registry.cn-hangzhou.aliyuncs.com/yalong_lee_release/grafana:v5.4.5
+          imagePullPolicy: Always
+          resources:
+            requests:
+              cpu: 250m
+              memory: 500Mi
+          ports:
+            - containerPort: 3000
+              name: grafana-port
+      restartPolicy: Always

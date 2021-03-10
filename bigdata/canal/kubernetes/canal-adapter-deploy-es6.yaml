@@ -1,0 +1,49 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: adapter-rdsidtest-es6
+  namespace: canal
+  labels:
+    app: adapter-rdsidtest-es6
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: adapter-rdsidtest-es6
+    spec:
+      containers:
+      - image: canal/canal-adapter:v1.1.4
+        name: adapter-rdsidtest-es6
+#        imagePullPolicy: Always
+        ports:
+        - containerPort: 11110
+          protocol: TCP
+          name: http1
+        - containerPort: 11111
+          protocol: TCP
+          name: http2
+        - containerPort: 11112
+          protocol: TCP
+          name: http3
+        volumeMounts:
+        - mountPath: /home/canal/conf
+          name: es-commans
+        - mountPath: /home/canal/conf/es6
+          name: es-params
+        resources:
+          requests:
+            cpu: 100m
+            memory: 100Mi
+          limits:
+            cpu: 4000m
+            memory: 4Gi
+      volumes:
+        - name: es-commans
+          configMap:
+            name: adapter-es6-commans
+        - name: es-params
+          configMap:
+            name: adapter-es6-params
+      securityContext:
+        runAsUser: 0
