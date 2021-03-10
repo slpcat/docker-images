@@ -30,6 +30,8 @@ RUN \
     tar -zxf /tmp/canal.deployer-1.1.5-SNAPSHOT.tar.gz -C /opt/canal-server && \
     rm -r /tmp/canal.deployer-1.1.5-SNAPSHOT.tar.gz
 
+COPY startup.sh /opt/canal-server/bin/startup.sh
+
 WORKDIR /opt/canal-server
 
 CMD ["sh", "-c", "./bin/startup.sh"]
