@@ -1,4 +1,25 @@
 #!/bin/bash
+#生成配置文件
+
+cat << EOF > ./conf/canal.properties
+# tcp bind ip
+canal.ip = ${canal.ip}
+# register ip
+canal.register.ip = ${canal.pod.name}.${canal.service.name}.${canal.namespace}
+
+# canal admin config
+canal.admin.manager = ${canal.admin.manager}
+canal.admin.port = ${canal.admin.port}
+canal.admin.user = ${canal.admin.useradmin}
+canal.admin.passwd = ${canal.admin.passwd}
+
+# admin auto register
+canal.admin.register.auto = true
+canal.admin.register.cluster =  ${canal.admin.register.cluster}
+
+canal.zkServers = ${canal.zkServers}
+
+EOF
 
 current_path=`pwd`
 case "`uname`" in

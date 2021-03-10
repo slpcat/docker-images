@@ -53,7 +53,7 @@ data:
     long_query_time=2
     log-slow-admin-statements = 0
     log_bin_trust_function_creators=1
-    binlog_format=mixed
+    binlog_format=row
     sync_binlog     = 0
     server-id   = 1
     innodb_write_io_threads = 8

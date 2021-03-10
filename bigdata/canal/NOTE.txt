@@ -3,4 +3,4 @@ https://github.com/alibaba/canal
 JAVA_OPTS=" $JAVA_OPTS -Djava.awt.headless=true -Djava.net.preferIPv4Stack=true -Dfile.encoding=UTF-8"
 ADAPTER_OPTS="-DappName=canal-adapter"
 
-
+kubectl create configmap canal-server-configmap -n canal --from-file=canal.properties
