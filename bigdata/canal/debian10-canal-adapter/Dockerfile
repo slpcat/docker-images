@@ -26,7 +26,7 @@ RUN apt-get install -y file
 RUN \
     mkdir -p /opt/rocketmq && \
     cd /opt/rocketmq 
-COPY --from=build /opt/canal/target/canal.deployer-1.1.5-SNAPSHOT.tar.gz  /tmp
+COPY --from=build /opt/canal/target/canal.deployer-1.1.5-SNAPSHOT.tar.gz  /tmp/
 
 RUN \
     mkdir -p /opt/canal-adapter && \
