@@ -1,0 +1,19 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: canal-server-hs
+  namespace: canal
+  labels:
+    k8s-app: canal-server
+spec:
+  ports:
+    - port: 11110
+      name: canal-admin-port
+    - port: 11111
+      name: canal-server-port
+    - port: 11112
+      name: metrics-port
+  selector:
+    k8s-app: canal-server
+  clusterIP: None
+  type: ClusterIP

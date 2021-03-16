@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: canal-admin
+  namespace: canal
+  labels:
+    k8s-app: canal-admin
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      k8s-app: canal-admin
+  template:
+    metadata:
+      labels:
+        k8s-app: canal-admin
+    spec:
+      containers:
+        - name: canal-admin
+          #image: registry.cn-hangzhou.aliyuncs.com/yalong_lee_release/canal-admin:v1.1.4
+          image: slpcat/canal-admin:v1.1.5
+          imagePullPolicy: Always
+          env:
+            - name: JAVA_OPTS
+              value: "-Xms1g -Xmx2g -Xss256k"
+            - name: spring.datasource.address
+              value: "mysql-hs:3306"
+            - name: spring.datasource.database
+              value: "canal_manager"
+            - name: spring.datasource.username
+              value: "root"
+            - name: spring.datasource.password
+              value: "root_password"
+            - name: "canal.adminUser"
+              value: "admin"
+            - name: "canal.adminPasswd"
+              value: "admin"
+            - name: "server.port"
+              value: "8089"
+          resources:
+            requests:
+              cpu: 500m
+              memory: 1Gi
+          ports:
+            - containerPort: 8089
+              name: admin-port
+          volumeMounts:
+            - name: application
+              mountPath: "/opt/canal-admin/conf/application.yml"
+              subPath: application.yml
+            - mountPath: /opt/canal-admin/logs
+              name: log
+      volumes:
+      - name: application
+        configMap:
+          name: canal-admin-configmap
+          #Add ConfigMap data to a specific path in the Volume
+          items:
+          - key: application.yml
+            path: application.yml
+      - name: log
+        emptyDir: {}
+      initContainers:
+        - name: init-db
+          image: registry.cn-hangzhou.aliyuncs.com/yalong_lee_release/busybox:1.28.4
+          command: ['sh', '-c', 'until nslookup mysql-0.mysql-server.dbaas; do echo waiting for mysql-0.mysql-server.dbaas; sleep 2; done;']
+      restartPolicy: Always

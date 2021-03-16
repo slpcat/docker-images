@@ -1,0 +1,54 @@
+apiVersion: v1
+data:
+  canal.properties: "#################################################\n#########
+    \t\tcommon argument\t\t#############\n#################################################\n#
+    tcp bind ip\ncanal.ip=\n# register ip to zookeeper\ncanal.register.ip=${HOSTNAME}\ncanal.port=11111\ncanal.metrics.pull.port=11112\n#
+    canal instance user/passwd\ncanal.user=\ncanal.passwd=\n\n# canal admin config\ncanal.admin.manager=canal-admin:8089\ncanal.admin.port=11110\ncanal.admin.user=admin\ncanal.admin.passwd=4ACFE3202A5FF5CF467898FC58AAB1D615029441\n\ncanal.zkServers=zk-cs:2181\n#
+    flush data to zk\ncanal.zookeeper.flush.period=1000\ncanal.withoutNetty=false\n#
+    tcp, kafka, RocketMQ\ncanal.serverMode=tcp\n# flush meta cursor/parse position
+    to file\ncanal.file.data.dir=${canal.conf.dir}\ncanal.file.flush.period=1000\n##
+    memory store RingBuffer size, should be Math.pow(2,n)\ncanal.instance.memory.buffer.size=16384\n##
+    memory store RingBuffer used memory unit size , default 1kb\ncanal.instance.memory.buffer.memunit=1024\n##
+    meory store gets mode used MEMSIZE or ITEMSIZE\ncanal.instance.memory.batch.mode=MEMSIZE\ncanal.instance.memory.rawEntry=true\n\n##
+    detecing config\ncanal.instance.detecting.enable=false\n#canal.instance.detecting.sql=insert
+    into retl.xdual values(1,now()) on duplicate key update x=now()\ncanal.instance.detecting.sql=select
+    1\ncanal.instance.detecting.interval.time=3\ncanal.instance.detecting.retry.threshold=3\ncanal.instance.detecting.heartbeatHaEnable=false\n\n#
+    support maximum transaction size, more than the size of the transaction will be
+    cut into multiple transactions delivery\ncanal.instance.transaction.size=1024\n#
+    mysql fallback connected to new master should fallback times\ncanal.instance.fallbackIntervalInSeconds=60\n\n#
+    network config\ncanal.instance.network.receiveBufferSize=16384\ncanal.instance.network.sendBufferSize=16384\ncanal.instance.network.soTimeout=30\n\n#
+    binlog filter config\ncanal.instance.filter.druid.ddl=true\ncanal.instance.filter.query.dcl=false\ncanal.instance.filter.query.dml=false\ncanal.instance.filter.query.ddl=false\ncanal.instance.filter.table.error=false\ncanal.instance.filter.rows=false\ncanal.instance.filter.transaction.entry=false\n\n#
+    binlog format/image check\ncanal.instance.binlog.format=ROW,STATEMENT,MIXED\ncanal.instance.binlog.image=FULL,MINIMAL,NOBLOB\n\n#
+    binlog ddl isolation\ncanal.instance.get.ddl.isolation=false\n\n# parallel parser
+    config\ncanal.instance.parser.parallel=true\n## concurrent thread number, default
+    60% available processors, suggest not to exceed Runtime.getRuntime().availableProcessors()\n#canal.instance.parser.parallelThreadSize=16\n##
+    disruptor ringbuffer size, must be power of 2\ncanal.instance.parser.parallelBufferSize=256\n\n#
+    table meta tsdb info\ncanal.instance.tsdb.enable=true\ncanal.instance.tsdb.dir=${canal.file.data.dir:../conf}/${canal.instance.destination:}\ncanal.instance.tsdb.url=jdbc:h2:${canal.instance.tsdb.dir}/h2;CACHE_SIZE=1000;MODE=MYSQL;\ncanal.instance.tsdb.dbUsername=canal\ncanal.instance.tsdb.dbPassword=canal\n#
+    dump snapshot interval, default 24 hour\ncanal.instance.tsdb.snapshot.interval=24\n#
+    purge snapshot expire , default 360 hour(15 days)\ncanal.instance.tsdb.snapshot.expire=360\n\n#
+    aliyun ak/sk , support rds/mq\ncanal.aliyun.accessKey=\ncanal.aliyun.secretKey=\n\n#################################################\n#########
+    \t\tdestinations\t\t#############\n#################################################\ncanal.destinations=\n#
+    conf root dir\ncanal.conf.dir=../conf\n# auto scan instance dir add/remove and
+    start/stop instance\ncanal.auto.scan=false\ncanal.auto.scan.interval=5\n\n#canal.instance.tsdb.spring.xml=classpath:spring/tsdb/h2-tsdb.xml\n#canal.instance.tsdb.spring.xml=classpath:spring/tsdb/mysql-tsdb.xml\n\ncanal.instance.global.mode=manager\ncanal.instance.global.lazy=false\ncanal.instance.global.manager.address=${canal.admin.manager}\n#canal.instance.global.spring.xml=classpath:spring/memory-instance.xml\n#canal.instance.global.spring.xml=classpath:spring/file-instance.xml\ncanal.instance.global.spring.xml=classpath:spring/default-instance.xml\n\n##################################################\n#########
+    \t\t     MQ \t\t     #############\n##################################################\ncanal.mq.servers=127.0.0.1:6667\ncanal.mq.retries=0\ncanal.mq.batchSize=16384\ncanal.mq.maxRequestSize=1048576\ncanal.mq.lingerMs=100\ncanal.mq.bufferMemory=33554432\ncanal.mq.canalBatchSize=50\ncanal.mq.canalGetTimeout=100\ncanal.mq.flatMessage=true\ncanal.mq.compressionType=none\ncanal.mq.acks=all\n#canal.mq.properties=\ncanal.mq.producerGroup=test\n#
+    Set this value to \"cloud\", if you want open message trace feature in aliyun.\ncanal.mq.accessChannel=local\n#
+    aliyun mq namespace\n#canal.mq.namespace=\n\n##################################################\n#########
+    \    Kafka Kerberos Info    #############\n##################################################\ncanal.mq.kafka.kerberos.enable=false\ncanal.mq.kafka.kerberos.krb5FilePath=\"../conf/kerberos/krb5.conf\"\ncanal.mq.kafka.kerberos.jaasFilePath=\"../conf/kerberos/jaas.conf\"\n\n"
+kind: ConfigMap
+metadata:
+  creationTimestamp: "2021-03-10T09:08:32Z"
+  managedFields:
+  - apiVersion: v1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:data:
+        .: {}
+        f:canal.properties: {}
+    manager: kubectl-create
+    operation: Update
+    time: "2021-03-10T09:08:32Z"
+  name: canal-server-configmap
+  namespace: canal
+  resourceVersion: "36642883"
+  selfLink: /api/v1/namespaces/canal/configmaps/canal-server-configmap
+  uid: bb07cb0a-ac7a-49a0-84d8-1d0ca471b5fa

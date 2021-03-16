@@ -4,3 +4,37 @@ JAVA_OPTS=" $JAVA_OPTS -Djava.awt.headless=true -Djava.net.preferIPv4Stack=true 
 ADAPTER_OPTS="-DappName=canal-adapter"
 
 kubectl create configmap canal-server-configmap -n canal --from-file=canal.properties
+
+安装步骤
+1.准备数据源mysql-datasource
+2.准备数据目标 elasticsearch
+3.搭建mysql-server-canal-admin 创建user，导入数据表
+4.搭建zookeeper-canal-admin
+5.搭建消息队列kafka，kafka-manager，可选rocketmq
+6.启动canal-admin 初始化配置
+7.启动canal-server 注册成功
+8.修改数据库里面配置canal_adapter
+9.启动canal_adapter
+10.目标elasticsearch验证数据
+
+
+adapter1.1.5安装部署配置
+
+远程配置中心方式（mysql）
+
+在使用canal-admin时使用manager_ddl.sql脚本创建的库中进行配置，也可以自己单独弄一个。
+
+application.yml配置：
+在canal_config表中创建id为2的记录
+设置字段name值为application.yml
+content值为application.yml文件中的内容（直接拷贝粘贴）
+content_md5值为内容md5标识（暂时没啥用，可以随便写一个）
+
+adapter数据配置：
+在canal_adapter_config表中新增记录
+设置字段category为了adapter数据源类型，如es7、rdb、hbase等，对应conf下的目录
+设置name为adapter文件名，如mytest_user.yml（必须.yml结尾），对应conf/{db type}下的目录.如conf/es7/mytest_user.yml，该路径作为程序中的配置主键用于区分不同的配置。
+content内容为adapter数据源配置文件里的内容，mytest_user.yml的内容
+
+开启远程配置
+修改conf/bootstrap.yml内容，开启后会拉取数据库中的配置覆盖到本地。

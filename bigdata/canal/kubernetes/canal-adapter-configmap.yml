@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: canal-adapter-configmap
+  namespace: canal
+data:
+  bootstrap.yml: |
+    canal:
+      # adapter远程配置库连接
+      manager:
+        jdbc:
+          url: jdbc:mysql://mysql-server.dbaas:3306/canal_manager?useUnicode=true&characterEncoding=UTF-8
+          username: root
+          password: root_password

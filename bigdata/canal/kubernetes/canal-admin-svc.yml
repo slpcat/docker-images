@@ -1,0 +1,13 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: canal-admin
+  namespace: canal
+  labels:
+    k8s-app: canal-admin
+spec:
+  ports:
+    - port: 8089
+      name: admin-port
+  selector:
+    k8s-app: canal-admin

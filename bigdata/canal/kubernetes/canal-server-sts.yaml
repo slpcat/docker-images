@@ -1,0 +1,93 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: canal-server
+  namespace: canal
+  labels:
+    k8s-app: canal-server
+spec:
+  replicas: 3
+  
+  selector:
+    matchLabels:
+      k8s-app: canal-server
+  serviceName: canal-server-hs
+  template:
+    metadata:
+      labels:
+        k8s-app: canal-server
+    spec:
+      terminationGracePeriodSeconds: 600 #k8s将会给应用发送SIGTERM信号，可以用来正确、优雅地关闭应用,默认为30秒
+      affinity:
+        podAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: "k8s-app"
+                    operator: In
+                    values:
+                      - canal-server
+              topologyKey: "kubernetes.io/hostname"
+      containers:
+        - name: canal-server
+          #image: registry.cn-hangzhou.aliyuncs.com/yalong_lee_release/canal-server:v1.1.4
+          image: slpcat/canal-server:v1.1.5
+          imagePullPolicy: Always
+          env:
+            # tcp bind ip
+            - name: "POD_IP"
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            # podName + serviceName + namespace = hostname
+            - name: "POD_NAME"
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: "SERVICE_NAME"
+              value: "canal-server-hs"
+            - name: "NAMESPACE"
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            # canal-admin的地址
+            - name: "CANAL_ADMIN_MANAGER"
+              value: "canal-admin:8089"
+            # canal-admin的tcp端口号
+            - name: "CANAL_ADMIN_PORT"
+              value: "11110"
+            # canal-admin的账号
+            - name: "CANAL_ADMIN_USER"
+              value: "admin"
+            # canal-admin的密码(数据库加密后的密文)
+            - name: "CANAL_ADMIN_PASSWORD"
+              value: "4ACFE3202A5FF5CF467898FC58AAB1D615029441"
+            # 自动注册至对应的集群
+            - name: "CANAL_ADMIN_CLUSTER"
+              value: "default"
+            - name: "CANAL_ZOOKEEPER"
+              value: "zk-cs:2181"
+          resources:
+            requests:
+              cpu: 500m
+              memory: 2Gi
+          ports:
+            - containerPort: 11110
+              name: admin-port
+            - containerPort: 11111
+              name: canal-port
+            - containerPort: 11112
+              name: metrics-port
+          volumeMounts:
+            - mountPath: /opt/canal-server/logs
+              name: log
+      volumes:
+      - name: log
+        emptyDir: {}
+      initContainers:
+        - name: init-zk
+          image: registry.cn-hangzhou.aliyuncs.com/yalong_lee_release/busybox:1.28.4
+          command: ['sh', '-c', 'until nslookup zk-cs; do echo waiting for zk-hs; sleep 2; done;']
+        - name: init-canal-admin
+          image: registry.cn-hangzhou.aliyuncs.com/yalong_lee_release/busybox:1.28.4
+          command: ['sh', '-c', 'until nslookup canal-admin; do echo waiting for zk-hs; sleep 2; done;']

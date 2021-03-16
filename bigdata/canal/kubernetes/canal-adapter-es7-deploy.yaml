@@ -1,4 +1,4 @@
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: adapter-rdsidtest-es6
@@ -7,13 +7,16 @@ metadata:
     app: adapter-rdsidtest-es6
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: adapter-rdsidtest-es6
   template:
     metadata:
       labels:
         app: adapter-rdsidtest-es6
     spec:
       containers:
-      - image: canal/canal-adapter:v1.1.4
+      - image: slpcat/canal-adapter:v1.1.5
         name: adapter-rdsidtest-es6
 #        imagePullPolicy: Always
         ports:
@@ -26,11 +29,6 @@ spec:
         - containerPort: 11112
           protocol: TCP
           name: http3
-        volumeMounts:
-        - mountPath: /home/canal/conf
-          name: es-commans
-        - mountPath: /home/canal/conf/es6
-          name: es-params
         resources:
           requests:
             cpu: 100m
@@ -38,12 +36,21 @@ spec:
           limits:
             cpu: 4000m
             memory: 4Gi
+        volumeMounts:
+          - name: bootstrap
+            mountPath: "/opt/canal-adapter/conf/bootstrap.yml"
+            subPath: bootstrap.yml
+          - mountPath: /opt/canal-adapter/logs
+            name: log
       volumes:
-        - name: es-commans
-          configMap:
-            name: adapter-es6-commans
-        - name: es-params
-          configMap:
-            name: adapter-es6-params
+      - name: bootstrap
+        configMap:
+          name: canal-adapter-configmap
+          #Add ConfigMap data to a specific path in the Volume
+          items:
+          - key: bootstrap.yml
+            path: bootstrap.yml
+      - name: log
+        emptyDir: {}
       securityContext:
         runAsUser: 0
