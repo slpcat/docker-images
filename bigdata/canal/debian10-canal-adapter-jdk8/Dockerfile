@@ -3,6 +3,7 @@ MAINTAINER 若虚 <slpcat@qq.com>
 
 # install from source
 RUN \
+    mkdir -p /opt && \
     cd /opt && \
     git clone https://github.com/alibaba/canal/ && \
     cd canal && \
