@@ -10,5 +10,5 @@ RUN \
     chown root:root /etc/sudoers && chmod 0440 /etc/sudoers
 
 RUN \
-    apt-get update -y && apt-get dist-upgrade && \
+    apt-get update -y && apt-get -y dist-upgrade && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y lightdm lxde chromium-browser
