@@ -71,6 +71,7 @@ RUN \
 	ca-certificates \
 	curl \
  	dbus-x11 \
+        dialog \
 	gawk \
 	gnupg2 \
 	libfuse2 \
