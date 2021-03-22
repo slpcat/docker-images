@@ -1,0 +1,8 @@
+docker run -d -p 3389:3389 jumanjiman/xrdp
+
+用户foo 密码bar
+
+https://github.com/frxyt/docker-xrdp
+docker run --rm -p 33890:3389 frxyt/xrdp:lxde
+
+user debian, password ChangeMe
