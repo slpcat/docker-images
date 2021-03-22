@@ -13,10 +13,14 @@ spec:
     protocol: TCP
     port: 80
     targetPort: 80
+  - name: https
+    protocol: TCP
+    port: 443
+    targetPort: 443
   - name: registry
     protocol: TCP
     port: 5000
     targetPort: 50000
-  type: NodePort
+  type: CLusterIP
   selector:
     app: gitlab-ce

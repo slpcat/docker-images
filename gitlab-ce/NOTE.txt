@@ -21,3 +21,7 @@ kubernets 部署示例
 4. 创建service提供外部访问
 
 The latest docker guide can be found here: [GitLab Docker images](/doc/docker/README.md).
+
+kooder
+
+Kooder 是一个开源的代码搜索工具，目标是为包括 Gitee/GitLab/Gitea 在内的代码托管系统提供 自动的源码、仓库和 Issue 的搜索服务。
