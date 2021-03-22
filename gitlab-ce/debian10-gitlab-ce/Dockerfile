@@ -34,6 +34,7 @@ RUN \
       openssh-server \
       wget \
       less \
+      lsb-release \
       nano \
       curl \
       gnupg \
@@ -41,10 +42,6 @@ RUN \
       vim
 
 SHELL ["/bin/sh", "-c"],
-
-# Install required packages
-RUN \
-    apt-get dist-upgrade -y
 
 # Remove MOTD
 RUN rm -rf /etc/update-motd.d /etc/motd /etc/motd.dynamic
