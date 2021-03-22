@@ -11,5 +11,4 @@ RUN \
 
 RUN \
     apt-get update -y && apt-get dist-upgrade && \
-    apt-get install -y lightdm lxde chromium-browser
-
+    DEBIAN_FRONTEND=noninteractive apt-get install -y lightdm lxde chromium-browser
