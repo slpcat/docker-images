@@ -66,6 +66,12 @@ spec:
           #capabilities:
           #  add: ["NET_ADMIN"]
         env:
+          - name: PUID
+            value: "1000"
+          - name: PGID
+            value: "1000"
+          - name: PASSWORD
+            value: "mypassword"
           #- name: LC_ALL
           #  value: "zh_CN.UTF-8"
           #- name: LANG

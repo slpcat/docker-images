@@ -11,6 +11,6 @@ spec:
     targetPort: 3389
   type: ClusterIP
   selector:
-    app: rdp-desktop-id01
+    #app: rdp-desktop-id01
     canary: rdp-desktop-id01
     #version: v1

@@ -14,7 +14,7 @@ RUN \
     apt-get update -y && apt-get -y dist-upgrade && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y lightdm \
     lxde firefox docker-ce wget vim-tiny \
-    language-pack-zh-hans \
+    pavumeter language-pack-zh-hans \
     ibus ibus-clutter ibus-gtk ibus-gtk3 ibus-pinyin ibus-libpinyin ibus-sunpinyin \
     htop iotop iftop net-tools tmux
 
