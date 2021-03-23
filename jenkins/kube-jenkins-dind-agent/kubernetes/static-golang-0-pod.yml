@@ -1,0 +1,63 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    jenkins: slave
+    jenkins/label: static-golang
+  name: static-golang-0
+  namespace: ci
+spec:
+  containers:
+  - name: jnlp
+    env:
+    - name: JENKINS_SECRET
+      value: "01e6a687194ba9d96460e3b2a5136abb7d50adeb13e98295550d1b0aed366128"
+    - name: JAVA_OPTS
+      value: -server -Djava.awt.headless=true -Djava.nio.channels.spi.SelectorProvider=sun.nio.ch.EPollSelectorProvider
+        -Dfile.encoding=UTF8 -Xverify:none -XX:MetaspaceSize=128m -XX:+UseNUMA -XX:+UseNUMAInterleaving
+        -XX:NUMAInterleaveGranularity=65536 -XX:+UseLargePages -XX:+UseCompressedOops
+        -XX:MaxMetaspaceSize=512m -XX:ReservedCodeCacheSize=240M -XX:MaxRAMFraction=2
+        -XshowSettings:vm -XX:+AggressiveOpts -Djute.maxbuffer=41943040 -XX:-UseBiasedLocking
+        -XX:+UseFastAccessorMethods -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap
+        -XX:+UseCompressedOops -XX:+CMSClassUnloadingEnabled  -XX:+CMSScavengeBeforeRemark
+        -XX:+DisableExplicitGC -XX:+UseG1GC -XX:+ExplicitGCInvokesConcurrent -XX:SoftRefLRUPolicyMSPerMB=0
+        -XX:G1ReservePercent=25 -XX:G1NewSizePercent=10 -XX:G1MaxNewSizePercent=25
+        -XX:MaxGCPauseMillis=20 -XX:-OmitStackTraceInFastThrow -XX:+ParallelRefProcEnabled
+        -XX:ParallelGCThreads=8 -XX:MaxTenuringThreshold=1 -XX:G1HeapWastePercent=10
+        -XX:SurvivorRatio=8 -XX:G1MixedGCCountTarget=16 -XX:G1MixedGCLiveThresholdPercent=90
+        -XX:InitiatingHeapOccupancyPercent=35 -XX:G1HeapRegionSize=32m -XX:+PerfDisableSharedMem
+        -XX:-ResizePLAB
+    - name: JENKINS_AGENT_NAME
+      value: static-golang-0
+    - name: JENKINS_NAME
+      value: static-golang-0
+    - name: JENKINS_AGENT_WORKDIR
+      value: /home/jenkins/agent
+    - name: JENKINS_URL
+      value: http://jenkins.ci/
+    image: slpcat/kube-jenkins-dind-agent:golang
+    imagePullPolicy: IfNotPresent
+    resources:
+      limits:
+        cpu: "4"
+        memory: 4Gi
+      requests:
+        cpu: "4"
+        memory: 4Gi
+    securityContext:
+      privileged: true
+      runAsUser: 0
+      runAsGroup: 0
+      #fsGroup: 1000
+    volumeMounts:
+    - mountPath: /home/jenkins/agent
+      name: workspace-volume
+    workingDir: /home/jenkins/agent
+  #imagePullSecrets:
+  #- name: ali-vpc
+  nodeSelector:
+    kubernetes.io/os: linux
+  volumes:
+  - name: workspace-volume
+    persistentVolumeClaim:
+      claimName: static-golang-0

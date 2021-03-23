@@ -1,0 +1,12 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: static-jnlp-0
+  namespace: ci
+spec:
+  accessModes:
+   - ReadWriteOnce
+  resources:
+    requests:
+       storage: 20Gi  #TODO: specify the appropriate size to match pv in pool of ceph rbd
+  #storageClassName: general

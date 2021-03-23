@@ -1,5 +1,9 @@
 公共组件
 packer,terraform
+云平台cli
+
+kubernetes常用工具
+kubectl helm istioctl
 
 jenkins-slave分类
 
@@ -12,4 +16,28 @@ https://github.com/jenkinsci/docker-inbound-agent
 docker run --init jenkins/inbound-agent -url http://jenkins-server:port <secret> <agent name>
 
 https://github.com/jenkinsci/kubernetes-plugin/tree/master/examples
+
+
+jenkins 静态slave持续运行 具备pvc
+
+static-golang
+static-jnlp
+static-java8
+static-java11
+static-nodejs
+
+java -jar agent.jar -jnlpUrl http://172.25.13.133/computer/static-golang-0/jenkins-agent.jnlp -workDir "/home/jenkins/agent"
+
+
+master配置
+创建节点
+名字static-golang-0
+目录/home/jenkins/agent
+标签
+启动方式 java web agent Launch slave agents via Java Web Start
+创建完毕获取secret
+http://172.25.13.133/computer/static-golang-0/jenkins-agent.jnlp
+
+
+
 

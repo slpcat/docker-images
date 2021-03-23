@@ -76,6 +76,10 @@ RUN pip3 install tccli
 
 COPY daemon.json /etc/docker/daemon.json
 
+#tencent cloud COSCMD
+RUN \
+    pip3 install coscmd -U
+
 # jenkins slave
 ENV HOME /home/jenkins
 
