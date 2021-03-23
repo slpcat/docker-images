@@ -31,8 +31,6 @@ spec:
       terminationGracePeriodSeconds: 60 ##k8s将会给应用发送SIGTERM信号，可以用来正确、优雅地关闭应用,默认为30秒
       #imagePullSecrets:
       #- name: registrykey-ali-ext
-      securityContext:
-        privileged: true
       containers:
       - name: rdp-desktop
         image: slpcat/desktop-rdesktop:focal
@@ -63,13 +61,11 @@ spec:
           limits:
             cpu: 4
             memory: 8Gi
+        securityContext:
+          privileged: true
+          #capabilities:
+          #  add: ["NET_ADMIN"]
         env:
-          - name: VNC_PASSWORD
-            value: "mypassword"
-          - name: RESOLUTION
-            value: "1280x1024"
-          - name: HTTP_PASSWORD
-            value: "mypassword"
           #- name: LC_ALL
           #  value: "zh_CN.UTF-8"
           #- name: LANG

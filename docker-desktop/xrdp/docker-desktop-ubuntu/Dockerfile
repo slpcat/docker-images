@@ -5,7 +5,7 @@ MAINTAINER 若虚 <slpcat@qq.com>
 COPY .xsession /config/.xsession
 COPY default-display-manager /etc/X11/default-display-manager
 COPY sudoers /etc/sudoers
-COPY services /etc/s6/
+COPY services /etc/s6/services
 
 RUN \
     chown root:root /etc/sudoers && chmod 0440 /etc/sudoers
