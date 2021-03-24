@@ -7,17 +7,17 @@ ENV \
     LANG="en_US.UTF-8" \
     LANGUAGE="en_US.UTF-8" \
     LC_ALL="en_US.UTF-8" \
-    TIMEZONE="Asia/Shanghai" \
+    TZ="Asia/Shanghai" \
     DEBIAN_FRONTEND="noninteractive" \ 
     container="docker"
 
 # Set timezone and locales
 RUN \
-    echo "${TIMEZONE}" > /etc/timezone \
+    echo "${TZ}" > /etc/timezone \
     && echo "$LANG UTF-8" > /etc/locale.gen \
     && apt-get update -q \
     && DEBIAN_FRONTEND=noninteractive apt-get install -yq apt-utils dialog vim-tiny curl locales \
-    && ln -sf /usr/share/zoneinfo/${TIMEZONE} /etc/localtime \
+    && ln -sf /usr/share/zoneinfo/${TZ} /etc/localtime \
     && update-locale LANG=$LANG \
     && locale-gen $LANG \
     && DEBIAN_FRONTEND=noninteractive dpkg-reconfigure locales

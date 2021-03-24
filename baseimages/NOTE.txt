@@ -1,3 +1,4 @@
+
 x86机器上运行arm64以及其他架构 docker
 https://github.com/multiarch/qemu-user-static
 
@@ -15,3 +16,13 @@ x86_64h-apple-darwin	osx64h, darwin64h, x86_64h		X
 i386-apple-darwin	osx32, darwin32				X	
 x86_64-w64-mingw32	windows, win64					X
 i686-w64-mingw32	win32						X
+
+容器内多进程管理
+1.supervisord
+2.systemd
+3.monit
+4.dumb-init
+5.tini
+6.s6 
+采用s6-svscan 代替 supervisord 进行程序管理
+https://github.com/just-containers/s6-overlay

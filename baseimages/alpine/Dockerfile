@@ -9,7 +9,7 @@ ENV \
     LANG="en_US.UTF-8" \ 
     LANGUAGE="en_US.UTF-8" \
     LC_ALL="en_US.UTF-8" \
-    TIMEZONE="Asia/Shanghai"
+    TZ="Asia/Shanghai"
 
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/' /etc/apk/repositories
 
@@ -27,8 +27,8 @@ RUN set -ex \
            tar \
            wget \
            curl \
-    && echo "${TIMEZONE}" > /etc/TZ \
-    && ln -sf /usr/share/zoneinfo/${TIMEZONE} /etc/localtime \
+    && echo "${TZ}" > /etc/TZ \
+    && ln -sf /usr/share/zoneinfo/${TZ} /etc/localtime \
     # Network fix
     && echo 'hosts: files mdns4_minimal [NOTFOUND=return] dns mdns4' >> /etc/nsswitch.conf
 

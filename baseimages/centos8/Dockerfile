@@ -9,12 +9,12 @@ ENV \
     LANG="en_US.UTF-8" \ 
     LANGUAGE="en_US.UTF-8" \
     #LC_ALL="en_US.UTF-8" \
-    TIMEZONE="Asia/Shanghai"
+    TZ="Asia/Shanghai"
 
 COPY yum.repos.d/*.repo /etc/yum.repos.d/
 
 # set timezone
-RUN ln -sf /usr/share/zoneinfo/${TIMEZONE} /etc/localtime
+RUN ln -sf /usr/share/zoneinfo/${TZ} /etc/localtime
 
 RUN \
     cd /etc/yum.repos.d \

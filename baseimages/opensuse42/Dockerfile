@@ -9,7 +9,7 @@ ENV \
     LANG="en_US.UTF-8" \ 
     LANGUAGE="en_US.UTF-8" \
     #LC_ALL="en_US.UTF-8" \
-    TIMEZONE="Asia/Shanghai"
+    TZ="Asia/Shanghai"
 
 RUN sed -i 's/download.opensuse.org/mirrors.aliyun.com\/opensuse/' /etc/zypp/repos.d/*
 
@@ -20,6 +20,6 @@ RUN  \
     zypper clean
 
 # set timezone
-RUN ln -sf /usr/share/zoneinfo/${TIMEZONE} /etc/localtime
+RUN ln -sf /usr/share/zoneinfo/${TZ} /etc/localtime
 
 CMD ["/bin/bash"]

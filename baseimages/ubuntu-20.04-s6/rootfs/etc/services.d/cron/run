@@ -1,2 +1,2 @@
 #!/usr/bin/execlineb -P
-exec crond -n
+crond -n
