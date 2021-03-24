@@ -65,4 +65,20 @@ RUN ALPINE_GLIBC_BASE_URL="https://github.com/sgerrand/alpine-pkg-glibc/releases
         "$ALPINE_GLIBC_BIN_PACKAGE_FILENAME" \
         "$ALPINE_GLIBC_I18N_PACKAGE_FILENAME"
 
-CMD ["/bin/bash"]
+ARG S6_VERSION=v2.2.0.0
+##
+## ROOTFS
+##
+
+# root filesystem
+#COPY rootfs /
+
+# s6 overlay
+ADD https://github.com/just-containers/s6-overlay/releases/download/${S6_VERSION}/s6-overlay-amd64.tar.gz /tmp/s6-overlay.tar.gz
+RUN tar xvfz /tmp/s6-overlay.tar.gz -C /
+
+##
+## INIT
+##
+
+ENTRYPOINT [ "/init" ]
