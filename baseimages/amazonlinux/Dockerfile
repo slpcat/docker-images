@@ -1,4 +1,4 @@
-FROM amazonelinux
+FROM amazonlinux
 
 MAINTAINER 若虚 <slpcat@qq.com>
 
