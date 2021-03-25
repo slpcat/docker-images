@@ -1,5 +1,5 @@
 #upstream https://github.com/jenkinsci/docker-inbound-agent
-FROM slpcat/openjdk:8
+FROM slpcat/openjdk:8-s6
 MAINTAINER 若虚 <slpcat@qq.com>
 
 RUN apt-get update -y             \
@@ -120,4 +120,4 @@ USER ${user}
 ENV AGENT_WORKDIR=${AGENT_WORKDIR}
 RUN mkdir /home/jenkins/.jenkins && mkdir -p ${AGENT_WORKDIR}
 
-ENTRYPOINT ["jenkins-agent"]
+CMD ["jenkins-agent"]
