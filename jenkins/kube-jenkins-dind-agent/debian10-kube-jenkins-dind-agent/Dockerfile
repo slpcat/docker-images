@@ -85,6 +85,7 @@ RUN \
 RUN pip3 install tccli
 
 COPY daemon.json /etc/docker/daemon.json
+COPY rootfs /
 
 #tencent cloud COSCMD
 RUN \
