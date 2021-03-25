@@ -1,5 +1,5 @@
 #upstream: https://github.com/jenkinsci/docker
-FROM slpcat/openjdk:11-buster
+FROM slpcat/openjdk:11-buster-s6
 MAINTAINER 若虚 <slpcat@qq.com>
 
 RUN apt-get update \
@@ -82,7 +82,7 @@ USER ${user}
 
 COPY jenkins-support /usr/local/bin/jenkins-support
 COPY jenkins.sh /usr/local/bin/jenkins.sh
-ENTRYPOINT ["/usr/bin/tini", "--", "/usr/local/bin/jenkins.sh"]
+#ENTRYPOINT ["/usr/bin/tini", "--", "/usr/local/bin/jenkins.sh"]
 
 # from a derived Dockerfile, can use `RUN plugins.sh active.txt` to setup /usr/share/jenkins/ref/plugins from a support bundle
 COPY plugins.sh /usr/local/bin/plugins.sh
@@ -395,3 +395,5 @@ ENV JAVA_OPTS="-server -Djava.awt.headless=true -XX:MetaspaceSize=128m \
          -Dhudson.DNSMultiCast.disabled=true"
 
 ENV JENKINS_OPTS="--webroot=${JENKINS_FOLDER}/war --httpListenAddress=0.0.0.0"
+
+CMD ["/usr/local/bin/jenkins.sh"]
