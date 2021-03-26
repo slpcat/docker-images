@@ -5,6 +5,35 @@ http://125.209.240.10:10123/
 
 https://github.com/pinpoint-apm/pinpoint-docker
 
+pinpoint部署监控Nginx
+https://github.com/pinpoint-apm/pinpoint/blob/master/doc/proxy-http-header.md
+通过设置请求头Pinpoint-ProxyNginx来透传
+还可以支持监控Apache HTTP Server 或者是App等其他前端应用在Nginx模块的耗时情况
+nginx.conf
+
+...
+  server {
+        listen       9080;
+        server_name  localhost;
+
+        location / {
+            ...
+            set $pinpoint_proxy_header "t=$msec D=$request_time";
+            proxy_set_header Pinpoint-ProxyNginx $pinpoint_proxy_header;
+        }
+  }
+...
+或者
+http {
+...
+
+    proxy_set_header Pinpoint-ProxyNginx t=$msec;
+
+...
+}
+
+pinpoint-自定义告警推送到钉钉、微信群
+
 编译组件 生产环境使用
 hbase 2.1.x
 
@@ -12,5 +41,22 @@ pinpoint-agent-attach-example
 java 直接启动 --> collector
 php --> Collector-Agent --> collector
 
-pinpoint-collector
-pinpoint-web
+pinpoint修改记录
+1.应用名字长度限制
+APPLICATION_NAME_MAX_LEN=128
+
+
+安装过程
+1.pinpoint-zookeeper
+
+2.pinpoint-hbase
+https://github.com/pinpoint-apm/pinpoint/tree/master/hbase/scripts
+./bin/hbase shell hbase-create.hbase
+
+3.pinpoint-collector
+
+4.pinpoint-mysql
+
+5.pinpoint-web
+
+6.pinpoint-flink

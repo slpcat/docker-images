@@ -27,13 +27,28 @@ spec:
   selector:
     app: pinpoint-collector
   ports:
+    - name: grpc-agent
+      port: 9991
+      protocol: TCP
+    - name: grpc-stat
+      port: 9992
+      protocol: TCP
+    - name: grpc-span
+      port: 9993
+      protocol: TCP
     - name: base
       port: 9994
+      protocol: TCP
+    - name: stat-tcp
+      port: 9995
       protocol: TCP
     - name: stat-udp
       port: 9995
       protocol: UDP
+    - name: span-tcp
+      port: 9996
+      protocol: TCP
     - name: span-udp
       port: 9996
       protocol: UDP
-  type: NodePort
+  type: ClusterIP

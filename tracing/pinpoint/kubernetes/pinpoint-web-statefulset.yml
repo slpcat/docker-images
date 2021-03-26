@@ -1,0 +1,91 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: pinpoint-web
+  namespace: tracing
+  labels:
+    app: pinpoint-web
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: pinpoint-web
+#  minReadySeconds: 60     #滚动升级时60s后认为该pod就绪
+  serviceName: pinpoint-web
+  template:
+    metadata:
+      labels:
+        app: pinpoint-web
+      annotations:
+        #disable istio sidecar injection
+        sidecar.istio.io/inject: "false"
+    spec:
+      #nodeName: k8s.node1 #指定调度节点为k8s.node1
+      #nodeSelector:  #调度特定的节点
+      #  env: test-team
+      terminationGracePeriodSeconds: 60 ##k8s将会给应用发送SIGTERM信号，可以用来正确、优雅地关闭应用,默认为30秒
+      #imagePullSecrets:
+      #- name: registrykey-ali-ext
+      containers:
+      - name: pinpoint-web
+        image: slpcat/pinpoint-web:v2.2.1-alpine
+        imagePullPolicy: Always
+        resources:
+          requests:
+            cpu: 500m
+            memory: 512Mi
+          limits:
+            cpu: 2
+            #nvidia.com/gpu: 1
+            memory: 4Gi
+        securityContext:
+          capabilities: {}
+          privileged: false
+        env:
+        - name: JAVA_OPTS
+          value: "-server -Djava.awt.headless=true -Djava.nio.channels.spi.SelectorProvider=sun.nio.ch.EPollSelectorProvider -Xverify:none -XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=512m -XX:ReservedCodeCacheSize=240M -XX:MaxRAMFraction=2 -XshowSettings:vm -XX:+AggressiveOpts -XX:-UseBiasedLocking -XX:+UseFastAccessorMethods -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:+UseG1GC -XX:+ExplicitGCInvokesConcurrent -XX:SoftRefLRUPolicyMSPerMB=0 -XX:G1ReservePercent=25 -XX:G1NewSizePercent=10 -XX:G1MaxNewSizePercent=25 -XX:MaxGCPauseMillis=20 -XX:-OmitStackTraceInFastThrow -XX:+ParallelRefProcEnabled -XX:ParallelGCThreads=8 -XX:MaxTenuringThreshold=1 -XX:G1HeapWastePercent=10 -XX:SurvivorRatio=8 -XX:G1MixedGCCountTarget=16 -XX:G1MixedGCLiveThresholdPercent=90 -XX:InitiatingHeapOccupancyPercent=35 -XX:G1HeapRegionSize=32m -XX:+PerfDisableSharedMem -XX:-ResizePLAB"
+        #- name: CLUSTER_ENABLE
+        #  value: "true"
+        #- name: CLUSTER_ZOOKEEPER_ADDRESS
+        #  value: "pinpoint-zookeeper-svc:2181"
+        - name: ADMIN_PASSWORD
+          value: "admin"
+        #- name: HBASE_HOST
+        #  value: "pinpoint-hbase-svc"
+        #- name: HBASE_PORT
+        #  value: "2181"
+        #- name: HBASE_ZNODE_PARENT
+        #  value: "hbase"
+        #- name: HBASE_NAMESPACE
+        #  value: "pinpoint"
+        - name: JDBC_DRIVER_CLASS_NAME
+          value: "com.mysql.jdbc.Driver"
+        - name: JDBC_URL
+          value: "jdbc:mysql://mysql-server:3306/pinpoint?characterEncoding=UTF-8"
+        - name: JDBC_USERNAME
+          value: "pinpoint"
+        - name: JDBC_PASSWORD
+          value: "pinpoint"
+        - name: DEBUG_LEVEL
+          value: "INFO"
+        - name: BATCH_ENABLE
+          value: "false"
+        - name: BATCH_SERVER_IP
+          value: "batch"
+        - name: BATCH_FLINK_SERVER
+          value: "FLINK_MANGER_SERVER_IP_LIST"
+        - name: SPRING_PROFILES_ACTIVE
+          value: "release"
+        - name: PINPOINT_ZOOKEEPER_ADDRESS
+          value: "pinpoint-hbase-svc:2181"
+        - name: CONFIG_SENDUSAGE
+          value: "false"
+        - name: LOGGING_LEVEL_ROOT
+          value: "INFO"
+        - name: CONFIG_SHOW_APPLICATIONSTAT
+          value: "true"
+        ports:
+        - containerPort: 9997
+          protocol: TCP
+        - containerPort: 8080
+          protocol: TCP

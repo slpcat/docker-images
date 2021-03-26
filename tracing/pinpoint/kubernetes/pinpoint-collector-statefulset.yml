@@ -1,0 +1,87 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: pinpoint-collector
+  namespace: tracing
+  labels:
+    app: pinpoint-collector
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: pinpoint-collector
+#  minReadySeconds: 60     #滚动升级时60s后认为该pod就绪
+  serviceName: pinpoint-collector
+  template:
+    metadata:
+      labels:
+        app: pinpoint-collector
+      annotations:
+        #disable istio sidecar injection
+        sidecar.istio.io/inject: "false"
+    spec:
+      #nodeName: k8s.node1 #指定调度节点为k8s.node1
+      #nodeSelector:  #调度特定的节点
+      #  env: test-team
+      terminationGracePeriodSeconds: 60 ##k8s将会给应用发送SIGTERM信号，可以用来正确、优雅地关闭应用,默认为30秒
+      #imagePullSecrets:
+      #- name: registrykey-ali-ext
+      containers:
+      - name: pinpoint-collector
+        image: slpcat/pinpoint-collector:v2.2.1-alpine
+        imagePullPolicy: Always
+        resources:
+          requests:
+            cpu: 500m
+            memory: 512Mi
+          limits:
+            cpu: 4
+            #nvidia.com/gpu: 1
+            memory: 8Gi
+        securityContext:
+          capabilities: {}
+          privileged: false
+        env:
+        - name: JAVA_OPTS
+          value: "-server -Dspring.profiles.active=release -Djava.awt.headless=true -Djava.nio.channels.spi.SelectorProvider=sun.nio.ch.EPollSelectorProvider -Xverify:none -XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=512m -XX:ReservedCodeCacheSize=240M -XX:MaxRAMFraction=2 -XshowSettings:vm -XX:+AggressiveOpts -XX:-UseBiasedLocking -XX:+UseFastAccessorMethods -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:+UseG1GC -XX:+ExplicitGCInvokesConcurrent -XX:SoftRefLRUPolicyMSPerMB=0 -XX:G1ReservePercent=25 -XX:G1NewSizePercent=10 -XX:G1MaxNewSizePercent=25 -XX:MaxGCPauseMillis=20 -XX:-OmitStackTraceInFastThrow -XX:+ParallelRefProcEnabled -XX:ParallelGCThreads=8 -XX:MaxTenuringThreshold=1 -XX:G1HeapWastePercent=10 -XX:SurvivorRatio=8 -XX:G1MixedGCCountTarget=16 -XX:G1MixedGCLiveThresholdPercent=90 -XX:InitiatingHeapOccupancyPercent=35 -XX:G1HeapRegionSize=32m -XX:+PerfDisableSharedMem -XX:-ResizePLAB"
+        - name: CLUSTER_ENABLE
+          value: "true"
+        #- name: CLUSTER_ZOOKEEPER_ADDRESS
+        #  value: "pinpoint-zookeeper-svc:2181"
+        #- name: HBASE_HOST
+        #  value: "pinpoint-hbase-svc"
+        #- name: HBASE_PORT
+        #  value: "2181"
+        #- name: HBASE_ZNODE_PARENT
+        #  value: "/hbase"
+        #- name: HBASE_NAMESPACE
+        #  value: "pinpoint"
+        - name: DEBUG_LEVEL
+          value: "INFO"
+        - name: SPRING_PROFILES
+          value: "release"
+        - name: PINPOINT_ZOOKEEPER_ADDRESS
+          value: "pinpoint-hbase-svc:2181"
+        - name: LOGGING_LEVEL_ROOT
+          value: "INFO"
+        - name: FLINK_CLUSTER_ENABLE
+          value: "false"
+        - name: FLINK_CLUSTER_ZOOKEEPER_ADDRESS
+          value: "flink-zk"
+        ports:
+        - containerPort: 9991
+          protocol: TCP
+        - containerPort: 9992
+          protocol: TCP
+        - containerPort: 9993
+          protocol: TCP
+        - containerPort: 9994
+          protocol: TCP
+        - containerPort: 9995
+          protocol: TCP
+        - containerPort: 9995
+          protocol: UDP
+        - containerPort: 9996
+          protocol: TCP
+        - containerPort: 9996
+          protocol: UDP

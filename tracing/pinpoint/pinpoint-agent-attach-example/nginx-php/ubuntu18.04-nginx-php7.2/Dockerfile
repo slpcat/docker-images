@@ -53,6 +53,8 @@ ENV \
 RUN sed -i 's/archive.ubuntu.com/mirrors.aliyun.com/' /etc/apt/sources.list && \
     sed -i 's/security.ubuntu.com/mirrors.aliyun.com/' /etc/apt/sources.list
 
+COPY nginx-official-repo.gpg /etc/apt/trusted.gpg.d/
+
 # Set timezone and locales
 RUN \
     echo "${TIMEZONE}" > /etc/timezone \
@@ -67,19 +69,20 @@ RUN \
 # Install required packages
 RUN \
     apt-get dist-upgrade -y \
-    && apt-get install -y python3 python3-pip curl gnupg2 ca-certificates lsb-release\
+    && apt-get install -y python3 python3-pip curl ca-certificates lsb-release\
     && composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/ \
     && composer selfupdate
 
 #install nginx
-RUN \
-    echo "deb http://nginx.org/packages/mainline/ubuntu `lsb_release -cs` nginx"     | tee /etc/apt/sources.list.d/nginx.list \
-    && echo -e "Package: *\nPin: origin nginx.org\nPin: release o=nginx\nPin-Priority: 900\n"  | tee /etc/apt/preferences.d/99nginx \
-    && curl -o /tmp/nginx_signing.key https://nginx.org/keys/nginx_signing.key \
-    && gpg --dry-run --quiet --import --import-options show-only /tmp/nginx_signing.key \
-    && mv /tmp/nginx_signing.key /etc/apt/trusted.gpg.d/nginx_signing.asc \
-    && apt update -y \
-    && apt install -y nginx 
+#RUN \
+    #echo "deb http://nginx.org/packages/mainline/ubuntu `lsb_release -cs` nginx"     | tee /etc/apt/sources.list.d/nginx.list \
+    #&& echo -e "Package: *\nPin: origin nginx.org\nPin: release o=nginx\nPin-Priority: 900\n"  | tee /etc/apt/preferences.d/99nginx \
+    #&& curl -o /tmp/nginx_signing.key https://nginx.org/keys/nginx_signing.key \
+    #&& gpg --dry-run --quiet --import --import-options show-only /tmp/nginx_signing.key \
+    #&& mv /tmp/nginx_signing.key /etc/apt/trusted.gpg.d/nginx_signing.asc \
+    #&& rm -f /etc/nginx/nginx.conf \
+    #&& apt-get update -y \
+    #&& apt-get install -y nginx 
 
 ENV WEB_DOCUMENT_ROOT=/app \
     WEB_DOCUMENT_INDEX=index.php \
@@ -88,6 +91,7 @@ ENV WEB_DOCUMENT_ROOT=/app \
     WEB_PHP_SOCKET=127.0.0.1:9000
 
 COPY conf/ /opt/docker/
+COPY php.ini /etc/php/7.2/fpm/php.ini
 
 ENV AGENT_ID="k8s-php" \
     AGENT_TYPE="PHP" \
