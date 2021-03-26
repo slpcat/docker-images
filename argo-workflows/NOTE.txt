@@ -1,0 +1,10 @@
+https://github.com/argoproj/argo-workflows
+Argo Workflows is an open source container-native workflow engine for orchestrating parallel jobs on Kubernetes. Argo Workflows is implemented as a Kubernetes CRD (Custom Resource Definition).
+
+kubectl create namespace argo
+kubectl apply -n argo -f https://raw.githubusercontent.com/argoproj/argo-workflows/stable/manifests/install.yaml
+
+kubectl create rolebinding default-admin --clusterrole=admin --serviceaccount=argo:default -n argo
+
+kubectl create rolebinding default-argo-workflow --clusterrole=argo-workflow-role  --serviceaccount=<namespace>:default -n <namespace>
+
