@@ -45,10 +45,7 @@ USER node
 # where available (npm@5+)
 COPY src/ ./
 
-RUN \
-    npm config set registry https://registry.npm.taobao.org \
-    && npm install
-
+RUN npm install
 # If you are building your code for production
 # RUN npm ci --only=production
 
@@ -57,3 +54,8 @@ RUN \
 
 EXPOSE 8080
 CMD [ "node", "server.js" ]
+
+FROM nginx
+
+COPY --from=builder /usr/src/app /app
+
