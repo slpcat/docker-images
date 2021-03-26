@@ -32,11 +32,11 @@ spec:
     - name: JENKINS_NAME
       value: static-golang-0
     - name: JENKINS_AGENT_WORKDIR
-      value: /home/jenkins/agent
+      value: /home/jenkins
     - name: JENKINS_URL
       value: http://jenkins.ci/
-    image: slpcat/kube-jenkins-dind-agent:golang
-    imagePullPolicy: IfNotPresent
+    image: slpcat/kube-jenkins-dind-agent:golang-buster
+    imagePullPolicy: Always
     resources:
       limits:
         cpu: "4"
@@ -45,14 +45,16 @@ spec:
         cpu: "4"
         memory: 4Gi
     securityContext:
-      privileged: true
+      #privileged: true
       runAsUser: 0
       runAsGroup: 0
       #fsGroup: 1000
     volumeMounts:
-    - mountPath: /home/jenkins/agent
+    - mountPath: /home/jenkins
       name: workspace-volume
-    workingDir: /home/jenkins/agent
+    - mountPath: /var/run/docker.sock
+      name: docker-sock
+    workingDir: /home/jenkins
   #imagePullSecrets:
   #- name: ali-vpc
   nodeSelector:
@@ -61,3 +63,9 @@ spec:
   - name: workspace-volume
     persistentVolumeClaim:
       claimName: static-golang-0
+  - name: docker-sock
+    hostPath:
+      # directory location on host
+      path: /var/run/docker.sock
+      # this field is optional
+      type: File

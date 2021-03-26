@@ -1,7 +1,7 @@
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: static-golang-0
+  name: static-java8-0
   namespace: ci
 spec:
   accessModes:

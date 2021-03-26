@@ -4,7 +4,7 @@ MAINTAINER 若虚 <slpcat@qq.com>
 
 RUN apt-get update \
     && apt-get upgrade -y \
-    && apt-get install -y git curl openssh-client unzip jq ttf-dejavu tini groff python3 \
+    && apt-get install -y git curl openssh-client unzip jq ttf-dejavu groff python3 \
     && curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | bash \
     && apt-get install -y git-lfs unzip \
     && git lfs install && rm -rf /var/lib/apt/lists/*
@@ -82,7 +82,6 @@ USER ${user}
 
 COPY jenkins-support /usr/local/bin/jenkins-support
 COPY jenkins.sh /usr/local/bin/jenkins.sh
-#ENTRYPOINT ["/usr/bin/tini", "--", "/usr/local/bin/jenkins.sh"]
 
 # from a derived Dockerfile, can use `RUN plugins.sh active.txt` to setup /usr/share/jenkins/ref/plugins from a support bundle
 COPY plugins.sh /usr/local/bin/plugins.sh

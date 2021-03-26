@@ -3,15 +3,15 @@ kind: Pod
 metadata:
   labels:
     jenkins: slave
-    jenkins/label: static-jnlp
-  name: static-jnlp-0
+    jenkins/label: static-java8
+  name: static-java8-0
   namespace: ci
 spec:
   containers:
   - name: jnlp
     env:
     - name: JENKINS_SECRET
-      value: "bb786066bb5f84560c493f0709bac3e32083e75325f51de3a55db9048e254f76"
+      value: "01e6a687194ba9d96460e3b2a5136abb7d50adeb13e98295550d1b0aed366128"
     - name: JAVA_OPTS
       value: -server -Djava.awt.headless=true -Djava.nio.channels.spi.SelectorProvider=sun.nio.ch.EPollSelectorProvider
         -Dfile.encoding=UTF8 -Xverify:none -XX:MetaspaceSize=128m -XX:+UseNUMA -XX:+UseNUMAInterleaving
@@ -28,14 +28,14 @@ spec:
         -XX:InitiatingHeapOccupancyPercent=35 -XX:G1HeapRegionSize=32m -XX:+PerfDisableSharedMem
         -XX:-ResizePLAB
     - name: JENKINS_AGENT_NAME
-      value: static-jnlp-0
+      value: static-java8-0
     - name: JENKINS_NAME
-      value: static-jnlp-0
+      value: static-java8-0
     - name: JENKINS_AGENT_WORKDIR
       value: /home/jenkins
     - name: JENKINS_URL
       value: http://jenkins.ci/
-    image: slpcat/kube-jenkins-dind-agent:jdk8
+    image: slpcat/kube-jenkins-dind-agent:java-buster
     imagePullPolicy: Always
     resources:
       limits:
@@ -45,7 +45,7 @@ spec:
         cpu: "4"
         memory: 4Gi
     securityContext:
-      privileged: true
+      #privileged: true
       runAsUser: 0
       runAsGroup: 0
       #fsGroup: 1000
@@ -62,7 +62,7 @@ spec:
   volumes:
   - name: workspace-volume
     persistentVolumeClaim:
-      claimName: static-jnlp-0
+      claimName: static-java8-0
   - name: docker-sock
     hostPath:
       # directory location on host

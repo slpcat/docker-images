@@ -199,6 +199,7 @@ RUN /usr/local/bin/install-plugins.sh       \
   configurationslicing:latest    \
   #copy-to-slave:latest          \
   copyartifact:latest            \
+  custom-checkbox-parameter:latest \
   #cvs:latest                    \
   dark-theme:latest              \
   dashboard-view:latest          \

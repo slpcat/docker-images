@@ -11,3 +11,7 @@ docker run --rm -ti \
   -p 8080:8080 -p 50000:50000
   -v jenkins-home:/var/jenkins_home \
   jenkins/jenkins:jdk11
+
+版本说明
+1. alpine + jdk 8
+2. 主要 debian10 + jdk 11
