@@ -1,0 +1,125 @@
+{{- if default "" .Values.externalUrl }}
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: {{ template "gitlab-ce.fullname" . }}
+  labels:
+    app: {{ template "gitlab-ce.fullname" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: {{ template "gitlab-ce.fullname" . }}
+      annotations:
+        #net.ipv4.tcp_syncookies=0 need kernel version 4.4 or newer
+        security.alpha.kubernetes.io/sysctls: "net.ipv4.tcp_syncookies=0,net.ipv4.ip_local_port_range=10000 65535"
+        #kernel version 4.15 needed
+        security.alpha.kubernetes.io/unsafe-sysctls: "net.core.somaxconn=65535,net.ipv4.tcp_tw_reuse=1,net.ipv4.tcp_fin_timeout=30,net.ipv4.tcp_keepalive_intvl=4,net.ipv4.tcp_keepalive_probes=3,net.ipv4.tcp_keepalive_time=120,net.ipv4.tcp_max_syn_backlog=65535,net.ipv4.tcp_rfc1337=1,net.ipv4.tcp_slow_start_after_idle=0,net.ipv4.tcp_fack=1,net.ipv4.tcp_max_tw_buckets=262144,net.ipv4.tcp_fastopen=3,net.ipv4.icmp_ratelimit=100,net.ipv4.tcp_abort_on_overflow=1,net.ipv4.tcp_adv_win_scale=2,net.ipv4.tcp_retries2=8,net.ipv4.tcp_syn_retries=3,net.ipv4.tcp_synack_retries=2,net.unix.max_dgram_qlen=512,net.ipv4.tcp_fwmark_accept=1,net.ipv4.fwmark_reflect=1,net.ipv4.tcp_no_metrics_save=1,net.netfilter.nf_conntrack_helper=1,net.netfilter.nf_conntrack_max=1048576,net.netfilter.nf_conntrack_tcp_timeout_close_wait=60,net.netfilter.nf_conntrack_tcp_timeout_established=120,net.netfilter.nf_conntrack_tcp_timeout_fin_wait=30,net.netfilter.nf_conntrack_tcp_timeout_last_ack=30,net.netfilter.nf_conntrack_tcp_timeout_time_wait=60"
+    spec:
+      containers:
+      - name: {{ template "gitlab-ce.fullname" . }}
+        image: {{ .Values.image }}
+        imagePullPolicy: {{ default "" .Values.imagePullPolicy | quote }}
+        env:
+        ## General GitLab Configs
+        ##
+        # This is a free-form env var that GitLab Omnibus uses to configure
+        # everything. We're passing this in from a configmap and pulling some
+        # of the values from the env vars defined below. This is done to
+        # avoid leaving secrets visible in kubectl.
+        - name: GITLAB_OMNIBUS_CONFIG
+          valueFrom:
+            configMapKeyRef:
+              name: {{ template "gitlab-ce.fullname" . }}
+              key: gitlab_omnibus_config
+        - name: GITLAB_ROOT_PASSWORD
+        {{- if default "" .Values.gitlabRootPassword }}
+          valueFrom:
+            secretKeyRef:
+              name: {{ template "gitlab-ce.fullname" . }}
+              key: gitlab-root-password
+        {{ end }}
+        - name: EXTERNAL_URL
+          value: {{ default "" .Values.externalUrl | quote }}
+        ## DB configuration
+        ##
+        - name: DB_HOST
+          value: {{ template "gitlab-ce.postgresql.fullname" . }}
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: {{ template "gitlab-ce.fullname" . }}
+              key: db-user
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ template "gitlab-ce.fullname" . }}
+              key: db-password
+        - name: DB_DATABASE
+          value: {{ .Values.postgresql.postgresDatabase | quote }}
+        ## Redis configuration
+        ##
+        - name: REDIS_HOST
+          value: {{ template "gitlab-ce.redis.fullname" . }}
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ template "gitlab-ce.fullname" . }}
+              key: redis-password
+        ports:
+        - name: ssh
+          containerPort: 22
+        - name: http
+          containerPort: 80
+        - name: https
+          containerPort: 443
+        - name: registry
+          containerPort: 50000
+        livenessProbe:
+          httpGet:
+            path: /help
+            port: {{ .Values.livenessPort }}
+          # This pod takes a very long time to start up. Be cautious when
+          # lowering this value to avoid Pod death during startup.
+          initialDelaySeconds: 200
+          timeoutSeconds: 1
+          periodSeconds: 10
+          successThreshold: 1
+          failureThreshold: 10
+        readinessProbe:
+          httpGet:
+            path: /help
+            port: {{ .Values.readinessPort }}
+          initialDelaySeconds: 30
+          timeoutSeconds: 1
+          periodSeconds: 10
+          successThreshold: 1
+          failureThreshold: 3
+        volumeMounts:
+        - name: gitlab-etc
+          mountPath: /etc/gitlab
+        - name: gitlab-data
+          mountPath: /var/opt/gitlab
+        resources:
+{{ toYaml .Values.resources | indent 10 }}
+      volumes:
+      - name: gitlab-etc
+      {{- if .Values.persistence.gitlabEtc.enabled }}
+        persistentVolumeClaim:
+          claimName: {{ template "gitlab-ce.fullname" . }}-etc
+      {{- else }}
+        emptyDir: {}
+      {{- end }}
+      - name: gitlab-data
+      {{- if .Values.persistence.gitlabData.enabled }}
+        persistentVolumeClaim:
+          claimName: {{ template "gitlab-ce.fullname" . }}-data
+      {{- else }}
+        emptyDir: {}
+      {{- end }}
+{{ else }}
+{{ end }}

@@ -1,0 +1,39 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gitlab-runner
+data:
+  config.toml: |
+    concurrent = 40
+    check_interval = 0
+
+    [[runners]]
+      name = "kubernetes runner"
+      url = "https://git.xxxx.com"
+      token = "f7cb691ad136a10ad0cab0b319925b"
+      executor = "kubernetes"
+      [runners.cache]
+      # 分布式cache,根据需求选择。
+        Type = "s3"
+        ServerAddress = "s3.amazonaws.com"
+        AccessKey = "xxxxxxxx"
+        SecretKey = "SFgNXHMJnDogFD+XAkXCG+0Ifd/Lk4PaJZHAucyw"
+        BucketName = "gitlab-runners"
+        BucketLocation = "cn-north-1"
+        Insecure = false
+        Path = "kubernetes-runner"
+        Shared = false
+      [runners.kubernetes]
+        # kubernetes apiserver 地址，默认走kubernetes.default,需要serviceaccount
+        host = "http://10.255.1.173:8080"
+        image = "alpine:3.7"
+        helper_image = "gitlab-runner-helper:x86_64-d89fa34a"
+        pull_policy = "if-not-present"
+        extra_hosts = ["other-host:127.0.0.1"]
+        poll_timeout = 3000
+        namespace = "gitlab"
+        namespace_overwrite_allowed = ""
+        privileged = true
+        service_account_overwrite_allowed = ""
+

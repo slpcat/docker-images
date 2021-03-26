@@ -1,0 +1,94 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gitlab-etc-configmap
+  namespace: ci
+data:
+  gitlab.rb: |-
+    external_url 'http://git.exameple.com'
+    #host = `hostname`.strip
+    node_exporter['enable'] = false
+    package['detect_init'] = true
+    package['modify_kernel_parameters'] = false
+    manage_accounts['enable'] = true
+    manage_storage_directories['manage_etc'] = true
+    gitlab_rails['monitoring_whitelist'] = ['127.0.0.0/8', '10.0.0.0/8', '172.16.0.0/12', '192.168.0.0/16']
+    gitlab_rails['gitlab_ssh_host'] = 'git.exameple.com'
+    gitlab_rails['time_zone'] = 'Beijing'
+    gitlab_rails['gitlab_email_enabled'] = true
+    gitlab_rails['gitlab_email_from'] = 'mail@exmple.com'
+    gitlab_rails['gitlab_email_display_name'] = 'GITMAIL'
+    gitlab_rails['auto_migrate'] = true
+    gitlab_rails['smtp_enable'] = true
+    gitlab_rails['smtp_address'] = "smtp.exmail.qq.com"
+    gitlab_rails['smtp_port'] = 465
+    gitlab_rails['smtp_user_name'] = "mail@example.com"
+    gitlab_rails['smtp_password'] = "password"
+    gitlab_rails['smtp_domain'] = "example.com"
+    gitlab_rails['smtp_authentication'] = "login"
+    gitlab_rails['smtp_enable_starttls_auto'] = true
+    gitlab_rails['smtp_tls'] = true
+    gitlab_rails['initial_root_password'] = "5iveL!fe"
+    gitlab_rails['registry_enabled'] = false
+    gitlab_rails['registry_host'] = "registry.exmpale.com"
+    gitlab_rails['registry_port'] = "5000"
+    gitlab_rails['env'] = {
+       'GITLAB_RAILS_RACK_TIMEOUT' => 600
+     }
+    gitaly['enable'] = true
+    gitaly['ruby_num_workers'] = 2
+    mattermost_nginx['redirect_http_to_https'] = false
+    registry['enable'] = false
+    registry_external_url 'http://registry.example.com'
+    registry_nginx['enable'] = false
+    registry_nginx['redirect_http_to_https'] = false
+    registry_nginx['listen_port'] = 50000
+    registry_nginx['proxy_set_headers'] = {
+      "Host" => "$http_host",
+      "X-Real-IP" => "$remote_addr",
+      "X-Forwarded-For" => "$proxy_add_x_forwarded_for",
+      "X-Forwarded-Proto" => "http",
+     }
+    unicorn['enable'] = false
+    puma['enable'] = true
+    puma['ha'] = false
+    puma['worker_timeout'] = 60
+    puma['worker_processes'] = 2
+    puma['min_threads'] = 2
+    puma['max_threads'] = 16
+    puma['somaxconn'] = 4096
+    puma['exporter_enabled'] = true
+    puma['per_worker_max_memory_mb'] = 850
+    sidekiq['log_directory'] = "/var/log/gitlab/sidekiq"
+    sidekiq['shutdown_timeout'] = 4
+    sidekiq['concurrency'] = 25
+    postgresql['shared_buffers'] = "256MB"
+    postgresql['autovacuum_max_workers'] = "3"
+    letsencrypt['enable'] = false
+    letsencrypt['contact_emails'] = ['mail@localhost']
+    nginx['enable'] = true
+    nginx['ssl_certificate'] = "/etc/gitlab/ssl/gitlab.example.com.crt"
+    nginx['ssl_certificate_key'] = "/etc/gitlab/ssl/gitlab.example.com.key"
+    nginx['client_max_body_size'] = '512m'
+    nginx['redirect_http_to_https'] = false
+    nginx['hsts_max_age'] = 31536000
+    nginx['hsts_include_subdomains'] = false
+    nginx['referrer_policy'] = false
+    nginx['real_ip_trusted_addresses'] = [ '192.168.1.0/24', '192.168.2.1', '2001:0db8::/32' ]
+    nginx['real_ip_header'] = 'X-Forwarded-For'
+    nginx['real_ip_recursive'] = 'on'
+    nginx['proxy_set_headers'] = {
+      "Host" => "$http_host_with_default",
+      "X-Real-IP" => "$remote_addr",
+      "X-Forwarded-For" => "$proxy_add_x_forwarded_for",
+      "X-Forwarded-Proto" => "http",
+      "X-Forwarded-Ssl" => "off",
+      "Upgrade" => "$http_upgrade",
+      "Connection" => "$connection_upgrade"
+     }
+    nginx['http2_enabled'] = false
+    nginx['worker_processes'] = 4
+    nginx['worker_connections'] = 10240
+    prometheus['enable'] = false
+    prometheus['monitor_kubernetes'] = false
+    prometheus_monitoring['enable'] = false

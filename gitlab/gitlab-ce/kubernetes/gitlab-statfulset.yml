@@ -1,0 +1,94 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: gitlab-ce
+  namespace: ci
+  labels:
+    app: gitlab-ce
+spec:
+  selector:
+    matchLabels:
+      app: gitlab-ce
+      version: v1
+  serviceName: gitlab-ce
+  podManagementPolicy: "Parallel"
+  replicas: 1
+  #minReadySeconds: 60     #滚动升级时60s后认为该pod就绪
+  template:
+    metadata:
+      labels:
+        app: gitlab-ce
+        version: v1
+      annotations:
+        #disable istio sidecar injection
+        sidecar.istio.io/inject: "false"
+    spec:
+      terminationGracePeriodSeconds: 60 ##k8s将会给应用发送SIGTERM信号，可以用来正确、优雅地关闭应用,默认为30秒
+      #从私有仓库下载镜像
+      #imagePullSecrets:
+      #- name: registrykey-ali-ext
+      containers:
+      - name: gitlab-ce
+        image: slpcat/gitlab-ce:13.10.0-ce0
+        imagePullPolicy: Always
+        livenessProbe: #kubernetes认为该pod是存活的,不存活则需要重启
+          httpGet:
+            path: /-/liveness
+            port: 80
+            scheme: HTTP
+          initialDelaySeconds: 60 # equals to the maximum startup time of the application + couple of seconds
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 5
+        readinessProbe: #kubernetes认为该pod是启动成功的
+          httpGet:
+            path: /-/readiness
+            port: 80
+            scheme: HTTP
+          initialDelaySeconds: 30 # equals to minimum startup time of the application
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 5
+        resources:
+          # keep request = limit to keep this container in guaranteed class
+          requests:
+            cpu: 1
+            memory: 1Gi
+          limits:
+            cpu: 8
+            memory: 16Gi
+        ports:
+          - name: ssh
+            containerPort: 22
+          - name: http
+            containerPort: 80
+          - name: https
+            containerPort: 443
+          - name: ldap
+            containerPort: 636
+          - name: registry
+            containerPort: 50000
+        volumeMounts:
+          - name: gitlab-etc
+            mountPath: "/etc/gitlab/gitlab.rb"
+            subPath: gitlab.rb
+          - name: gitlab-data
+            mountPath: "/var/opt/gitlab"
+      volumes:
+        - name: gitlab-etc
+          configMap:
+            name: gitlab-etc-configmap
+            #Add ConfigMap data to a specific path in the Volume
+            items:
+            - key: gitlab.rb
+              path: gitlab.rb
+  volumeClaimTemplates:
+  - metadata:
+      name: gitlab-data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      #ceph rbd storageclass
+      #storageClassName: rbd
+      resources:
+        requests:
+          storage: 160Gi

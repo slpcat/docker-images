@@ -1,0 +1,48 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "gitlab-runner.fullname" . }}
+  labels:
+    app: {{ template "gitlab-runner.fullname" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+data:
+  entrypoint: |
+    #!/bin/bash
+    set -e
+    mkdir -p /home/gitlab-runner/.gitlab-runner/
+    cp /scripts/config.toml /home/gitlab-runner/.gitlab-runner/
+
+    # Register the runner
+    if [[ -f /secrets/s3-access-key && -f /secrets/s3-secret-key ]]; then
+      export S3_ACCESS_KEY=$(cat /secrets/s3-access-key)
+      export S3_SECRET_KEY=$(cat /secrets/s3-secret-key)
+    fi
+
+    if [[ -f /secrets/runner-registration-token ]]; then
+      export REGISTRATION_TOKEN=$(cat /secrets/runner-registration-token)
+    fi
+
+    if [[ -f /secrets/runner-token ]]; then
+      export CI_SERVER_TOKEN=$(cat /secrets/runner-token)
+    fi
+
+    /entrypoint register --non-interactive \
+      {{- range .Values.runners.imagePullSecrets }}
+      --kubernetes-image-pull-secrets {{ . | quote }} \
+      {{- end }}
+
+    # Start the runner
+    /entrypoint run --user=gitlab-runner \
+      --working-directory=/home/gitlab-runner
+  config.toml: |
+    concurrent = {{ .Values.concurrent }}
+    check_interval = {{ .Values.checkInterval }}
+    log_level = {{ default "info" .Values.logLevel | quote }}
+    {{- if .Values.metrics.enabled }}
+    metrics_server = '[::]:9252'
+    {{- end }}
+  configure: |
+    set -e
+    cp /init-secrets/* /secrets

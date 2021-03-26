@@ -1,0 +1,32 @@
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: gitlab-runner
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: gitlab-runner
+  template:
+    metadata:
+      labels:
+        name: gitlab-runner
+    spec:
+      imagePullSecrets:
+        - name: docker-secret
+      containers:
+        - args:
+            - run
+          image: gitlab-runner:v10.6.0
+          imagePullPolicy: IfNotPresent
+          name: gitlab-runner
+          volumeMounts:
+            - mountPath: /etc/gitlab-runner
+              name: config
+              readOnly: true
+      restartPolicy: Always
+      volumes:
+        - configMap:
+            name: gitlab-runner
+          name: config
