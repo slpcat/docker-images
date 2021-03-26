@@ -10,6 +10,7 @@ Elasticsearch Operator
 https://www.elastic.co/cn/products/elastic-cloud-kubernetes
 kubectl apply -f https://download.elastic.co/downloads/eck/1.0.0/all-in-one.yaml
 https://github.com/elastic/cloud-on-k8s
+https://github.com/elastic/helm-charts/tree/v7.11.2/elasticsearch
 
 2.kubedb
 
@@ -42,6 +43,14 @@ cerebro
 ELKman
 
 esrally功能：es的性能测试工具
+
+ElasticHD
+ElasticHD 支持 ES监控、实时搜索、Index template快捷替换修改、索引列表信息查看， SQL converts to DSL工具等。是一款非常伴的 Dashboard。
+
+elasticsearch-head 是用于监控 Elasticsearch 状态的客户端插件，包括数据可视化、执行增删改查操作等。
+
+Dejavu 也是一个 Elasticsearch的 Web UI 工具，其 UI界面更符合当下主流的前端页面风格，因此使用起来很方便。
+
 
 kibana plugin
 
@@ -481,6 +490,23 @@ em-elasticsearch: eventmachine的elasticsearch库
 es2unix:通过unix命令行调用elasticsearchapi
 
 https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html
+
+Elasticsearch 备份与还原
+
+迁移工具 ESM
+elasticsearch-migration
+https://github.com/elastic/elasticsearch-migration
+
+Elasticdump数据备份与数据转移索引还原
+elasticsearch-dump
+https://github.com/elasticsearch-dump/elasticsearch-dump (推荐)
+
+elasticsearch-exporter工具做数据迁移
+elasticsearch-exporter 
+https://github.com/mallocator/Elasticsearch-Exporter (废弃)
+
+logstash定向索引迁移
+
 
 单节点 
 docker run -d --restart=always --name elasticsearch -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" -v /data/es-data:/usr/share/elasticsearch/data docker.elastic.co/elasticsearch/elasticsearch:7.8.0

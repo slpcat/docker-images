@@ -1,0 +1,30 @@
+elasticdump是实现不同ElasticSearch集群之间索引迁移的工具。默认情况下，ITOA集群部署成功后，该工具存在于安装节点（客户端节点）上。
+不同ElasticSearch集群之间要实现索引数据的转移，需要使用到elasticdump工具。
+要实现ElasticSearch的数据迁移，除了要实现索引中文档对象的迁移外，还需要迁移索引中映射模式的迁移。关于某一个索引的映射信息可以通过ElasticSearch中的_plugin/head插件在web界面通过信息中的索引信息来查阅
+
+# 镜像下载
+$ docker pull taskrabbit/elasticsearch-dump
+# 下面还是例子：通过镜像导出数据到本地
+# 创建一个文件夹用于保存导出数据
+$ mkdir -p /root/data
+# 下面需要对路径进行映射并执行命令（导出mapping）
+$ docker run --rm -ti -v /data:/tmp taskrabbit/elasticsearch-dump \
+  --input=http://production.es.com:9200/my_index \
+  --output=/tmp/my_index_mapping.json \
+  --type=mapping
+# 导出（data）
+$ docker run --rm -ti -v /root/data:/tmp taskrabbit/elasticsearch-dump \
+  --input=http://192.168.56.104:9200/test_index \
+  --output=/tmp/elasticdump_export.json \
+  --type=data
+  -----------------------------------------------------------------------------
+# 以下内容为ES -> ES的数据迁移例子
+$ docker run --rm -ti taskrabbit/elasticsearch-dump \
+  --input=http://production.es.com:9200/my_index \
+  --output=http://staging.es.com:9200/my_index \
+  --type=mapping
+$ docker run --rm -ti taskrabbit/elasticsearch-dump \
+  --input=http://production.es.com:9200/my_index \
+  --output=http://staging.es.com:9200/my_index \
+  --type=data
+

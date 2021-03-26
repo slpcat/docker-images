@@ -1,0 +1,123 @@
+---
+# Source: cerebro/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cerebro-id01
+  labels:
+    app: cerebro
+    chart: cerebro-0.5.2
+    release: cerebro-id01
+    heritage: Helm
+data:
+  application.conf: |-
+    secret = "9uQYd86BGgbRo5GQlyApLrM107N6ekVGO4hnqLt0817JIuyofEwohhYMJltetovY"
+
+    basePath = "/"
+
+    pidfile.path = /dev/null
+
+    rest.history.size = 50
+
+    data.path = "/var/db/cerebro/cerebro.db"
+
+    es = {
+      gzip = true
+    }
+
+    auth = {
+    }
+
+    hosts = [
+      
+      {
+        host = "http://elasticsearch-elasticsearch-ingest:9200"
+        name = "elasticsearch"
+      }
+    ]
+---
+# Source: cerebro/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: cerebro-id01
+  labels:
+    app: cerebro
+    chart: cerebro-0.5.2
+    release: cerebro-id01
+    heritage: Helm
+  annotations:
+spec:
+  type: NodePort
+  ports:
+    - port: 80
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app: cerebro
+    release: cerebro-id01
+---
+# Source: cerebro/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cerebro-id01
+  labels:
+    app: cerebro
+    chart: cerebro-0.5.2
+    release: cerebro-id01
+    heritage: Helm
+spec:
+  replicas: 1
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app: cerebro
+      release: cerebro-id01
+  template:
+    metadata:
+      labels:
+        app: cerebro
+        release: cerebro-id01
+      annotations:
+        checksum/config: ee27ca3603ba6637a93a1946ba9eb9a7565108f081c91a02d756cf8c2f08ccfc
+    spec:
+      initContainers:
+        - name: chown-db
+          image: docker.io/busybox:musl
+          imagePullPolicy: IfNotPresent
+          command: ["chown", "1000:1000", "/var/db/cerebro"]
+          volumeMounts:
+            - name: db
+              mountPath: /var/db/cerebro
+      containers:
+        - name: cerebro
+          image: "slpcat/cerebro:0.9.3"
+          imagePullPolicy: IfNotPresent
+          args: ["-Dconfig.file=/etc/cerebro/application.conf"]
+          ports:
+            - name: http
+              containerPort: 9000
+              protocol: TCP
+          volumeMounts:
+            - name: db
+              mountPath: /var/db/cerebro
+            - name: config
+              mountPath: /etc/cerebro
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+          resources:
+            {}
+      volumes:
+        - name: db
+          emptyDir: {}
+        - name: config
+          configMap:
+            name: cerebro-id01

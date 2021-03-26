@@ -52,7 +52,7 @@ name: elastic
 ## Comma, semi-colon or space separated list of plugins to install at initialization
 ## ref: https://github.com/bitnami/bitnami-docker-elasticsearch#environment-variables
 ##
-# plugins:
+plugins: elasticsearch-analysis-ik
 
 ## Customize elasticsearch configuration
 ## ref: https://www.elastic.co/guide/en/elasticsearch/reference/current/settings.html
@@ -179,7 +179,7 @@ coordinating:
 ##
 data:
   name: data
-  replicas: 2
+  replicas: 3
   ## updateStrategy for ElasticSearch Data statefulset
   ## ref: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#update-strategies
   updateStrategy:
@@ -218,7 +218,7 @@ data:
   persistence:
     ## If true, use a Persistent Volume Claim, If false, use emptyDir
     ##
-    enabled: false
+    enabled: true
 
     ## Persistent Volume Claim annotations
     ##
@@ -239,7 +239,7 @@ data:
 
     ## Persistent Volume size
     ##
-    size: 8Gi
+    size: 160Gi
 
 ## Elasticsearch ingest node parameters
 ##
@@ -293,7 +293,7 @@ ingest:
   #  failureThreshold: 5
 
 metrics:
-  enabled: false
+  enabled: true
   name: metrics
   image:
     registry: docker.io
