@@ -1,0 +1,6 @@
+{
+    "proxmox_host": "10.155.33.184:8006",
+    "proxmox_node": "pve01",
+    "proxmox_api_user": "root@pam",
+    "proxmox_api_password": "root123456!"
+}

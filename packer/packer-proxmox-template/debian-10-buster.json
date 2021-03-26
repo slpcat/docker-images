@@ -1,0 +1,66 @@
+{
+  "variables": {
+    "proxmox_host": null,
+    "proxmox_node": null,
+    "proxmox_api_user": null,
+    "proxmox_api_password": null
+  },
+  "sensitive-variables": ["proxmox_api_password"],
+  "builders": [
+    {
+      "type": "proxmox-iso",
+      "proxmox_url": "https://{{ user `proxmox_host` }}/api2/json",
+      "insecure_skip_tls_verify": true,
+      "username": "{{ user `proxmox_api_user` }}",
+      "password": "{{ user `proxmox_api_password` }}",
+
+      "template_description": "Debian 10 cloud-init template. Built on {{ isotime \"2006-01-02T15:04:05Z\" }}",
+      "node": "{{user `proxmox_node`}}",
+      "network_adapters": [
+        {
+          "model": "virtio",
+          "bridge": "vmbr1",
+          "firewall": true
+        }
+      ],
+      "disks": [
+        {
+          "type": "scsi",
+          "disk_size": "10G",
+          "storage_pool": "local-zfs",
+          "storage_pool_type": "zfs",
+          "format": "raw"
+        }
+      ],
+      "scsi_controller": "virtio-scsi",
+
+      "iso_file": "local:iso/debian-10.8.0-amd64-netinst.iso",
+      "http_directory": "./",
+      "boot_wait": "10s",
+      "boot_command": [
+        "<esc><wait>auto url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed.cfg<enter>"
+      ],
+      "unmount_iso": true,
+
+      "cloud_init": true,
+      "cloud_init_storage_pool": "local",
+
+      "vm_name": "debian-10.8.0-amd64",
+      "memory": "2048",
+      "cpu_type": "kvm64",
+      "sockets": "1",
+      "cores": "2",
+      "os": "l26",
+
+      "ssh_username": "root",
+      "ssh_password": "packer"
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "file",
+      "source": "cloud.cfg",
+      "destination": "/etc/cloud/cloud.cfg"
+    }
+  ]
+}
