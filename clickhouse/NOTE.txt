@@ -7,9 +7,9 @@ Loghouse-dashboard 是 loghouse 中的一个专门针对Clickhouse作为日志�
 https://github.com/Altinity/clicktail
 可以采用clicktail 这个神器。它是Altinity公司基于honeytail开发的一个Go语言的日志解析、传输工具，可以直接解析MySQL慢查询日志、Nginx日志、PG以及MongoDB日志，直接写入Clickhouse，用于后期的分析。
 
-docker run -d --name clickhouse-server --ulimit nofile=262144:262144 -p 9000:9000 -p 8123:8123 -v /data/clickhouse-conf/config.xml:/etc/clickhouse-server/config.xml -v /data/clickhouse-data:/var/lib/clickhouse yandex/clickhouse-server 
+docker run -d --name clickhouse-server --ulimit nofile=262144:262144 -p 9000:9000 -p 8123:8123 -v /data/clickhouse-conf/config.xml:/etc/clickhouse-server/config.xml -v /data/clickhouse-data:/var/lib/clickhouse yandex/clickhouse-server:20.12
 
-docker run -it --rm --link some-clickhouse-server:clickhouse-server yandex/clickhouse-client --host clickhouse-server
+docker run -it --rm --link some-clickhouse-server:clickhouse-server yandex/clickhouse-client:20.12 --host clickhouse-server
 
 https://clickhouse.yandex/docs/en/operations/tips/#zookeeper
 
@@ -89,6 +89,11 @@ profile配置，最大内存、负载方式等（没有特别关注，可见官�
 PASSWORD=$(base64 < /dev/urandom | head -c8);
 echo "$PASSWORD"; echo -n "$PASSWORD" | sha256sum | tr -d '-'
 
+兼容mysql
+echo -n "$PASSWORD" | sha1sum | tr -d '-'
+
+<password_double_sha1_hex>e395796d6546b1b65db9d665cd43f0e858dd4303</password_double_sha1_hex>
+
 6lYaUiFi
 967f3bf355dddfabfca1c9f5cab39352b2ec1cd0b05f9e1e6b8f629705fe7d6e
 权限验证
@@ -107,4 +112,6 @@ Ok.
 
 0 rows in set. Elapsed: 0.002 sec. 
 
+
+https://github.com/Altinity/clickhouse-operator
 

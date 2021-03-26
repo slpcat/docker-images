@@ -1,0 +1,2 @@
+用户名: default
+密码: clickhouse
