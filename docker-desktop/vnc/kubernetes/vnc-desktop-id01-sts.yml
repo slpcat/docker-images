@@ -2,27 +2,27 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   #命名规范:应用名称-版本
-  name: rdp-desktop-id01
+  name: vnc-desktop-id01
   namespace: desktop
   labels:
-    app: rdp-desktop-id01
-    canary: rdp-desktop-id01
+    app: vnc-desktop-id01
+    canary: vnc-desktop-id01
 spec:
   #保留历史版本数量
   revisionHistoryLimit: 3
   replicas: 1
-  serviceName: rdp-desktop-id01
+  serviceName: vnc-desktop-id01
   selector:
     matchLabels:
-      app: rdp-desktop-id01
-      canary: rdp-desktop-id01
+      app: vnc-desktop-id01
+      canary: vnc-desktop-id01
       version: v2
 #  minReadySeconds: 60     #滚动升级时60s后认为该pod就绪
   template:
     metadata:
       labels:
-        app: rdp-desktop-id01
-        canary: rdp-desktop-id01
+        app: vnc-desktop-id01
+        canary: vnc-desktop-id01
         version: v2
       annotations:
         #enable istio sidecar injection
@@ -32,8 +32,8 @@ spec:
       #imagePullSecrets:
       #- name: registrykey-ali-ext
       containers:
-      - name: rdp-desktop
-        image: slpcat/desktop-rdesktop:focal
+      - name: vnc-desktop
+        image: dorowu/ubuntu-desktop-lxde-vnc
         imagePullPolicy: Always
         #livenessProbe: #kubernetes认为该pod是存活的,不存活则需要重启
         #  httpGet:
@@ -61,17 +61,12 @@ spec:
           limits:
             cpu: 4
             memory: 8Gi
-        securityContext:
-          privileged: true
-          #fsGroup: 1000
-          #capabilities:
-          #  add: ["NET_ADMIN"]
         env:
-          - name: PUID
-            value: "1000"
-          - name: PGID
-            value: "1000"
-          - name: PASSWORD
+          - name: VNC_PASSWORD
+            value: "mypassword"
+          - name: RESOLUTION
+            value: "1280x1024"
+          - name: HTTP_PASSWORD
             value: "mypassword"
           #- name: LC_ALL
           #  value: "zh_CN.UTF-8"
@@ -80,8 +75,10 @@ spec:
           - name: TZ
             value: "Asia/Shanghai"
         ports:
-          - name: rdp
-            containerPort: 3389
+          - name: http
+            containerPort: 80
+          - name: vnc
+            containerPort: 5900
         volumeMounts:
            - mountPath: /dev/shm
              name: shm-volume

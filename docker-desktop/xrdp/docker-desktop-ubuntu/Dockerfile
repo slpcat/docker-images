@@ -5,7 +5,7 @@ MAINTAINER 若虚 <slpcat@qq.com>
 COPY .xsession /config/.xsession
 COPY default-display-manager /etc/X11/default-display-manager
 COPY sudoers /etc/sudoers
-COPY services /etc/s6/services
+COPY services.d /etc/services.d/
 
 RUN \
     chown root:root /etc/sudoers && chmod 0440 /etc/sudoers
@@ -20,11 +20,10 @@ RUN \
 
 #install chrome browser
 RUN \
-    wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && \
     echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list && \
     wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | apt-key add - && \
     apt-get update -y && \
-    apt-get install -y google-chrome
+    apt-get install -y google-chrome-stable
 #apt-get install snapcraft
 #apt install chromium-browser
  

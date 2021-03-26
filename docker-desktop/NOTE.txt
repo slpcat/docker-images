@@ -1,0 +1,20 @@
+容器里面运行桌面环境
+https://github.com/linuxserver
+https://github.com/jumanjihouse/devenv
+
+桌面环境
+
+推荐rdp 远程
+
+vnc + web访问
+
+桌面环境 lxqt
+
+后台服务 supervisord
+
+支持sound透传
+
+/home 卷持久化
+
+支持docker
+
