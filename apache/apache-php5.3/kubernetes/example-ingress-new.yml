@@ -3,6 +3,7 @@ kind: Ingress
 metadata:
   name: ingress-wildcard-host
 spec:
+  ingressClassName: external-lb
   rules:
   - host: "foo.bar.com"
     http:

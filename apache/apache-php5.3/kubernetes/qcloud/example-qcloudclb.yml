@@ -9,6 +9,7 @@ metadata:
     service.kubernetes.io/qcloud-loadbalancer-backends-label: "group=access-layer"
     service.cloud.tencent.com/specify-protocol: {"80":{"protocol":["TCP_SSL"],"tls":"cert-secret"}}
     service.kubernetes.io/local-svc-only-bind-node-with-pod:
+    service.cloud.tencent.com/tke-service-config:<config-name>
     service.kubernetes.io/service.extensiveParameters:
     service.kubernetes.io/qcloud-loadbalancer-internal-subnetid:
   namespace: default

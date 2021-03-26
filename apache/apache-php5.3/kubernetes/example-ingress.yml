@@ -5,7 +5,27 @@ metadata:
   namespace: default
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/client_body_buffer_size: 2m
+    nginx.ingress.kubernetes.io/client_max_body_size: 100m
+    nginx.ingress.kubernetes.io/cors-allow-credentials: 'true'
+    nginx.ingress.kubernetes.io/cors-allow-headers: >-
+      DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,token,deviceSystem,deviceId,anonymousId,currentLocaleLanguageCode,sensorsData,appVersion,deviceVersion,BundleVersion,loginIp,deviceModel,osVersion,deviceModel,EagleEye-TraceID,EagleEye-SessionID,EagleEye-pAppName,qiyutoken
+    nginx.ingress.kubernetes.io/cors-allow-methods: 'PUT,DELETE,PATCH,GET,POST,OPTIONS'
+    nginx.ingress.kubernetes.io/cors-allow-origin: '*'
+    nginx.ingress.kubernetes.io/enable-cors: 'true'
+    nginx.ingress.kubernetes.io/keepalive_timeout: '120'
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: '120'
+    nginx.ingress.kubernetes.io/proxy-read-timeout: '120'
+    nginx.ingress.kubernetes.io/proxy-send-timeout: '120'
+    nginx.ingress.kubernetes.io/proxy_buffer_size: 1024k
+    nginx.ingress.kubernetes.io/proxy_buffers: 20 1024k
+    nginx.ingress.kubernetes.io/proxy_ignore_client_abort: 'on'
+    nginx.ingress.kubernetes.io/proxy_max_temp_file_size: 128m
+    nginx.ingress.kubernetes.io/send_timeout: '120'
+    nginx.ingress.kubernetes.io/service-weight: ''
+    nginx.ingress.kubernetes.io/upstream-hash-by: $http_x_forwarded_for
 spec:
+  ingressClassName: external-lb
   tls:
   - hosts:
     - first-domain
@@ -21,3 +41,16 @@ spec:
           serviceName: example-web
           servicePort: 80
         path: /path/to
+  #同一个后端绑多个域名
+  - host: foobar.com
+    http: &http_rules
+      paths:
+      - backend:
+          serviceName: foobar
+          servicePort: 80
+  - host: api.foobar.com
+    http: *http_rules
+  - host: admin.foobar.com
+    http: *http_rules
+  - host: status.foobar.com
+    http: *http_rules

@@ -2,6 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   annotations:
+    #https://kubernetes.io/docs/concepts/services-networking/service/
     # This annotation is only required if you are creating an internal facing ELB. Remove this annotation to create public facing ELB.
     service.beta.kubernetes.io/aws-load-balancer-internal: "true"
     service.beta.kubernetes.io/aws-load-balancer-ssl-cert: arn:aws:acm:us-east-1:123456789012:certificate/12345678-1234-1234-1234-123456789012
@@ -16,48 +17,38 @@ metadata:
     service.beta.kubernetes.io/aws-load-balancer-access-log-s3-bucket-name: "my-bucket"
     # The name of the Amazon S3 bucket where the access logs are stored
     service.beta.kubernetes.io/aws-load-balancer-access-log-s3-bucket-prefix: "my-bucket-prefix/prod"
-# The logical hierarchy you created for your Amazon S3 bucket, for example `my-bucket-prefix/prod`
+    # The logical hierarchy you created for your Amazon S3 bucket, for example `my-bucket-prefix/prod`
     service.beta.kubernetes.io/aws-load-balancer-connection-draining-enabled: "true"
     service.beta.kubernetes.io/aws-load-balancer-connection-draining-timeout: "60"
-   service.beta.kubernetes.io/aws-load-balancer-connection-idle-timeout: "60"
-        # The time, in seconds, that the connection is allowed to be idle (no data has been sent over the connection) before it is closed by the load balancer
-
-        service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: "true"
-        # Specifies whether cross-zone load balancing is enabled for the load balancer
-
-        service.beta.kubernetes.io/aws-load-balancer-additional-resource-tags: "environment=prod,owner=devops"
-        # A comma-separated list of key-value pairs which will be recorded as
-        # additional tags in the ELB.
-
-        service.beta.kubernetes.io/aws-load-balancer-healthcheck-healthy-threshold: ""
-        # The number of successive successful health checks required for a backend to
-        # be considered healthy for traffic. Defaults to 2, must be between 2 and 10
-
-        service.beta.kubernetes.io/aws-load-balancer-healthcheck-unhealthy-threshold: "3"
-        # The number of unsuccessful health checks required for a backend to be
-        # considered unhealthy for traffic. Defaults to 6, must be between 2 and 10
-
-        service.beta.kubernetes.io/aws-load-balancer-healthcheck-interval: "20"
-        # The approximate interval, in seconds, between health checks of an
-        # individual instance. Defaults to 10, must be between 5 and 300
-
-        service.beta.kubernetes.io/aws-load-balancer-healthcheck-timeout: "5"
-        # The amount of time, in seconds, during which no response means a failed
-        # health check. This value must be less than the service.beta.kubernetes.io/aws-load-balancer-healthcheck-interval
-        # value. Defaults to 5, must be between 2 and 60
-
-        service.beta.kubernetes.io/aws-load-balancer-security-groups: "sg-53fae93f"
-        # A list of existing security groups to be added to ELB created. Unlike the annotation
-        # service.beta.kubernetes.io/aws-load-balancer-extra-security-groups, this replaces all other security groups previously assigned to the ELB.
-
-        service.beta.kubernetes.io/aws-load-balancer-extra-security-groups: "sg-53fae93f,sg-42efd82e"
-        # A list of additional security groups to be added to the ELB
-
-        service.beta.kubernetes.io/aws-load-balancer-target-node-labels: "ingress-gw,gw-name=public-api"
-        # A comma separated list of key-value pairs which are used
-        # to select the target nodes for the load balancer
-
-        service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
+    service.beta.kubernetes.io/aws-load-balancer-connection-idle-timeout: "60"
+    # The time, in seconds, that the connection is allowed to be idle (no data has been sent over the connection) before it is closed by the load balancer
+    service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: "true"
+    # Specifies whether cross-zone load balancing is enabled for the load balancer
+    service.beta.kubernetes.io/aws-load-balancer-additional-resource-tags: "environment=prod,owner=devops"
+    # A comma-separated list of key-value pairs which will be recorded as
+    # additional tags in the ELB.
+    service.beta.kubernetes.io/aws-load-balancer-healthcheck-healthy-threshold: ""
+    # The number of successive successful health checks required for a backend to
+    # be considered healthy for traffic. Defaults to 2, must be between 2 and 10
+    service.beta.kubernetes.io/aws-load-balancer-healthcheck-unhealthy-threshold: "3"
+    # The number of unsuccessful health checks required for a backend to be
+    # considered unhealthy for traffic. Defaults to 6, must be between 2 and 10
+    service.beta.kubernetes.io/aws-load-balancer-healthcheck-interval: "20"
+    # The approximate interval, in seconds, between health checks of an
+    # individual instance. Defaults to 10, must be between 5 and 300
+    service.beta.kubernetes.io/aws-load-balancer-healthcheck-timeout: "5"
+    # The amount of time, in seconds, during which no response means a failed
+    # health check. This value must be less than the service.beta.kubernetes.io/aws-load-balancer-healthcheck-interval
+    # value. Defaults to 5, must be between 2 and 60
+    service.beta.kubernetes.io/aws-load-balancer-security-groups: "sg-53fae93f"
+    # A list of existing security groups to be added to ELB created. Unlike the annotation
+    # service.beta.kubernetes.io/aws-load-balancer-extra-security-groups, this replaces all other security groups previously assigned to the ELB.
+    service.beta.kubernetes.io/aws-load-balancer-extra-security-groups: "sg-53fae93f,sg-42efd82e"
+    # A list of additional security groups to be added to the ELB
+    service.beta.kubernetes.io/aws-load-balancer-target-node-labels: "ingress-gw,gw-name=public-api"
+    # A comma separated list of key-value pairs which are used
+    # to select the target nodes for the load balancer
+    service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
 
   labels:
     app: nginx

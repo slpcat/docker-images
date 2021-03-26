@@ -140,6 +140,7 @@ spec:
       containers:
       - name: example-web
         image: registry.cn-beijing.aliyuncs.com/example/example_web:${BUILD_NUMBER}
+        workingDir: /yourworkdir
         #command:
         #- /cmd
         #- --cpu=100m
@@ -208,3 +209,35 @@ spec:
       volumes:
       - name: log
         emptyDir: {}
+    volumeClaimTemplates:
+      - metadata:
+          annotations:
+            volume.beta.kubernetes.io/storage-class: ${STORAGECLASS}
+          name: plugindir
+        spec:
+          accessModes:
+            - ReadWriteMany
+          resources:
+            requests:
+              storage: 5Gi
+      - metadata:
+          annotations:
+            volume.beta.kubernetes.io/storage-class: ${STORAGECLASS}
+          name: datadir
+        spec:
+          accessModes:
+            - ReadWriteMany
+          resources:
+            requests:
+              storage: 5Gi
+      - metadata:
+          annotations:
+            volume.beta.kubernetes.io/storage-class: ${STORAGECLASS}
+          creationTimestamp: null
+          name: logdir
+        spec:
+          accessModes:
+            - ReadWriteMany
+          resources:
+            requests:
+              storage: 5Gi
