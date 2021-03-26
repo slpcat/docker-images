@@ -6,6 +6,7 @@ RUN apt-get update -y             \
     && apt-get upgrade -y         \
     && apt-get install -y         \
        apt-transport-https        \
+       bison                      \
        ca-certificates            \
        curl                       \
        gnupg-agent                \
@@ -84,8 +85,8 @@ RUN \
 #tccli 
 RUN pip3 install tccli
 
-COPY daemon.json /etc/docker/daemon.json
-COPY rootfs /
+#COPY daemon.json /etc/docker/daemon.json
+#COPY rootfs /
 
 #tencent cloud COSCMD
 RUN \
