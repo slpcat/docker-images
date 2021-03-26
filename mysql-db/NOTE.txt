@@ -9,3 +9,5 @@ docker run -d --restart=always --name mysql-server \
     -e MYSQL_DATABSE=mydb \
     -v /data/mysql:/var/lib/mysql \
     slpcat/percona-5.6
+
+推荐版本 percona8.0
