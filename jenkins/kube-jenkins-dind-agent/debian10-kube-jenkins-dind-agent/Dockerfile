@@ -100,6 +100,9 @@ RUN groupadd -g 10000 jenkins \
     && usermod -a -G docker jenkins \
     && sed -i '/^root/a\jenkins    ALL=(ALL:ALL) NOPASSWD:ALL' /etc/sudoers
 
+RUN rm -rf /root/ \
+    && ln -sf /home/jenkins /root
+
 LABEL Description="This is a base image, which provides the Jenkins agent executable (slave.jar)" Vendor="Jenkins project" Version="4.7"
 
 ARG VERSION=4.7
