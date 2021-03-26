@@ -24,7 +24,7 @@ ipvlan需要内核版本>=4.19
 
 代码仓库: gitlab-ce,gogs
 代码审核: gerrit,crucible
-代码品质管理: SonarQube,revive
+代码品质管理: SonarQube(荐),revive,FindBugs,spotBugs
 
 编译器: numba,Emscripten
 docker基础镜像源：webdevops，bitnami,turnkey,distroless
@@ -36,14 +36,14 @@ artifactory仓库: nexus2,nexus3,harbor,registry,quay,jfrog/Artifactory
 
 CMDB资产配置: OneCMDB、CMDBuild、ItopCMDB、Rapid OSS、ECDB、i-doit、iTop
 开源DevOps平台: walle,gaia,BlueKing-cmdb,cds,cloudunit,hygieia,adminset
-跳板机/堡垒机: jumpserver
+跳板机/堡垒机: jumpserver,Guacamole 是一个基于 HTML 5 和 JavaScript 的 VNC 查看器，服务端基于 Java 的 VNC-to-XML 代理开发。
 helm应用商店: chartmuseum,kubeapps
 分布式存储: ceph,minio,openebs,glusterfs,EdgeFS,moosefs,lizardfs,beegfs
 分布式数据库:citusdata
 内存分布式管理系统: Alluxio,apache ignite,Apache arrow,Hazelcast,Oracle Coherence,GemFire
 大数据集群: hadoop(hdfs+yarn),hbase,spark,flink,Drill
 实时流计算: Spark （micro batch），Storm， Flink，Samza,Kafka Stream,StreamBase,Hangout,Amazon Kinesis,Apache Ignite
-ETL/CDC工具: DataX,DataX Web,Kettle,Sqoop,streamSets,Apache NiFi,Kafka Connect,Debezium,Waterdrop,databus,canal
+ETL/CDC工具: DataX,DataX Web,Kettle,Sqoop,streamSets,Apache NiFi,Kafka Connect,Debezium,Waterdrop,databus,canal,maxwell,mysql_steamer,flinkx,datalink,
 web服务器/容器: nginx-php,apache-php,tomcat,resin
 SQL数据库: mysql,percona,mariadb,postgresql,greenplum,MyRocks,Citus,mssql-linux
 SQL版本管理: Flyway
@@ -55,7 +55,7 @@ MPP DataBase: Teradata,Greenplum,Vertica,Impala,GPDB
 数据可视化: Superset,SQLPad,MetaBase,Franchise,Redash,ECharts,mapd-charting,highchart,d3.js,google chart,gephi,Sigma.js,Keylines,VivaGraph,ngraph,Linkurious,immerse,Mapv,deck.gl,DbVisualizer
 NoSQL数据库/缓存/存储: memcache,rethinkdb,redis,ssdb,leveldb,mongodb,cassandra,ScyllaDB,LucidDB,boltdb,ArangoDB,Azure DocumentDB,DynamoDB,Hazelcast,Infinispan,MarkLogic,OrientDB,OnceDB,TerarkDB
 分布式kv存储: 小米Pegasus,Zeppelin,京东JIMDB，淘宝Tair，tikv
-列式数据库: clickhouse(荐),Vertica,MonetDB,InfiniDB,ParAccel,EventQL,HadoopDB,Postgres-XL,RecDB,Stado,Yahoo Everest,
+列式数据库: clickhouse(荐),Vertica,MonetDB,InfiniDB,ParAccel,EventQL,HadoopDB,Postgres-XL,RecDB,Stado,Yahoo Everest,DorisDB,Apache Doris
 图数据库: AgensGraph,Titan/JanusGraph,neo4j,OrientDB,FlockDB,Arangodb,GunDB,TigerGraph,LightGraphs,PandaGraph,Cayley,Orly,DGraph,SparkGraphX,InfiniteGraph,
 数据仓库: Infobright,Palo,Druid,pinot,Kylin,Hyper,presto，argo
 GPU-Powered Database: Kinetica,OmniSciDB (formerly MapD Core),BlazingDB,Brytlyt,PG-Strom,Blazegraph,SQream
@@ -88,13 +88,15 @@ FAAS: fission,fnproject,funktion,kubeless,nuclio,open-lambda,openfaas,openwhisk,
 监控: Argus,bosun,Collectd,cadvisor,cortex,heapster,kube-state-metrics,metrics-server,searchlight,prometheus,thanos,kubewatch,searchlight,Molten,sensu,telegraf(TICK),Alerta,zabbix,statsite,statsd,riemann, Wavefront,Honeycomb,Graphite,open-falcon,Xhprof/Xhgui,nightingale,CAT（Central Application Tracking）,netdata,
 动态性能追踪: bcc-tools,systemtap,sysdig,kubectl-trace,bpftrace
 APM/tracing: appdash,apm-server,pinpoint,jaeger,zipkin,skywalking,opentracing,opencensus,opentelemetry,Elastic APM(原Opbeat),Dapper(Google),StackDriver Trace (Google),鹰眼(taobao),谛听(盘古，阿里云云产品使用的Trace系统),云图(蚂蚁Trace系统),X-ray(aws),Datadog,AppDynamics,New Relic,ScienceLogic,SignalFx,Stackifya,Dynatrace,OneAPM,RichAPM,Instana,RapidSpike,IQLECT,Dynatrace,SolarWinds Server & Application Monitor,CloudMonix,Glowroot,2 Steps,inspectIT
+基础架构即代码: packer,terraform
+分布式事务: seata,EasyTransaction
 
 kubernetes集群安装/升级: kubespray
 Kubernetes发行版: Rancher,CoreOS Tectonic,Canonical Distribution of Kubernetes（CDK）,Heptio Kubernetes,Kontena Pharos,Pivotal 容器服务 (PKS),Red Hat OpenShift,Telekube,Microk8s,k3s,
 kubernetes可视化管理工具: kubernetes-dashboard,weavescope,kubebox,kubedash,kube-ops-view,cabin,wayne(360),KubeSphere,openshift,rancher,Kuboard,lensapp/lens,karbon,instana
 kubernetes灾难恢复: ark/Velero
 kubernetes扩容:virtual-kubelet,cluster-capacity,hpa-operator
-
+成本计算: Kubecost
 Open Application Model （OAM)
 https://openappmodel.io
 
@@ -104,7 +106,7 @@ ReactiveX
 http://reactivex.io/
 
 开发工具: Telepresence,Keel,Apollo,Deis Workflow,Kel,
-安全工具: anchore,clair,cert-manager,docker-bench-security,magic-namespace,notary,OpenSCAP,trireme,NeuVector,Deepfence,StackRox,Tenable,Cavirin,Kube-Bench,Sysdig Falco,Sysdig Secure,Kubesec.io;付费 Aquasec,flawcheck
+安全工具: anchore,clair,cert-manager,docker-bench-security,magic-namespace,notary,OpenSCAP,trireme,NeuVector,Deepfence,StackRox,Tenable,Cavirin,Kube-Bench,Sysdig Falco,Sysdig Secure,Kubesec.io;付费 Aquasec,flawcheck,portshift-operator
 安全平台: Wazuh,
 安全审计: Auditbeat+ELK,
 编排转换：kompose
@@ -151,6 +153,7 @@ clickhouse-operator
 NVIDIA GPU Operator
 rook-operator
 flinkk8soperator
+https://github.com/lyft/flinkk8soperator
 istio-operator
 influxdb-operator
 grafana-operator
