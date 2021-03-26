@@ -24,6 +24,6 @@ COPY mvn-entrypoint.sh /usr/local/bin/mvn-entrypoint.sh
 COPY settings-docker.xml /usr/share/maven/ref/
 COPY settings.xml $USER_HOME_DIR/.m2/
 
-RUN chown -R jenkins:jenkins $USER_HOME_DIR
+#RUN chown -R jenkins:jenkins $USER_HOME_DIR
 
-USER jenkins
+#USER jenkins
