@@ -1,0 +1,9 @@
+https://streamsets.com/
+Continuous Data for Nonstop Business
+
+docker run --restart on-failure -p 18630:18630 -d --name streamsets-dc streamsets/datacollector
+
+用户名: admin
+密码 :    admin
+
+

@@ -1,0 +1,54 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: maxwell-bootstrap-id01
+  namespace: default
+spec:
+  template:
+    metadata:
+      name: maxwell-bootstrap
+    spec:
+      containers:
+      - name: maxwell-bootstrap
+        image: zendesk/maxwell
+        env:
+          - name: LOG_LEVEL
+            value: "info"
+          - name: HOST
+            value: "mysql-server.dbaas"
+          - name: PORT
+            value: "3306"
+          - name: USER
+            value: "root"
+          - name: PASSWORD
+            value: "root_password"
+          #- name: DATABASE
+          #  value: "mydb"
+          #- name: TABLE
+          #  value: "table01"
+          #- name: WHERE_CLAUSE
+          #  value: "where"
+          #- name: PRODUCER
+          #  value: "stdout"
+          - name: PRODUCER
+            value: "kafka"
+          - name: CLIENT_ID
+            value: "maxwell"
+          - name: KAFKA_BROKERS
+            value: "kafka-svc:9092"
+          - name: KAFKA_TOPIC
+            value: "maxwell-topic"
+        command: [ "/bin/sh", "-c", "bin/maxwell-bootstrap --log_level $LOG_LEVEL \
+                                    --producer=$PRODUCER --host $HOST --user $USER \
+                                    --password $PASSWORD --port $PORT \
+                                    #--database $DATABASE --table $TABLE \
+                                    --kafka.bootstrap.servers=${KAFKA_BROKERS} \
+                                    --kafka_topic=$KAFKA_TOPIC \
+                                    --kafka_partition_hash=murmur3 \
+                                    --kafka_key_format=hash \
+                                    --kafka.compression.type=snappy \
+                                    --kafka.retries=5 \
+                                    --kafka.acks=all \
+                                    --producer_partition_by=primary_key \
+                                    --bootstrapper=async " ]
+      restartPolicy: Never

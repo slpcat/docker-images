@@ -1,0 +1,106 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  labels:
+      app: pinpoint-hbase
+  name: pinpoint-hbase-svc
+  namespace: tracing
+spec:
+  ports:
+  - port: 2181
+    targetPort: 2181
+    name: zookeeper
+  - port: 60000
+    targetPort: 60000
+    name: hmaster-api
+  - port: 60020
+    targetPort: 60020
+    name: hregion-api
+  clusterIP: None
+  selector:
+    app: pinpoint-hbase
+---
+kind: Service
+apiVersion: v1
+metadata:
+  labels:
+      app: pinpoint-hbase
+  name: pinpoint-hbase-ui
+  namespace: tracing
+spec:
+  ports:
+  - port: 16010
+    targetPort: 16010
+    name: hmaster-ui
+  - port: 16030
+    targetPort: 16030
+    name: hregion-ui
+  selector:
+    app: pinpoint-hbase
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    app: pinpoint-hbase
+  name: pinpoint-hbase
+  namespace: tracing
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pinpoint-hbase
+  serviceName: pinpoint-hbase-svc
+  template:
+    metadata:
+      labels:
+        app: pinpoint-hbase
+        name: pinpoint-hbase
+      annotations:
+        #disable istio sidecar injection
+        #sidecar.istio.io/inject: "false"
+        #scheduler.alpha.kubernetes.io/critical-pod=""
+    spec:
+      containers:
+        #image: pinpointdocker/pinpoint-hbase:2.2.0
+      - image: harisekhon/hbase:2.1
+        imagePullPolicy: Always
+        name: pinpoint-hbase
+        ports:
+        - containerPort: 2181
+          name: zookeeper
+          protocol: TCP
+        - containerPort: 60000
+          name: hmaster-api
+          protocol: TCP
+        - containerPort: 16010
+          name: hmaster-ui
+          protocol: TCP
+        - containerPort: 60020
+          name: hregion-api
+          protocol: TCP
+        - containerPort: 16030
+          name: hregion-ui
+          protocol: TCP
+        resources:
+          limits:
+            cpu: "2"
+            memory: 4Gi
+          requests:
+            cpu: 500m
+            memory: 1Gi
+        volumeMounts:
+        #- mountPath: /home/pinpoint
+        - mountPath: /hbase-data
+          name: pinpoint-hbase-store
+  volumeClaimTemplates:
+  - metadata:
+      name: pinpoint-hbase-store
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 80Gi

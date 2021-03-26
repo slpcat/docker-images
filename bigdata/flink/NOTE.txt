@@ -9,3 +9,26 @@ https://github.com/apache/flink-docker
 Flink job cluster on Kubernetes
 
 Native Kubernetes Setup
+
+1.下载解压安装包
+https://flink.apache.org/downloads.html
+
+2.创建serviceaccount
+kubectl create ns flink
+kubectl apply -f flink-serviceaccount.yml
+
+3.创建集群
+./bin/kubernetes-session.sh \
+  -Dkubernetes.cluster-id=my-flink-cluster \
+  -Dkubernetes.container.image=flink:1.12.1-scala_2.12 \
+  -Dkubernetes.container.image.pull-policy=Always \
+  -Dkubernetes.namespace=flink \
+  -Dkubernetes.service-account=flink \
+  -Dtaskmanager.memory.process.size=2048m \
+  -Dkubernetes.taskmanager.cpu=-1 \
+  -Dtaskmanager.numberOfTaskSlots=4 \
+  -Dresourcemanager.taskmanager-timeout=360000 \
+  -Dkubernetes.service.create-timeout=100min \
+  -Dkubernetes.jobmanager.cpu=1.0 \
+  -Dkubernetes.rest-service.exposed.type=ClusterIP
+

@@ -1,0 +1,30 @@
+http://maxwells-daemon.io/quickstart/
+
+docker run -it --rm zendesk/maxwell bin/maxwell --user=$MYSQL_USERNAME \
+    --password=$MYSQL_PASSWORD --host=$MYSQL_HOST --producer=kafka \
+    --kafka.bootstrap.servers=$KAFKA_HOST:$KAFKA_PORT --kafka_topic=maxwell
+
+针对数据初始化的问题，Maxwell 提供了一个命令工具 maxwell-bootstrap 帮助我们完成数据初始化，maxwell-bootstrap 是基于 SELECT * FROM table 的方式进行全量数据初始化，不会产生多余的binlog！
+
+这个工具有下面这些参数：
+
+参数	说明
+--log_level LOG_LEVEL	日志级别（DEBUG, INFO, WARN or ERROR）
+--user USER	mysql 用户名
+--password PASSWORD	mysql 密码
+--host HOST	mysql 地址
+--port PORT	mysql 端口
+--database DATABASE	要bootstrap的表所在的数据库
+--table TABLE	要引导的表
+--where WHERE_CLAUSE	设置过滤条件
+--client_id CLIENT_ID	指定执行引导操作的Maxwell实例
+
+docker run -it --rm zendesk/maxwell bin/maxwell-bootstrap --user maxwell  \
+    --password 123456 --host 10.100.97.246  --database test --table test --client_id maxwell
+
+部署以及同步过程
+1.首次全量同步
+job maxwell-bootstrap 
+2.实时增量同步
+deploy maxwell
+
