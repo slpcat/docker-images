@@ -1,0 +1,35 @@
+蓝绿发布
+必须2个deploy
+切换service selector的label
+
+非istio 单一deploy方案 仅支持灰度(金丝雀)发布
+更新镜像，并暂停升级
+kubectl set image deployment myapp-deploy myapp:v2 -n test && kubectl rollout pause deployment myapp-deploy -n test
+
+如果正常解除暂停
+kubectl rollout resume deployment myapp-deploy -n test
+如果异常进行回滚
+kubectl rollout history deployment myapp-deploy -n test
+
+查看确认版本
+kubectl get rs -n test -o wide
+
+支持灰度发布和AB测试以及实例比例流量分配（不支持指定百分比）
+
+1.非istio方案多个deploy方案: 部署3个版本的tomcat，版本v1对应8.0，版本v2对应8.5，版本v3对应9.0，都支持水平自动伸缩
+注意: 版本v1 v2不代表新旧顺序，只是为了区分，版本数最少2个，也可以更多
+
+新添加版本从1开始增加，调整实例pod数量,分配访问比例，观察监控访问流量变化/错误,如果有错误删除新版，维持现状。
+
+如果正常新添加版本扩至目标数量，逐步降低旧版数量到1，最终删除旧版
+
+2.默认4层负载均衡svc，在多个版本之间轮转请求
+
+3.istio方案 支持多版本AB测试，支持指定百分比流量分配 http请求逻辑流程
+客户端->集群外部L4负载均衡->istio gateway-> istio virtualservice->istio destination->集群内部L4负载均衡->pod
+涉及多级调用: pod->egress->ServiceEntry 或者 pod->集群内部L4负载均衡->其他pod
+注意：整个过程并不需要kubernetes内置L7负载均衡ingress
+
+4.熔断规则
+
+5.限流规则

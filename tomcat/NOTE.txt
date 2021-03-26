@@ -11,6 +11,27 @@ tracing/telemetry/
 
 debian10 + openjdk11
 
+java -server -Dserver.tomcat.max-threads=400 -Dspringmvc.thread.core=10 -Dspringmvc.thread.max=400 -Dspringmvc.thread.queue=200 -Xms512m -Xmx512m -jar test4server.jar
+
+java -server -Djetty.thread.max=400 -Djetty.thread.min=10 -Dspringmvc.thread.core=10 -Dspringmvc.thread.max=400 -Dspringmvc.thread.queue=200 -Xms512m -Xmx512m -jar test4server.jar
+
+java -server -Dserver.undertow.io-threads=16 -Dserver.undertow.worker-threads=400 -Dspringmvc.thread.core=10 -Dspringmvc.thread.max=400 -Dspringmvc.thread.queue=200 -Xms512m -Xmx512m -jar test4server.jar
+
+#最大连接数
+server.tomcat.max-connections=20000
+#最大线程数
+server.tomcat.max-threads=1000
+#最大等待数
+server.tomcat.accept-count=800
+## 最小工作空闲线程数，默认10。（适当增大一些，以便应对突然增长的访问量）
+server.tomcat.min-spare-threads=100
+#请求头最大长度kb
+server.tomcat.max-http-header-size=1048576
+server.tomcat.max-http-post-size=0
+server.tomcat.uri-encoding=UTF-8
+#链接建立超时时间
+server.tomcat.connection-timeout=12000
+
 开启Tomcat JMX功能
 CATALINA_OPTS="$CATALINA_OPTS
 -Dcom.sun.management.jmxremote
