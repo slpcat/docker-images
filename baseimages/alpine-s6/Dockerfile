@@ -65,7 +65,7 @@ RUN ALPINE_GLIBC_BASE_URL="https://github.com/sgerrand/alpine-pkg-glibc/releases
         "$ALPINE_GLIBC_BIN_PACKAGE_FILENAME" \
         "$ALPINE_GLIBC_I18N_PACKAGE_FILENAME"
 
-ARG S6_VERSION=v2.2.0.0
+ARG S6_VERSION=v2.2.0.3
 ##
 ## ROOTFS
 ##

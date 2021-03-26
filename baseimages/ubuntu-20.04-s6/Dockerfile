@@ -30,7 +30,7 @@ RUN \
 RUN \
     apt-get dist-upgrade -y
 
-ARG S6_VERSION=v2.2.0.0
+ARG S6_VERSION=v2.2.0.3
 ##
 ## ROOTFS
 ##
