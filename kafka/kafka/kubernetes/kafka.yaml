@@ -148,7 +148,7 @@ spec:
           --override listeners=PLAINTEXT://:9092 \
           --override advertised.listeners=PLAINTEXT://${POD_IP}:9092 \
           --override zookeeper.connect=zk-0.zk-svc.default.svc.cluster.local:2181,zk-1.zk-svc.default.svc.cluster.local:2181,zk-2.zk-svc.default.svc.cluster.local:2181/kafka \
-          --override log.dirs=/var/lib/kafka \
+          --override log.dirs=/var/lib/kafka/data \
           --override auto.create.topics.enable=false \
           --override auto.leader.rebalance.enable=true \
           --override background.threads=10 \

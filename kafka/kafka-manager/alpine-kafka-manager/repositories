@@ -1,4 +1,4 @@
 [repositories]
   local
-  aliyun: http://maven.aliyun.com/nexus/content/groups/public/
+  aliyun: https://maven.aliyun.com/nexus/content/groups/public/
   central: https://repo.maven.apache.org/maven2/

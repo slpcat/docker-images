@@ -27,7 +27,7 @@ spec:
       #- name: registrykey-ali-ext
       containers:
       - name: kafka-manager
-        image: slpcat/kafka-manager:v2.0.0.2-alpine
+        image: slpcat/kafka-manager:v3.0.0.5
         imagePullPolicy: Always
         livenessProbe: #kubernetes认为该pod是存活的,不存活则需要重启
           tcpSocket:
@@ -56,16 +56,15 @@ spec:
           privileged: false
         env:
           - name: ZK_HOSTS
-            value: "zk-0.zk-svc.default.svc.cluster.local:2181,zk-1.zk-svc.default.svc.cluster.local:2181,zk-2.zk-svc.default.svc.cluster.local:2181"
-          - name: APPLICATION_SECRET
-            value: "letmein"
-          - name: KM_USERNAME
+            value: "zk-cs:2181"
+          - name: KAFKA_MANAGER_AUTH_ENABLED
+            value: "true"
+          - name: KAFKA_MANAGER_USERNAME
             value: "admin"
-          - name: KM_PASSWORD
-            value: "admin"
+          - name: KAFKA_MANAGER_PASSWORD
+            value: "password"
           - name: JAVA_OPTS
-            value: "-server -Djava.awt.headless=true -Djava.nio.channels.spi.SelectorProvider=sun.nio.ch.EPollSelectorProvider -Xverify:none -XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=512m -XX:ReservedCodeCacheSize=240M -XX:MaxRAMFraction=2 -XshowSettings:vm -XX:+AggressiveOpts -XX:-UseBiasedLocking -XX:+UseFastAccessorMethods -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:+UseG1GC -XX:+ExplicitGCInvokesConcurrent -XX:SoftRefLRUPolicyMSPerMB=0 -XX:G1ReservePercent=25 -XX:G1NewSizePercent=10 -XX:G1MaxNewSizePercent=25 -XX:MaxGCPauseMillis=20 -XX:-OmitStackTraceInFastThrow -XX:+ParallelRefProcEnabled -XX:ParallelGCThreads=8 -XX:MaxTenuringThreshold=1 -XX:G1HeapWastePercent=10 -XX:SurvivorRatio=8 -XX:G1MixedGCCountTarget=16 -XX:G1MixedGCLiveThresholdPercent=90 -XX:InitiatingHeapOccupancyPercent=35 -XX:G1HeapRegionSize=32m -XX:+PerfDisableSharedMem -XX:-ResizePLAB"
-#export HBASE_OPTS="-XX:+UseConcMarkSweepGC"
+            value: "-server -Djava.awt.headless=true -Djava.nio.channels.spi.SelectorProvider=sun.nio.ch.EPollSelectorProvider -Xverify:none -XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=512m -XX:ReservedCodeCacheSize=240M -XshowSettings:vm -XX:-UseBiasedLocking -XX:+UnlockExperimentalVMOptions -XX:+UseG1GC -XX:+ExplicitGCInvokesConcurrent -XX:SoftRefLRUPolicyMSPerMB=0 -XX:G1ReservePercent=25 -XX:G1NewSizePercent=10 -XX:G1MaxNewSizePercent=25 -XX:MaxGCPauseMillis=20 -XX:-OmitStackTraceInFastThrow -XX:+ParallelRefProcEnabled -XX:ParallelGCThreads=8 -XX:MaxTenuringThreshold=1 -XX:G1HeapWastePercent=10 -XX:SurvivorRatio=8 -XX:G1MixedGCCountTarget=16 -XX:G1MixedGCLiveThresholdPercent=90 -XX:InitiatingHeapOccupancyPercent=35 -XX:G1HeapRegionSize=32m -XX:+PerfDisableSharedMem -XX:-ResizePLAB"
         ports:
           - name: http
             containerPort: 9000
