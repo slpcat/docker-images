@@ -40,7 +40,7 @@ spec:
           imagePullPolicy: IfNotPresent
           env:
             - name: SEATA_CONFIG_NAME
-              value: file:/root/seata-config/registry.conf
+              value: file:/root/seata-config/registry
           ports:
             - name: http
               containerPort: 8091

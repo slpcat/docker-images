@@ -29,8 +29,8 @@ data:
     query_cache_min_res_unit = 2k
     read_rnd_buffer_size = 16M
     myisam_sort_buffer_size = 128M
-    thread_handling		= pool-of-threads
-    thread_pool_oversubscribe = 10
+    #thread_handling		= pool-of-threads
+    #thread_pool_oversubscribe = 10
     interactive_timeout = 600
     wait_timeout        = 300
     back_log            = 1000
@@ -44,9 +44,9 @@ data:
     skip-name-resolve
     #innodb_buffer_pool_instances = 8
     #innodb_file_per_table = 1
-    #datadir = /data/mydata
+    datadir = /var/lib/mysql/mydata
     #log-bin=/data/binlogs/mysql-bin
-    expire_logs_day=30
+    #expire_logs_day=30
     max_binlog_size = 256M
     slow_query_log=ON
     #slow-query-log-file=/data/binlogs/slow_query.log
@@ -59,6 +59,7 @@ data:
     innodb_write_io_threads = 8
     innodb_read_io_threads = 16
     innodb_flush_log_at_trx_commit = 2
+    innodb_large_prefix = 1
     innodb_log_files_in_group = 2
     innodb_max_dirty_pages_pct = 60
     innodb_flush_method     = O_DIRECT_NO_FSYNC
@@ -81,7 +82,7 @@ data:
     innodb_sync_spin_loops  = 100
     innodb_spin_wait_delay  = 30
     innodb_old_blocks_time  = 1000
-    innodb_log_block_size   = 4096
+    #innodb_log_block_size   = 4096
     innodb_old_blocks_pct   = 60
     innodb_open_files       = 4096
     [mysqldump]

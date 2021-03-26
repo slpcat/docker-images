@@ -115,7 +115,7 @@ spec:
             - name: NACOS_SERVERS
               value: "nacos-0.nacos-headless.test.svc.cluster.local:8848 nacos-1.nacos-headless.test.svc.cluster.local:8848 nacos-2.nacos-headless.test.svc.cluster.local:8848"
             - name: NACOS_DEBUG
-              value: "true"
+              value: "y"
             - name: TOMCAT_ACCESSLOG_ENABLED
               value: "true"
             - name: NACOS_AUTH_SYSTEM_TYPE

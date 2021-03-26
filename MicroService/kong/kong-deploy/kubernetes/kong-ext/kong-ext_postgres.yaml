@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: kong-proxy
+  name: kong-ext-proxy
   namespace: kong
 spec:
   type: ClusterIP
@@ -13,13 +13,13 @@ spec:
     targetPort: 8000
     protocol: TCP
   selector:
-    app: kong
+    app: kong-ext
 
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: kong-proxy-grpc
+  name: kong-ext-proxy-grpc
   namespace: kong
 spec:
   type: ClusterIP
@@ -31,33 +31,33 @@ spec:
     targetPort: 9080
     protocol: TCP
   selector:
-    app: kong
+    app: kong-ext
 
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: kong-proxy-ssl
+  name: kong-ext-proxy-ssl
   namespace: kong
 spec:
   type: ClusterIP
   #loadBalancerSourceRanges:
   #- 0.0.0.0/0
   ports:
-  - name: kong-proxy-ssl
+  - name: kong-ext-proxy-ssl
     port: 8443
     targetPort: 8443
     protocol: TCP
   selector:
-    app: kong
+    app: kong-ext
 
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: kong-admin
+  name: kong-ext-admin
   labels:
-    k8s-app: kong
+    k8s-app: kong-ext
   namespace: kong
 spec:
   #type: LoadBalancer
@@ -69,13 +69,13 @@ spec:
     targetPort: 8001
     protocol: TCP
   selector:
-    app: kong
+    app: kong-ext
 
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: kong-admin-ssl
+  name: kong-ext-admin-ssl
   namespace: kong
 spec:
   #type: LoadBalancer
@@ -87,26 +87,26 @@ spec:
     targetPort: 8444
     protocol: TCP
   selector:
-    app: kong
+    app: kong-ext
 
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: kong
+  name: kong-ext
   namespace: kong
   labels:
-    app: kong
+    app: kong-ext
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: kong
+      app: kong-ext
   template:
     metadata:
       labels:
-        name: kong
-        app: kong
+        name: kong-ext
+        app: kong-ext
     spec:
       #securityContext:
         #sysctls:
@@ -178,7 +178,7 @@ spec:
           - name: KONG_PG_PORT
             value: "5432"
           - name: KONG_PG_DATABASE
-            value: "kong"
+            value: "kong_ext"
           - name: KONG_PG_USER
             value: "kong"
           - name: KONG_PG_PASSWORD

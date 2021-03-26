@@ -4,6 +4,10 @@ dockerfile 见nginx/kong
 kubectl apply -f https://bit.ly/kong-ingress-dbless
 
 2.部署方式 kong-deploy 无ingress,konga管理UI，使用db
+常用
+数据库postgres共用一个实例
+konga共用一个实例
+kong-proxy多个 内部kong-proxy-int 外部kong-proxy-ext
 
 3.部署方式 kong-mesh
 https://github.com/Kong/kong-mesh-dist-kubernetes

@@ -14,6 +14,7 @@ docker run --name seata-server \
         -e SEATA_IP=192.168.1.1 \
         -e SEATA_PORT=8091 \
         seataio/seata-server
+        slpcat/seata-server:1.4.1
 
 SEATA_PORT=8091
       - STORE_MODE=file

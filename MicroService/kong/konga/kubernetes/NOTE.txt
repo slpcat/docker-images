@@ -1,3 +1,5 @@
+https://github.com/pantsel/konga
+
 docker run -p 1337:1337 
              -e "TOKEN_SECRET={{somerandomstring}}" \
              -e "DB_ADAPTER=the-name-of-the-adapter" \ // 'mongo','postgres','sqlserver'  or 'mysql'
@@ -11,3 +13,5 @@ docker run -p 1337:1337
              --name konga \
              pantsel/konga
 
+迁移数据库
+$ node ./bin/konga.js  prepare --adapter postgres --uri postgresql://localhost:5432/konga
