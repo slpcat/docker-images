@@ -1,0 +1,4 @@
+#!/usr/bin/execlineb -P
+
+if { logutil-newfifo /var/run/s6/nginx-access-log-fifo }
+if { logutil-newfifo /var/run/s6/nginx-error-log-fifo }

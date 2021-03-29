@@ -1,0 +1,11 @@
+#!/usr/bin/execlineb -P
+
+with-contenv
+s6-envuidgid nginx
+multisubstitute
+{
+  importas -u uid UID
+  importas -u gid GID
+  define check_cmd "/usr/sbin/nginx -t -c {{.}}"
+}
+renderizr --onetime --template "/etc/nginx/nginx.conf.tmpl;/etc/nginx/nginx.conf;${uid}:${gid};0600;${check_cmd};" etcd

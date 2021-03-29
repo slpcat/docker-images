@@ -1,0 +1,10 @@
+#!/usr/bin/execlineb -P
+
+if { s6-mkdir -p /etc/nginx/certs }
+if -t { s6-test ! -f /etc/nginx/certs/dhparam.pem }
+if
+{
+  export RANDFILE .rnd
+  openssl dhparam -out /etc/nginx/certs/dhparam.pem 2048
+}
+if { s6-envuidgid nginx s6-chown -U -- /etc/nginx/certs/dhparam.pem }

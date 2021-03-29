@@ -1,0 +1,4 @@
+/etc/nginx true nginx 0600 0700
+/var/lib/nginx true nginx 0600 0700
+/var/log/nginx-error-logs false nobody,32768:32768 0755 2700
+/var/log/nginx-access-logs false nobody,32768:32768 0755 2700
