@@ -26,7 +26,7 @@ RUN \
 
 # Install required packages
 RUN \
-    apt-get dist-upgrade -y
+    apt-get dist-upgrade -y && rm -rf /var/lib/apt/lists/
 
 ARG S6_VERSION=v2.2.0.3
 ##

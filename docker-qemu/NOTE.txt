@@ -1,0 +1,21 @@
+x86机器上运行arm64以及其他架构 docker
+https://github.com/multiarch/qemu-user-static
+
+apt-get install qemu-user-static qemu-user
+docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+
+Triple			Aliases				linux	osx	windows
+x86_64-linux-gnu	(default), linux, amd64, x86_64	X
+arm-linux-gnueabi	arm, armv5			X
+arm-linux-gnueabihf	armhf, armv7, armv7l		X
+aarch64-linux-gnu	arm64, aarch64			X
+mipsel-linux-gnu	mips, mipsel			X
+powerpc64le-linux-gnu	powerpc, powerpc64, powerpc64le	X
+x86_64-apple-darwin	osx, osx64, darwin, darwin64		X
+x86_64h-apple-darwin	osx64h, darwin64h, x86_64h		X
+i386-apple-darwin	osx32, darwin32				X
+x86_64-w64-mingw32	windows, win64					X
+i686-w64-mingw32	win32						X
+
+docker run -it --rm multiarch/alpine:armhf-edge /bin/sh
+docker run -it --rm multiarch/alpine:aarch64-edge /bin/sh

@@ -31,24 +31,24 @@ spec:
       - name: gitlab-ce
         image: slpcat/gitlab-ce:13.10.0-ce0
         imagePullPolicy: Always
-        livenessProbe: #kubernetes认为该pod是存活的,不存活则需要重启
-          httpGet:
-            path: /-/liveness
-            port: 80
-            scheme: HTTP
-          initialDelaySeconds: 60 # equals to the maximum startup time of the application + couple of seconds
-          timeoutSeconds: 5
-          successThreshold: 1
-          failureThreshold: 5
-        readinessProbe: #kubernetes认为该pod是启动成功的
-          httpGet:
-            path: /-/readiness
-            port: 80
-            scheme: HTTP
-          initialDelaySeconds: 30 # equals to minimum startup time of the application
-          timeoutSeconds: 5
-          successThreshold: 1
-          failureThreshold: 5
+        #livenessProbe: #kubernetes认为该pod是存活的,不存活则需要重启
+        #  httpGet:
+        #    path: /-/liveness
+        #    port: 80
+        #    scheme: HTTP
+        #  initialDelaySeconds: 60 # equals to the maximum startup time of the application + couple of seconds
+        #  timeoutSeconds: 5
+        #  successThreshold: 1
+        #  failureThreshold: 5
+        #readinessProbe: #kubernetes认为该pod是启动成功的
+        #  httpGet:
+        #    path: /-/readiness
+        #    port: 80
+        #    scheme: HTTP
+        #  initialDelaySeconds: 30 # equals to minimum startup time of the application
+        #  timeoutSeconds: 5
+        #  successThreshold: 1
+        #  failureThreshold: 5
         resources:
           # keep request = limit to keep this container in guaranteed class
           requests:
@@ -70,19 +70,17 @@ spec:
             containerPort: 50000
         volumeMounts:
           - name: gitlab-etc
-            mountPath: "/etc/gitlab/gitlab.rb"
-            subPath: gitlab.rb
+            mountPath: "/etc/gitlab"
           - name: gitlab-data
             mountPath: "/var/opt/gitlab"
-      volumes:
-        - name: gitlab-etc
-          configMap:
-            name: gitlab-etc-configmap
-            #Add ConfigMap data to a specific path in the Volume
-            items:
-            - key: gitlab.rb
-              path: gitlab.rb
   volumeClaimTemplates:
+  - metadata:
+      name: gitlab-etc
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 20Gi
   - metadata:
       name: gitlab-data
     spec:

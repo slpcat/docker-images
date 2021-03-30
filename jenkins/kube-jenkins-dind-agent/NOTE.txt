@@ -17,8 +17,9 @@ docker run --init jenkins/inbound-agent -url http://jenkins-server:port <secret>
 
 https://github.com/jenkinsci/kubernetes-plugin/tree/master/examples
 
+动态创建agent 使用dind 在容器内运行dockerd 需要开特权
 
-jenkins 静态slave持续运行 具备pvc
+jenkins 静态slave持续运行 具备pvc 只使用docker-cli 无特权
 
 static-golang
 static-jnlp

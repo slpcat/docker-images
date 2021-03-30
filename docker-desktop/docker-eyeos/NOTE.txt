@@ -1,0 +1,30 @@
+mkdir -p images
+cd images
+
+wget https://images.sick.codes/hfs.sec.zst
+wget https://images.sick.codes/hfs.main.zst
+
+# decompress images, uses about 15GB
+zstd -d hfs.main.zst
+zstd -d hfs.sec.zst
+
+docker pull sickcodes/docker-eyeos:latest
+
+docker run -it --privileged \
+    --device /dev/kvm \
+    -e RAM=6 \
+    -e HFS_MAIN=./images/hfs.main \
+    -e HFS_SEC=./images/hfs.sec \
+    -p 2222:2222 \
+    -v "$PWD:/home/arch/docker-eyeos/images" \
+    -e "DISPLAY=${DISPLAY:-:0.0}" \
+    -v /tmp/.X11-unix:/tmp/.X11-unix \
+    sickcodes/docker-eyeos:latest
+
+ssh root@localhost -p 2222
+
+# password is alpine
+
+# -----> Try to SSH about 4 times
+# -----> also needs to HIT ENTER a few times in the terminal to kick it along
+

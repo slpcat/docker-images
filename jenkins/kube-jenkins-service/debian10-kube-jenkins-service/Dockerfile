@@ -1,5 +1,5 @@
 #upstream: https://github.com/jenkinsci/docker
-FROM slpcat/openjdk:11-buster-s6
+FROM slpcat/openjdk:11-slim-s6
 MAINTAINER 若虚 <slpcat@qq.com>
 
 RUN apt-get update \

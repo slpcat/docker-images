@@ -26,6 +26,6 @@ RUN \
 
 # Install required packages
 RUN \
-    apt-get dist-upgrade -y
+    apt-get dist-upgrade -y && rm -rf /var/lib/apt/lists/
 
 CMD ["/bin/bash"]
