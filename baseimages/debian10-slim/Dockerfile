@@ -1,5 +1,5 @@
 #upstream https://github.com/debuerreotype/docker-debian-artifacts/blob/de09dd55b6328b37b89a33e76b698f9dbe611fab/jessie/backports/Dockerfile
-FROM debian:buster
+FROM debian:buster-slim
 MAINTAINER 若虚 <slpcat@qq.com>
 
 # Container variables
@@ -28,26 +28,4 @@ RUN \
 RUN \
     apt-get dist-upgrade -y
 
-ARG S6_VERSION=v2.2.0.3
-ARG SOCKLOG_VERSION=v3.1.1-1
-##
-## ROOTFS
-##
-
-# root filesystem
-#COPY rootfs /
-
-# Install s6-overlay
-ADD https://github.com/just-containers/s6-overlay/releases/download/${S6_VERSION}/s6-overlay-amd64.tar.gz /tmp/s6-overlay.tar.gz
-RUN tar xvfz /tmp/s6-overlay.tar.gz -C / && rm /tmp/s6-overlay.tar.gz
-
-## Install socklog-overlay
-#ADD https://github.com/just-containers/socklog-overlay/releases/download/${SOCKLOG_VERSION}/socklog-overlay-amd64.tar.gz /tmp/
-#RUN tar xzf /tmp/socklog-overlay-amd64.tar.gz -C / && rm /tmp/socklog-overlay-amd64.tar.gz
-
-
-##
-## INIT
-##
-
-ENTRYPOINT [ "/init" ]
+CMD ["/bin/bash"]

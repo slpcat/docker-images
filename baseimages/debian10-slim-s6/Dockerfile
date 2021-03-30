@@ -1,5 +1,5 @@
 #upstream https://github.com/debuerreotype/docker-debian-artifacts/blob/de09dd55b6328b37b89a33e76b698f9dbe611fab/jessie/backports/Dockerfile
-FROM debian:buster
+FROM debian:buster-slim
 MAINTAINER 若虚 <slpcat@qq.com>
 
 # Container variables

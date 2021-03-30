@@ -1,0 +1,8 @@
+-
++\..err:
++\.error:
++\.emerg:
++\.alert:
++\.crit:
+${SOCKLOG_TIMESTAMP_FORMAT}
+/var/log/socklog/errors

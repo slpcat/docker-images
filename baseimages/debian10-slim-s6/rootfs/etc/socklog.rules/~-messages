@@ -1,0 +1,11 @@
+-
++\.info:
++\.notice:
++\.warn:
+-^auth\.
+-^authpriv\.
+-^mail\.
+-^news\.
+-^cron\.
+${SOCKLOG_TIMESTAMP_FORMAT}
+/var/log/socklog/messages

@@ -26,7 +26,12 @@ i686-w64-mingw32	win32						X
 6.s6 
 采用s6-svscan 代替 supervisord 进行程序管理
 https://github.com/just-containers/s6-overlay
-runit，OpenRC
+7.runit VoidLinux
+8.OpenRC gentoo,AlpineLinux
+
+日志管理
+socklog - system and kernel logging services 替代syslogd
+
 
 腾讯os
 tencentos/tencentos_server31
@@ -36,4 +41,8 @@ amazonlinux
 
 精简版系统
 debian:buster-slim
+
+
+tinycore linux
+
 
