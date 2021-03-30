@@ -4,7 +4,7 @@ MAINTAINER 若虚 <slpcat@qq.com>
 
 RUN apt-get update \
     && apt-get upgrade -y \
-    && apt-get install -y git curl openssh-client unzip jq ttf-dejavu groff python3 \
+    && apt-get install -y git curl wget openssh-client unzip jq ttf-dejavu groff python3 \
     && curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | bash \
     && apt-get install -y git-lfs unzip \
     && git lfs install && rm -rf /var/lib/apt/lists/*
