@@ -27,7 +27,7 @@ RUN \
 # Install required packages
 RUN \
     apt-get dist-upgrade -y && rm -rf /var/lib/apt/lists/
-
+ARG TARGETARCH
 ARG S6_VERSION=v2.2.0.3
 ARG SOCKLOG_VERSION=v3.1.1-1
 ##
@@ -38,7 +38,7 @@ ARG SOCKLOG_VERSION=v3.1.1-1
 #COPY rootfs /
 
 # Install s6-overlay
-ADD https://github.com/just-containers/s6-overlay/releases/download/${S6_VERSION}/s6-overlay-amd64.tar.gz /tmp/s6-overlay.tar.gz
+ADD https://github.com/just-containers/s6-overlay/releases/download/${S6_VERSION}/s6-overlay-${TARGETARCH}.tar.gz /tmp/s6-overlay.tar.gz
 RUN tar xvfz /tmp/s6-overlay.tar.gz -C / && rm /tmp/s6-overlay.tar.gz
 
 ## Install socklog-overlay
