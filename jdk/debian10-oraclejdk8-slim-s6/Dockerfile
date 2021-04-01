@@ -18,6 +18,7 @@ ENV JAVA_VERSION=8 \
     JAVA_8_HOME=/usr/lib/jvm/java-8-oracle
 
 RUN \
+    mkdir -p /usr/lib/jvm && \
     cd "/tmp" && \
     wget https://github.com/frekele/oracle-java/releases/download/${JAVA_VERSION}u${JAVA_UPDATE}-b${JAVA_BUILD}/jdk-${JAVA_VERSION}u${JAVA_UPDATE}-linux-x64.tar.gz && \
     tar -zxf jdk-${JAVA_VERSION}u${JAVA_UPDATE}-linux-x64.tar.gz && \
@@ -58,4 +59,4 @@ RUN \
            "$JAVA_HOME/jre/lib/jfr.jar" \
            "$JAVA_HOME/jre/lib/jfr" \
            "$JAVA_HOME/jre/lib/oblique-fonts" && \
-    rm "/tmp/"*
+    rm -rf "/tmp/"*
