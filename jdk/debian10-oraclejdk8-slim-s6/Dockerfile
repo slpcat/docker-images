@@ -19,7 +19,7 @@ ENV JAVA_VERSION=8 \
 RUN \
     cd "/tmp" && \
     wget https://github.com/frekele/oracle-java/releases/download/${JAVA_VERSION}u${JAVA_UPDATE}-b${JAVA_BUILD}/jdk-${JAVA_VERSION}u${JAVA_UPDATE}-linux-x64.tar.gz && \
-    tar -zxf jdk-${JAVA_VERSION}u${JAVA_UPDATE}-linux-x64.tar.gz 
+    tar -zxf jdk-${JAVA_VERSION}u${JAVA_UPDATE}-linux-x64.tar.gz && \
     mv "/tmp/jdk1.${JAVA_VERSION}.0_${JAVA_UPDATE}" "/usr/lib/jvm/java-${JAVA_VERSION}-oracle" && \
     ln -s "java-${JAVA_VERSION}-oracle" "$JAVA_HOME" && \
     ln -s "$JAVA_HOME/bin/"* "/usr/bin/" && \
