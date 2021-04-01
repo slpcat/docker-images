@@ -19,3 +19,15 @@ i686-w64-mingw32	win32						X
 
 docker run -it --rm multiarch/alpine:armhf-edge /bin/sh
 docker run -it --rm multiarch/alpine:aarch64-edge /bin/sh
+
+如果你使用的是 Docker 桌面版（MacOS 和 Windows），默认已经启用了 binfmt_misc
+ docker run --rm --privileged docker/binfmt:66f9012c56a8316f9244ffd7622d7c21c1f6f28d
+Docker 默认会使用不支持多 CPU 架构的构建器
+
+创建一个新的构建器：
+docker buildx create --use --name mybuilder
+启动构建器：
+docker buildx inspect mybuilder --bootstrap
+
+docker buildx build -t hello-arch --platform=linux/arm,linux/arm64,linux/amd64 .
+docker buildx build -t slpcat/debian10:slim-s6  --platform=linux/arm,linux/arm64,linux/amd64 . --push

@@ -45,4 +45,24 @@ debian:buster-slim
 
 tinycore linux
 
+Running the command docker buildx install sets up docker builder command as an alias to docker buildx. This results in the ability to have docker build use the current buildx builder.
 
+多架构支持
+docker buildx build -t slpcat/debian10:slim-s6  --platform=linux/arm,linux/arm64,linux/amd64 . --push
+
+使用镜像加速优化
+https://github.com/moby/buildkit/blob/master/docs/buildkitd.toml.md
+
+新建配置文件 buildkitd.toml
+# buildkitd.toml
+[registry."docker.io"]
+  mirrors = ["wlzfs4t4.mirror.aliyuncs.com"]
+
+创建本地 builder
+### create builder with mirror
+docker buildx create --use --name localbuilder --platform=linux/amd64,linux/arm64 --config=buildkitd.toml
+
+
+使用buildx 替代build
+docker buildx install
+docker buildx  uninstall
