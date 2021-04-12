@@ -4,7 +4,7 @@ MAINTAINER 若虚 <slpcat@qq.com>
 
 # Install required packages
 RUN  \
-    yum update -y && \
+    yum update -y && yum install -y wget && \
     yum clean all
 
 #install JDK 1.8.212
