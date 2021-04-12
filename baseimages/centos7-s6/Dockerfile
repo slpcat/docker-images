@@ -32,7 +32,7 @@ ARG SOCKLOG_VERSION=v3.1.1-1
 
 # Install s6-overlay
 ADD https://github.com/just-containers/s6-overlay/releases/download/${S6_VERSION}/s6-overlay-${TARGETARCH}.tar.gz /tmp/s6-overlay.tar.gz
-RUN tar xvfz /tmp/s6-overlay.tar.gz -C / && rm /tmp/s6-overlay.tar.gz
+RUN tar xvfz /tmp/s6-overlay.tar.gz -C / && rm /tmp/s6-overlay.tar.gz && ln -sf /bin/bash /bin/sh
 
 ## Install socklog-overlay
 #ADD https://github.com/just-containers/socklog-overlay/releases/download/${SOCKLOG_VERSION}/socklog-overlay-${TARGETARCH}.tar.gz /tmp/
