@@ -1,0 +1,34 @@
+https://github.com/kubernetes-sigs/aws-load-balancer-controller
+https://aws.amazon.com/cn/blogs/opensource/kubernetes-ingress-aws-alb-ingress-controller/
+
+https://kubernetes-sigs.github.io/aws-load-balancer-controller/guide/ingress/annotations/
+
+
+kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/aws-alb-ingress-controller/v1.1.4/docs/examples/rbac-role.yaml
+
+aws iam create-policy \
+    --policy-name ALBIngressControllerIAMPolicy \
+    --policy-document https://raw.githubusercontent.com/kubernetes-sigs/aws-alb-ingress-controller/v1.1.4/docs/examples/iam-policy.json
+
+eksctl create iamserviceaccount \
+       --cluster=attractive-gopher \
+       --namespace=kube-system \
+       --name=alb-ingress-controller \
+       --attach-policy-arn=$PolicyARN \
+       --override-existing-serviceaccounts \
+       --approve
+
+
+curl -sS "https://raw.githubusercontent.com/kubernetes-sigs/aws-alb-ingress-controller/v1.1.4/docs/examples/alb-ingress-controller.yaml" \
+     | sed "s/# - --cluster-name=devCluster/- --cluster-name=attractive-gopher/g" \
+     | kubectl apply -f -
+
+create an IAM OIDC provider and associate it with your cluster:
+
+deploy the relevant RBAC roles and role bindings as required by the AWS ALB Ingress controller:
+
+create an IAM policy named ALBIngressControllerIAMPolicy to allow the ALB Ingress controller to make AWS API calls on your behalf.
+
+ create a Kubernetes service account and an IAM role (for the pod running the AWS ALB Ingress controller) by substituting $PolicyARN with the recorded value from the previous step:
+
+
