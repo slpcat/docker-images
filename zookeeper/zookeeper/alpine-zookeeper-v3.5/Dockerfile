@@ -11,13 +11,13 @@ ARG ZK_DIST=zookeeper-3.5.9
 
 RUN set -x \
     && apk add gnupg \
-    && wget -q "http://archive.apache.org/dist/zookeeper/$ZK_DIST/$ZK_DIST.tar.gz" \
-    && wget -q "http://archive.apache.org/dist/zookeeper/$ZK_DIST/$ZK_DIST.tar.gz.asc" \
+    && wget -q "http://archive.apache.org/dist/zookeeper/$ZK_DIST/apache-$ZK_DIST-bin.tar.gz" \
+    && wget -q "http://archive.apache.org/dist/zookeeper/$ZK_DIST/apache-$ZK_DIST-bin.tar.gz.asc" \
     && wget -q "http://archive.apache.org/dist/zookeeper/KEYS" \
     && gpg --import KEYS \
-    && gpg --batch --verify "$ZK_DIST.tar.gz.asc" "$ZK_DIST.tar.gz" \
-    && tar -xzf "$ZK_DIST.tar.gz" -C /opt \
-    && rm -r KEYS "$ZK_DIST.tar.gz" "$ZK_DIST.tar.gz.asc" \
+    && gpg --batch --verify "$ZK_DIST-bin.tar.gz.asc" "$ZK_DIST-bin.tar.gz" \
+    && tar -xzf "$ZK_DIST-bin.tar.gz" -C /opt \
+    && rm -r KEYS "$ZK_DIST-bin.tar.gz" "$ZK_DIST-bin.tar.gz.asc" \
     && ln -s /opt/$ZK_DIST /opt/zookeeper \
     && rm -rf /opt/zookeeper/CHANGES.txt \
     /opt/zookeeper/README.txt \
