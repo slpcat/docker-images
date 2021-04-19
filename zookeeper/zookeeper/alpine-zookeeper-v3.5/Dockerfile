@@ -50,6 +50,6 @@ RUN set -x \
     && chown -R "$ZK_USER:$ZK_USER" /opt/apache-$ZK_DIST-bin $ZK_DATA_DIR $ZK_LOG_DIR $ZK_DATA_LOG_DIR /tmp/zookeeper \
     && ln -s /opt/zookeeper/conf/ /usr/etc/zookeeper \
     && ln -s /opt/zookeeper/bin/* /usr/bin \
-    && ln -s /opt/zookeeper/$ZK_DIST.jar /usr/share/zookeeper/ \
+    #&& ln -s /opt/zookeeper/$ZK_DIST.jar /usr/share/zookeeper/ \
     && ln -s /opt/zookeeper/lib/* /usr/share/zookeeper
 CMD ["sh", "-c", "zkGenConfig.sh && zkServer.sh start-foreground"]
