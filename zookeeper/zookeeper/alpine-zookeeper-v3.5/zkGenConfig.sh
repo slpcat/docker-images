@@ -118,6 +118,7 @@ function create_config() {
     echo "forceSync=$ZK_FORCE_SYNC" >> $ZK_CONFIG_FILE
     echo "fsync.warningthresholdms=$ZK_FSYNC_WARNING_THRESHOLD_MS" >> $ZK_CONFIG_FILE
     echo "globalOutstandingLimit=$ZK_GLOBAL_OUTSTANDING_LIMIT" >> $ZK_CONFIG_FILE
+    echo "4lw.commands.whitelist=*" >> $ZK_CONFIG_FILE
 
     if [ $ZK_REPLICAS -gt 1 ]; then
         print_servers >> $ZK_CONFIG_FILE
