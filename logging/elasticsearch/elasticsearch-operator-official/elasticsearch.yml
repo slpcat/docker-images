@@ -2,16 +2,31 @@ apiVersion: elasticsearch.k8s.elastic.co/v1beta1
 kind: Elasticsearch
 metadata:
   name: quickstart
+  namespace: dbaas
 spec:
-  version: 7.4.0
+  version: 7.9.3
   nodeSets:
   - name: default
-    count: 1
+    count: 2
     config:
       node.master: true
       node.data: true
       node.ingest: true
       node.store.allow_mmap: false
+    podTemplate:
+      spec:
+        containers:
+        - name: elasticsearch
+          env:
+          - name: ES_JAVA_OPTS
+            value: -Xms2g -Xmx2g
+          resources:
+            requests:
+              memory: 4Gi
+              cpu: 0.5
+            limits:
+              memory: 4Gi
+              cpu: 2
     volumeClaimTemplates:
     - metadata:
         name: elasticsearch-data
@@ -21,3 +36,4 @@ spec:
         resources:
           requests:
             storage: 50Gi
+        #storageClassName: standard 

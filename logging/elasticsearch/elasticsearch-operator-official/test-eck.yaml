@@ -1,0 +1,303 @@
+apiVersion: elasticsearch.k8s.elastic.co/v1
+kind: Elasticsearch
+metadata:
+  name: test
+  namespace: test
+spec:
+  http:
+    tls:
+      selfSignedCertificate:
+        disabled: true
+  version: 7.6.0
+  image: nexus.internal.test:8082/amd64/elasticsearch:7.6.0 # 此处是我的私有仓库地址
+  imagePullPolicy: IfNotPresent
+  updateStrategy:
+    changeBudget:
+      maxSurge: 2 # 缺省为-1，表示新的Pod会马上创建，这样会瞬间消耗大量的资源，然后再替换旧的Pod来进行升级
+      maxUnavailable: 1 # 缺省为1
+  podDisruptionBudget:
+    spec:
+      minAvailable: 1 # 缺省为1
+      selector:
+        matchLabels:
+          elasticsearch.k8s.elastic.co/cluster-name: test # 即metadata.name的值
+    nodeSets:
+    # 定义合规的主节点
+    - name: master-eligible
+      count: 2
+      config:
+      node.master: true
+      node.data: false
+      node.ingest: false
+      node.ml: false
+      node.store.allow_mmap: false
+      xpack.ml.enabled: false
+      cluster.remote.connect: false
+  volumeClaimTemplates:
+  - metadata:
+        name: elasticsearch-data
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 32Gi
+      storageClassName: nf5270m4-es-master
+  podTemplate:
+    metadata:
+      labels:
+        app: master-eligible
+    spec:
+      nodeSelector: # 节点选取和污点容忍，因为nf5270m4这台浪潮服务器，是做私有仓库用的，一般不调度Pod
+        "kubernetes.io/hostname": nf5270m4
+      tolerations:
+      - key: "node-role.kubernetes.io/node"
+        operator: "Exists"
+        effect: "PreferNoSchedule"
+      containers: # 定义资源限制
+      - name: elasticsearch
+        resources:
+          requests:
+            cpu: 2 # 默认没有限制
+            memory: 16Gi # 默认为2Gi
+          limits:
+            # cpu: # 此处没有定义，缺省也没有定义，所以没有限制
+            memory: 24Gi # 缺省是2Gi
+        env:
+        - name: ES_JAVA_OPTS # 缺省是1Gi
+          value: -Xms10g -Xmx10g
+      initContainers:
+      - name: sysctl
+        securityContext:
+          privileged: true
+        command: ['sh', '-c', 'sysctl -w vm.max_map_count=262144']
+  - name: master-voting # 定义选举节点
+    count: 1
+    config:
+      node.master: true
+      node.voting_only: true # 缺省值为false
+      node.data: false
+      node.ingest: false
+      node.ml: false
+      node.store.allow_mmap: false
+      xpack.ml.enabled: false
+      cluster.remote.connect: false
+    podTemplate:
+      metadata:
+        labels:
+          app: master-voting
+      spec:
+        nodeSelector:
+          "kubernetes.io/hostname": nf5270m4
+        tolerations:
+        - key: "node-role.kubernetes.io/node"
+          operator: "Exists"
+          effect: "PreferNoSchedule"
+        initContainers:
+        - name: sysctl
+          securityContext:
+            privileged: true
+                    command: ['sh', '-c', 'sysctl -w vm.max_map_count=262144']
+        containers:
+        - name: elasticsearch
+          resources:
+            requests:
+              cpu: 1 # default is not set
+              memory: 2Gi # default is 2Gi
+            limits:
+              cpu: 1 # default is not set
+              memory: 2Gi # default is 2Gi
+          env:
+          - name: ES_JAVA_OPTS # default is 1 Gi
+            value: 1Gi
+        volumes:
+        - name: elasticsearch-data
+        emptyDir: {} # 使用空目录
+        initContainers:
+        - name: sysctl
+          securityContext:
+            privileged: true
+          command: ['sh', '-c', 'sysctl -w vm.max_map_count=262144']
+---
+# 定义合规的主节点
+  - name: ingest
+    count: 1
+    config:
+      node.master: false
+      node.data: false
+      node.ingest: true
+      node.ml: false
+      node.store.allow_mmap: false
+      cluster.remote.connect: false
+  volumeClaimTemplates:
+  - metadata:
+      name: elasticsearch-data
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 32Gi
+        storageClassName: nf5270m4-es-ingest
+  podTemplate:
+    metadata:
+      labels:
+        app: ingest
+    spec:
+      nodeSelector: # 节点选取和污点容忍，因为nf5270m4这台浪潮服务器，是做私有仓库用的，一般不调度Pod
+        "kubernetes.io/hostname": nf5270m4
+      tolerations:
+      - key: "node-role.kubernetes.io/node"
+        operator: "Exists"
+        effect: "PreferNoSchedule"
+      containers: # 定义资源限制
+      - name: elasticsearch
+        resources:
+          requests:
+            cpu: 1 # 默认没有限制
+            memory: 8Gi # 默认为2Gi
+          limits:
+            # cpu: # 此处没有定义，缺省也没有定义，所以没有限制
+            memory: 16Gi # 缺省是2Gi
+      env:
+      - name: ES_JAVA_OPTS # 缺省是1Gi
+        value: -Xms10g -Xmx10g
+      initContainers:
+      - name: sysctl
+        securityContext:
+          privileged: true
+        command: ['sh', '-c', 'sysctl -w vm.max_map_count=262144']
+---
+# 定义合规的主节点
+  - name: coordinate
+    count: 1
+    config:
+      node.master: false
+      node.data: false
+      node.ingest: false
+      node.ml: false
+      node.store.allow_mmap: false
+      cluster.remote.connect: false
+  volumeClaimTemplates:
+  - metadata:
+      name: elasticsearch-data
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 32Gi
+      storageClassName: nf5270m4-es-coordinate
+  podTemplate:
+    metadata:
+      labels:
+        app: coordinate
+    spec:
+      nodeSelector: # 节点选取和污点容忍，因为nf5270m4这台浪潮服务器，是做私有仓库用的，一般不调度Pod
+        "kubernetes.io/hostname": nf5270m4
+      tolerations:
+      - key: "node-role.kubernetes.io/node"
+        operator: "Exists"
+        effect: "PreferNoSchedule"
+      containers: # 定义资源限制
+      - name: elasticsearch
+        resources:
+          requests:
+            cpu: 4 # 默认没有限制
+            memory: 32Gi # 默认为2Gi
+          limits:
+            # cpu: # 此处没有定义，缺省也没有定义，所以没有限制
+            memory: 48Gi # 缺省是2Gi
+        env:
+        - name: ES_JAVA_OPTS # 缺省是1Gi
+          value: -Xms16g -Xmx16g
+      initContainers:
+      - name: sysctl
+        securityContext:
+          privileged: true
+        command: ['sh', '-c', 'sysctl -w vm.max_map_count=262144']
+---
+# 定义合规的主节点
+  - name: data
+    count: 64
+    config:
+      node.master: false
+      node.data: true
+      node.ingest: false
+      node.ml: false
+      node.store.allow_mmap: false
+      cluster.remote.connect: false
+  volumeClaimTemplates:
+  - metadata:
+      name: elasticsearch-data
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 2Ti
+      storageClassName: e9k-es-data
+  podTemplate:
+    metadata:
+      labels:
+        app: data
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  elasticsearch.k8s.elastic.co/cluster-name: test
+              topologyKey: kubernetes.io/hostname
+      containers: # 定义资源限制
+      - name: elasticsearch
+        resources:
+          requests:
+            cpu: 2 # 默认没有限制
+            memory: 48Gi # 默认为2Gi
+          limits:
+            # cpu: # 此处没有定义，缺省也没有定义，所以没有限制
+            memory: 64Gi # 缺省是2Gi
+        env:
+        - name: ES_JAVA_OPTS # 缺省是1Gi
+          value: -Xms31g -Xmx31g
+      initContainers:
+      - name: sysctl
+        securityContext:
+          privileged: true
+        command: ['sh', '-c', 'sysctl -w vm.max_map_count=262144']
+---
+apiVersion: kibana.k8s.elastic.co/v1
+kind: Kibana
+metadata:
+  name: test
+  namespace: test
+spec:
+  version: 7.6.0
+  image: nexus.internal.test:8082/amd64/kibana:7.6.0 # 此处是我的私有仓库地址
+  imagePullPolicy: IfNotPresent
+  count: 1
+  elasticsearchRef: # 连接es集群的名字
+    name: "test"
+  http:
+    tls:
+      selfSignedCertificate:
+        disabled: true # 使用http访问
+  podTemplate:
+    spec:
+      nodeSelector:
+        "kubernetes.io/hostname": nf5270m4
+      tolerations:
+      - key: "node-role.kubernetes.io/node"
+        operator: "Exists"
+        effect: "PreferNoSchedule"
+      containers:
+      - name: kibana
+        resources:
+          requests:
+            cpu: 1
+            memory: 2Gi
+          limits:
+            memory: 64Gi

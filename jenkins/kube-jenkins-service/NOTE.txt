@@ -7,9 +7,12 @@ https://plugins.jenkins.io/kubernetes/
 https://www.infoq.com/articles/scaling-docker-with-kubernetes/
 
 docker pull jenkins/jenkins:jdk11
-docker run --rm -ti \
+
+docker run -d -it --restart=alwasy \
   -p 8080:8080 -p 50000:50000
   -v jenkins-home:/var/jenkins_home \
+  slpcat/kube-jenkins-service:2.286-jdk11
+
   jenkins/jenkins:jdk11
 
 版本说明

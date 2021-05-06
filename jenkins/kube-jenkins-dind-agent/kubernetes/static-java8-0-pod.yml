@@ -35,7 +35,7 @@ spec:
       value: /home/jenkins
     - name: JENKINS_URL
       value: http://jenkins.ci/
-    image: slpcat/kube-jenkins-dind-agent:java-buster
+    image: slpcat/kube-jenkins-dind-agent:java-oraclejdk8
     imagePullPolicy: Always
     resources:
       limits:

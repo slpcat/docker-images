@@ -2,8 +2,9 @@ apiVersion: kibana.k8s.elastic.co/v1beta1
 kind: Kibana
 metadata:
   name: quickstart
+  namespace: dbaas
 spec:
-  version: 7.4.0
+  version: 7.9.3
   count: 1
   elasticsearchRef:
     name: quickstart

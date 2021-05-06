@@ -116,7 +116,7 @@ http://reactivex.io/
 备份/恢复/迁移: mydumper,zkcopy,mongodb_consistent_backup, WAL-E
 PaaS:flynn,tsuru,service-catalog
 负载均衡: gimbal,metallb,porter,GLB Director,DPDK-LVS,Jupiter,Seesaw,LoadMaster by KEMP,HAProxy,Zevenet,PEN,Gobetween
-Routing: quagga,frr(荐),Zebra, bird, bgpd
+Routing: quagga,frr(荐),Zebra, bird, bgpd,flexiwan,openwrt,
 大数据集群管理: CDH,HDP,ambari
 商业智能BI: MS Power BI,Superset,Metabase,CBoard,JasperSoft, OpenReports,SpagoBI,Pentaho,knowage-suite,Helical Insight,Knime,Rapidminer,Reportserver,Seal Report,Spagobi,SQL Power Wabit,Tableau Public,Zoho Reports,QlikView,SAP Business Objects,IBM Cognos Analytics, Oracle Business Intelligence,Yellowfin,WebFOCUS,TIBCO Spotfire,SAS BI,Targit,Izenda Embedded BI & Analytics,MicroStrategy,Board,Sisense, Statsbot,Panorama-Necto,InetSoft,FineBI,BIRT,Jupyter Notebook,zeppelin,metabase
 数据报表

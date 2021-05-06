@@ -1,0 +1,66 @@
+
+docker run -d openwrtorg/rootfs
+
+系统
+计划任务
+挂载点
+中文语言
+luci-i18n-base-zh-cn
+手机app远程控制
+netdata监控
+
+
+
+服务
+打印服务,支持手机打印
+动态dns
+硬盘休眠
+网络唤醒
+miniDLNA
+网络共享
+磁盘监控
+uPNP
+OpenConnect VPN
+OpenVPN
+Apple AirPlay 2 无损音频接收服务器
+MWAN3 分流助手
+
+
+网络
+DHCP/DNS
+mptcp
+多线多播syncppp
+负载均衡
+arp绑定
+FULLCONE NAT
+hostapd无线AP
+Pon stick
+
+usb自动挂载
+策略路由
+家长控制
+docker
+dockerman（docker-ce管理工具）
+mesh组网: FreeMesh
+captive portal: nocatsplash或者wifidog
+KMS SERVER
+Dnsfliter
+LXC容器
+wireguard
+OpenAppFilter
+
+Turbo ACC 网络加速 SFE Fast Path 加速
+Godproxy滤广告
+UU游戏加速器
+迅雷快鸟 Zerotier
+EQOS插件(网速控制服务)
+adguardhome、smartdns
+
+https://github.com/garypang13/luci-app-dnsfilter
+https://github.com/garypang13/luci-app-bypass
+https://github.com/vernesong/OpenClash
+https://github.com/pymumu/luci-app-smartdns
+https://github.com/rufengsuixing/luci-app-adguardhome
+https://github.com/coolsnowwolf/lede
+
+OpenWrt R20.12.12 GDQ v1.1[2021] Compiled by eSir 高大全版本

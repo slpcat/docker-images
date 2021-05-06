@@ -1,0 +1,274 @@
+apiVersion: elasticsearch.k8s.elastic.co/v1
+kind: Elasticsearch
+metadata:
+  name: test
+  namespace: test
+spec:
+  http:
+    tls:
+      selfSignedCertificate:
+        disabled: true
+  #  service:
+  #    spec:
+  #      type: LoadBalancer
+  #      selector:
+  #        elasticsearch.k8s.elastic.co/cluster-name: "quickstart"
+  #        elasticsearch.k8s.elastic.co/node-master: "false"
+  version: 7.9.3
+  image: slpcat/elasticsearch:7.9.3
+  imagePullPolicy: IfNotPresent
+  updateStrategy:
+    changeBudget:
+      maxSurge: 2 # 缺省为-1，表示新的Pod会马上创建，这样会瞬间消耗大量的资源，然后再替换旧的Pod来进行升级
+      maxUnavailable: 1 # 缺省为1
+  podDisruptionBudget:
+    spec:
+      minAvailable: 1 # 缺省为1
+      selector:
+        matchLabels:
+          elasticsearch.k8s.elastic.co/cluster-name: test # 即metadata.name的值
+  nodeSets:
+  # 定义合规的主节点
+  - name: master-eligible
+    count: 2
+    config:
+      # On Elasticsearch versions before 7.9.0, replace the node.roles configuration with the following:
+      # node.master: true
+      node.roles: ["master"]
+      xpack.ml.enabled: false
+      node.store.allow_mmap: false
+      node.remote_cluster_client: false
+    volumeClaimTemplates:
+    - metadata:
+        name: elasticsearch-data
+      spec:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 32Gi
+        #storageClassName: standard
+    podTemplate:
+      metadata:
+        labels:
+          app: master-eligible
+      spec:
+        #nodeSelector: # 节点选取和污点容忍
+        #  "kubernetes.io/hostname": host01
+        tolerations:
+        - key: "node-role.kubernetes.io/node"
+          operator: "Exists"
+          effect: "PreferNoSchedule"
+        containers: # 定义资源限制
+        - name: elasticsearch
+          resources:
+            requests:
+              cpu: 2 # 默认没有限制
+              memory: 16Gi # 默认为2Gi
+            limits:
+              # cpu: # 此处没有定义，缺省也没有定义，所以没有限制
+              memory: 24Gi # 缺省是2Gi
+          env:
+          - name: ES_JAVA_OPTS # 缺省是1Gi
+            value: -Xms10g -Xmx10g
+        initContainers:
+        - name: sysctl
+          securityContext:
+            privileged: true
+          command: ['sh', '-c', 'sysctl -w vm.max_map_count=262144']
+  # 定义选举节点
+  - name: master-voting
+    count: 1
+    config:
+      node.roles: [ master, voting_only ]
+      node.master: true
+      node.voting_only: true # 缺省值为false
+      node.data: false
+      node.ingest: false
+      node.ml: false
+      node.store.allow_mmap: false
+      xpack.ml.enabled: false
+      cluster.remote.connect: false
+    podTemplate:
+      metadata:
+        labels:
+          app: master-voting
+      spec:
+        #nodeSelector:
+        #  "kubernetes.io/hostname": host01
+        tolerations:
+        - key: "node-role.kubernetes.io/node"
+          operator: "Exists"
+          effect: "PreferNoSchedule"
+        initContainers:
+        - name: sysctl
+          securityContext:
+            privileged: true
+          command: ['sh', '-c', 'sysctl -w vm.max_map_count=262144']
+        containers:
+        - name: elasticsearch
+          resources:
+            requests:
+              cpu: 1 # default is not set
+              memory: 2Gi # default is 2Gi
+            limits:
+              cpu: 1 # default is not set
+              memory: 2Gi # default is 2Gi
+          env:
+          - name: ES_JAVA_OPTS # default is 1 Gi
+            value: 1Gi
+        volumes:
+        - name: elasticsearch-data
+        emptyDir: {} # 使用空目录
+
+  # 定义摄取节点
+  - name: ingest
+    count: 2
+    config:
+    node.roles: [ ingest ]
+    node.master: false
+    node.data: false
+    node.ingest: true
+    node.ml: false
+    node.store.allow_mmap: false
+    cluster.remote.connect: false
+    volumeClaimTemplates:
+    - metadata:
+        name: elasticsearch-data
+      spec:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 32Gi
+          #storageClassName: standard
+    podTemplate:
+      metadata:
+        labels:
+          app: ingest
+      spec:
+        #nodeSelector: # 节点选取和污点容忍
+        #  "kubernetes.io/hostname": host03
+        tolerations:
+        - key: "node-role.kubernetes.io/node"
+          operator: "Exists"
+          effect: "PreferNoSchedule"
+        containers: # 定义资源限制
+        - name: elasticsearch
+          resources:
+            requests:
+              cpu: 1 # 默认没有限制
+              memory: 8Gi # 默认为2Gi
+            limits:
+              # cpu: # 此处没有定义，缺省也没有定义，所以没有限制
+              memory: 16Gi # 缺省是2Gi
+          env:
+          - name: ES_JAVA_OPTS # 缺省是1Gi
+            value: -Xms10g -Xmx10g
+        initContainers:
+        - name: sysctl
+          securityContext:
+            privileged: true
+          command: ['sh', '-c', 'sysctl -w vm.max_map_count=262144']
+  # 定义合规的主节点
+  - name: coordinate
+    count: 1
+    config:
+      node.roles: [ ]
+      node.master: false
+      node.data: false
+      node.ingest: false
+      node.ml: false
+      node.store.allow_mmap: false
+      cluster.remote.connect: false
+    volumeClaimTemplates:
+    - metadata:
+        name: elasticsearch-data
+      spec:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 32Gi
+        storageClassName: nf5270m4-es-coordinate
+    podTemplate:
+      metadata:
+        labels:
+          app: coordinate
+      spec:
+        #nodeSelector: # 节点选取和污点容忍
+        #  "kubernetes.io/hostname": host04
+        tolerations:
+        - key: "node-role.kubernetes.io/node"
+          operator: "Exists"
+          effect: "PreferNoSchedule"
+        containers: # 定义资源限制
+        - name: elasticsearch
+          resources:
+            requests:
+              cpu: 4 # 默认没有限制
+              memory: 32Gi # 默认为2Gi
+            limits:
+              # cpu: # 此处没有定义，缺省也没有定义，所以没有限制
+              memory: 48Gi # 缺省是2Gi
+          env:
+          - name: ES_JAVA_OPTS # 缺省是1Gi
+            value: -Xms16g -Xmx16g
+        initContainers:
+        - name: sysctl
+          securityContext:
+            privileged: true
+          command: ['sh', '-c', 'sysctl -w vm.max_map_count=262144']
+  # 定义合规的主节点
+  - name: data
+    count: 4
+    config:
+      #data节点被细分成data_content，data_hot，data_warm 或 data_cold四类角色
+      node.roles: [ data ]
+      node.master: false
+      node.data: true
+      node.ingest: false
+      node.ml: false
+      node.store.allow_mmap: false
+      cluster.remote.connect: false
+    volumeClaimTemplates:
+    - metadata:
+        name: elasticsearch-data
+      spec:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 2Ti
+        #storageClassName: standard
+    podTemplate:
+      metadata:
+        labels:
+          app: data
+      spec:
+        affinity:
+          podAntiAffinity:
+            preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    elasticsearch.k8s.elastic.co/cluster-name: test
+                topologyKey: kubernetes.io/hostname
+        containers: # 定义资源限制
+        - name: elasticsearch
+          resources:
+            requests:
+              cpu: 2 # 默认没有限制
+              memory: 48Gi # 默认为2Gi
+            limits:
+              # cpu: # 此处没有定义，缺省也没有定义，所以没有限制
+              memory: 64Gi # 缺省是2Gi
+          env:
+          - name: ES_JAVA_OPTS # 缺省是1Gi
+            value: -Xms31g -Xmx31g
+        initContainers:
+        - name: sysctl
+          securityContext:
+            privileged: true
+          command: ['sh', '-c', 'sysctl -w vm.max_map_count=262144']

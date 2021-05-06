@@ -1,0 +1,35 @@
+apiVersion: kibana.k8s.elastic.co/v1
+kind: Kibana
+metadata:
+  name: test
+  namespace: test
+spec:
+  version: 7.9.3
+  image: kibana:7.9.3
+  imagePullPolicy: IfNotPresent
+  count: 1
+  elasticsearchRef: # 连接es集群的名字
+    name: "test"
+  http:
+    tls:
+      selfSignedCertificate:
+        disabled: true # 使用http访问
+  podTemplate:
+    spec:
+      #nodeSelector:
+      #  "kubernetes.io/hostname": host05
+      tolerations:
+      - key: "node-role.kubernetes.io/node"
+        operator: "Exists"
+        effect: "PreferNoSchedule"
+      containers:
+      - name: kibana
+        env:
+          - name: LOGGING_VERBOSE
+            value: "true"
+        resources:
+          requests:
+            cpu: 1
+            memory: 2Gi
+          limits:
+            memory: 8Gi

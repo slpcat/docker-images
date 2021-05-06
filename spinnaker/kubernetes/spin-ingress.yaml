@@ -1,0 +1,34 @@
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: deck-ingress
+  namespace: spinnaker
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+spec:
+  rules:
+  - host: spinnaker.test.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: spin-deck
+          servicePort: 9000
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: gate-ingress
+  namespace: spinnaker
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+spec:
+  rules:
+  - host: gate.test.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: spin-gate
+          servicePort: 8084

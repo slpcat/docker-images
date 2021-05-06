@@ -8,9 +8,12 @@ Elasticsearch Operator
 
 1.official 
 https://www.elastic.co/cn/products/elastic-cloud-kubernetes
+在集群中安装 ECK 对应的 Operator 资源对象
 kubectl apply -f https://download.elastic.co/downloads/eck/1.0.0/all-in-one.yaml
+
 https://github.com/elastic/cloud-on-k8s
 https://github.com/elastic/helm-charts/tree/v7.11.2/elasticsearch
+
 
 2.kubedb
 

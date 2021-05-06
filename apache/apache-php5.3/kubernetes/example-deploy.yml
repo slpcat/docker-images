@@ -8,6 +8,8 @@ metadata:
     #Reloader can watch changes in ConfigMap and Secret and do rolling upgrades
     configmap.reloader.stakater.com/reload: "foo-configmap,bar-configmap,baz-configmap"
   labels:
+    # enable on-demand mode
+    k8s.aliyun.com/image-accelerate-mode: on-demand
     app: example-web
 spec:
   #保留历史版本数量
