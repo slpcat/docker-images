@@ -29,7 +29,7 @@ ipvlan需要内核版本>=4.19
 编译器: numba,Emscripten
 docker基础镜像源：webdevops，bitnami,turnkey,distroless
 
-持续集成/发布: jenkins,jenkins-x,fabric8,spinnaker,gitlab-ci,drone,makisu,flagger,shipper,Hubot,Lita,Err,StackStorm,Netflix Winston,Tekton,CDS,gaia,FlyWayDB,LiquiBase,Flocker,ArgoCD,
+持续集成/发布: jenkins,jenkins-x,fabric8,spinnaker,gitlab-ci,drone,makisu,flagger(荐),shipper,Hubot,Lita,Err,StackStorm,Netflix Winston,Tekton,CDS,gaia,FlyWayDB,LiquiBase,Flocker,ArgoCD,
 测试: chaos-monkey,chaoskube,k8s-testsuite,test-infra,sonobuoy,PowerfulSeal,twemperf(memcached),locust，selenium,Cucumber,LoadRunner,SoapUI,appium,espresso, robotium
 混沌工程: kube-monkey,powerfulseal,chaostoolkit-kubernetes,ChaosMesh
 artifactory仓库: nexus2,nexus3,harbor,registry,quay,jfrog/Artifactory

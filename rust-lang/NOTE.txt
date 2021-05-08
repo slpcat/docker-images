@@ -107,4 +107,4 @@ https://github.com/dessalines/lemmy
 高性能 WebAssembly 虚拟机 SSVM
 https://github.com/second-state/SSVM
 
-
+Dapr 是 2019 年 10 月微软开源的可移植、事件驱动分布式运行时，它使开发人员能够轻松地构建运行在云平台和边缘的弹性而微服务化的无状态和有状态的应用程序，从而降低基于微服务架构构建现代云原生应用的准入门槛。

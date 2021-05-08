@@ -1,0 +1,50 @@
+apiVersion: redis.redis.opstreelabs.in/v1beta1
+kind: Redis
+metadata:
+  name: redis
+  namespace: dbaas
+spec:
+  mode: cluster
+  size: 3
+  global:
+    image: 'slpcat/redis:v6.2'
+    imagePullPolicy: IfNotPresent
+    password: Opstree@1234
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        cpu: 100m
+        memory: 128Mi
+  master:
+    service:
+      type: ClusterIP
+    redisConfig: {}
+  slave:
+    service:
+      type: ClusterIP
+    redisConfig: {}
+  service:
+    type: ClusterIP
+  redisConfig: {}
+  redisExporter:
+    enabled: true
+    image: 'slpcat/redis-exporter:1.0'
+    imagePullPolicy: Always
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        cpu: 100m
+        memory: 128Mi
+  storage:
+    volumeClaimTemplate:
+      spec:
+        #storageClassName: buildpiper-storage
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 20Gi

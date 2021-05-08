@@ -21,7 +21,9 @@ Fiat 是鉴权的组件，配置权限管理，支持 OAuth、SAML、LDAP、GitH
 https://spinnaker.io/setup/install/halyard/#install-halyard-on-docker
 https://github.com/zeyangli/spinnaker-cd-install
 
-安装过程 docker + kubernetes
+安装过程 
+方案一
+docker + kubernetes
 运行halyard容器
 
 docker run -d -p 8084:8084 -p 9000:9000 \
@@ -52,6 +54,11 @@ docker run -d -p 8084:8084 -p 9000:9000 \
 
 创建存储，用来保存spinnaker需要持久保存的数据
 
+##关闭s3版本控制
+mkdir -p ~/.hal/default/profiles
+touch ~/.hal/default/profiles/front50-local.yml
+echo 'spinnaker.s3.versioning: false' >> ~/.hal/default/profiles/front50-local.yml
+
 minio
 
 echo $MINIO_SECRET_KEY | hal config storage s3 edit --endpoint $ENDPOINT \
@@ -77,11 +84,32 @@ hal config api edit --cors-access-pattern
 hal config security api edit --cors-access-pattern spin-gate.spinnaker
 
 # 访问方式：设置deck与gate的域名 
-hal config security ui edit --override-base-url http://spin-deck.spinnaker:8084
+hal config security ui edit --override-base-url http://spin-deck.spinnaker:9000
 hal config security api edit --override-base-url http://spin-gate.spinnaker:8084
+
+创建ingress
+deck-ingress
+gate-ingress
 
 部署spinnaker
 
 hal deploy apply
 
 
+#启用chaos
+hal config features edit --chaos True
+#查看spinnaker版本
+hal version list
+
+Halyard初始化配置
+
+添加镜像仓库（Harbor）和K8s集群账户
+
+开启特性功能（pipeline-templates、artifacts、managed-pipeline-templates-v2-ui）
+
+配置JenkinsCI集成
+
+配置GitHub/GitLab集成
+
+方案二
+使用 Spinnaker Operator

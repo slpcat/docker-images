@@ -327,6 +327,7 @@ RUN /usr/local/bin/install-plugins.sh       \
   ssh2easy:latest                \
   slave-setup:latest             \
   sonar:latest                   \
+  strict-crumb-issuer:latest     \
   structs:latest                 \
   subversion:latest              \
   terraform:latest               \
