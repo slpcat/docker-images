@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# Copyright (c) 2019 FEROX YT EIRL, www.ferox.yt <devops@ferox.yt>
+# Copyright (c) 2019 Jérémy WALTHER <jeremy.walther@golflima.net>
+# See <https://github.com/frxyt/docker-xrdp> for details.
+
+# Get prefix of supervisor
+printf -v LOG_PREFIX "%-${FRX_LOG_PREFIX_MAXLEN}.${FRX_LOG_PREFIX_MAXLEN}s" ${SUPERVISOR_PROCESS_NAME}
+
+# Append prefix to stdout & stderr
+exec 1> >( perl -ne '$| = 1; print "'"${LOG_PREFIX}"' | $_"' >&1 )
+exec 2> >( perl -ne '$| = 1; print "'"${LOG_PREFIX}"' | $_"' >&2 )
+
+# Run command
+exec "$@"

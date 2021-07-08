@@ -45,6 +45,8 @@ data:
   keep-alive-requests: "5000"
   proxy-buffering: "on"
   proxy-connect-timeout: "10"
+  proxy-read-timeout: "180"
+  proxy-send-timeout: "180"
   reuse-port: "true"
   server-tokens: "false"
   ssl-redirect: "false"

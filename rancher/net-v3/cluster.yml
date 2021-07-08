@@ -1,19 +1,14 @@
-# 
-# Cluster Config
-# 
 answers: {}
 docker_root_dir: /var/lib/docker
 enable_cluster_alerting: false
 enable_cluster_monitoring: false
 enable_network_policy: false
+fleet_workspace_name: fleet-default
 local_cluster_auth_endpoint:
   enabled: true
-name: rancher-cluster1
-# 
-# Rancher Config
-# 
+name: pve01
 rancher_kubernetes_engine_config:
-  addon_job_timeout: 30
+  addon_job_timeout: 45
   authentication:
     strategy: x509|webhook
   authorization: {}
@@ -29,71 +24,34 @@ rancher_kubernetes_engine_config:
       prevent_single_point_failure: true
     node_selector: null
     nodelocal:
-      ip_address: ''
       node_selector: null
       update_strategy:
         rolling_update: {}
-    provider: coredns
+    options: null
     reversecidrs: null
     stubdomains: null
+    tolerations: null
     update_strategy:
       rolling_update: {}
     upstreamnameservers:
       - 8.8.8.8
       - 8.8.4.4
   ignore_docker_version: true
-# 
-# # Currently only nginx ingress provider is supported.
-# # To disable ingress controller, set `provider: none`
-# # To enable ingress on specific nodes, use the node_selector, eg:
-#    provider: nginx
-#    node_selector:
-#      app: ingress
-# 
   ingress:
+    default_backend: false
+    http_port: 0
+    https_port: 0
     provider: none
-  kubernetes_version: v1.17.4-rancher1-3
+  kubernetes_version: v1.20.6-rancher1-1
   monitoring:
     provider: none
     replicas: 0
-# 
-#   If you are using calico on AWS
-# 
-#    network:
-#      plugin: calico
-#      calico_network_provider:
-#        cloud_provider: aws
-# 
-# # To specify flannel interface
-# 
-#    network:
-#      plugin: flannel
-#      flannel_network_provider:
-#      iface: eth1
-# 
-# # To specify flannel interface for canal plugin
-# 
-#    network:
-#      plugin: canal
-#      canal_network_provider:
-#        iface: eth1
-# 
   network:
     mtu: 0
     plugin: none
   restore:
     restore: false
-# 
-#    services:
-#      kube-api:
-#        service_cluster_ip_range: 10.43.0.0/16
-#      kube-controller:
-#        cluster_cidr: 10.42.0.0/16
-#        service_cluster_ip_range: 10.43.0.0/16
-#      kubelet:
-#        cluster_domain: cluster.local
-#        cluster_dns_server: 10.43.0.10
-# 
+  rotate_encryption_key: false
   services:
     etcd:
       backup_config:
@@ -101,12 +59,11 @@ rancher_kubernetes_engine_config:
         interval_hours: 12
         retention: 6
         safe_timestamp: false
+        timeout: 300
       creation: 12h
       extra_args:
-        auto-compaction-retention: '240'
         election-timeout: '5000'
         heartbeat-interval: '500'
-        quota-backend-bytes: '6442450944'
       gid: 0
       retention: 72h
       snapshot: false
@@ -123,6 +80,8 @@ rancher_kubernetes_engine_config:
         v: '2'
         watch-cache: 'true'
       pod_security_policy: false
+      secrets_encryption_config:
+        enabled: false
       service_cluster_ip_range: 10.43.0.0/16
       service_node_port_range: 30000-32767
     kube-controller:
@@ -136,7 +95,6 @@ rancher_kubernetes_engine_config:
         concurrent-service-syncs: '4'
         concurrent-serviceaccount-token-syncs: '5'
         deployment-controller-sync-period: 30s
-        feature-gates: TaintBasedEvictions=false
         node-cidr-mask-size: '24'
         node-monitor-grace-period: 20s
         node-monitor-period: 5s
@@ -180,7 +138,7 @@ rancher_kubernetes_engine_config:
         v: '2'
         volume-stats-agg-period: 1m0s
       fail_swap_on: false
-      generate_serving_certificate: true
+      generate_serving_certificate: false
     kubeproxy:
       extra_args:
         conntrack-max-per-core: '262144'
@@ -188,7 +146,6 @@ rancher_kubernetes_engine_config:
         conntrack-tcp-timeout-close-wait: 30s
         conntrack-tcp-timeout-established: 120s
         ipvs-min-sync-period: 10s
-        ipvs-strict-arp: 'true'
         ipvs-sync-period: 30s
         kube-api-burst: '20'
         kube-api-qps: '10'
@@ -199,9 +156,9 @@ rancher_kubernetes_engine_config:
   upgrade_strategy:
     drain: false
     max_unavailable_controlplane: '1'
-    max_unavailable_worker: 11%%%
+    max_unavailable_worker: '10'
     node_drain_input:
-      delete_local_data: 'false'
+      delete_local_data: false
       force: false
       grace_period: -1
       ignore_daemon_sets: true
@@ -212,9 +169,8 @@ scheduled_cluster_scan:
     cis_scan_config:
       debug_master: false
       debug_worker: false
-      override_benchmark_version: rke-cis-1.4
+      override_benchmark_version: rke-cis-1.5
       profile: permissive
   schedule_config:
     cron_schedule: 0 0 * * *
     retention: 24
-

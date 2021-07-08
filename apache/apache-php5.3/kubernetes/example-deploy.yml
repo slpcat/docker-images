@@ -27,6 +27,12 @@ spec:
     rollingUpdate:  #由于replicas为3,则整个升级,pod个数在2-4个之间
       maxSurge: 1      #滚动升级时会先启动1个pod
       maxUnavailable: 1 #滚动升级时允许的最大Unavailable的pod个数
+    type: RollingUpdate
+  #strategy:
+  #  rollingUpdate:
+  #    maxSurge: 25%
+  #    maxUnavailable: 25%
+  #  type: RollingUpdate
   template:
     metadata:
       labels:
@@ -153,6 +159,20 @@ spec:
         #- -conf
         #- /etc/app.conf
         imagePullPolicy: Always
+        lifecycle:
+          postStart:
+            exec:
+              command:
+              - "cp"
+              - "/sample.war"
+              - "/app"
+          preStop:
+            httpGet:
+             host: monitor.com
+             path: /waring
+             port: 8080
+             scheme: HTTP
+
         livenessProbe: #kubernetes认为该pod是存活的,不存活则需要重启
           httpGet:
             path: /

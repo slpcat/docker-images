@@ -1,0 +1,92 @@
+#!/bin/bash
+
+# Copyright (c) 2019 FEROX YT EIRL, www.ferox.yt <devops@ferox.yt>
+# Copyright (c) 2019 Jérémy WALTHER <jeremy.walther@golflima.net>
+# See <https://github.com/frxyt/docker-xrdp> for details.
+
+# Display version
+cat /frx/version
+echo
+
+# Execute requested command if needed
+if [ -n "${FRX_CMD_INIT}" ]; then
+    echo "Executing command : '${FRX_CMD_INIT}' ..."
+    source <(echo "${FRX_CMD_INIT}")
+    unset FRX_CMD_INIT
+fi
+
+# Run apt-get upgrade & install asked packages if needed
+[[ "${FRX_APTGET_DISTUPGRADE}" == '1' || -n "${FRX_APTGET_INSTALL}" ]] && DEBIAN_FRONTEND=noninteractive apt-get update -y
+[[ "${FRX_APTGET_DISTUPGRADE}" == '1' ]] && DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y
+[[ -n "${FRX_APTGET_INSTALL}" ]] && DEBIAN_FRONTEND=noninteractive apt-get install -y --fix-missing --no-install-recommends ${FRX_APTGET_INSTALL}
+unset FRX_APTGET_UPGRADE FRX_APTGET_INSTALL
+
+# Create user if it doesn't exist
+if ! id -u ${FRX_XRDP_USER_NAME} > /dev/null 2>&1; then
+    echo -n "Creating user '${FRX_XRDP_USER_NAME}' ... "
+    # Create user
+    /usr/sbin/groupadd -g ${FRX_XRDP_USER_GID} ${FRX_XRDP_USER_NAME}
+    [[ -d "/home/${FRX_XRDP_USER_NAME}" ]] \
+        && /usr/sbin/useradd -g ${FRX_XRDP_USER_GID} -s /bin/bash -u ${FRX_XRDP_USER_UID} ${FRX_XRDP_USER_NAME} \
+        || /usr/sbin/useradd -g ${FRX_XRDP_USER_GID} -ms /bin/bash -u ${FRX_XRDP_USER_UID} ${FRX_XRDP_USER_NAME}
+    # Set password
+    echo ${FRX_XRDP_USER_NAME}:${FRX_XRDP_USER_PASSWORD} | /usr/sbin/chpasswd
+    # Add user to sudo if needed
+    [[ "${FRX_XRDP_USER_SUDO}" == '1' ]] && /usr/sbin/adduser ${FRX_XRDP_USER_NAME} sudo > /dev/null
+    # Copy default desktop icons if needed
+    [[ "${FRX_XRDP_USER_COPY_SA}" == '1' ]] \
+        && mkdir -p /home/${FRX_XRDP_USER_NAME}/Desktop \
+        && cp /usr/share/applications/*.desktop /home/${FRX_XRDP_USER_NAME}/Desktop \
+        && chown ${FRX_XRDP_USER_UID}:${FRX_XRDP_USER_GID} -R /home/${FRX_XRDP_USER_NAME}/Desktop
+    echo "[OK]"
+fi
+
+# Clear user ENV variables
+unset FRX_XRDP_USER_NAME FRX_XRDP_USER_PASSWORD FRX_XRDP_USER_SUDO FRX_XRDP_USER_GID FRX_XRDP_USER_UID FRX_XRDP_USER_COPY_SA
+
+# Adjust TimeZone
+echo "Setting time zone to: '${TZ}' ..."
+ln -snf "/usr/share/zoneinfo/${TZ}" /etc/localtime
+echo "${TZ}" > /etc/timezone
+dpkg-reconfigure -f noninteractive tzdata
+
+# Generate server keys
+[[ ! -e /etc/xrdp/rsakeys.ini ]] \
+    && echo "Generating XRDP RSA keys ..." \
+    && xrdp-keygen xrdp /etc/xrdp/rsakeys.ini \
+    && chown xrdp:xrdp /etc/xrdp/rsakeys.ini \
+    && chmod 400 /etc/xrdp/rsakeys.ini
+[[ ! -e /etc/xrdp/cert.pem || ! -e /etc/xrdp/key.pem ]] \
+    && echo "Generating XRDP RSA certificate ..." \
+    && openssl req -x509 -newkey rsa:4096 -nodes -keyout /etc/xrdp/key.pem -out /etc/xrdp/cert.pem -days 3650 -subj "${FRX_XRDP_CERT_SUBJ}" \
+    && chown xrdp:xrdp /etc/xrdp/cert.pem /etc/xrdp/key.pem \
+    && chmod 400 /etc/xrdp/cert.pem /etc/xrdp/key.pem
+[[ ! -e /etc/ssh/ssh_host_ecdsa_key || ! -e /etc/ssh/ssh_host_ecdsa_key.pub ]] \
+    && echo "Generating SSH host ECDSA key ..." \
+    && ssh-keygen -t ecdsa -f /etc/ssh/ssh_host_ecdsa_key < /dev/null \
+    && chmod 400 /etc/ssh/ssh_host_ecdsa_key && chmod 444 /etc/ssh/ssh_host_ecdsa_key.pub
+[[ ! -e /etc/ssh/ssh_host_ed25519_key || ! -e /etc/ssh/ssh_host_ed25519_key.pub ]] \
+    && echo "Generating SSH host ED25519 key ..." \
+    && ssh-keygen -t ed25519 -f /etc/ssh/ssh_host_ed25519_key < /dev/null \
+    && chmod 400 /etc/ssh/ssh_host_ed25519_key && chmod 444 /etc/ssh/ssh_host_ed25519_key.pub
+[[ ! -e /etc/ssh/ssh_host_rsa_key || ! -e /etc/ssh/ssh_host_rsa_key.pub ]] \
+    && echo "Generating SSH host RSA key ..." \
+    && ssh-keygen -t rsa -b 4096 -f /etc/ssh/ssh_host_rsa_key < /dev/null \
+    && chmod 400 /etc/ssh/ssh_host_rsa_key && chmod 444 /etc/ssh/ssh_host_rsa_key.pub
+unset FRX_XRDP_CERT_SUBJ
+
+# Execute requested command if needed
+if [ -n "${FRX_CMD_START}" ]; then
+    echo "Executing command : '${FRX_CMD_START}' ..."
+    source <(echo "${FRX_CMD_START}")
+    unset FRX_CMD_START
+fi
+
+# Execute customs scripts if needed
+for exe in $(find /frx/entrypoint.d -executable ! -type d | sort); do
+    echo "Executing entrypoint : '${exe}' ..."
+	/bin/bash ${exe}
+done
+
+# Start supervisor
+/usr/bin/supervisord -c /etc/supervisor/supervisord.conf

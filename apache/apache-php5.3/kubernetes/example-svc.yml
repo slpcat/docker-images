@@ -11,12 +11,15 @@ metadata:
   #  kube-router.io/service.dsr: tunnel
   #  cilium-clustermesh Global Services
   #  io.cilium/global-service: "true"
+  #metallb address pool
+  #  metallb.universe.tf/address-pool: production-public-ips
   labels:
     k8s-app: example-web
     #kubernetes.io/cluster-service: "true"
 spec:
   #headless service
   #clusterIP: None
+  #loadBalancerIP: 192.168.1.1
   ports:
   #监控端口
   - name: metrics
@@ -34,3 +37,7 @@ spec:
     #version: v1
     #statefulset.kubernetes.io/pod-name: pod-0
   #sessionAffinity: None
+  sessionAffinity: ClientIP
+  sessionAffinityConfig:
+    clientIP:
+      timeoutSeconds: 10800

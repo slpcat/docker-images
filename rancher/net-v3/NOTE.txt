@@ -1,0 +1,11 @@
+网络插件cni只有一个: cilium+直接路由
+对外输出路由表用bird2
+bgp rr路由反射器由bird2提供
+
+ipvlan 只在特定场景使用，不做loadbanlancer 不依赖跨集群访问 常规场景首选veth作为datapath
+
+CNI简化方案
+node位于同一网段，同一个二层网络
+kube-proxy 由cni插件 cilium提供
+直接使用路由，不用隧道
+

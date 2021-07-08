@@ -1,0 +1,6 @@
+https://www.graalvm.org/
+
+docker run -it oracle/graalvm-ce:19.3.0 bash 
+
+docker pull springci/graalvm-ce:master-java8
+docker pull springci/graalvm-ce:master-java11

@@ -1,0 +1,7 @@
+开源在线教育点播系统
+https://meedu.tech/
+
+QOR是首个使用Go语言开发的电商系统、CMS的SDK
+https://getqor.com/cn
+
+

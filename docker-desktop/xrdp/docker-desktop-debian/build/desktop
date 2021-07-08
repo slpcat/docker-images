@@ -1,0 +1,48 @@
+#!/bin/bash
+
+# Copyright (c) 2019 FEROX YT EIRL, www.ferox.yt <devops@ferox.yt>
+# Copyright (c) 2019 Jérémy WALTHER <jeremy.walther@golflima.net>
+# See <https://github.com/frxyt/docker-xrdp> for details.
+
+# Make sure requested tag is a valid desktop name
+[[ -z "$1" ]] && exit 0;
+[[ "$1" =~ cinnamon|gnome|kde|lxde|mate|xfce ]] || exit 0;
+
+# Update APT cache
+DEBIAN_FRONTEND=noninteractive apt-get update
+
+case $1 in
+    *cinnamon*)
+        echo "Installing Cinnamon ..."
+        DEBIAN_FRONTEND=noninteractive apt-get upgrade -y --fix-missing --no-install-recommends task-cinnamon-desktop
+        echo "cinnamon" > /etc/skel/.xsession
+        echo "[OK]";;
+    *gnome*)
+        echo "Installing GNOME ..."
+        DEBIAN_FRONTEND=noninteractive apt-get upgrade -y --fix-missing --no-install-recommends task-gnome-desktop
+        echo "gnome-session" > /etc/skel/.xsession
+        echo "[OK]";;
+    *kde*)
+        echo "Installing KDE ..."
+        DEBIAN_FRONTEND=noninteractive apt-get upgrade -y --fix-missing --no-install-recommends task-kde-desktop
+        echo "startkde" > /etc/skel/.xsession
+        echo "[OK]";;
+    *lxde*)
+        echo "Installing LXDE ..."
+        DEBIAN_FRONTEND=noninteractive apt-get upgrade -y --fix-missing --no-install-recommends task-lxde-desktop
+        echo "startlxde" > /etc/skel/.xsession
+        echo "[OK]";;
+    *mate*)
+        echo "Installing MATE ..."
+        DEBIAN_FRONTEND=noninteractive apt-get upgrade -y --fix-missing --no-install-recommends task-mate-desktop
+        echo "mate-session" > /etc/skel/.xsession
+        echo "[OK]";;
+    *xfce*)
+        echo "Installing Xfce ..."
+        DEBIAN_FRONTEND=noninteractive apt-get upgrade -y --fix-missing --no-install-recommends task-xfce-desktop
+        echo "startxfce4" > /etc/skel/.xsession
+        echo "[OK]";;
+esac
+
+# Clean APT cache
+apt-get clean -y && apt-get clean -y && apt-get autoclean -y && rm -r /var/lib/apt/lists/*

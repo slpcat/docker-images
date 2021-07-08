@@ -32,6 +32,10 @@ https://github.com/just-containers/s6-overlay
 日志管理
 socklog - system and kernel logging services 替代syslogd
 
+rockylinux
+
+阿里linux
+
 
 腾讯os
 tencentos/tencentos_server31

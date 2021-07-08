@@ -38,13 +38,14 @@ CMDB资产配置: OneCMDB、CMDBuild、ItopCMDB、Rapid OSS、ECDB、i-doit、iT
 开源DevOps平台: walle,gaia,BlueKing-cmdb,cds,cloudunit,hygieia,adminset
 跳板机/堡垒机: jumpserver,Guacamole 是一个基于 HTML 5 和 JavaScript 的 VNC 查看器，服务端基于 Java 的 VNC-to-XML 代理开发。
 helm应用商店: chartmuseum,kubeapps
-分布式存储: ceph,minio,openebs,glusterfs,EdgeFS,moosefs,lizardfs,beegfs
+分布式存储: ceph,minio,openebs,glusterfs,EdgeFS,moosefs,lizardfs,beegfs,iomesh,rancher longhorn,
 分布式数据库:citusdata
 内存分布式管理系统: Alluxio,apache ignite,Apache arrow,Hazelcast,Oracle Coherence,GemFire
 大数据集群: hadoop(hdfs+yarn),hbase,spark,flink,Drill
 实时流计算: Spark （micro batch），Storm， Flink，Samza,Kafka Stream,StreamBase,Hangout,Amazon Kinesis,Apache Ignite
 ETL/CDC工具: DataX,DataX Web,Kettle,Sqoop,streamSets,Apache NiFi,Kafka Connect,Debezium,Waterdrop,databus,canal,maxwell,mysql_steamer,flinkx,datalink,
 web服务器/容器: nginx-php,apache-php,tomcat,resin
+java虚拟机: graalvm,sdkman
 SQL数据库: mysql,percona,mariadb,postgresql,greenplum,MyRocks,Citus,mssql-linux
 SQL版本管理: Flyway
 SQL审计: Yearning MYSQL,Inception，mysql-sniffer，pgAudit

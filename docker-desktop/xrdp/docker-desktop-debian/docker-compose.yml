@@ -1,0 +1,14 @@
+version: '3.7'
+
+services:
+  xrdp:
+    image: frxyt/xrdp:latest
+    build:
+      #args: 
+      #  - DOCKER_TAG=xfce
+      context: .
+    ports:
+      - "22000:22"
+      - "33890:3389"
+    volumes:
+      - ./home:/home:rw
