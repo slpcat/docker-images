@@ -5,6 +5,9 @@
 https://help.aliyun.com/document_detail/121080.html
 https://github.com/aliyun/logstash-input-logservice
 
+logstash 插件
+https://github.com/logstash-plugins
+
 logstash_exporter
 
 多个pipeline管理
@@ -25,6 +28,7 @@ docker run -d --restart=always --name logstash \
 -e LOG_LEVEL=info \
 -e MONITORING_ENABLED=false \
 logstash:7.10.2
+elastic/logstash:7.10.2
 
 
 -v ./logstash.yml:/usr/share/logstash/config/logstash.yml 
