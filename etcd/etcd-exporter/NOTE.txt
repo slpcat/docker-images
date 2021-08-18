@@ -1,0 +1,3 @@
+etcd内置exporter只需要service-monitor
+
+
