@@ -93,9 +93,9 @@ RUN \
 	tzdata && \
  echo "**** generate locale ****" && \
  locale-gen en_US.UTF-8 && \
- echo "**** create abc user and make our folders ****" && \
- useradd -u 911 -U -d /config -s /bin/false abc && \
- usermod -G users abc && \
+ echo "**** create ubuntu user and make our folders ****" && \
+ useradd -u 911 -U -d /config -s /bin/false ubuntu && \
+ usermod -G users ubuntu && \
  mkdir -p \
 	/app \
 	/config \

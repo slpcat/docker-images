@@ -99,8 +99,8 @@ RUN \
  apt-get install -y --no-install-recommends \
 	docker-ce-cli && \
  echo "**** cleanup and user perms ****" && \
- echo "abc:abc" | chpasswd && \
- usermod -aG sudo abc && \
+ echo "ubuntu:sPcza48aOoapd!bk" | chpasswd && \
+ usermod -aG sudo ubuntu && \
  apt-get autoclean && \
  rm -rf \
 	/var/lib/apt/lists/* \

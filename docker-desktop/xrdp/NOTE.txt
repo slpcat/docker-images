@@ -7,5 +7,5 @@ docker run --rm -p 33890:3389 frxyt/xrdp:lxde
 
 user debian, password ChangeMe
 
-docker run -d --privileged -p 3389:3389  slpcat/baseimage-rdesktop:focal
+docker run -d --privileged -p 3389:3389  slpcat/desktop-rdesktop:focal
 user abc password abc
