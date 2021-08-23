@@ -9,3 +9,4 @@ user debian, password ChangeMe
 
 docker run -d --privileged -p 3389:3389  slpcat/desktop-rdesktop:focal
 user abc password abc
+user ubuntu password sPcza48aOoapd!bk

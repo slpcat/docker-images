@@ -1,7 +1,8 @@
 #FROM ghcr.io/linuxserver/baseimage-ubuntu:focal as buildstage
 FROM slpcat/baseimage-ubuntu:focal as buildstage
 
-ARG XRDP_PULSE_VERSION=v0.4
+ARG XRDP_PULSE_VERSION=v0.4 \
+    DEBIAN_FRONTEND=noninteractive
 
 RUN \
  echo "**** install build deps ****" && \
