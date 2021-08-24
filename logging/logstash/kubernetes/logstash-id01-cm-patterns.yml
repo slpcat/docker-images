@@ -1,0 +1,12 @@
+# Source: logstash/templates/patterns-config.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: RELEASE-NAME-logstash-patterns
+  namespace: logging
+  labels:
+    app: logstash
+    chart: logstash-2.3.0
+    release: RELEASE-NAME
+    heritage: Helm
+data:

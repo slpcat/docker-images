@@ -1,0 +1,11 @@
+# Source: logstash/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: RELEASE-NAME-logstash
+  namespace: logging
+  labels:
+    app: logstash
+    chart: logstash-2.3.0
+    release: RELEASE-NAME
+    heritage: Helm
