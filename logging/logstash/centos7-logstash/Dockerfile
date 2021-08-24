@@ -45,15 +45,16 @@ ENV PATH=/usr/share/logstash/bin:$PATH
 
 #install plugins
 RUN bin/logstash-plugin install logstash-filter-geoip
-#RUN bin/logstash-plugin install logstash-output-loki
+RUN bin/logstash-plugin install logstash-output-loki
 RUN bin/logstash-plugin install logstash-output-s3
-RUN bin/logstash-plugin install logstash-output-oss
+#RUN bin/logstash-plugin install logstash-output-oss
 #Web hdfs output for logstash
 RUN bin/logstash-plugin install logstash-output-webhdfs
 RUN bin/logstash-plugin install logstash-output-opentsdb
 #The plugin makes possible to store logs in ceph.
 #RUN bin/logstash-plugin install logstash-output-rados
 RUN bin/logstash-plugin install logstash-output-zabbix
+RUN bin/logstash-plugin install logstash-output-influxdb
 
 # Provide a minimal configuration, so that simple invocations will provide
 # a good experience.
