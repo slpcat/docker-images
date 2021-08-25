@@ -45,6 +45,10 @@ WORKDIR /usr/share/logstash
 ENV ELASTIC_CONTAINER true
 ENV PATH=/usr/share/logstash/bin:$PATH
 
+ENV JAVA_HOME=/usr/share/logstash/jdk \
+    PATH=$PATH:$JAVA_HOME/bin \
+    CLASSPATH=.:$JAVA_HOME/lib
+
 #install plugins
 RUN bin/logstash-plugin install logstash-input-sls
 
