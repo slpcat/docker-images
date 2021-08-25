@@ -24,6 +24,8 @@ RUN groupadd --gid 1000 logstash && \
       --home-dir /usr/share/logstash --no-create-home \
       logstash
 
+COPY java.sh /etc/profile.d/
+
 # Add Logstash itself.
 RUN curl -Lo - https://artifacts.elastic.co/downloads/logstash/logstash-7.14.0-linux-$(arch).tar.gz | \
     tar zxf - -C /usr/share && \
