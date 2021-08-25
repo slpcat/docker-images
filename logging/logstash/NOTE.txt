@@ -7,6 +7,8 @@ https://github.com/aliyun/logstash-input-logservice
 
 通过logstash-output-oss插件，您可以将数据批量传送到阿里云对象存储服务OSS（Object Storage Service）中
 logstash-input-sls插件是阿里云Logstash自带的默认插件。作为Logstash的input插件，logstash-input-sls插件提供了从日志服务获取日志的功能。
+https://help.aliyun.com/document_detail/139627.html
+https://github.com/aliyun/logstash-input-logservice
 
 logstash 插件
 https://github.com/logstash-plugins

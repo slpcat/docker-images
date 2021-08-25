@@ -44,7 +44,10 @@ ENV ELASTIC_CONTAINER true
 ENV PATH=/usr/share/logstash/bin:$PATH
 
 #install plugins
+RUN bin/logstash-plugin install logstash-input-sls
+
 RUN bin/logstash-plugin install logstash-filter-geoip
+
 RUN bin/logstash-plugin install logstash-output-loki
 RUN bin/logstash-plugin install logstash-output-s3
 #RUN bin/logstash-plugin install logstash-output-oss
