@@ -58,6 +58,7 @@ RUN bin/logstash-plugin install logstash-output-influxdb
 
 # Provide a minimal configuration, so that simple invocations will provide
 # a good experience.
+ADD config/jvm.options config/jvm.options
 ADD config/pipelines.yml config/pipelines.yml
 ADD config/logstash-full.yml config/logstash.yml
 ADD config/log4j2.properties config/
