@@ -94,7 +94,7 @@ RUN \
  echo "**** generate locale ****" && \
  locale-gen en_US.UTF-8 && \
  echo "**** create ubuntu user and make our folders ****" && \
- useradd -u 911 -U -d /config -s /bin/false ubuntu && \
+ useradd -u 1000 -U -d /config -s /bin/false ubuntu && \
  usermod -G users ubuntu && \
  mkdir -p \
 	/app \
