@@ -1,0 +1,4 @@
+docker run -p 1935:1935 -p 1985:1985 -p 8080:8080 \
+--name srs \
+ossrs/srs:v4.0.85
+
