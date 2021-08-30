@@ -1,0 +1,2 @@
+T-Pot是基于Debian (Stable) 网络安装程序. honeypot守护程序以及其他支持组件被docker托管。这使T-Pot可以在同一网络接口上运行多个honeypot守护程序和工具，同时保持较小的占用空间并将每个honeypot限制在其自己的环境中。
+https://github.com/telekom-security/tpotce
