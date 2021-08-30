@@ -1,0 +1,1 @@
+elasticsearch_exporter --es.uri=http://es.example..com --web.listen-address="172.16.1.1:9200"  --es.all --es.indices 

@@ -10,6 +10,9 @@ https://github.com/monitoringartist/kubernetes-zabbix
 This is a standalone agent which subscribe to Kubernetes REST API event watch and send them to Zabbix 
 https://github.com/cloudawan/zabbix_agent
 
+zabbix 对接elasticsearch存储
+https://www.zabbix.com/documentation/5.0/zh/manual/appendix/install/elastic_search_setup
+
 Overview of Monitoring Artist (dockerized) monitoring ecosystem:
 
 1.Dockbix XXL - Zabbix server/proxy/UI/snmpd/java gateway with additional extensions

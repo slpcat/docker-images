@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grafana-backup
+  labels:
+    app: grafana-backup
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: grafana-backup
+  template:
+    metadata:
+      labels:
+        app: grafana-backup
+    spec:
+      containers:
+      - name: grafana-backup
+        image: yangchuansheng/grafana-backup-tool:latest
+        imagePullPolicy: IfNotPresent
+        command: ["/bin/bash"]
+        tty: true
+        stdin: true
+        env:
+        - name: GRAFANA_TOKEN
+          value: "eyJr0NkFBeWV1QVpMNjNYWXA3UXNOM2JWMWdZOTB2ZFoiLCJuIjoiYWRtaW4iLCJpZCI6MX0="
+        - name: GRAFANA_URL
+          value: "http://<grafana_ip>:<grafana_port>"
+        - name: GRAFANA_ADMIN_ACCOUNT
+          value: "admin"
+        - name: GRAFANA_ADMIN_PASSWORD
+          value: "admin"
+        - name: VERIFY_SSL
+          value: "False"
+        volumeMounts:
+        - mountPath: /opt/grafana-backup-tool
+          name: data
+      volumes:
+      - name: data
+        hostPath:
+          path: /mnt/manifest/grafana/backup

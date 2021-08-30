@@ -17,6 +17,38 @@ Open-Falcon
 https://grafana.com/plugins/fastweb-openfalcon-datasource
 Prometheus AlertManager
 https://grafana.com/plugins/camptocamp-prometheus-alertmanager-datasource
+WorldMap地图插件
+
+Grafana的百度地图插件，基于WorldMap修改。
+https://gitee.com/summergaolib/grafana-baidumap-panel/
+
+grafana-diagram
+Grafana插件可使用流程图，甘特图，序列图或类图来可视化图中的指标
+grafana-flowcharting
+流程图，Grafana插件，用于创建复杂的visio绘图样式，例如技术架构，平面图，图表，基于draw.io的分层架构
+grafana-api-datasource
+grafana插件，可以从api获取json数据并解析数据
+GrafanaJsonDatasource
+最灵活的Grafana数据源，可通过HTTP JSON API获取数据
+grafana-infinity-datasource
+grafana的CSV，JSON，GraphQL，XML和HTML数据源
+graphql-datasource
+Grafana数据源插件可从GraphQL API查询数据
+grafana2-kairosdb-datasource-plugin
+Grafana 2-KairosDB数据源插件
+grafana-meta-queries
+Grafana插件，用于计算时间段指标，例如每周，每周，每月和每年等
+grafana-statusmap
+Grafana面板插件可随时间可视化多个对象的状态
+grafana-progress-list
+进度列表
+grafana-hds-datasource
+LinkSmart历史数据存储区的Grafana插件
+grafana-azure-datasource
+Azure以及Grafana的数据源
+
+grafana-reporter
+https://github.com/IzakMarais/reporter
 
 阿里云监控对接Grafana
 https://www.alibabacloud.com/help/zh/doc-detail/109434.htm
@@ -35,7 +67,20 @@ https://github.com/TencentCloud/tencentcloud-monitor-grafana-app/
 https://cloud.tencent.com/document/product/614/52102
 https://github.com/TencentCloud/cls-grafana-datasource
 
+AWS监控对接Grafana
+
+Azure监控对接Grafana
+
+
+grafana 备份恢复
+https://github.com/yangchuansheng/docker-image
+https://github.com/ysde/grafana-backup-tool
+
+grafana-backup save --components=<folders,dashboards,datasources,alert-channels,organizations,users
+
 独立版
 推荐使用prometheus-operator
 
 docker run -d --restart=always --name=grafana -e JAEGER_SERVICE_NAME=my-grafana -e JAEGER_RPC_METRICS=true -e JAEGER_AGENT_HOST=jaeger.ip -e GF_TRACING_JAEGER_ADDRESS=jaeger.ip:6831 -e GF_TRACING_JAEGER_ZIPKIN_PROPAGATION=true -p 3000:3000 -v /data/grafana-data:/var/lib/grafana grafana/grafana:7.1.5
+
+docker run -d --restart=always --name=grafana  -p 3000:3000 -v /data/grafana-data:/var/lib/grafana grafana/grafana:8.1.1

@@ -9,3 +9,5 @@ helm install my-release bitnami/thanos
 
 helm repo add banzaicloud-stable https://kubernetes-charts.banzaicloud.com
 
+
+

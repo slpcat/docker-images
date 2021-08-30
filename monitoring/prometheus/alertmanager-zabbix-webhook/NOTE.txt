@@ -1,0 +1,4 @@
+https://github.com/souzaal/alertmanager-zabbix-webhook
+
+Webhook that sends alerts to a Zabbix server via trapper items.
+You can create your Zabbix Hosts/Items/Triggers yourself or you can use https://github.com/gmauleon/alertmanager-zabbix-provisioner
