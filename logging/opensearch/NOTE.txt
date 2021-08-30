@@ -1,0 +1,34 @@
+https://www.opensearch.org/
+
+https://github.com/opensearch-project
+
+
+Data Prepper
+Data Prepper receives trace data from the OpenTelemetry collector, and aggregates, transforms, and normalizes it for analysis and visualization.
+
+Command Line Tools
+The OpenSearch command line interface (opensearch-cli) lets you manage your cluster from the command line and automate tasks.
+
+username (admin) and password (admin)
+
+opensearch 插件
+https://www.opensearch.org/docs
+
+security-plugin authentication and access control
+alerting
+
+
+
+ElastiFlow
+ElastiFlow instantly transforms OpenSearch into a turnkey network traffic analytics solution. It provides deep insights into performance and availability issues, as well as security threats, for environments at any scale.
+
+Kubernetes Logging stack using Opensearch
+This helm chart deploys a scalable containerized logging stack, enabling log observability for kubernetes applications with Opensearch. The deployment may take various forms, from a single node setup usable for a local development up to scaled multi nodes opensearch deployments used in production environments. It is an easy way to provision a managed Opensearch cluster with optional kafka brokers, flunetbits and fluentd(s) supplying additional initialization steps for the varois components.
+
+Wazuh
+Wazuh is a free and open source platform used for threat prevention, detection, and response. It protects workloads across on-premises, virtualized, containerized and cloud-based environments. Wazuh has been fully integrated with OpenSearch, providing a search engine and a user interface to navigate through security alerts.
+
+
+docker run -p 9200:9200 -p 9600:9600 -e "discovery.type=single-node" opensearchproject/opensearch:1.0.0
+
+docker run -p 5601:5601 -e OPENSEARCH_HOSTS='["https://opensearch-node1:9200","https://opensearch-node2:9200"]' opensearchproject/opensearch-dashboards:1.0.0

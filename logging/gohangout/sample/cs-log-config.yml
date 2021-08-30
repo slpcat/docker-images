@@ -1,0 +1,82 @@
+inputs:
+    - Kafka:
+        topic:
+            cs_cdn_log: 1
+        codec: json
+        consumer_settings:
+            bootstrap.servers: "10.0.0.7:9092"
+            from.beginning: 'true'
+            group.id: cs_cdn_log-00
+
+
+
+filters:
+    - Grok:
+        src: message
+        match:
+          - '"(?P<client_ip>\S+)" "(?P<log_level>\S+)" "(?P<domain>\S+)" "(?P<request_time>[^"]+)" "(?P<response_time>\d+)" "(?P<request>[^"]+)" "(?P<status>\d+)" "(?P<response_size>\d+)" "(?P<body_bytes_sent>\d+)" "(?P<http_referer>[^"]+)" "(?P<cookies>[^"]+)" "(?P<user_agent>[^"]+)" "(?P<http_x_forwarded_for>[^"]+)" "(?P<request_trace_id>\S+)" "(?P<hit_info>\S+)" "(?P<cdn_server_addr>\S+)" "(?P<isp_id>[^"]+)" "(?P<loc_id>[^"]+)" "(?P<procotol>\S+)"'
+        remove_fields: ['log_level', 'cookies']
+        failTag: matchfail
+        add_fields:
+          cdn_product: 'cs'
+          cdn_type: 'all'
+
+
+    - Date:
+        src: 'request_time'
+        target: '@timestamp'
+        location: Asia/Shanghai
+        overwrite: true
+        formats:
+            - '[02/Jan/2006:15:04:05 +0800]'
+        remove_fields: ["request_time"]
+
+    - Add:
+        overwrite: true
+        fields:
+          second: '1000'
+
+
+    - Convert:
+        fields:
+            response_time:
+                to: float
+                setto_if_fail: 0.0
+            status:
+                to: int
+                setto_if_fail: 0
+            body_bytes_sent:
+                to: int
+                setto_if_fail: 0
+            response_size:
+                to: int
+                setto_if_fail: 0
+            second:
+                to: float
+                setto_if_fail: 0.0
+
+    - Add:
+        overwrite: true
+        fields:
+          response_time: '{{ divide .response_time .second }}'
+
+    - Convert:
+        fields:
+            response_time:
+                to: float
+                setto_if_fail: 0.0
+
+outputs:
+    - Elasticsearch:
+        hosts:
+            - http://172.16.1.16:9200
+            - http://172.16.1.17:9200
+            - http://172.16.1.18:9200
+        index: 'cdn_log_%{+2006_01_02}' #golang里面的渲染方式就是用数字, 而不是用YYMM.
+        index_time_location: 'Local'
+        bulk_actions: 5000
+        bulk_size: 15
+        flush_interval: 30
+        concurrent: 1
+        es_version: 7
+        index_type: "_doc"

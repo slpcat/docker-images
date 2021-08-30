@@ -1,0 +1,167 @@
+{ - 
+  "cdn_log_2020_05_20": { - 
+    "mappings": { - 
+      "properties": { - 
+        "@timestamp": { - 
+          "type": "date"
+        },
+        "cdn_product": { - 
+          "type": "text",
+          "fields": { - 
+            "keyword": { - 
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        },
+        "cdn_type": { - 
+          "type": "text",
+          "fields": { - 
+            "keyword": { - 
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        },
+        "client_ip": { - 
+          "type": "text",
+          "fields": { - 
+            "keyword": { - 
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        },
+        "domain": { - 
+          "type": "text",
+          "fields": { - 
+            "keyword": { - 
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        },
+        "file_size": { - 
+          "type": "long"
+        },
+        "hit_info": { - 
+          "type": "text",
+          "fields": { - 
+            "keyword": { - 
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        },
+        "http_range": { - 
+          "type": "text",
+          "fields": { - 
+            "keyword": { - 
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        },
+        "http_referer": { - 
+          "type": "text",
+          "fields": { - 
+            "keyword": { - 
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        },
+        "hy_ip": { - 
+          "type": "text",
+          "fields": { - 
+            "keyword": { - 
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        },
+        "isp_id": { - 
+          "type": "text",
+          "fields": { - 
+            "keyword": { - 
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        },
+        "loc_id": { - 
+          "type": "text",
+          "fields": { - 
+            "keyword": { - 
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        },
+        "method": { - 
+          "type": "text",
+          "fields": { - 
+            "keyword": { - 
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        },
+        "procotol": { - 
+          "type": "text",
+          "fields": { - 
+            "keyword": { - 
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        },
+        "request": { - 
+          "type": "text",
+          "fields": { - 
+            "keyword": { - 
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        },
+        "response_size": { - 
+          "type": "long"
+        },
+        "response_time": { - 
+          "type": "float"
+        },
+        "status": { - 
+          "type": "long"
+        },
+        "uri": { - 
+          "type": "text",
+          "fields": { - 
+            "keyword": { - 
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        },
+        "uri_param": { - 
+          "type": "text",
+          "fields": { - 
+            "keyword": { - 
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        },
+        "user_agent": { - 
+          "type": "text",
+          "fields": { - 
+            "keyword": { - 
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        }
+      }
+    }
+  }
+}

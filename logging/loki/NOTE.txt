@@ -1,1 +1,16 @@
 https://github.com/grafana/loki
+
+helm repo add loki https://grafana.github.io/loki/charts
+helm repo update
+
+kubectl create ns loki
+helm upgrade --install loki --namespace=loki loki/loki  --set fluent-bit.enabled=true,promtail.enabled=false,grafana.enabled=true,prometheus.enabled=true,prometheus.alertmanager.persistentVolume.enabled=true,prometheus.server.persistentVolume.enabled=true
+
+helm upgrade --install fluent-bit --namespace=loki loki/fluent-bit --set loki.serviceName=loki.loki.svc.cluster.local
+
+https://grafana.com/docs/loki/latest/installation/docker/
+
+wget https://raw.githubusercontent.com/grafana/loki/v2.3.0/cmd/loki/loki-local-config.yaml -O loki-config.yaml
+docker run -v $(pwd):/mnt/config -p 3100:3100 grafana/loki:2.3.0 -config.file=/mnt/config/loki-config.yaml
+wget https://raw.githubusercontent.com/grafana/loki/v2.3.0/cmd/promtail/promtail-docker-config.yaml -O promtail-config.yaml
+docker run -v $(pwd):/mnt/config -v /var/log:/var/log grafana/promtail:2.3.0 -config.file=/mnt/config/promtail-config.yaml

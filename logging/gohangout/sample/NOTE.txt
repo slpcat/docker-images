@@ -1,0 +1,58 @@
+腾讯静态cdn日志样本
+
+referer: https://site.example.com/
+
+method: OPTIONS
+
+isp: 中国移动
+
+ua: Mozilla/5.0 (iPad; CPU OS 14_4_2 like Mac OS X;Koolearn; site/4.32.0; A1/160/194) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 XDFZXClassroom({"osVersion":14.4,"brand":"Apple","osPlatform":"iOS","deviceType":"iPad7,5"})
+
+uuid: 8635061668888763174
+
+version: 1
+
+file_size: 0
+
+url: /v1/api/service/kafka-rest/playback/data-report
+
+request_range: -
+
+rsp_size: 538
+
+hit: miss
+
+request_time: 35
+
+http_code: 204
+
+param: token=7b7710a56ba6f817afc52
+
+proto: HTTPS
+
+host: play.exmaple.com
+
+client_ip: 1.2.3.4
+
+time: 1628651950
+
+app_id: 1255817909
+
+prov: 山西
+
+request_port: 36570
+
+
+腾讯动态cdn日志样本
+
+20210811035335 36.99.1.17 url.example.com /domain/domain.js 343 1442 2 304 http://url.site.com/ 30 "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.119 Safari/537.36" "(null)" GET HTTP/1.1 miss
+日志内容依次为：请求时间，客户端IP，访问域名，文件路径，字节数，省份编码，运营商编码，HTTP状态码，referer，Request-Time，UA，range，HTTP Method，协议标识，缓存HIT/MISS，
+
+
+
+阿里云静态cdn日志样本
+
+
+nginx 日志格式
+
+log_format web_log_json '"$time_local" "$hostname" "$remote_addr" "$upstream_addr" "$request_time" "$upstream_response_time" "$upstream_connect_time" "$status" "$upstream_status" "$bytes_sent" "$remote_user" "$request" "$request_uri" "$uri" "$args" "$user_agent" "$http_referer" "$host" "second" "$scheme" "$request_method" "$request_trace_id" "$request_trace_seq" "$http_x_forwarded_for" "$http_Authorization" "$user_cookie" "$sso_id_cookie" "$session" "$user_true_ip" "$proxy_host"';

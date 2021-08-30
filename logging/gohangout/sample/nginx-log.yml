@@ -1,0 +1,82 @@
+inputs:
+    - '/tol/app/gohangout/kafka_sarama_input.so':
+        topic:
+            nginx_log: 1
+        codec: json
+        consumer_settings:
+            bootstrap.servers: "10.0.0.1:9092"
+            group.id: nginx_logs
+            client.id: 996
+            auto.commit.interval.ms: '1000'
+            auto.commit: 'true'
+            version: '1.1.1'
+
+filters:
+    - Date:
+        src: 'collect_timestamp'
+        target: 'collect_time'
+        location: UTC
+        #location: America/Sitka
+        overwrite: true
+        formats:
+            - '2006-01-02T15:04:05.000000Z'
+        remove_fields: ["collect_timestamp"]
+
+    - Date:
+        src: 'time_local'
+        target: '@timestamp'
+        location: Asia/Shanghai
+        overwrite: true
+        formats:
+            - '02/Jan/2006:15:04:05 +0800'
+        remove_fields: ["time_local"]
+
+    - Convert:
+        fields:
+            status:
+                to: int
+                setto_if_fail: 0
+            upstream_status:
+                to: int
+                setto_if_fail: 0
+            bytes_sent:
+                to: int
+                setto_if_fail: 0
+            request_time:
+                to: float
+                setto_if_fail: 0.0
+            upstream_response_time:
+                to: float
+                setto_if_fail: 0.0
+            upstream_connect_time:
+                to: float
+                setto_if_fail: 0.0
+            request_trace_seq:
+                to: int
+                setto_if_fail: 0
+
+outputs:
+   # - Clickhouse:
+   #     table: 'nginx_logs.test_nginx_logs_buffer'
+   #     conn_max_life_time: 10
+   #     hosts:
+   #         - 'tcp://10.0.1.13:9000'
+   #     fields: ["timestamp", "hostname", "remote_addr", "upstream_addr", "request_time", "upstream_response_time", "upstream_connect_time", "status", "upstream_status", "bytes_sent", "remote_user", "request", "http_user_agent", "http_referer", "domain", "scheme", "request_method", "request_trace_id", "request_trace_seq", "http_x_forwarded_for", "http_Authorization", "http_site_session_id", "tags"]
+   #     bulk_actions: 10000
+   #     flush_interval: 30
+   #     concurrent: 100
+    - Elasticsearch:
+        hosts:
+            - http://172.16.0.1:9200
+            - http://172.16.0.2:9200
+            - http://172.16.0.3:9200
+        index: 'nginx_log_%{+2006_01_02}' #golang里面的渲染方式就是用数字, 而不是用YYMM.
+        #index_time_location: 'Local'
+        bulk_actions: 5000
+        bulk_size: 15
+        flush_interval: 30
+        concurrent: 1
+        es_version: 7
+        index_type: "_doc"
+#outputs:
+#    - Stdout: {}

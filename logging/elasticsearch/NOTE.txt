@@ -24,6 +24,9 @@ prometheus-operator监控
 servicemonitor-elasticsearch-bitnami.yml
 dashboard-elasticsearch-bitnami.json
 
+elasticsearch-datacapture-plugin 
+
+
 Tools for moving and saving indices
 https://github.com/taskrabbit/elasticsearch-dump
 
@@ -61,17 +64,30 @@ kibana plugin
 docker image repack
 
 analysis-icu
+Elasticsearch ICU分析插件，集成了ICU模块，添加了ICU相关的分析组件。
 analysis-ik
+Elasticsearch IK分析插件。
 analysis-kuromoji
+Elasticsearch日语（kuromoji）分析插件， 集成了Lucene kuromoji分析模块。
 analysis-phonetic
+Elasticsearch 音标分析插件，集成了词元过滤器。
 analysis-pinyin
+Elasticsearch 拼音分析插件。
 analysis-smartcn
+	
+Elasticsearch 智能中文分析插件，集成了Lucene智能中文分析器。
 elasticsearch-repository-oss
+
 ingest-attachment
 ingest-geoip
 ingest-user-agent
 
 es常用插件
+
+analysis-aliws
+Elasticsearch Aliws分析插件，集成相应分析器和分词器
+
+
 search-guard：https://github.com/floragunncom/search-guard 
 elasticsearch-http-user-auth：https://github.com/elasticfence/elasticsearch-http-user-auth
 分词插件

@@ -1,0 +1,8 @@
+https://elasticstack.blog.csdn.net/article/details/119382357
+
+配置我们的中央 rsyslog 服务器以使用 JSON 模板来格式化日志数据，然后将其发送到 Logstash，然后将其发送到 Elasticsearch。
+
+日志转换成json
+/etc/rsyslog.d/01-json-template.conf
+输出json
+/etc/rsyslog.d/60-output.conf

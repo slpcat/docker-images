@@ -57,6 +57,8 @@ RUN bin/logstash-plugin install logstash-filter-geoip
 RUN bin/logstash-plugin install logstash-output-loki
 RUN bin/logstash-plugin install logstash-output-s3
 RUN bin/logstash-plugin install logstash-output-oss
+#AWS openseach 
+RUN bin/logstash-plugin install logstash-output-opensearch
 #Web hdfs output for logstash
 RUN bin/logstash-plugin install logstash-output-webhdfs
 RUN bin/logstash-plugin install logstash-output-opentsdb

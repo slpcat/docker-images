@@ -1,0 +1,217 @@
+inputs:
+    - Kafka:
+        topic:
+            ten_dcdn_log: 1
+        codec: json
+        consumer_settings:
+            bootstrap.servers: "10.0.0.7:9092"
+            from.beginning: 'true'
+            group.id: ten_dcdn_log-00
+
+filters:
+    - Grok:
+        src: message
+        match:
+          - '"(?P<request_time>[^"]+)" "(?P<client_ip>\S+)" "(?P<domain>\S+)" "(?P<request>[^"]+)" "(?P<request_size>\d+)" "(?P<loc_id>\d+)" "(?P<isp_id>\d+)" "(?P<status>\d+)" "(?P<http_referer>[^"]+)" "(?P<response_time>[.0-9]+)" "(?P<user_agent>[^"]+)" "(?P<http_range>[^"]+)" "(?P<method>\S+)" "(?P<procotol>\S+)" "(?P<hit_info>\S+)" "(?P<upstream_addr>[^"]+)" "(?P<upstream_status>\S+)" "(?P<request_trace_id>\S+)" "(?P<http_x_forwarded_for>[^"]+)" "(?P<content_type>\S+)"'
+        failTag: matchfail
+        add_fields:
+          cdn_product: 'ten'
+          cdn_type: 'dynamic'
+
+    - Drop:
+        if:
+          - 'EQ(tags,"matchfail")'
+
+    - Date:
+        src: 'request_time'
+        target: '@timestamp'
+        location: Asia/Shanghai
+        overwrite: true
+        formats:
+          - '2006-01-02T15:04:05Z'
+        remove_fields: ["request_time"]
+
+    - Add:
+        overwrite: true
+        fields:
+          second: '1000'
+
+    - Convert:
+        fields:
+            response_time:
+                to: float
+                setto_if_fail: 0.0
+            second:
+                to: float
+                setto_if_fail: 0.0
+            status:
+                to: int
+                setto_if_fail: 0
+            upstream_status:
+                to: int
+                setto_if_fail: 0
+            request_size:
+                to: int
+                setto_if_fail: 0
+
+    - Add:
+        overwrite: true
+        fields:
+          response_time: '{{ divide .response_time .second }}'
+
+    - Replace:
+        fields:
+          isp_id: ['3947', '中国铁通']
+    - Replace:
+        fields:
+          isp_id: ['1046', '中国移动']
+    - Replace:
+        fields:
+          isp_id: ['43', '长城宽带']
+    - Replace:
+        fields:
+          isp_id: ['38', '教育网']
+    - Replace:
+        fields:
+          isp_id: ['26', '中国联通']
+    - Replace:
+        fields:
+          isp_id: ['2', '中国电信']
+    - Replace:
+        fields:
+          isp_id: ['0', '其他运营商']
+    - Replace:
+        fields:
+          isp_id: ['-1', '境外运营商']
+    - Replace:
+        fields:
+          loc_id: ['1468', '新疆']
+    - Replace:
+        fields:
+          loc_id: ['1467', '青海']
+    - Replace:
+        fields:
+          loc_id: ['1466', '湖南']
+    - Replace:
+        fields:
+          loc_id: ['1465', '江西']
+    - Replace:
+        fields:
+          loc_id: ['1445', '吉林']
+    - Replace:
+        fields:
+          loc_id: ['1464', '辽宁']
+    - Replace:
+        fields:
+          loc_id: ['1442', '浙江']
+    - Replace:
+        fields:
+          loc_id: ['1441', '海南']
+    - Replace:
+        fields:
+          loc_id: ['1208', '甘肃']
+    - Replace:
+        fields:
+          loc_id: ['1177', '天津']
+    - Replace:
+        fields:
+          loc_id: ['1155', '西藏']
+    - Replace:
+        fields:
+          loc_id: ['1135', '湖北']
+    - Replace:
+        fields:
+          loc_id: ['1068', '四川']
+    - Replace:
+        fields:
+          loc_id: ['1069', '河北']
+    - Replace:
+        fields:
+          loc_id: ['1050', '上海']
+    - Replace:
+        fields:
+          loc_id: ['1051', '重庆']
+    - Replace:
+        fields:
+          loc_id: ['182', '河南']
+    - Replace:
+        fields:
+          loc_id: ['173', '广西']
+    - Replace:
+        fields:
+          loc_id: ['153', '云南']
+    - Replace:
+        fields:
+          loc_id: ['145', '黑龙江']
+    - Replace:
+        fields:
+          loc_id: ['152', '陕西']
+    - Replace:
+        fields:
+          loc_id: ['146', '山西']
+    - Replace:
+        fields:
+          loc_id: ['122', '山东']
+    - Replace:
+        fields:
+          loc_id: ['121', '安徽']
+    - Replace:
+        fields:
+          loc_id: ['120', '江苏']
+    - Replace:
+        fields:
+          loc_id: ['118', '贵州']
+    - Replace:
+        fields:
+          loc_id: ['119', '宁夏']
+    - Replace:
+        fields:
+          loc_id: ['86', '内蒙古']
+    - Replace:
+        fields:
+          loc_id: ['22', '北京']
+    - Replace:
+        fields:
+          loc_id: ['2', '福建']
+    - Replace:
+        fields:
+          loc_id: ['4', '广东']
+    - Replace:
+        fields:
+          loc_id: ['1', '港澳台']
+    - Replace:
+        fields:
+          loc_id: ['0', '其他']
+    - Replace:
+        fields:
+          loc_id: ['-1', '境外']
+
+    - Convert:
+        fields:
+            response_time:
+                to: float
+                setto_if_fail: 0.0
+
+outputs:
+   # - Clickhouse:
+   #     table: 'nginx_logs.test_nginx_logs_buffer'
+   #     conn_max_life_time: 10
+   #     hosts:
+   #         - 'tcp://10.1.1.3:9000'
+   #     fields: ["timestamp", "hostname", "remote_addr", "upstream_addr", "request_time", "upstream_response_time", "upstream_connect_time", "status", "upstream_status", "bytes_sent", "remote_user", "request", "http_user_agent", "http_referer", "domain", "scheme", "request_method", "request_trace_id", "request_trace_seq", "http_x_forwarded_for", "http_Authorization", "http_site_session_id", "tags"]
+   #     bulk_actions: 10000
+   #     flush_interval: 30
+   #     concurrent: 100
+    - Elasticsearch:
+        hosts:
+            - http://172.16.1.1:9200
+            - http://172.16.1.2:9200
+            - http://172.16.1.3:9200
+        index: 'cdn_log_%{+2006_01_02}' #golang里面的渲染方式就是用数字, 而不是用YYMM.
+        index_time_location: 'Local'
+        bulk_actions: 5000
+        bulk_size: 15
+        flush_interval: 30
+        concurrent: 1
+        es_version: 7
+        index_type: "_doc"

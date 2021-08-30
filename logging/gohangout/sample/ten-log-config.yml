@@ -1,0 +1,110 @@
+inputs:
+    - Kafka:
+        topic:
+            ten_cdn_log: 1
+        codec: json
+        consumer_settings:
+            bootstrap.servers: "10.0.1.1:9092"
+            from.beginning: 'true'
+            group.id: test-00
+
+filters:
+    - Date:
+        src: 'time'
+        target: 'temp_time'
+        location: Asia/Shanghai
+        overwrite: true
+        formats:
+            - 'UNIX'
+    - Add:
+        overwrite: true
+        fields:
+          second: '1000'
+
+    - Convert:
+        fields:
+          temp_time:
+              to: string
+              setto_if_fail: 'fail'
+          request_time:
+              to: float
+              setto_if_fail: 0.0
+          second:
+              to: float
+              setto_if_fail: 0.0
+    - Split:
+        src: temp_time
+        sep: "+"
+        maxSplit: -1
+        fields: ['shijian', 'shiqu']
+        ignore_blank: true
+        overwrite: true
+        trim: '"]['
+    - Date:
+        src: 'shijian'
+        target: '@timestamp'
+        location: Asia/Shanghai
+        overwrite: true
+        formats:
+          - '2006-01-02T15:04:05'
+
+    - Add:
+        overwrite: true
+        fields:
+          hit_info: '[hit]'
+          domain: '[host]'
+          status: '[http_code]'
+          isp_id: '[isp]'
+          uri_param: '[param]'
+          request: '{{.url}}?{{.param}}'
+          procotol: '[proto]'
+          loc_id: '[prov]'
+          http_referer: '[referer]'
+          response_time: '{{ divide .request_time .second }}'
+          response_size: '[rsp_size]'
+          user_agent: '[ua]'
+          uri: '[url]'
+          http_range: '[request_range]'
+          cdn_product: 'ten'
+          cdn_type: 'static'
+
+    - Convert:
+        fields:
+          file_size:
+              to: int
+              setto_if_fail: 0
+          response_size:
+              to: int
+              setto_if_fail: 0
+          response_time:
+              to: float
+              setto_if_fail: 0.0
+          status:
+              to: int
+              setto_if_fail: 0
+
+    - Remove:
+        fields: ['app_id', 'hit', 'host', 'http_code', 'isp', 'param', 'proto', 'prov', 'referer', 'rsp_size', 'shijian', 'shiqu', 'temp_time', 'time', 'ua', 'uuid', 'version', 'url', 'second', 'request_range', 'request_time']
+outputs:
+   # - Clickhouse:
+   #     table: 'nginx_logs.test_nginx_logs_buffer'
+   #     conn_max_life_time: 10
+   #     hosts:
+   #         - 'tcp://10.1.1.1:9000'
+   #     fields: ["timestamp", "hostname", "remote_addr", "upstream_addr", "request_time", "upstream_response_time", "upstream_connect_time", "status", "upstream_status", "bytes_sent", "remote_user", "request", "http_user_agent", "http_referer", "domain", "scheme", "request_method", "request_trace_id", "request_trace_seq", "http_x_forwarded_for", "http_Authorization", "http_site_session_id", "tags"]
+   #     bulk_actions: 10000
+   #     flush_interval: 30
+   #     concurrent: 100
+    - Elasticsearch:
+        hosts:
+            - http://172.16.1.1:9200
+            - http://172.16.1.2:9200
+            - http://172.16.1.3:9200
+        index: 'cdn_log_%{+2006_01_02}' #golang里面的渲染方式就是用数字, 而不是用YYMM.
+        index_time_location: 'Local'
+        bulk_actions: 5000
+        bulk_size: 15
+        flush_interval: 30
+        concurrent: 1
+        es_version: 7
+        index_type: "_doc"
