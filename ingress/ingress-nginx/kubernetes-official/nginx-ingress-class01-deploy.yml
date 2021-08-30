@@ -86,10 +86,18 @@ data:
   enable-underscores-in-headers: "true"
   generate-request-id: "true"
   ignore-invalid-headers: "true"
-  log-format-upstream: $remote_addr - [$remote_addr] - $remote_user [$time_local] "$request"
-    $status $body_bytes_sent "$http_referer" "$http_user_agent" $request_length $request_time
-    [$proxy_upstream_name] $upstream_addr $upstream_response_length $upstream_response_time
-    $upstream_status $req_id $host [$proxy_alternative_upstream_name]
+  compute-full-forwarded-for: 'true'
+  forwarded-for-header: "X-Forwarded-For"
+  use-forwarded-headers: 'true'
+  #log-format-upstream: $remote_addr - [$remote_addr] - $remote_user [$time_local] "$request"
+  #  $status $body_bytes_sent "$http_referer" "$http_user_agent" $request_length $request_time
+  #  [$proxy_upstream_name] $upstream_addr $upstream_response_length $upstream_response_time
+  #  $upstream_status $req_id $host [$proxy_alternative_upstream_name]
+  log-format-upstream: $remote_addr - [$remote_addr] - $remote_user [$time_local]
+    "$server_protocol" "$request_method" "$uri" "$request_body" $status $body_bytes_sent
+    "$http_referer" "$http_user_agent" $request_length $request_time [$proxy_upstream_name]
+    $upstream_addr $upstream_response_length $upstream_response_time $upstream_status
+    $req_id $host [$proxy_alternative_upstream_name] "$request_filename"
 ---
 # Source: ingress-nginx/templates/clusterrole.yaml
 apiVersion: rbac.authorization.k8s.io/v1

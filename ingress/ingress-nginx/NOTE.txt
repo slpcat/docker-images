@@ -3,3 +3,20 @@
 https://kubernetes.github.io/ingress-nginx/deploy/#aws
 
 https://kubernetes.github.io/ingress-nginx/user-guide/multiple-ingress/
+
+日志分析
+
+accesslog -->es -->grafana
+  log-format-upstream: $remote_addr - [$remote_addr] - $remote_user [$time_local]
+    "$server_protocol" "$request_method" "$uri" "$request_body" $status $body_bytes_sent
+    "$http_referer" "$http_user_agent" $request_length $request_time [$proxy_upstream_name]
+    $upstream_addr $upstream_response_length $upstream_response_time $upstream_status
+    $req_id $host [$proxy_alternative_upstream_name] "$request_filename"
+
+https://cloud.tencent.com/developer/article/1822955
+
+accesslog -->loki -->grafana
+
+日志从 Kafka 到 Loki 的 N 种方式
+
+Fluentd,Logstash,Vector
