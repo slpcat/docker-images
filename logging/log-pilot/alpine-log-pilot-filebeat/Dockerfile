@@ -8,7 +8,7 @@ ENV \
     LANGUAGE="en_US.UTF-8" \
     LC_ALL="en_US.UTF-8" \
     TIMEZONE="Asia/Shanghai" \
-    FILEBEAT_VERSION="7.10.1"
+    FILEBEAT_VERSION="7.14.1"
 
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/' /etc/apk/repositories
 
