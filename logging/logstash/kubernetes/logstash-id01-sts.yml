@@ -11,7 +11,7 @@ metadata:
     heritage: Helm
 spec:
   serviceName: RELEASE-NAME-logstash
-  replicas: 1
+  replicas: 3
   podManagementPolicy: OrderedReady
   selector:
     matchLabels:
@@ -63,9 +63,19 @@ spec:
               value: "9200"
             # Logstash Java Options
             - name: LS_JAVA_OPTS
-              value: -Xmx1g -Xms1g
+              value: -Xmx4g -Xms1g -Dnetworkaddress.cache.ttl=1
             - name: XPACK_MONITORING_ENABLED
               value: "false"
+            - name: LOG_LEVEL
+              value: "info"
+            - name: PIPELINE_WORKERS
+              value: "8"
+            - name: PIPELINE_BATCH_SIZE
+              value: "1000"
+            - name: PIPELINE_BATCH_DELAY
+              value: "100"
+            - name: PIPELINE_FLUSH_SIZE
+              value: "2000"
             ## Additional env vars
             - name: CONFIG_RELOAD_AUTOMATIC
               value: "true"
@@ -73,14 +83,23 @@ spec:
               value: "/usr/share/logstash/pipeline"
             - name: PATH_DATA
               value: "/usr/share/logstash/data"
-            - name: QUEUE_CHECKPOINT_WRITES
-              value: "1"
+            #- name: QUEUE_CHECKPOINT_WRITES
+            #  value: "1"
             - name: QUEUE_DRAIN
               value: "true"
+            - name: QUEUE_PAGE_CAPACITY
+              value: "250mb"
+            - name: QUEUE_MAX_EVENTS
+              value: "0"
+            - name: QUEUE_CHECKPOINT_WRITES
+              value: "1024"
+            - name: QUEUE_CHECKPOINT_INTERVAL
+              value: "1000"
             - name: QUEUE_MAX_BYTES
               value: "1gb"
             - name: QUEUE_TYPE
-              value: "persisted"
+              #value: "persisted"
+              value: "memory"
           resources:
             requests:
               cpu: 500m

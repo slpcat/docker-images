@@ -1,0 +1,3 @@
+https://elastalert.readthedocs.io/en/latest/running_elastalert.html#downloading-and-configuring
+https://github.com/Yelp/elastalert.git
+

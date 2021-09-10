@@ -6,7 +6,7 @@ metadata:
 spec:
   version: 7.9.3
   image: kibana:7.9.3
-  imagePullPolicy: IfNotPresent
+  #imagePullPolicy: IfNotPresent
   count: 1
   elasticsearchRef: # 连接es集群的名字
     name: "test"

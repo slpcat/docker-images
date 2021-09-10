@@ -1,4 +1,20 @@
+https://www.elastic.co/guide/en/cloud-on-k8s/current/index.html
 https://www.elastic.co/guide/en/cloud-on-k8s/current/k8s-deploy-elasticsearch.html
+
+Deploy ECK in your Kubernetes cluster
+kubectl create -f https://download.elastic.co/downloads/eck/1.7.1/crds.yaml
+kubectl apply -f https://download.elastic.co/downloads/eck/1.7.1/operator.yaml
+
+kubectl -n elastic-system logs -f statefulset.apps/elastic-operator
+
+Deploy an Elasticsearch cluster
+
 
 获取用户名/密码
 kubectl get secret gemfieldes-es-elastic-user -o=jsonpath='{.data.elastic}' | base64 --decode
+
+Deploy a Kibana instance
+
+Login as the elastic user. The password can be obtained with the following command
+kubectl get secret quickstart-es-elastic-user -o=jsonpath='{.data.elastic}' | base64 --decode; echo
+

@@ -26,6 +26,8 @@ data:
     }
 
     auth = {
+  #    username = "username"
+  #    password = "secret-password"
     }
 
     hosts = [
@@ -93,7 +95,7 @@ spec:
               mountPath: /var/db/cerebro
       containers:
         - name: cerebro
-          image: "slpcat/cerebro:0.9.3"
+          image: "slpcat/cerebro:0.9.4"
           imagePullPolicy: IfNotPresent
           args: ["-Dconfig.file=/etc/cerebro/application.conf"]
           ports:

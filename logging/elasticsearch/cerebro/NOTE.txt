@@ -1,1 +1,1 @@
-docker run -d --restart=always --name cerebro -p 9000:9000 slpcat/cerebro:0.8.3 -Dhosts.0.host=http://172.17.0.1:9200
+docker run -d --restart=always --name cerebro -p 9000:9000 slpcat/cerebro:0.9.4 -Dhosts.0.host=http://172.17.0.1:9200

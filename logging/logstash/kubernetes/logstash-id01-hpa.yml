@@ -1,0 +1,22 @@
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+  #命名规范:应用名称-版本
+  name: id01-logstash-hpa
+  namespace: logging
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: StatefulSet
+    name: id01-logstash
+  minReplicas: 1
+  maxReplicas: 10
+  metrics:
+  #各种指标参数要依据压力测试结果而定
+  - type: Resource
+    resource:
+  #根据CPU占用率进行缩放
+      name: cpu
+      target:
+        averageUtilization: 500
+        type: Utilization

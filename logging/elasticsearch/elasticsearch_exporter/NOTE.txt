@@ -1,0 +1,5 @@
+elasticsearch_exporter
+
+https://grafana.com/grafana/dashboards/2322
+
+
