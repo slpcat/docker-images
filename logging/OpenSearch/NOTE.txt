@@ -1,3 +1,0 @@
-AWS发布Elasticsearch和Kibana的开源分叉OpenSearch项目，新项目包括源自Elasticsearch 7.10.2的OpenSearch，以及源自Kibana 7.10. 2的OpenSearch Dashboards，官方提到，OpenSearch是之前Elasticsearch开放版本的新家，所有软件都是使用Apache 2.0授权。
-
-https://github.com/opensearch-project/OpenSearch

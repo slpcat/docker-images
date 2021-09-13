@@ -17,6 +17,9 @@ Open-Falcon
 https://grafana.com/plugins/fastweb-openfalcon-datasource
 Prometheus AlertManager
 https://grafana.com/plugins/camptocamp-prometheus-alertmanager-datasource
+
+grafana-opensearch-datasource 
+
 WorldMap地图插件
 
 Grafana的百度地图插件，基于WorldMap修改。
@@ -37,15 +40,19 @@ Grafana数据源插件可从GraphQL API查询数据
 grafana2-kairosdb-datasource-plugin
 Grafana 2-KairosDB数据源插件
 grafana-meta-queries
-Grafana插件，用于计算时间段指标，例如每周，每周，每月和每年等
+Meta Queries插件是作为数据源插件构建的，可以与其他数据源结合使用以显示计算的指标，例如移动平均，时移。
 grafana-statusmap
 Grafana面板插件可随时间可视化多个对象的状态
 grafana-progress-list
 进度列表
+citilogics-geoloop-panel:动画地图
 grafana-hds-datasource
 LinkSmart历史数据存储区的Grafana插件
 grafana-azure-datasource
 Azure以及Grafana的数据源
+grafana-cli plugins install grafana-azure-monitor-datasource 
+AWS X-Ray data source
+grafana-cli plugins install grafana-x-ray-datasource
 
 grafana-reporter
 https://github.com/IzakMarais/reporter
@@ -62,12 +69,27 @@ https://github.com/aliyun/aliyun-log-grafana-datasource-plugin
 腾讯云监控对接 Grafana
 https://cloud.tencent.com/document/product/248/48529
 https://github.com/TencentCloud/tencentcloud-monitor-grafana-app/
+grafana-cli plugins install tencentcloud-monitor-app
 
 腾讯云日志CLS 对接 Grafana
 https://cloud.tencent.com/document/product/614/52102
 https://github.com/TencentCloud/cls-grafana-datasource
 
 AWS监控对接Grafana
+Access key ID 和 Secret access Key 需要在AWS的  Identity and Access Management 页面里配置用户和权限
+
+https://grafana.com/docs/grafana/latest/datasources/cloudwatch/
+控制台网址： https://console.aws.amazon.com/iam/home?#/home
+
+AWS timestream对接Grafana
+grafana-cli plugins install grafana-timestream-datasource
+
+中文教程：https://docs.aws.amazon.com/zh_cn/general/latest/gr/managing-aws-access-keys.html
+
+英文教程： https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey_API
+
+dashborad 模板下载：https://codeload.github.com/monitoringartist/grafana-aws-cloudwatch-dashboards/zip/master
+
 
 Azure监控对接Grafana
 
@@ -81,6 +103,16 @@ grafana-backup save --components=<folders,dashboards,datasources,alert-channels,
 独立版
 推荐使用prometheus-operator
 
+grafana agent 
+
+https://github.com/grafana/agent 
+grafana agent 
+功能类似opentelemetry-collector，但是主要是agent 模式的支持，支持log，trace，metrics，prometheus remote write 
+同时对于prometheus 分服务发现支持也是很不错的，功能很丰富
+
 docker run -d --restart=always --name=grafana -e JAEGER_SERVICE_NAME=my-grafana -e JAEGER_RPC_METRICS=true -e JAEGER_AGENT_HOST=jaeger.ip -e GF_TRACING_JAEGER_ADDRESS=jaeger.ip:6831 -e GF_TRACING_JAEGER_ZIPKIN_PROPAGATION=true -p 3000:3000 -v /data/grafana-data:/var/lib/grafana grafana/grafana:7.1.5
 
-docker run -d --restart=always --name=grafana  -p 3000:3000 -v /data/grafana-data:/var/lib/grafana grafana/grafana:8.1.1
+docker run -d --restart=always --name=grafana  \
+  -e "GF_SERVER_ROOT_URL=http://grafana.server.name"  \
+  -e "GF_INSTALL_PLUGINS=grafana-clock-panel,grafana-piechart-panel,grafana-simple-json-datasource  1.2.3" \
+  -p 3000:3000 -v /data/grafana-data:/var/lib/grafana grafana/grafana:8.1.1

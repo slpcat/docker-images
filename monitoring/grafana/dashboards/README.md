@@ -1,5 +1,7 @@
 https://grafana.com/dashboards
 
+https://github.com/monitoringartist/grafana-aws-cloudwatch-dashboards
+
 zookeeper dashboard
 https://github.com/jiankunking/grafana-dashboards/raw/master/Prometheus_Zookeeper_Overview.json
 
@@ -51,6 +53,8 @@ ID: 763 Redis Dashboard for Prometheus Redis Exporter
  
 ID: 12165 Prometheus Operator Redis
 
+ID：12559 loki-nginx-ingress
+
 ID: 6248 Minio
 
 ID: 4475 Traefik
@@ -62,6 +66,16 @@ ID: 7424 kong
 ID: 10990 Nginx VTS
 
 ID: 13474 Alibaba Cloud Monitor For SLB Dashboard
+
+ID: 139 AWS Billing
+
+ID: 13105 1 Kubernetes for Prometheus Dashboard CN 20201209
+
+ID: 8919 1 Node Exporter for Prometheus Dashboard CN v20201010
+
+ID: 12559 Grafana Loki Dashboard for NGINX Service Mesh
+https://grafana.com/grafana/dashboards/12559
+
 
 Clock Panel可以用来显示当前（各国）时间或用于倒计时，并支持每秒更新一次。
 grafana-cli plugins install grafana-clock-panel
