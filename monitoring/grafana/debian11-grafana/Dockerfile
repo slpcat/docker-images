@@ -1,5 +1,5 @@
 #upstream https://github.com/grafana/grafana-docker
-FROM debian:bullseye-slim
+FROM debian:bullseye
 
 ARG GRAFANA_VERSION="8.1.3"
 ARG GRAFANA_URL="https://dl.grafana.com/oss/release/grafana-${GRAFANA_VERSION}.linux-amd64.tar.gz"
