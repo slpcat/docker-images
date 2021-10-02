@@ -1,0 +1,49 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rocketmq-exporter-001-configmap
+  namespace: monitoring
+data:
+  application.yml: |-
+    server:
+      port: 5557
+    spring:
+      application:
+        name: rocketmq-exporter
+      http:
+        encoding:
+          charset: UTF-8
+          enabled: true
+          force: true
+    logging:
+      config: classpath:logback.xml
+
+    rocketmq:
+      config:
+        webTelemetryPath: /metrics
+        rocketmqVersion: 4_8_0
+        namesrvAddr: 127.0.0.4:9876
+        enableCollect: true
+        enableACL: false # if >=4.4.0
+        accessKey:  # if >=4.4.0
+        secretKey:  # if >=4.4.0
+        outOfTimeSeconds: 60 # Cache clear time with no update
+
+    threadpool:
+      collect-client-metric-executor:
+        core-pool-size: 10
+        maximum-pool-size: 10
+        keep-alive-time: 3000
+        queueSize: 5000
+    task:
+      count: 5 # num of scheduled-tasks
+      collectTopicOffset:
+        cron: 15 0/1 * * * ?
+      collectConsumerOffset:
+        cron: 15 0/1 * * * ?
+      collectBrokerStatsTopic:
+        cron: 15 0/1 * * * ?
+      collectBrokerStats:
+        cron: 15 0/1 * * * ?
+      collectBrokerRuntimeStats:
+        cron: 15 0/1 * * * ?

@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rocketmq-exporter-001
+  namespace: monitoring
+  labels:
+    k8s-app: rocketmq-exporter-001
+spec:
+  selector:
+    matchLabels:
+      k8s-app: rocketmq-exporter-001
+  template:
+    metadata:
+      labels:
+        k8s-app: rocketmq-exporter-001
+    spec:
+      containers:
+      - name: rocketmq-exporter-001
+        image: docker.io/rocketmq-exporter
+        ports:
+          - name: metrics
+            containerPort: 5557
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 5557
+          initialDelaySeconds: 5
+        volumeMounts:
+        - name: config
+          mountPath: /opt/rocketmq-exporter/config/application.xml
+          subPath: application.xml
+      volumes:
+      - name: config
+        configMap:
+          name: rocketmq-exporter-001-configmap
