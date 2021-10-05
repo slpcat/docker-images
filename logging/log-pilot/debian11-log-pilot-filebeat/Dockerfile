@@ -42,8 +42,10 @@ RUN \
     apt-get install -y python2 && \
     update-alternatives --install /usr/bin/python python /usr/bin/python2.7 0
 
-COPY --from=builder /go/src/log-pilot/log-pilot /pilot/pilot
+RUN mkdir -p /etc/filebeat/prospectors.d/
+
 COPY assets/entrypoint assets/filebeat/ assets/healthz /pilot/
+COPY --from=builder /go/src/log-pilot/log-pilot /pilot/pilot
 COPY --from=builder /usr/bin/filebeat /usr/bin/filebeat
 COPY --from=builder /etc/filebeat/ /etc/filebeat/
 
