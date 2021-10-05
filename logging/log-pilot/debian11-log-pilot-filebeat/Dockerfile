@@ -28,7 +28,7 @@ ENV \
     LANGUAGE="en_US.UTF-8" \
     LC_ALL="en_US.UTF-8" \
     TIMEZONE="Asia/Shanghai" \
-    FILEBEAT_VERSION="7.14.1"
+    FILEBEAT_VERSION="7.15.0"
 
 COPY install_filebeat.sh /tmp/
 RUN /tmp/install_filebeat.sh
