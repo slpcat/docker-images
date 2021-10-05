@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
     if [ "$TARGETARCH" == "amd64" ]; then
        export ARCH="x86_64"
     else
