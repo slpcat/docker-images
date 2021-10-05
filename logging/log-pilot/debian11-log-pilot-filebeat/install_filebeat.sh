@@ -5,7 +5,8 @@
        export ARCH=$TARGETARCH
     fi
 
-    wget  https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-${FILEBEAT_VERSION}-linux-${ARCH}.tar.gz
+    cd /tmp
+    wget https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-${FILEBEAT_VERSION}-linux-${ARCH}.tar.gz
     mkdir -p /etc/filebeat /var/lib/filebeat /var/log/filebeat
     tar zxf /tmp/filebeat-${FILEBEAT_VERSION}-linux-${ARCH}.tar.gz -C /tmp/
     cp -rf /tmp/filebeat-${FILEBEAT_VERSION}-linux-${ARCH}/filebeat /usr/bin/
