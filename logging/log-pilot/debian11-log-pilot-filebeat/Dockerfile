@@ -58,14 +58,16 @@ COPY install_filebeat.sh /tmp/
 RUN /tmp/install_filebeat.sh
 
 COPY config.filebeat filebeat.tpl /pilot/
-COPY --from=installer /go/src/log-pilot/log-pilot /pilot/
+COPY --from=installer /go/src/log-pilot/log-pilot /pilot/pilot
 
 FROM slpcat/debian:bullseye
 MAINTAINER 若虚 <slpcat@qq.com>
 
-#RUN apk update && \ 
-#    apk add ca-certificates python2 && \
-#    update-ca-certificates 
+RUN \ 
+    apt-get update -y && \
+    apt-get dist-upgrade -y && \
+    apt-get install -y python2 && \
+    update-alternatives --install /usr/bin/python python /usr/bin/python2.7 0
 
 COPY --from=builder /pilot/ /pilot/
 COPY --from=builder /usr/bin/filebeat /usr/bin/filebeat
