@@ -381,7 +381,7 @@ ENV JAVA_OPTS="-server -Djava.awt.headless=true -XX:MetaspaceSize=128m \
          -XX:SoftRefLRUPolicyMSPerMB=0 -XX:+DisableExplicitGC -XX:G1ReservePercent=25 \
          -XX:G1NewSizePercent=10 -XX:G1MaxNewSizePercent=25 -XX:MaxGCPauseMillis=20 \
          -XX:-OmitStackTraceInFastThrow -XX:+ParallelRefProcEnabled -XX:ParallelGCThreads=8 \
-         -XX:MaxTenuringThreshold=1 -XX:G1HeapWastePercent=10 -XX:SurvivorRatio=8 \
+         -XX:MaxTenuringThreshold=1 -XX:G1HeapWastePercent=10 \
          -XX:G1MixedGCCountTarget=16 -XX:G1MixedGCLiveThresholdPercent=90 \
          -XX:InitiatingHeapOccupancyPercent=35 -XX:G1HeapRegionSize=32m \
          -XX:-ResizePLAB -Djenkins.install.runSetupWizard=false \
