@@ -1,5 +1,24 @@
+FROM golang:1.17-alpine3.14 as installer
+
+WORKDIR /go/src
+
+RUN \
+    sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/' /etc/apk/repositories && \
+    apk update && apk add git
+
+RUN  \
+    git clone https://github.com/AliyunContainerService/log-pilot.git && \
+    cd log-pilot/ && \
+    go mod init && \
+    go get && \
+    go mod tidy && \
+    go mod vendor && \
+    go build
+
 FROM registry.cn-hangzhou.aliyuncs.com/acs/log-pilot:0.9.7-filebeat as builder
 MAINTAINER 若虚 <slpcat@qq.com>
+
+ARG TARGETARCH
 
 # Container variables
 ENV \
@@ -31,15 +50,13 @@ RUN set -ex \
     # Network fix
     && echo 'hosts: files mdns4_minimal [NOTFOUND=return] dns mdns4' >> /etc/nsswitch.conf
 
-RUN \
-    wget  https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-${FILEBEAT_VERSION}-linux-x86_64.tar.gz && \
-    tar xzvf filebeat-${FILEBEAT_VERSION}-linux-x86_64.tar.gz && \
-    mv filebeat-${FILEBEAT_VERSION}-linux-x86_64/filebeat /usr/bin/filebeat && \
-    rm -rf filebeat-${FILEBEAT_VERSION}-linux-x86_64*
+COPY install_filebeat.sh /tmp/
+RUN /tmp/install_filebeat.sh
 
 COPY config.filebeat filebeat.tpl /pilot/
+COPY --from=installer /go/src/log-pilot/log-pilot /pilot/
 
-FROM slpcat/alpine:3.12
+FROM slpcat/alpine:3.14
 MAINTAINER 若虚 <slpcat@qq.com>
 
 RUN apk update && \ 
