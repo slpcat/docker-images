@@ -1,0 +1,3 @@
+# buildkitd.toml
+[registry."docker.io"]
+  mirrors = ["wlzfs4t4.mirror.aliyuncs.com"]

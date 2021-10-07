@@ -1,2 +1,0 @@
-{% from "consul-template/map.jinja" import consul_template with context %}
-{{ consul_template.config | json }}
