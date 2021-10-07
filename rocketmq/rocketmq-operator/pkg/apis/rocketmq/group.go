@@ -15,7 +15,9 @@
  * limitations under the License.
  */
 
-// Package v1alpha1 contains API Schema definitions for the rocketmq v1alpha1 API group
-// +k8s:deepcopy-gen=package,register
-// +groupName=rocketmq.apache.org
-package v1alpha1
+// Package rocketmq contains rocketmq API versions.
+//
+// This file ensures Go source parsers acknowledge the rocketmq package
+// and any child packages. It can be removed if any other Go source files are
+// added to this package.
+package rocketmq

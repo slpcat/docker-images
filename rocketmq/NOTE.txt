@@ -6,3 +6,11 @@ https://github.com/apache/rocketmq-exporter
 
 https://github.com/apache/rocketmq-externals
 
+MQCloud - 集客户端SDK，运维，监控，预警等功能的RocketMQ企业级一站式服务平台
+https://github.com/sohutv/mqcloud/wiki
+
+https://github.com/apache/rocketmq-operator
+
+
+rocketmq-dashboard
+

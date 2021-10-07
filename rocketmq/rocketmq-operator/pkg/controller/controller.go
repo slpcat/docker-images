@@ -15,7 +15,22 @@
  * limitations under the License.
  */
 
-// Package v1alpha1 contains API Schema definitions for the rocketmq v1alpha1 API group
-// +k8s:deepcopy-gen=package,register
-// +groupName=rocketmq.apache.org
-package v1alpha1
+// Package controller contains the controller of different CRDs
+package controller
+
+import (
+	"sigs.k8s.io/controller-runtime/pkg/manager"
+)
+
+// AddToManagerFuncs is a list of functions to add all Controllers to the Manager
+var AddToManagerFuncs []func(manager.Manager) error
+
+// AddToManager adds all Controllers to the Manager
+func AddToManager(m manager.Manager) error {
+	for _, f := range AddToManagerFuncs {
+		if err := f(m); err != nil {
+			return err
+		}
+	}
+	return nil
+}

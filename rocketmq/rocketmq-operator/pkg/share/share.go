@@ -15,7 +15,22 @@
  * limitations under the License.
  */
 
-// Package v1alpha1 contains API Schema definitions for the rocketmq v1alpha1 API group
-// +k8s:deepcopy-gen=package,register
-// +groupName=rocketmq.apache.org
-package v1alpha1
+// Package share defines some variables shared by different packages
+package share
+
+var (
+	// GroupNum is the number of broker group
+	GroupNum = 0
+
+	// NameServersStr is the name server list
+	NameServersStr = ""
+
+	// IsNameServersStrUpdated is whether the name server list is updated
+	IsNameServersStrUpdated = false
+
+	// IsNameServersStrInitialized is whether the name server list is initialized
+	IsNameServersStrInitialized = false
+
+	// BrokerClusterName is the broker cluster name
+	BrokerClusterName = ""
+)

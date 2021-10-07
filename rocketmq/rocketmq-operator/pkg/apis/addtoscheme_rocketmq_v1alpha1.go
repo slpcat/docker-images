@@ -15,7 +15,13 @@
  * limitations under the License.
  */
 
-// Package v1alpha1 contains API Schema definitions for the rocketmq v1alpha1 API group
-// +k8s:deepcopy-gen=package,register
-// +groupName=rocketmq.apache.org
-package v1alpha1
+package apis
+
+import (
+	"github.com/apache/rocketmq-operator/pkg/apis/rocketmq/v1alpha1"
+)
+
+func init() {
+	// Register the types with the Scheme so the components can map objects to GroupVersionKinds and back
+	AddToSchemes = append(AddToSchemes, v1alpha1.SchemeBuilder.AddToScheme)
+}
