@@ -29,13 +29,14 @@ ARG VERSION
 LABEL build_version="Linuxserver.io version:- ${VERSION} Build-date:- ${BUILD_DATE}"
 LABEL maintainer="TheLamer"
 
-# set version for s6 overlay
-ARG OVERLAY_VERSION="v2.2.0.3"
-ARG OVERLAY_ARCH="amd64"
+ARG TARGETARCH
+ARG S6_VERSION=v2.2.0.3
+ARG SOCKLOG_VERSION=v3.1.1-1
+COPY install_s6.sh /tmp
 
-# add s6 overlay
-ADD https://github.com/just-containers/s6-overlay/releases/download/${OVERLAY_VERSION}/s6-overlay-${OVERLAY_ARCH}-installer /tmp/
-RUN chmod +x /tmp/s6-overlay-${OVERLAY_ARCH}-installer && /tmp/s6-overlay-${OVERLAY_ARCH}-installer / && rm /tmp/s6-overlay-${OVERLAY_ARCH}-installer
+# Install s6-overlay
+RUN /tmp/install_s6.sh
+
 COPY patch/ /tmp/patch
 
 # set environment variables
