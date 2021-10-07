@@ -1,5 +1,5 @@
-#FROM ghcr.io/linuxserver/baseimage-ubuntu:focal as buildstage
-FROM slpcat/baseimage-ubuntu:focal as buildstage
+FROM ghcr.io/linuxserver/baseimage-ubuntu:focal as buildstage
+#FROM slpcat/baseimage-ubuntu:focal as buildstage
 
 ARG XRDP_PULSE_VERSION=v0.4 \
     DEBIAN_FRONTEND=noninteractive
@@ -50,8 +50,8 @@ RUN \
  cp -ax ../xrdp_*.deb /buildout/xrdp.deb
 
 # runtime stage
-#FROM ghcr.io/linuxserver/baseimage-ubuntu:focal
-FROM slpcat/baseimage-ubuntu:focal
+FROM ghcr.io/linuxserver/baseimage-ubuntu:focal
+#FROM slpcat/baseimage-ubuntu:focal
 
 # set version label
 ARG BUILD_DATE
@@ -95,7 +95,7 @@ RUN \
  rm /xrdp.deb && \
  echo "**** install docker ****" && \
  curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - && \
- add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable" && \
+ add-apt-repository "deb https://download.docker.com/linux/ubuntu focal stable" && \
  apt-get update && \
  apt-get install -y --no-install-recommends \
 	docker-ce-cli && \
