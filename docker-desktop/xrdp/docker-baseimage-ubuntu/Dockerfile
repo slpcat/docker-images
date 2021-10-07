@@ -1,7 +1,7 @@
 FROM alpine:3.12 as rootfs-stage
 
 # environment
-ENV REL=bionic
+ENV REL=focal
 ENV ARCH=amd64
 # install packages
 RUN \
@@ -28,14 +28,6 @@ ARG BUILD_DATE
 ARG VERSION
 LABEL build_version="Linuxserver.io version:- ${VERSION} Build-date:- ${BUILD_DATE}"
 LABEL maintainer="TheLamer"
-
-ARG TARGETARCH
-ARG S6_VERSION=v2.2.0.3
-ARG SOCKLOG_VERSION=v3.1.1-1
-COPY install_s6.sh /tmp
-
-# Install s6-overlay
-RUN /tmp/install_s6.sh
 
 COPY patch/ /tmp/patch
 
@@ -90,6 +82,7 @@ RUN \
  echo "**** install packages ****" && \
  apt-get install -y \
 	curl \
+        wget \
 	patch \
 	tzdata && \
  echo "**** generate locale ****" && \
@@ -111,6 +104,14 @@ RUN \
 	/tmp/* \
 	/var/lib/apt/lists/* \
 	/var/tmp/*
+
+ARG TARGETARCH
+ARG S6_VERSION=v2.2.0.3
+ARG SOCKLOG_VERSION=v3.1.1-1
+COPY install_s6.sh /tmp
+
+# Install s6-overlay
+RUN /tmp/install_s6.sh
 
 # add local files
 COPY root/ /

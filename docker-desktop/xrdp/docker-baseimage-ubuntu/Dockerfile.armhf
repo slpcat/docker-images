@@ -1,7 +1,7 @@
 FROM alpine:3.12 as rootfs-stage
 
 # environment
-ENV REL=bionic
+ENV REL=focal
 ENV ARCH=armhf
 # install packages
 RUN \
