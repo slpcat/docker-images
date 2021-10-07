@@ -10,4 +10,3 @@ set -e
 
     wget -O /tmp/s6-overlay.tar.gz https://github.com/just-containers/s6-overlay/releases/download/${S6_VERSION}/s6-overlay-${ARCH}.tar.gz
     tar xvfz /tmp/s6-overlay.tar.gz -C / && rm /tmp/s6-overlay.tar.gz && ln -sf /usr/bin/bash /bin/sh && ln -sf /usr/bin/bash /bin/bash
-    rm -rf /tmp/*

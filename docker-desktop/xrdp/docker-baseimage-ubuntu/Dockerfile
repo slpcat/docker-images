@@ -41,6 +41,11 @@ TERM="xterm"
 # copy sources
 COPY sources.list /etc/apt/
 
+ARG TARGETARCH
+ARG S6_VERSION=v2.2.0.3
+ARG SOCKLOG_VERSION=v3.1.1-1
+COPY install_s6.sh /tmp
+
 RUN \
  echo "**** Ripped from Ubuntu Docker Logic ****" && \
  set -xe && \
@@ -87,6 +92,7 @@ RUN \
 	tzdata && \
  echo "**** generate locale ****" && \
  locale-gen en_US.UTF-8 && \
+ /tmp/install_s6.sh && \
  echo "**** create ubuntu user and make our folders ****" && \
  useradd -u 1000 -U -d /config -s /bin/false ubuntu && \
  usermod -G users ubuntu && \
@@ -94,7 +100,7 @@ RUN \
 	/app \
 	/config \
 	/defaults && \
- #mv /usr/bin/with-contenv /usr/bin/with-contenvb && \
+ mv /usr/bin/with-contenv /usr/bin/with-contenvb && \
  patch -u /etc/s6/init/init-stage2 -i /tmp/patch/etc/s6/init/init-stage2.patch && \
  echo "**** cleanup ****" && \
  apt-get remove -y patch && \
@@ -105,13 +111,7 @@ RUN \
 	/var/lib/apt/lists/* \
 	/var/tmp/*
 
-ARG TARGETARCH
-ARG S6_VERSION=v2.2.0.3
-ARG SOCKLOG_VERSION=v3.1.1-1
-COPY install_s6.sh /tmp
 
-# Install s6-overlay
-RUN /tmp/install_s6.sh
 
 # add local files
 COPY root/ /
