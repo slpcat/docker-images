@@ -1,5 +1,5 @@
 #upstream: https://github.com/jenkinsci/docker
-FROM slpcat/openjdk:11
+FROM slpcat/oraclejdk:11-bullseye
 MAINTAINER 若虚 <slpcat@qq.com>
 
 ARG TARGETARCH
