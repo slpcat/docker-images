@@ -39,7 +39,7 @@ MAINTAINER 若虚 <slpcat@qq.com>
 RUN \ 
     apt-get update -y && \
     apt-get dist-upgrade -y && \
-    apt-get install -y python2 && \
+    apt-get install -y python2 procps && \
     update-alternatives --install /usr/bin/python python /usr/bin/python2.7 0
 
 RUN mkdir -p /etc/filebeat/prospectors.d/
