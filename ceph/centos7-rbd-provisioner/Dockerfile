@@ -1,24 +1,22 @@
-# Copyright 2017 The Kubernetes Authors.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+#upstream https://github.com/kubernetes-incubator/external-storage/blob/master/ceph/rbd/Dockerfile
+FROM slpcat/golang-gvm AS builder
+MAINTAINER 若虚 <slpcat@qq.com>
+
+#get source code
+RUN git clone https://github.com/kubernetes-incubator/external-storage.git \
+    && cd external-storage \
+    && git checkout rbd-provisioner-v2.1.1-k8s1.11
+COPY go_build.sh /go_build.sh
+RUN /go_build.sh
+
 #upstream https://github.com/kubernetes-incubator/external-storage/blob/master/ceph/rbd/Dockerfile
 FROM centos:7
 
-ENV CEPH_VERSION "luminous"
+ENV CEPH_VERSION "nautilus"
 RUN rpm -Uvh https://download.ceph.com/rpm-$CEPH_VERSION/el7/noarch/ceph-release-1-1.el7.noarch.rpm && \
   yum install -y epel-release && \
   yum install -y --nogpgcheck ceph-common && \
   yum clean all
 
-COPY rbd-provisioner /usr/local/bin/rbd-provisioner
+COPY --from=builder /rbd-provisioner /usr/local/bin/rbd-provisioner
 ENTRYPOINT ["/usr/local/bin/rbd-provisioner"]
