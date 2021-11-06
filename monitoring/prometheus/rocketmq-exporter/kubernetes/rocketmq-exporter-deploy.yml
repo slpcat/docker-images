@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: rocketmq-exporter-001
-        image: docker.io/rocketmq-exporter
+        image: slpcat/rocketmq-exporter
         ports:
           - name: metrics
             containerPort: 5557
@@ -27,8 +27,8 @@ spec:
           initialDelaySeconds: 5
         volumeMounts:
         - name: config
-          mountPath: /opt/rocketmq-exporter/config/application.xml
-          subPath: application.xml
+          mountPath: /opt/rocketmq-exporter/config/application.yml
+          subPath: application.yml
       volumes:
       - name: config
         configMap:

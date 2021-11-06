@@ -9,3 +9,22 @@ victoriametrics 是一个时序数据库，可以用来作为prometheus 的long-
 高压缩比
 
 https://victoriametrics.com/
+https://github.com/VictoriaMetrics/VictoriaMetrics
+
+vmagent 抓取metrics存到tsdb，兼容替代prometheus相关功能
+vmalert vmalert执行给定MetricsQL表达式（规则）的列表，并将警报发送到Alert Manager。
+vmstorage 持久存储
+vminsert 通过remote_write API接收来自Prometheus的数据并将其分布在可用的vmstorage节点上。
+vmselect 通过从vmstorage节点获取并合并所需数据，通过Prometheus查询API执行传入查询。
+vmbackup&&vmrestore 备份恢复
+victoriametrics
+
+docker run -d --restart=always -p 8428:8428 -p 8089:8089 \
+   -p 8089:8089/udp -p 2003:2003 -p 2003:2003/udp -p 4242:4242 \
+   -v /data/vmdata:/storage \
+   victoriametrics/victoria-metrics \
+      '--storageDataPath=/storage' \
+      '--graphiteListenAddr=:2003' \
+      '--opentsdbListenAddr=:4242' \
+      '--httpListenAddr=:8428' \
+      '--influxListenAddr=:8089'

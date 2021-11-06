@@ -114,5 +114,5 @@ docker run -d --restart=always --name=grafana -e JAEGER_SERVICE_NAME=my-grafana 
 
 docker run -d --restart=always --name=grafana  \
   -e "GF_SERVER_ROOT_URL=http://grafana.server.name"  \
-  -e "GF_INSTALL_PLUGINS=grafana-clock-panel,grafana-piechart-panel,grafana-simple-json-datasource  1.2.3" \
-  -p 3000:3000 -v /data/grafana-data:/var/lib/grafana grafana/grafana:8.1.1
+  -e "GF_INSTALL_PLUGINS=grafana-clock-panel,grafana-piechart-panel,grafana-simple-json-datasource" \
+  -p 3000:3000 -v /data/grafana-data:/var/lib/grafana slpcat/grafana:8.1.3

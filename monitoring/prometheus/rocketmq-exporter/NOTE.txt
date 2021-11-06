@@ -1,1 +1,5 @@
-每个kafka实例对应一个exporter
+https://github.com/apache/rocketmq-exporter#configuration
+
+Grafana Dashboard ID: 10477, name: RocketMQ Exporter Overview.
+
+ID: 14612

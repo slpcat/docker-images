@@ -1,0 +1,46 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: zabbix-web
+  namespace: kube-system
+  labels:
+    app: zabbix-web
+spec:
+  replicas: 1
+  revisionHistoryLimit: 3
+  strategy:
+    rollingUpdate:
+      maxSurge: 30%
+      maxUnavailable: 30%
+  template:
+    metadata:
+      labels:
+        app: zabbix-web
+    spec:
+      hostname: zabbix-web
+      containers:
+      - name: zabbix-web
+        image: yangpeng2468/zabbix-web-nginx-mysql:3.4.7
+        imagePullPolicy: IfNotPresent
+        resources:
+         limits:
+           cpu: 300m
+           memory: 600Mi
+         requests:
+           cpu: 100m
+           memory: 100Mi
+        ports:
+        - containerPort: 80
+        env:
+        - name: DB_SERVER_HOST
+          value: "mariadb-server"
+        - name: ZBX_SERVER_HOST
+          value: "zabbix-server"
+        - name: MYSQL_USER
+          value: "zabbix"
+        - name: MYSQL_PASSWORD
+          value: "zabbix"
+        - name: TZ
+          value: "Asia/Shanghai"
+        - name: PHP_TZ
+          value: "Asia/Shanghai"

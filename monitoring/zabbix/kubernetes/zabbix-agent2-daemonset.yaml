@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: zabbix-agent2
+  namespace: monitoring
+  labels:
+    tier: monitoring
+    app: zabbix-agent2
+    version: v1
+spec:
+  #保留历史版本数量
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app: zabbix-agent2
+  template:
+    metadata:
+      labels:
+        name: zabbix-agent2
+    spec:
+      # Filter to specific nodes:
+      # nodeSelector:
+      #  app: zabbix-agent2
+      hostPID: true
+      hostIPC: true
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+      containers:
+        - resources:
+            requests:
+              cpu: 0.15
+          securityContext:
+            privileged: true
+          env:
+            - name: ZBX_HOSTNAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            - name: ZBX_SERVER_HOST
+              value: "127.0.0.1,zabbix-server.monitoring"
+            - name: ZBX_ACTIVESERVERS
+              value: "zabbix-server.monitoring"
+            - name: ZBX_DEBUGLEVEL
+              value: "3"
+            - name: ZBX_UNSAFEUSERPARAMETERS
+              value: "1"
+          image: zabbix/zabbix-agent2:alpine-5.4-latest
+          name: zabbix-agent2
+          volumeMounts:
+            - name: rootfs
+              mountPath: /rootfs
+            - name: run
+              mountPath: /var/run/
+      volumes:
+        - name: rootfs
+          hostPath:
+              path: /
+        - name: run
+          hostPath:
+              path: /var/run/

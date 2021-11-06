@@ -2,16 +2,15 @@ apiVersion: v1
 kind: Service
 metadata:
   name: zabbix-server
-  namespace: monitoring
+  namespace: kube-system
   labels:
-    app: zabbix
+    app: zabbix-server
 spec:
+  type: NodePort
   ports:
   - port: 10051
     targetPort: 10051
-    name: zabbix-trapper
-  - port: 10052
-    targetPort: 10052
-    name: zabbix-jmx
+    nodePort: 30017
+    protocol: TCP
   selector:
-    name: zabbix-server
+    app: zabbix-server

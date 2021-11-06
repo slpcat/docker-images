@@ -1,0 +1,60 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: zabbix-server
+  namespace: kube-system
+  labels:
+    app: zabbix-server
+spec:
+  replicas: 1
+  revisionHistoryLimit: 3
+  strategy:
+    rollingUpdate:
+      maxSurge: 30%
+      maxUnavailable: 30%
+  template:
+    metadata:
+      labels:
+        app: zabbix-server
+    spec:
+      hostname: zabbix-server
+      volumes:
+        - name: zabbix-dingding-script
+          configMap:
+            name: zabbix-dingding-script
+            defaultMode: 0775
+        - name: zabbix-dingding-conf
+          configMap:
+            name: zabbix-dingding-conf
+            defaultMode: 0664
+      containers:
+      - name: zabbix-server
+        image: yangpeng2468/zabbix-server-mysql:3.4.7
+        imagePullPolicy: IfNotPresent
+        resources:
+         limits:
+           cpu: 400m
+           memory: 1024Mi
+         requests:
+           cpu: 100m
+           memory: 100Mi
+        ports:
+        - containerPort: 10051
+        env:
+        - name: DB_SERVER_HOST
+          value: "mariadb-server"
+        - name: MYSQL_USER
+          value: "zabbix"
+        - name: MYSQL_PASSWORD
+          value: "zabbix"
+        - name: MYSQL_DATABASE
+          value: "zabbix"
+        - name: ZBX_CACHESIZE
+          value: "1024M"
+        - name: TZ
+          value: "Asia/Shanghai"
+        volumeMounts:
+          - name: zabbix-dingding-script
+            mountPath: /usr/lib/zabbix/alertscripts
+          - name: zabbix-dingding-conf
+            mountPath: /usr/lib/zabbix/externalscripts

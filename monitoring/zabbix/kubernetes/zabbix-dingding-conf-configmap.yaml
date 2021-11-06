@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: zabbix-dingding-conf
+  namespace: kube-system
+data:
+  dingding.conf: |
+    [config]
+    #此文件注意权限
+    log=/tmp/zabbix_dingding.log
+    webhook=https://oapi.dingtalk.com/robot/send?access_token=${钉钉机器人token}
