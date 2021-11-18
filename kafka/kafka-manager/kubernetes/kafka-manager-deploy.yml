@@ -56,7 +56,7 @@ spec:
           privileged: false
         env:
           - name: ZK_HOSTS
-            value: "zk-cs:2181"
+            value: "zk-km-cs:2181"
           - name: KAFKA_MANAGER_AUTH_ENABLED
             value: "true"
           - name: KAFKA_MANAGER_USERNAME
