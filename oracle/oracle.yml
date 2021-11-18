@@ -1,0 +1,52 @@
+#-------------定义oralce代理服务--------------------
+apiVersion: v1
+kind: Service
+metadata:
+  name: oralce-svc
+  labels:
+    app: oralce
+spec:
+  type: NodePort
+  ports:
+  - port: 1521
+    targetPort: 1521
+    name: oracle1521
+  - port: 8080
+    targetPort: 8080
+    name: oralce8080
+  selector:
+    app: oralce
+---
+ 
+#-------------定义oralce部署--------------------
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: oralce
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: oralce
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: oralce
+    spec:
+      containers:
+      - image: mybook2019/oracle-ee-11g:v1.0
+        name: oralce
+        - containerPort: 1521
+          name: oralce1521
+        - containerPort: 8080
+          name: oralce8080
+        volumeMounts:
+        - name: oralce-data
+          mountPath: /u01/app/oracle
+      volumes:
+      - name: oralce-data
+        nfs:
+          path: /home/sharenfs/oracle
+          server: 192.168.8.132
