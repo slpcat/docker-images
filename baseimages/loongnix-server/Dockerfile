@@ -11,7 +11,7 @@ ENV \
     #LC_ALL="en_US.UTF-8" \
     TZ="Asia/Shanghai"
 
-RUN dnf install loongnix-release-epel
+RUN dnf install -y loongnix-release-epel
 
 # set timezone
 RUN ln -sf /usr/share/zoneinfo/${TZ} /etc/localtime
