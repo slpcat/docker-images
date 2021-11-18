@@ -1,0 +1,68 @@
+http://snapshots.linaro.org/components/kernel/leg-virt-tianocore-edk2-upstream/latest/QEMU-AARCH64/RELEASE_GCC5/QEMU_EFI.img.gz
+
+qemu
+
+qemu-system-aarch64 -m 4096M -cpu cortex-a57 -M virt  \
+        -bios QEMU_EFI.fd \
+        -serial telnet::4444,server -nographic \
+        -drive if=none,file=FreeBSD-13.0-RELEASE-arm64-aarch64.qcow2,id=hd0 \
+        -device virtio-blk-device,drive=hd0 \
+        -device virtio-net-device,netdev=net0 \
+        -netdev user,id=net0
+
+qemu-system-aarch64 -m 4096M -cpu cortex-a57 -M virt  \
+        -bios QEMU_EFI.fd \
+        -serial telnet::4444,server -nographic \
+        -drive if=none,file=FreeBSD-13.0-RELEASE-arm64-aarch64.qcow2,id=hd0 \
+        -device virtio-blk-device,drive=hd0 \
+        -device virtio-net-device,netdev=net0 \
+        -netdev user,id=net0
+
+qemu-system-aarch64 \
+-machine virt \
+-m 2048 \
+-smp 2 \
+-cpu cortex-a57 \
+-device ES1370 \
+-device virtio-mouse-pci -device virtio-keyboard-pci \
+-serial mon:stdio \
+-boot menu=on \
+-net nic \
+-net user,hostfwd=tcp::5555-:22 \
+-hda rk3399_mpv_arm64_20210603_2hdmi.img
+
+
+rk3399_mpv_arm64_20210603_2hdmi.img
+
+
+qemu-system-aarch64 -m 2G -smp 4 -M virt -cpu max \
+  --accel tcg,thread=multi \
+  -bios QEMU_EFI.fd \
+  -drive if=none,file=debian-11-work-openstack-arm64.qcow2,id=hd0 -device virtio-blk-device,drive=hd0 \
+  -device e1000,netdev=net0 -netdev user,id=net0,hostfwd=tcp:127.0.0.1:5555-:22 \
+  -nographic
+
+qemu-system-aarch64.exe -m 3560 -cpu cortex-a57 -M virt -accel tcg,tb-size=1280,thread=multi -smp cpus=2 -pflash QEMU_EFI.img -pflash pstore.img -device virtio-gpu-pci -device  qemu-xhci  -device usb-kbd -device usb-mouse -nic user,model=virtio-net-pci -device es1370 -device virtio-scsi-pci,id=scsi0 -drive if=none,format=raw,file=.\debian-testing-arm64-netinst.iso,id=cd0 -device scsi-cd,bus=scsi0.0,lun=0,drive=cd0 -drive if=none,format=qcow2,file=.\root.qcow2,id=hd0 -device scsi-hd,bus=scsi0.0,lun=1,drive=hd0
+
+./qemu-arm/aarch64-softmmu/qemu-system-aarch64 -cpu cortex-a57 -machine type=ranchu -m 4096 \
+-kernel ./ranchu-kernel/Image -append 'console=ttyAMA0,38400 keep_bootcon' -monitor stdio \
+-initrd ranchu-build/ramdisk.img -drive index=2,id=userdata,file=ranchu-build/userdata.img \
+-device virtio-blk-device,drive=userdata -device virtio-blk-device,drive=cache \
+-drive index=1,id=cache,file=ranchu-build/cache.img -device virtio-blk-device,drive=system \
+-drive index=0,id=system,file=ranchu-build/system.img -netdev user,id=mynet \
+-device virtio-net-device,netdev=mynet -show-cursor
+
+
+  qemu-system-riscv64 \
+   -nographic \
+   -machine virt \
+   -smp 4 \
+   -m 2G \
+   -kernel Fedora-Minimal-Rawhide-*-fw_payload-uboot-qemu-virt-smode.elf \
+   -bios none \
+   -object rng-random,filename=/dev/urandom,id=rng0 \
+   -device virtio-rng-device,rng=rng0 \
+   -device virtio-blk-device,drive=hd0 \
+   -drive file=Fedora-Minimal-Rawhide-20200108.n.0-sda.raw,format=raw,id=hd0 \
+   -device virtio-net-device,netdev=usernet \
+   -netdev user,id=usernet,hostfwd=tcp::10000-:22
