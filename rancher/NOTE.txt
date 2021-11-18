@@ -27,7 +27,7 @@ cluster-id 唯一
 A 安装Rancher服务端
 https://rancher.com/docs/rancher/v2.x/en/quick-start-guide/deployment/quickstart-manual-setup/#1-provision-a-linux-host
 
-docker run -d --restart=always --privileged -v /data/rancher:/var/lib/rancher/ -p 80:80 -p 443:443 rancher/rancher:v2.5.8
+docker run -d --restart=always --privileged -v /data/rancher:/var/lib/rancher/ -p 80:80 -p 443:443 rancher/rancher:v2.6.1
 
 docker run -itd --name rancher2.5.8 -p 80:80 -p 443:443 \
 --privileged=true \
@@ -178,7 +178,7 @@ helm template cilium --namespace=kube-system \
   --set global.hubble.ui.enabled=true > experimental-install.yaml
 
 helm template cilium/cilium \
-         --version 1.10.0 \
+         --version 1.10.3 \
          --namespace kube-system \
          --set cluster-name="default01" \
          --set cluster-id="1" \
@@ -200,6 +200,8 @@ helm template cilium/cilium \
          --set ipvlan.masterDevice=eth0 \
          --set tunnel=disabled \
          --set l7Proxy=false \
+         --set bgp.enabled=true \
+         --set bgp.announce.loadbalancerIP=true \
          --set hubble.enabled=true \
          --set hubble.ui.backend.image.repository="quay.io/cilium/hubble-ui-backend" \
          --set hubble.ui.backend.image.tag="v0.7.9@sha256:632c938ef6ff30e3a080c59b734afb1fb7493689275443faa1435f7141aabe76" \
@@ -317,6 +319,13 @@ https://github.com/rancher/rke/issues/1432
 
 kube-proxy script as placed in /opt/custom/bin
 
+Cilium CNI Chaining
+helm install cilium cilium/cilium --version 1.7.3 \
+  --namespace kube-system \
+  --set global.cni.chainingMode=aws-cni \
+  --set global.masquerade=false \
+  --set global.tunnel=disabled \
+  --set global.nodeinit.enabled=true
 
 rancher 主机驱动
 https://github.com/lnxbil/docker-machine-driver-proxmox-ve
@@ -333,3 +342,9 @@ http://arthurchiao.art/blog/k8s-l4lb/
 https://github.com/facebookincubator/katran
 
 https://github.com/kubesphere/porter
+
+descheduler
+
+https://github.com/kubernetes-sigs/descheduler
+
+

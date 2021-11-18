@@ -6,13 +6,14 @@ enable_network_policy: false
 fleet_workspace_name: fleet-default
 local_cluster_auth_endpoint:
   enabled: true
-name: pve01
+name: k8s-dev
 rancher_kubernetes_engine_config:
-  addon_job_timeout: 45
+  addon_job_timeout: 30
   authentication:
     strategy: x509|webhook
   authorization: {}
   bastion_host:
+    ignore_proxy_env_vars: false
     ssh_agent_auth: false
   cloud_provider: {}
   dns:
@@ -24,28 +25,27 @@ rancher_kubernetes_engine_config:
       prevent_single_point_failure: true
     node_selector: null
     nodelocal:
-      ip_address: "169.254.20.10"
       node_selector: null
       update_strategy:
         rolling_update: {}
-    options:
-      nodelocal_autoscaler_priority_class_name: system-cluster-critical
-      nodelocal_priority_class_name: system-cluster-critical
+    options: null
+    provider: coredns
     reversecidrs: null
     stubdomains: null
     tolerations: null
     update_strategy:
       rolling_update: {}
     upstreamnameservers:
-      - 8.8.8.8
-      - 8.8.4.4
+      - 10.155.5.4
+      - 10.155.5.5
+  enable_cri_dockerd: false
   ignore_docker_version: true
   ingress:
-    default_backend: false
+    default_backend: true
     http_port: 0
     https_port: 0
     provider: none
-  kubernetes_version: v1.20.6-rancher1-1
+  kubernetes_version: v1.21.5-rancher1-1
   monitoring:
     provider: none
     replicas: 0
@@ -65,8 +65,10 @@ rancher_kubernetes_engine_config:
         timeout: 300
       creation: 12h
       extra_args:
+        auto-compaction-retention: '240'
         election-timeout: '5000'
         heartbeat-interval: '500'
+        quota-backend-bytes: '6442450944'
       gid: 0
       retention: 72h
       snapshot: false
@@ -83,8 +85,6 @@ rancher_kubernetes_engine_config:
         v: '2'
         watch-cache: 'true'
       pod_security_policy: false
-      secrets_encryption_config:
-        enabled: false
       service_cluster_ip_range: 10.43.0.0/16
       service_node_port_range: 30000-32767
     kube-controller:
@@ -108,7 +108,7 @@ rancher_kubernetes_engine_config:
       service_cluster_ip_range: 10.43.0.0/16
     kubelet:
       cluster_dns_server: 10.43.0.10
-      cluster_domain: cluster1.local
+      cluster_domain: k8s-dev.local
       extra_args:
         allowed-unsafe-sysctls: net.*
         cgroup-driver: cgroupfs
@@ -141,7 +141,7 @@ rancher_kubernetes_engine_config:
         v: '2'
         volume-stats-agg-period: 1m0s
       fail_swap_on: false
-      generate_serving_certificate: false
+      generate_serving_certificate: true
     kubeproxy:
       extra_args:
         conntrack-max-per-core: '262144'
@@ -149,6 +149,7 @@ rancher_kubernetes_engine_config:
         conntrack-tcp-timeout-close-wait: 30s
         conntrack-tcp-timeout-established: 120s
         ipvs-min-sync-period: 10s
+        ipvs-strict-arp: 'true'
         ipvs-sync-period: 30s
         kube-api-burst: '20'
         kube-api-qps: '10'
@@ -159,7 +160,7 @@ rancher_kubernetes_engine_config:
   upgrade_strategy:
     drain: false
     max_unavailable_controlplane: '1'
-    max_unavailable_worker: '10'
+    max_unavailable_worker: 11%%%
     node_drain_input:
       delete_local_data: false
       force: false
@@ -177,3 +178,4 @@ scheduled_cluster_scan:
   schedule_config:
     cron_schedule: 0 0 * * *
     retention: 24
+

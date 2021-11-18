@@ -1,0 +1,7 @@
+calico 方案
+
+替代kube-proxy
+引入ebpf
+使用bgp路由
+所有node同一网段
+
