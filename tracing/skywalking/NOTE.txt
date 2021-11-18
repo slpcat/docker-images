@@ -1,0 +1,23 @@
+docker run --name skywalking-oap --restart always \
+  -p 1234:1234 -p 11800:11800 -p 12800:12800 -d \
+  -e SW_STORAGE=elasticsearch \
+  -e SW_STORAGE_ES_CLUSTER_NODES=search-elk.es.amazonaws.com:443 \
+  -e SW_STORAGE_ES_HTTP_PROTOCOL="https" \
+  -e SW_ES_USER=elastic \
+  -e SW_ES_PASSWORD=password \
+  -e SW_STORAGE_ES_INDEX_SHARDS_NUMBER=4 \
+  -e SW_STORAGE_ES_INDEX_REPLICAS_NUMBER=0 \
+  -e SW_STORAGE_ES_FLUSH_INTERVAL=60 \
+  -e SW_STORAGE_ES_CONCURRENT_REQUESTS=16 \
+  -e SW_STORAGE_ES_QUERY_MAX_SIZE:5000 \
+  apache/skywalking-oap-server:8.8.1
+
+
+docker run --name skywalking-ui --restart always \
+  -p 9898:8080 -d \
+  -e SW_OAP_ADDRESS=http://10.100.1.1:12800 \
+  apache/skywalking-ui:8.8.1 --security.user.admin.password=admin
+
+
+-javaagent:/path/to/skywalking-agent/skywalking-agent.jar -Dskywalking.agent.service_name=my-App-name -Dskywalking.collector.backend_service=localhost:11800
+
