@@ -1,0 +1,6 @@
+https://github.com/opsgenie/kubernetes-event-exporter
+
+kubernetes-event-exporter
+This tool is presented at KubeCon 2019 San Diego.
+
+This tool allows exporting the often missed Kubernetes events to various outputs so that they can be used for observability or alerting purposes. You won't believe what you are missing.
