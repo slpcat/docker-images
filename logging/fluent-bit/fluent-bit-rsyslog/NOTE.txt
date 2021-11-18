@@ -1,0 +1,7 @@
+RSyslog Configuration
+
+Add a new file to your rsyslog config rules called 60-fluent-bit.conf inside the directory /etc/rsyslog.d/ and add the following content:
+
+action(type="omfwd"Target="127.0.0.1"Port="5140"Protocol="tcp")
+
+sudo service rsyslog restart

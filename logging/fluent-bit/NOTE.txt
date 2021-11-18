@@ -26,3 +26,7 @@ sidecar方式从pod采集日志
 
 https://github.com/leahnp/fluentbit-sidecar
 
+
+fluent-bit 接收syslog输出到kafka
+
+

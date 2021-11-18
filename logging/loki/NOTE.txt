@@ -14,3 +14,5 @@ wget https://raw.githubusercontent.com/grafana/loki/v2.3.0/cmd/loki/loki-local-c
 docker run -v $(pwd):/mnt/config -p 3100:3100 grafana/loki:2.3.0 -config.file=/mnt/config/loki-config.yaml
 wget https://raw.githubusercontent.com/grafana/loki/v2.3.0/cmd/promtail/promtail-docker-config.yaml -O promtail-config.yaml
 docker run -v $(pwd):/mnt/config -v /var/log:/var/log grafana/promtail:2.3.0 -config.file=/mnt/config/promtail-config.yaml
+
+docker run -d --restart=always -p 3100:3100 grafana/loki:2.3.0
