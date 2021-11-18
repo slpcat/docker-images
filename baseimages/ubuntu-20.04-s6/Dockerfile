@@ -28,8 +28,11 @@ RUN \
 
 # Install required packages
 RUN \
-    apt-get dist-upgrade -y
+    apt-get dist-upgrade -y && \
+    apt-get install -y wget && \
+    apt-get clean
 
+ARG TARGETARCH
 ARG S6_VERSION=v2.2.0.3
 ##
 ## ROOTFS
@@ -39,8 +42,10 @@ ARG S6_VERSION=v2.2.0.3
 #COPY rootfs /
 
 # s6 overlay
-ADD https://github.com/just-containers/s6-overlay/releases/download/${S6_VERSION}/s6-overlay-amd64.tar.gz /tmp/s6-overlay.tar.gz
-RUN tar xvfz /tmp/s6-overlay.tar.gz -C /
+COPY install_s6.sh /tmp
+
+# Install s6-overlay
+RUN /tmp/install_s6.sh
 
 ##
 ## INIT

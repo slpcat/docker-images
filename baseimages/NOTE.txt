@@ -2,6 +2,9 @@
 x86机器上运行arm64以及其他架构 docker
 https://github.com/multiarch/qemu-user-static
 
+使用qemu模拟其他架构，arm可以运行x86
+sudo apt-get install qemu-user qemu-user-static binfmt-support
+
 https://www.docker.com/blog/multi-platform-docker-builds/
 
 Triple			Aliases				linux	osx	windows
@@ -16,6 +19,12 @@ x86_64h-apple-darwin	osx64h, darwin64h, x86_64h		X
 i386-apple-darwin	osx32, darwin32				X	
 x86_64-w64-mingw32	windows, win64					X
 i686-w64-mingw32	win32						X
+linux/386
+linux/ppc64le
+linux/loongarch64
+linux/loong64
+linux/mips64le
+
 
 容器内多进程管理
 1.supervisord
@@ -51,8 +60,19 @@ tinycore linux
 
 Running the command docker buildx install sets up docker builder command as an alias to docker buildx. This results in the ability to have docker build use the current buildx builder.
 
-多架构支持
-docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+多架构支持,支持amd64, arm64v8, arm32v7, arm32v6, i386, s390x or ppc64le hosts.
+#docker run --rm --privileged multiarch/qemu-user-static --reset -p yes 
+
+#https://github.com/dbhi/qus
+#docker run --rm --privileged aptman/qus -s -- -p
+
+#推荐:  https://github.com/tonistiigi/binfmt
+
+docker run --privileged --rm tonistiigi/binfmt --install all
+
+#去除多架构支持
+#docker run --rm --privileged aptman/qus -- -r
+
 
 使用镜像加速优化
 https://github.com/moby/buildkit/blob/master/docs/buildkitd.toml.md
@@ -64,12 +84,25 @@ https://github.com/moby/buildkit/blob/master/docs/buildkitd.toml.md
 
 创建本地 builder
 ### create builder with mirror
-docker buildx create --use --name localbuilder --platform=linux/amd64,linux/arm64 --config=/etc/docker/buildkitd.toml
+docker buildx create --use --name localbuilder --platform=linux/amd64,linux/arm64,linux/riscv64 --config=/etc/docker/buildkitd.toml
 
-docker buildx build -t slpcat/debian10:slim-s6  --platform=linux/arm,linux/arm64,linux/amd64 . --push
+docker buildx build -t slpcat/debian10:slim-s6  --platform=linux/arm,linux/arm64,linux/amd64,linux/riscv64 . --push
 
 使用buildx 替代build
 docker buildx install
 docker buildx  uninstall
 
-docker build -t slpcat/debian:buster --platform=linux/arm64,linux/amd64 . --push
+docker build -t slpcat/debian:buster --platform=linux/arm64,linux/amd64,linux/riscv64 . --push
+
+
+https://github.com/linuxhq/rpmbuild-snoopy
+
+Snoopy is a tiny library that logs all executed commands (+ arguments) on your system.
+
+https://github.com/carlosedp/riscv-bringup
+
+
+runtime 
+
+https://github.com/gotoz/runq
+

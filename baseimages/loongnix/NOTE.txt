@@ -1,0 +1,11 @@
+
+http://manual.loongnix.cn/loongnix/faq/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F.html
+
+Loongnix系统下如何制作rootfs文件系统
+先安装debootstrap
+1.
+debootstrap --no-check-gpg --variant=minbase --components=main,non-free,contrib --arch=loongarch64 --foreign DaoXiangHu-testing iso http://pkg.loongnix.cn/loongnix
+
+2、chroot iso debootstrap/debootstrap --second-stage
+
+3、chroot iso bash

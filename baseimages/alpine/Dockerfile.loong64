@@ -1,0 +1,29 @@
+FROM harbor.loongnix.cn/mirrorloongsoncontainers/alpine:v3.11.11
+# Container variables
+ENV \
+    TERM="xterm" \
+    LANG="en_US.UTF-8" \
+    LANGUAGE="en_US.UTF-8" \
+    LC_ALL="en_US.UTF-8" \
+    TZ="Asia/Shanghai"
+
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/' /etc/apk/repositories
+
+# Set timezone and locales
+RUN set -ex \
+    && apk update \
+    && apk upgrade \
+    && apk add \
+           bash \
+           tzdata \
+           vim \
+           tini \
+           su-exec \
+           gzip \
+           tar \
+           wget \
+           curl \
+    && echo "${TZ}" > /etc/TZ \
+    && ln -sf /usr/share/zoneinfo/${TZ} /etc/localtime \
+    # Network fix
+    && echo 'hosts: files mdns4_minimal [NOTFOUND=return] dns mdns4' >> /etc/nsswitch.conf
