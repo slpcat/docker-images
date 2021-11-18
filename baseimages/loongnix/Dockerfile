@@ -16,7 +16,7 @@ RUN \
     echo "${TZ}" > /etc/timezone \
     && echo "$LANG UTF-8" > /etc/locale.gen \
     && apt-get update -q \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -yq apt-utils dialog vim-tiny curl locales \ 
+    && DEBIAN_FRONTEND=noninteractive apt-get install -yq apt-utils vim-tiny curl locales \ 
     && ln -sf /usr/share/zoneinfo/${TZ} /etc/localtime \
     && update-locale LANG=$LANG \
     && locale-gen $LANG \
