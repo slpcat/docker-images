@@ -1,0 +1,9 @@
+https://github.com/kubevirt/kubevirt/blob/master/docs/architecture.md
+
+yum -y install qemu-kvm libvirt virt-install bridge-utils
+
+$ apt install -y qemu-kvm libvirt-bin bridge-utils virt-manager
+
+
+
+
