@@ -12,6 +12,7 @@ metadata:
     k8s.aliyun.com/image-accelerate-mode: on-demand
     app: example-web
 spec:
+  #runtimeClassName: myclass
   #保留历史版本数量
   revisionHistoryLimit: 3
   replicas: 1
@@ -70,6 +71,15 @@ spec:
       #imagePullSecrets:
       #- name: registrykey-ali-ext
       affinity:
+        nodeAffinity:
+          #preferredDuringSchedulingIgnoredDuringExecution
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: tester
+                operator: NotIn
+                values:
+                - chenqiang
         podAntiAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
             - labelSelector:
@@ -145,6 +155,23 @@ spec:
       #  hostnames:
       #  - "foo.remote"
       #  - "bar.remote"
+
+      dnsConfig:
+        nameservers:
+        - 169.254.20.10
+        - 172.21.0.10
+        options:
+        - name: ndots
+          value: "3"
+        - name: attempts
+          value: "2"
+        - name: timeout
+          value: "1"
+        searches:
+        - default.svc.cluster.local
+        - svc.cluster.local
+        - cluster.local
+      dnsPolicy: None
       containers:
       - name: example-web
         image: registry.cn-beijing.aliyuncs.com/example/example_web:${BUILD_NUMBER}
@@ -173,6 +200,16 @@ spec:
              port: 8080
              scheme: HTTP
 
+        # startupProbe  启动检查
+        startupProbe:                     #健康检查方式：[readinessProbe,livenessProbe,StartupProbe]
+          failureThreshold: 3             #检测失败3次表示未就绪
+          httpGet:                        #请求方式
+            path: /ready                  #请求路径
+            port: 8182                    #请求端口
+            scheme: HTTP                  #请求协议
+          periodSeconds: 10               #检测间隔
+          successThreshold: 1             #检查成功为2次表示就绪
+          timeoutSeconds: 1               #检测失败1次表示未就绪
         livenessProbe: #kubernetes认为该pod是存活的,不存活则需要重启
           httpGet:
             path: /
