@@ -1,1 +1,20 @@
 https://github.com/jenkinsci/jenkinsfile-runner
+
+report plugin
+allure-results
+
+CLI to import/export Jenkins jobs & plugins.
+https://github.com/mlabouardy/butler
+To export Jenkins jobs, you need to provide the URL of the source Jenkins instance:
+butler plugins export --server localhost:8080 --username admin --password admin
+to import the plugins to the new Jenkins instance, use the command below with the URL of the Jenkins target instance as an argument:
+butler plugins import --server localhost:8080 --username admin --password admin
+
+To export Jenkins jobs, just provide the URL of the source Jenkins server:
+
+butler jobs export --server localhost:8080 --username admin --password admin
+
+to import the jobs to the new Jenkins instance, issue the following command:
+
+butler jobs import --server localhost:8080 --username admin --password admin
+
