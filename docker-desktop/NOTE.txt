@@ -1,3 +1,28 @@
+分为两种情况支持，
+区别在于x server和存储挂载
+
+一是将本地容器中运行
+
+主要场景 高性能 已经便于与本机现有环境混合/融合使用
+
+其实现方式如下：
+
+[应用程序]->[X11客户端]->[X11服务端]->[显示屏幕]
+
+其中容器是客户端，主机是服务端。通过主机和容器共享套接字unix:0，实现容器GUI软件显示在本地
+
+实现如下：
+
+$ docker run \
+    -v /tmp/.X11-unix:/tmp/.X11-unix \
+    -e DISPLAY=unix$DISPLAY \
+
+二是在远程服务器容器中运行
+主要场景：所有功能特性都在远端实现 性能偏弱 好处强隔离 不依赖本地特性
+
+容器内运行虚拟x server 通过远程桌面协议访问
+
+
 容器里面运行桌面环境
 https://github.com/linuxserver
 https://github.com/jumanjihouse/devenv
@@ -11,6 +36,8 @@ https://github.com/appium/appium-docker-android
 
 iOS
 https://github.com/ljjbluesky/Docker-eyeOS
+
+Docker-eyeOS:在Docker容器中运行iPhone（xnu-arm64）！ 支持KVM + iOS内核调试（
 
 ChomeOS
 https://github.com/pwdonald/chromeos-qemu-docker

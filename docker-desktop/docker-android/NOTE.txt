@@ -1,2 +1,27 @@
  docker run --privileged -d -p 6080:6080 -p 5554:5554 -p 5555:5555 -e DEVICE="Samsung Galaxy S6" --name android-container budtmo/docker-android-x86-8.1
 
+ docker run --privileged -d -p 6080:6080 -p 5554:5554 -p 5555:5555 -e DEVICE="Samsung Galaxy S6" --name android-container budtmo/docker-android-x86-8.1
+
+
+https://github.com/sickcodes/dock-droid
+https://github.com/sickcodes/droid-native
+
+
+BlissOS x86 Image https://img.shields.io/docker/image-size/sickcodes/dock-droid/latest?label=sickcodes%2Fdock-droid%3Alatest
+docker run -it \
+    --device /dev/kvm \
+    -v /tmp/.X11-unix:/tmp/.X11-unix \
+    -e "DISPLAY=${DISPLAY:-:0.0}" \
+    -p 5555:5555 \
+    sickcodes/dock-droid:latest
+Headlessly (on a server, or locally)
+
+docker run -it \
+    --device /dev/kvm \
+    -e EXTRA="-display none -vnc 0.0.0.0:99,password=on" \
+    -p 5555:5555 \
+    -p 5999:5999 \
+    sickcodes/dock-droid:latest
+For headless, in the QEMU console, type change vnc password user
+
+
