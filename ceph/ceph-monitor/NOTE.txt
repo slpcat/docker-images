@@ -1,0 +1,3 @@
+https://docs.ceph.com/en/latest/mgr/zabbix/
+https://docs.ceph.com/en/latest/mgr/prometheus/
+
