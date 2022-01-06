@@ -42,20 +42,26 @@ RUN \
 
 #helm
 ARG VERIFY_CHECKSUM=false
+#RUN \
+#    curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 \
+#    && bash get_helm.sh \
+#    && rm get_helm.sh
+
 RUN \
-    curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 \
-    && bash get_helm.sh \
-    && rm get_helm.sh
+    curl https://baltocdn.com/helm/signing.asc | apt-key add - \
+    && echo "deb https://baltocdn.com/helm/stable/debian/ all main" | tee /etc/apt/sources.list.d/helm-stable-debian.list \
+    && apt-get update \
+    && apt-get install helm
 
 #istioctl
-ARG ISTIO_VERSION=1.9.0
+ARG ISTIO_VERSION=1.12.1
 RUN \
     curl -L https://istio.io/downloadIstio | sh - \
     && mv istio-${ISTIO_VERSION}/bin/istioctl /usr/local/bin \
     && rm -rf  istio-${ISTIO_VERSION}
 
 #packer
-ARG PACKER_VERSION=1.7.0
+ARG PACKER_VERSION=1.7.8
 RUN \
     wget https://releases.hashicorp.com/packer/${PACKER_VERSION}/packer_${PACKER_VERSION}_linux_amd64.zip \
     && unzip packer_${PACKER_VERSION}_linux_amd64.zip \
@@ -71,7 +77,7 @@ RUN \
     && rm aliyun-cli-linux-${ALIYUN_CLI_VERSION}-amd64.tgz
 
 #terraform
-ARG TERRAFORM_VERSION=0.14.7
+ARG TERRAFORM_VERSION=1.1.2
 RUN \
    wget https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip \
    && unzip terraform_${TERRAFORM_VERSION}_linux_amd64.zip \
