@@ -34,6 +34,10 @@ RUN \
     apt-get update -y &&\
     apt-get install -y docker-ce 
 
+#install ansible
+RUN \
+    pip3 install netaddr pbr hvac jmespath ruamel.yaml ansible
+
 #kubectl
 RUN \
     curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" \
