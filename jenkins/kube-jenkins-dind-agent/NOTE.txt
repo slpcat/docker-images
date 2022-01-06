@@ -40,5 +40,54 @@ master配置
 http://172.25.13.133/computer/static-golang-0/jenkins-agent.jnlp
 
 
+docker run -d --restart=always \
+
+-e JENKINS_SECRET=bb786066bb5f84560c493f0709bac3e32083e75325f51d \
+-e JENKINS_AGENT_NAME=jenkins-slave \
+-e JENKINS_NAME=jenkins-slave \
+-e JENKINS_AGENT_WORKDIR=/home/jenkins
+-e JENKINS_URL=http://jenkins.ci/ \
+
+slpcat/kube-jenkins-dind-agent:jdk8
+
+
+   - name: JENKINS_SECRET
+      value: "bb786066bb5f84560c493f0709bac3e32083e75325f51de3a55db9048e254f76"
+    - name: JAVA_OPTS
+        -XX:-ResizePLAB
+    - name: JENKINS_AGENT_NAME
+      value: static-jnlp-0
+    - name: JENKINS_NAME
+      value: static-jnlp-0
+    - name: JENKINS_AGENT_WORKDIR
+      value: /home/jenkins
+    - name: JENKINS_URL
+      value: http://jenkins.ci/
+    image: slpcat/kube-jenkins-dind-agent:jdk8
+    imagePullPolicy: Always
+    resources:
+      limits:
+        cpu: "4"
+        memory: 4Gi
+      requests:
+        cpu: "4"
+        memory: 4Gi
+    securityContext:
+      privileged: true
+      runAsUser: 0
+      runAsGroup: 0
+      #fsGroup: 1000
+    volumeMounts:
+    - mountPath: /home/jenkins
+      name: workspace-volume
+    - mountPath: /var/run/docker.sock
+      name: docker-sock
+    workingDir: /home/jenkins
+
+
+todo
+debian11
+rsync
+bos utils
 
 
