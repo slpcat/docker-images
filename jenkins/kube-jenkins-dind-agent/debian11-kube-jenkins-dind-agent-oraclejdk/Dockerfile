@@ -61,12 +61,25 @@ RUN \
     && rm -rf  istio-${ISTIO_VERSION}
 
 #packer
-ARG PACKER_VERSION=1.7.8
+#ARG PACKER_VERSION=1.7.8
+#RUN \
+#    wget https://releases.hashicorp.com/packer/${PACKER_VERSION}/packer_${PACKER_VERSION}_linux_amd64.zip \
+#    && unzip packer_${PACKER_VERSION}_linux_amd64.zip \
+#    && mv packer /usr/local/bin/ \
+#    && rm packer_${PACKER_VERSION}_linux_amd64.zip
+
+#terraform
+#ARG TERRAFORM_VERSION=1.1.2
+#RUN \
+#   wget https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip \
+#   && unzip terraform_${TERRAFORM_VERSION}_linux_amd64.zip \
+#   && mv terraform /usr/local/bin/ \
+#   && rm terraform_${TERRAFORM_VERSION}_linux_amd64.zip
+
 RUN \
-    wget https://releases.hashicorp.com/packer/${PACKER_VERSION}/packer_${PACKER_VERSION}_linux_amd64.zip \
-    && unzip packer_${PACKER_VERSION}_linux_amd64.zip \
-    && mv packer /usr/local/bin/ \
-    && rm packer_${PACKER_VERSION}_linux_amd64.zip
+    curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add - \
+    && apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main" \
+    && apt-get update -y && apt-get install -y packer terraform
 
 #aliyun-cli
 ARG ALIYUN_CLI_VERSION=3.0.60
@@ -75,14 +88,6 @@ RUN \
     && tar -zxvf aliyun-cli-linux-${ALIYUN_CLI_VERSION}-amd64.tgz \
     && mv aliyun /usr/local/bin \
     && rm aliyun-cli-linux-${ALIYUN_CLI_VERSION}-amd64.tgz
-
-#terraform
-ARG TERRAFORM_VERSION=1.1.2
-RUN \
-   wget https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip \
-   && unzip terraform_${TERRAFORM_VERSION}_linux_amd64.zip \
-   && mv terraform /usr/local/bin/ \
-   && rm terraform_${TERRAFORM_VERSION}_linux_amd64.zip
 
 #awscli
 RUN \
