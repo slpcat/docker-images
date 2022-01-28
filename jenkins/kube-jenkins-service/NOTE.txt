@@ -11,7 +11,7 @@ docker pull jenkins/jenkins:jdk11
 docker run -d -it --restart=always \
   -p 80:8080 -p 50000:50000 \
   -v jenkins-home:/var/jenkins_home \
-  slpcat/kube-jenkins-service:2.321-jdk11
+  slpcat/kube-jenkins-service:2.328-jdk11
 
   jenkins/jenkins:jdk11
 

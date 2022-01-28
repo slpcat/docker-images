@@ -183,6 +183,7 @@ RUN /usr/local/bin/install-plugins.sh       \
   dark-theme:latest              \
   dashboard-view:latest          \
   delivery-pipeline-plugin:latest \
+  dependency-check-jenkins-plugin:latest \
   description-setter:latest      \
   dingding-notifications:latest  \
   dingding-json-pusher:latest    \
