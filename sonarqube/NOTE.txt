@@ -25,8 +25,10 @@ docker run -d --name sonarqube -e SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true -p 9000
 
 
 docker run -d -p 9000:9000 \
-	-e "SONARQUBE_JDBC_URL=jdbc:postgresql://192.168.0.3:5432/sonar" \
-	-e "SONARQUBE_JDBC_USERNAME=postgres" \
-	-e "SONARQUBE_JDBC_PASSWORD=1" \
-	--name sonarqube sonarqube:8.9.5-community
-9.2.3-community
+    -e "SONARQUBE_JDBC_URL=jdbc:postgresql://192.168.0.3:5432/sonar" \
+    -e "SONARQUBE_JDBC_USERNAME=postgres" \
+    -e "SONARQUBE_JDBC_PASSWORD=1" \
+    -v /data/sonarqube/conf:/opt/sonarqube/conf \
+    -v /data/sonarqube/data:/opt/sonarqube/data \
+    -v /data/sonarqube/extensions:/opt/sonarqube/extensions \
+    --name sonarqube sonarqube:9.2.3-community

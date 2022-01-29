@@ -23,6 +23,7 @@ docker run -d --restart=always -p 8428:8428 -p 8089:8089 \
    -p 8089:8089/udp -p 2003:2003 -p 2003:2003/udp -p 4242:4242 \
    -v /data/vmdata:/storage \
    victoriametrics/victoria-metrics \
+      '--retentionPeriod=6' \
       '--storageDataPath=/storage' \
       '--graphiteListenAddr=:2003' \
       '--opentsdbListenAddr=:4242' \

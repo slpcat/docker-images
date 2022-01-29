@@ -223,7 +223,7 @@ grafana/
 docker run  -d \
    -p 9090:9090 \
    -v /etc/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml  \
-   -v /data/prometheus:/prometheus \
+   -v /data/prometheus:/var/lib/prometheus \
    prom/prometheus \
    --config.file=/etc/prometheus/prometheus.yml \
    --web.listen-address="0.0.0.0:9090" \

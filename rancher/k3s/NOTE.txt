@@ -1,0 +1,45 @@
+https://docs.rancher.cn/docs/k3s/_index
+
+在rancher中文文档中推荐了一种更轻量的Kubernetes集群搭建方式:K3S，安装过程非常简单，只需要服务器能够访问互联网，执行相应的命令就可以了
+Master主机执行命令，执行完成后获取master主机的K3S_TOKEN用于slave（默认路径:/var/lib/rancher/k3s/server/node-token）
+
+curl -sfL http://rancher-mirror.cnrancher.com/k3s/k3s-install.sh | INSTALL_K3S_MIRROR=cn  INSTALL_K3S_VERSION="v1.22.5+k3s1" INSTALL_K3S_EXEC="--docker" sh -s - server
+slave主机执行命令，加入K3S集群
+
+curl -sfL http://rancher-mirror.cnrancher.com/k3s/k3s-install.sh | INSTALL_K3S_MIRROR=cn INSTALL_K3S_VERSION="v1.22.5+k3s1" INSTALL_K3S_EXEC="--docker" K3S_URL=https://192.168.15.252:6443 K3S_TOKEN=K10bb35019b1669197e06f97b6c14bb3b3c7c7076cd20afe1f550d6793d02b9eed8::server:9599c8b3ffbbd38b7721207183cd6a62 sh -
+
+
+高可用集群安装
+runtime 推荐containerd
+
+第一个server
+curl -sfL http://rancher-mirror.cnrancher.com/k3s/k3s-install.sh | INSTALL_K3S_MIRROR=cn sh -s - server \
+  --token=SECRET \
+  --datastore-endpoint="mysql://username:password@tcp(hostname:3306)/database-name"
+
+
+第二个server
+curl -sfL https://get.k3s.io | sh -s - server \
+  --token=SECRET \
+  --datastore-endpoint="mysql://username:password@tcp(hostname:3306)/database-name"
+
+加入agent
+
+K3S_TOKEN=SECRET k3s agent --server https://fixed-registration-address:6443
+
+
+mac os 安装
+
+brew search multipass
+brew install multipass
+
+使用Multipass来创建一个VM：需要1GB内存和5GB磁盘
+
+multipass launch --name k3s --mem 1G --disk 5G
+Launched: k3s
+
+等待VM创建，然后为VM启动一个shell
+
+multipass shell k3s
+接着运行命令安装k3s
+

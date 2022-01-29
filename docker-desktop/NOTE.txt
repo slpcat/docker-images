@@ -61,3 +61,8 @@ vnc + web访问
 The egfx branch with avc444 and glamor is the best ... very little CPU usage and 2-5 Mbit bandwidth
 
 If you use glamor when building xorgxrdp (--enable-glamor) you should be hardware rendering. Then a remotefx session should work well. Glamor only works well with Intel and AMD GPUs, if you want to use NVidia there is another way. One issue is many shooter games grab the mouse and work from relative mouse movement only. From what I've seen, RDP only has absolute mouse messages. So avoid games that grab the mouse or we have to look for a fix.
+
+
+
+Anbox（Android in a box），一款通过沙盒直接运行安卓程序的软件
+

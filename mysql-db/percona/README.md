@@ -4,6 +4,7 @@ https://github.com/percona/percona-docker
 2.多主集群强一致 helm/percona-xtradb-cluster
 
 docker run -d --restart=always --net=host --name percona-server \
+-e TZ="Asia/Shanghai" \
 -e MYSQL_ROOT_PASSWORD=my_rootpassword -e MYSQL_DATABASE=mydb \
 -e MYSQL_USER=myuser -e MYSQL_PASSWORD=mydb_password \
 -v /data/mysql-data:/var/lib/mysql \

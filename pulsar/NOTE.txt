@@ -1,0 +1,27 @@
+Pulsar是一款分布式发布/订阅消息平台
+
+docker run -it \
+  -p 6650:6650 \
+  -p 8080:8080 \
+  -v $PWD/pulsardata:/pulsar/data \
+  apachepulsar/pulsar:2.8.1 \
+  bin/pulsar standalone
+
+Pulsar Manager
+Pulsar Manager 是一个网页式可视化管理与监测工具，支持多环境下的动态配置。可用于管理和监测租户、命名空间、topic、订阅、broker、集群等。
+
+docker run -it \
+    -p 9527:9527 -p 7750:7750 \
+    -e SPRING_CONFIGURATION_FILE=/pulsar-manager/pulsar-manager/application.properties \
+    apachepulsar/pulsar-manager:v0.2.0
+
+设置管理员账户和密码
+SRF_TOKEN=$(curl http://localhost:7750/pulsar-manager/csrf-token)
+curl \
+   -H 'X-XSRF-TOKEN: $CSRF_TOKEN' \
+   -H 'Cookie: XSRF-TOKEN=$CSRF_TOKEN;' \
+   -H "Content-Type: application/json" \
+   -X PUT http://localhost:7750/pulsar-manager/users/superuser \
+   -d '{"name": "admin", "password": "apachepulsar", "description": "test", "email": "username@test.org"}'
+
+https://pulsar.apache.org/docs/zh-CN/next/administration-pulsar-manager/

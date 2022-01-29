@@ -1,0 +1,9 @@
+description "Consul Template"
+start on (local-filesystems and net-device-up IFACE!=lo)
+stop on runlevel [06]
+
+exec /usr/local/bin/consul-template -config /etc/consul-template.d
+
+respawn
+respawn limit 10 10
+kill timeout 10

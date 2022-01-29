@@ -1,0 +1,8 @@
+wheel
+ansible
+awscli
+boto
+boto3
+cloudflare
+PyYAML
+requests

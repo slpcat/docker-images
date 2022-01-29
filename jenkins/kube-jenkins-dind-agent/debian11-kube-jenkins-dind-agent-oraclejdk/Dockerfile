@@ -121,6 +121,35 @@ RUN \
 RUN \
     curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b /usr/local/bin
 
+#jenkins-x
+RUN \
+    wget https://github.com/jenkins-x/jx/releases/download/v3.2.248/jx-linux-amd64.tar.gz \
+    && tar zxf jx-linux-amd64.tar.gz \
+    && mv jx /usr/local/bin/ \
+    && rm jx-linux-amd64.tar.gz
+
+#skaffold 
+RUN \
+    curl -Lo skaffold https://storage.googleapis.com/skaffold/releases/v1.35.0/skaffold-linux-amd64 \
+    && chmod +x skaffold \
+    && mv skaffold /usr/local/bin
+
+#draft: A tool for developers to create cloud-native applications on Kubernetes
+
+#Knative client 
+
+RUN \
+    wget https://github.com/knative/client/releases/download/knative-v1.2.0/kn-linux-amd64 \
+    && chmod +x kn-linux-amd64 \
+    && mv kn-linux-amd64 /usr/local/bin/kn
+
+#sealer
+
+RUN \
+    wget -c http://sealer.oss-cn-beijing.aliyuncs.com/sealers/sealer-v0.6.1-linux-amd64.tar.gz && \
+    tar -xvf sealer-v0.6.1-linux-amd64.tar.gz -C /usr/local/bin \
+    rm sealer-v0.6.1-linux-amd64.tar.gz
+
 # jenkins slave
 ENV HOME /home/jenkins
 

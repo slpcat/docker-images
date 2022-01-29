@@ -1,0 +1,9 @@
+https://github.com/goharbor/harbor
+
+# 新建目录
+mkdir /home/harbor
+cd /home/harbor
+# 下载harbor版本安装包
+wget https://storage.googleapis.com/harbor-releases/release-1.5.0/harbor-offline-installer-v1.5.1.tgz
+# 解压
+tar xvf harbor-offline-installer-v1.5.1.tgz

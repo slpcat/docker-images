@@ -1,0 +1,83 @@
+8.20.2 (长期支持)
+https://toscode.gitee.com/lonsun/atlassian-agent/blob/master/README.md
+
+docker run -d --restart=always --net=host --name mysql-server \
+-e TZ="Asia/Shanghai" \
+-e MYSQL_ROOT_PASSWORD="hzk8tfExydyBebs80hketnhq" \
+-v /data/mysql-data:/var/lib/mysql \
+mysql:5.7 --character-set-server=utf8mb4 --collation-server=utf8mb4_bin
+注意关闭ssl
+
+[mysqld]
+...
+default-storage-engine=INNODB
+character_set_server=utf8mb4
+innodb_default_row_format=DYNAMIC
+innodb_large_prefix=ON
+innodb_file_format=Barracuda
+innodb_log_file_size=2G
+skip-ssl
+
+
+
+docker run -d --restart=always --name jira \
+  -p 80:8080 \
+  -v /data/jira-home:/var/atlassian/jira \
+  slpcat/jira:8.20.2
+
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: jira 
+  namespace: kube-system
+spec:
+  selector:
+    app: jira
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8080 
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: jira 
+  namespace: kube-system
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+         app: jira
+    spec:
+       nodeSelector:
+         k8stest: node4
+       containers:
+       - name: jira
+         image: reg.qiniu.com/zun/jira:7.12.3
+         imagePullPolicy: IfNotPresent
+         ports:
+         - containerPort: 8080 
+         env:
+         - name: JIRA_DATABASE_URL
+           value: 'postgresql://jira@postgresql-opera:5432/jiradb1'
+         - name: JIRA_DB_PASSWORD
+           value: 'jellyfish123'
+         - name: SETENV_JVM_MINIMUM_MEMORY
+           value: '1024m'
+         - name: SETENV_JVM_MAXIMUM_MEMORY
+           value: '1025m'
+         - name: X_PROXY_NAME
+           value: 'jira.gugud.com'
+         - name: X_PROXY_PORT
+           value: '443'
+         - name: X_PROXY_SCHEME
+           value: 'https'
+         volumeMounts:
+         - mountPath: /var/atlassian/jira 
+           name: jira-volume
+       volumes:
+       - name: jira-volume
+         hostPath:
+          path: /files/data/jiradata

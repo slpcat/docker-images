@@ -20,6 +20,69 @@ pilot.traceSampling  set the percentage of trace sampling
 kubectl -n istio-system edit deploy istio-pilot
 PILOT_TRACE_SAMPLING
 
+安装前生成清单文件
+istioctl manifest generate > $HOME/generated-manifest.yaml
+
+ 
+istioctl manifest generate \
+  --set profile=default \
+  --set .values.global.imagePullPolicy=IfNotPresent   \
+  --set .values.global.hub=valiyun.com.cn/registry \
+  --set .values.global.jwtPolicy=first-party-jwt \
+  --set .values.grafana.enabled=true \
+  --set .values.grafana.image.repository=valiyun.com.cn/registry/grafana \
+  --set .values.grafana.persist=true \
+  --set .values.grafana.storageClassName=vali-service-istio-grafana-storage-class \
+  --set .values.grafana.security.enabled=true \
+  --set .values.grafana.resources.limits.cpu=1000m   \
+  --set .values.grafana.resources.limits.memory=1024Mi   \
+  --set .values.grafana.resources.requests.cpu=10m   \
+  --set .values.grafana.resources.requests.memory=256Mi   \
+  --set .values.kiali.enabled=true \
+  --set .values.kiali.hub=valiyun.com.cn/registry \
+  --set .values.kiali.resources.limits.cpu=1000m   \
+  --set .values.kiali.resources.limits.memory=1024Mi   \
+  --set .values.kiali.resources.requests.cpu=10m   \
+  --set .values.kiali.resources.requests.memory=256Mi   \
+  --set .values.prometheus.hub=valiyun.com.cn/registry \
+  --set .values.prometheus.retention=720h \
+  --set .values.prometheus.resources.limits.cpu=1000m   \
+  --set .values.prometheus.resources.limits.memory=4096Mi   \
+  --set .values.prometheus.resources.requests.cpu=500m   \
+  --set .values.prometheus.resources.requests.memory=2048Mi   \
+  --set .values.tracing.enabled=true \
+  --set .values.tracing.jaeger.hub=valiyun.com.cn/registry   \
+  --set .values.tracing.jaeger.tag=1.17   \
+  --set .values.tracing.jaeger.persist=true   \
+  --set .values.tracing.jaeger.resources.limits.cpu=1000m   \
+  --set .values.tracing.jaeger.resources.limits.memory=2048Mi   \
+  --set .values.tracing.jaeger.resources.requests.cpu=150m   \
+  --set .values.tracing.jaeger.resources.requests.memory=900Mi   \
+  --set .values.tracing.jaeger.storageClassName=vali-service-istio-jaeger-storage-class \
+  --set .values.pilot.traceSampling=10   \
+  --set .values.pilot.hub=valiyun.com.cn/registry   \
+  --set .values.pilot.resources.limits.cpu=4000m   \
+  --set .values.pilot.resources.limits.memory=4096Mi   \
+  --set .values.pilot.resources.requests.cpu=500m   \
+  --set .values.pilot.resources.requests.memory=2048Mi   \
+  --set .values.pilot.autoscaleMin=2 \
+  --set .values.gateways.istio-egressgateway.enabled=false \
+  --set .values.gateways.istio-ingressgateway.resources.limits.cpu=4000m  \
+  --set .values.gateways.istio-ingressgateway.resources.limits.memory=4096Mi   \
+  --set .values.gateways.istio-ingressgateway.resources.requests.cpu=1000m   \
+  --set .values.gateways.istio-ingressgateway.resources.requests.memory=512Mi   \
+  --set .values.gateways.istio-ingressgateway.autoscaleMin=2 \
+  --set .values.global.proxy.image=valiyun.com.cn/registry/proxyv2:1.6.14   \
+  --set .values.global.proxy.resources.limits.cpu=2000m   \
+  --set .values.global.proxy.resources.limits.memory=1024Mi   \
+  --set .values.global.proxy.resources.requests.cpu=500m   \
+  --set .values.global.proxy.resources.requests.memory=512Mi  \
+  > istio-install-default.yaml
+验证安装是否成功
+istioctl verify-install -f $HOME/generated-manifest.yaml
+
+多个istio-ingressgateway
+
 2.istio cilium增强版
 istio 1.0.3
 cilium 1.3.0
@@ -52,6 +115,9 @@ cilium 透明代理拦截
 log-pilot日志输出，es集群存储
 prometheus监控接入,持久化
 jaeger追踪接入，持久化
+
+图形管理工具
+Vistio
 
 示例:
 支持蓝绿发布，灰度发布，支持2个或多个版本切换，并且能够瞬时回滚

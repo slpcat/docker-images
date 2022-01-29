@@ -1,3 +1,8 @@
+curl https://packages.fluentbit.io/fluentbit.key | sudo apt-key add -
+deb https://packages.fluentbit.io/debian/buster buster main
+
+
+
 wget https://raw.githubusercontent.com/prabhatsharma/elasticsearch-using-operator/master/fluent-bit-values.yml
 
 fluent-bit-clickhouse
@@ -26,6 +31,7 @@ sidecar方式从pod采集日志
 
 https://github.com/leahnp/fluentbit-sidecar
 
+$ docker run -ti fluent/fluent-bit:1.8 /fluent-bit/bin/fluent-bit -i cpu -o stdout -f 1
 
 fluent-bit 接收syslog输出到kafka
 

@@ -1,0 +1,9 @@
+cmd_blacklist_glob:
+  - 'rm -rf /'
+  - 'rm -rf /*'
+  - 'rm -rf *'
+  - 'halt'
+  - 'reboot'
+  - 'shutdown -h now'
+  - 'init 0'
+  - 'init 6'

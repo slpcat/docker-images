@@ -1,0 +1,36 @@
+https://docs.k0sproject.io/
+
+curl -sSLf https://get.k0s.sh | sudo sh
+
+sudo k0s install controller --single
+
+sudo k0s start
+
+推荐离线安装
+air-gap install
+https://github.com/k0sproject/k0sctl/releases
+
+wget https://github.com/k0sproject/k0sctl/releases/download/v0.12.2/k0sctl-linux-x64
+
+wget https://github.com/k0sproject/k0s/releases/download/v1.23.1%2Bk0s.1/k0s-airgap-bundle-v1.23.1+k0s.1-amd64
+
+create a k0sctl configuration file:
+
+k0sctl init --k0s > k0sctl.yaml
+
+Deploy the cluster
+
+k0sctl apply --config k0sctl.yaml
+
+Access the cluster
+
+k0sctl kubeconfig > kubeconfig
+
+
+nerdctl config
+/etc/nerdctl/nerdctl.toml
+
+https://github.com/k0sproject/k0s/blob/main/docs/runtime.md
+
+内置containerd 配置文件
+/etc/k0s/containerd.toml

@@ -1,0 +1,15 @@
+helm repo add pravega https://charts.pravega.io
+helm repo update
+helm install zookeeper-operator --namespace=zookeeper --create-namespace pravega/zookeeper-operator
+
+
+
+kubectl create --namespace zookeeper -f - <<EOF
+apiVersion: zookeeper.pravega.io/v1beta1
+kind: ZookeeperCluster
+metadata:
+    name: zookeeper-id01
+    namespace: zookeeper
+spec:
+    replicas: 1
+EOF

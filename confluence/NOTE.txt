@@ -1,0 +1,9 @@
+https://www.atlassian.com/software/confluence/download-archives
+
+7.13.3 (long term support)
+
+docker run -d --restart=always --name confluence \
+  -p 80:8090 -p 8091:8091 \
+  -e CATALINA_OPTS=" -Xms256m -Xmx2g" \
+  -v /data/confluence-home:/var/atlassian/confluence \
+  slpcat/confluence:7.13.3

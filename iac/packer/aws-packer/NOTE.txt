@@ -1,0 +1,5 @@
+amazon-eks-custom-amis:基于Red Hat Enterprise Linux，CentOS，Debian，...
+Amazon EKS示例定制AMI
+该存储库包含脚本和定义，以和 创建用于自定义AMI。 许多组织都需要运行自定义AMI，以确保安全性，合规性或内部策略要求。 Amazon EKS优化AMI仍然是在Amazon EKS上部署容器的首选方式，这些AMI旨在为希望使用非Amazon Linux操作系统实现自定义AMI的客户提供一个起点。 在此存储库中构建的AMI基于的 。
+该存储库还将Docker CIS Benchmark和Amazon EKS CIS Benchmark应用于所有AMI。 我们还支持许多可选的强化基准测试，例如DISA STIG，PCI-DSS和HIPAA。 这些基于和其他开放源代码强化指南。
+此存储库创建的脚本和工件不能保证合规性，并且AWS并未正式支持这些AMI。 在将AMI投入生产之前，请确保您的安全和合规团队彻底审查这些脚本。

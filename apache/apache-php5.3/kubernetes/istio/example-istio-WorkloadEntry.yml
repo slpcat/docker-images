@@ -1,0 +1,11 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: WorkloadEntry
+metadata:
+  name: mysqldb-we
+spec:
+  address: 124.**.65.221
+  labels:
+    app: mysqlvm
+    instance-id: ubuntu-vm-mariadb
+    class: vm
+---

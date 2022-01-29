@@ -2,6 +2,7 @@ apiVersion: networking.istio.io/v1alpha3
 kind: Gateway
 metadata:
   name: tomcat8-gateway
+  namespace: default
 spec:
   selector:
     istio: ingressgateway # use Istio default gateway implementation
@@ -66,7 +67,10 @@ spec:
         subset: v2
       weight: 100
     #请求超时时长，后端响应时间大于此值，直接返回服务不可用
-    timeout: 0.5s
+    timeout: 30s
+    retries:
+      attempts: 3
+      perTryTimeout: 2s
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: DestinationRule
@@ -95,3 +99,6 @@ spec:
   - name: v2
     labels:
       version: v2
+    trafficPolicy:
+      loadBalancer:
+        simple: ROUND_ROBIN

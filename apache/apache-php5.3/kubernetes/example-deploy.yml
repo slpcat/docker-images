@@ -7,6 +7,12 @@ metadata:
   annotations:
     #Reloader can watch changes in ConfigMap and Secret and do rolling upgrades
     configmap.reloader.stakater.com/reload: "foo-configmap,bar-configmap,baz-configmap"
+    # Tell Kubernetes to apply the AppArmor profile "k8s-apparmor-example-deny-write".
+    # Note that this is ignored if the Kubernetes node is not running version 1.4 or greater.
+    #container_name 对应的是具体的容器名称，可以直接填写pod名称；
+    #profile_ref一般为 localhost/k8s-apparmor-example-deny-write(/etc/apparmor.d 下的profile 名称)
+    container.apparmor.security.beta.kubernetes.io/<container_name>: <profile_ref>
+    container.apparmor.security.beta.kubernetes.io/hello: localhost/k8s-apparmor-example-deny-write
   labels:
     # enable on-demand mode
     k8s.aliyun.com/image-accelerate-mode: on-demand

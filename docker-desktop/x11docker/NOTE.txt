@@ -1,3 +1,5 @@
+https://github.com/mviereck/x11docker/
+
 x11docker --desktop --init=systemd --pulseaudio --gpu slpcat/x11docker-deepin
 # alternativly:
 x11docker --desktop --dbus-system --pulseaudio --gpu --clipboard slpcat/x11docker-deepin
@@ -23,6 +25,11 @@ x11docker/plasma
 x11docker/lumina
 x11docker/trinity
 x11docker/openbox
+
+
+https://github.com/bestwu/docker-qq
+https://github.com/bestwu/docker-wechat
+
 johnshine/baidunetdisk-crossover-vnc
 bestwu/thunderspeed
 bestwu/qq:im
@@ -34,3 +41,32 @@ jess/spotify
 leesah/eclipse
 chrisdaish/vlc
 rasch/inkscape
+
+
+docker run -d --name qq \
+    --device /dev/snd --ipc="host"\
+    -v $HOME/TencentFiles:/TencentFiles \
+    -v /tmp/.X11-unix:/tmp/.X11-unix \
+    -e XMODIFIERS=@im=fcitx \
+    -e QT_IM_MODULE=fcitx \
+    -e GTK_IM_MODULE=fcitx \
+    -e DISPLAY=unix$DISPLAY \
+    -e AUDIO_GID=`getent group audio | cut -d: -f3` \
+    -e VIDEO_GID=`getent group video | cut -d: -f3` \
+    -e GID=`id -g` \
+    -e UID=`id -u` \
+    bestwu/qq:im
+
+docker run -d --name wechat --device /dev/snd --ipc="host"\
+    -v /tmp/.X11-unix:/tmp/.X11-unix \
+    -v $HOME/WeChatFiles:/WeChatFiles \
+    -e DISPLAY=unix$DISPLAY \
+    -e XMODIFIERS=@im=fcitx \
+    -e QT_IM_MODULE=fcitx \
+    -e GTK_IM_MODULE=fcitx \
+    -e AUDIO_GID=`getent group audio | cut -d: -f3` \
+    -e GID=`id -g` \
+    -e UID=`id -u` \
+    bestwu/wechat
+
+docker run --rm  --name firefox -e DISPLAY=10.0.0.3:0 -e XAUTHORITY=/.Xauthority --net host -v /tmp/.X11-unix:/tmp/.X11-unix -v ~/.Xauthority:/.Xauthority  jess/firefox

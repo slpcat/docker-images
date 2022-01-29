@@ -35,6 +35,12 @@ docker run -itd --name rancher2.5.8 -p 80:80 -p 443:443 \
 -e CATTLE_AGENT_IMAGE="registry.cn-hangzhou.aliyuncs.com/rancher/rancher-agent:v2.5.8" \
 registry.cn-hangzhou.aliyuncs.com/rancher/rancher:v2.5.8
 
+docker run -d --restart=always --privileged --name rancher-server \
+    -p 443:443 -e AUDIT_LEVEL=3   \
+    -v /data/cert/4366172_kuxxxx.rxxxox.cn.pem:/etc/rancher/ssl/cert.pem \
+    -v /data/cert/4366172_kuxxxx.rxxxox.cn.key:/etc/rancher/ssl/key.pem  \
+    rancher/rancher:v2.6.3 --no-cacerts
+
 
 高可用安装需要独立kubernetes集群和负载均衡器
 helm repo add rancher-stable https://releases.rancher.com/server-charts/stable

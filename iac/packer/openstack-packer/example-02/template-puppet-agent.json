@@ -1,0 +1,22 @@
+{
+  "builders": [
+    {
+      "type": "openstack",
+      "region": "RegionOne",
+      "ssh_username": "ubuntu",
+      "image_name": "template-ubuntu-1604-x64-lts--puppet-{{timestamp}}",
+      "source_image": "420c1121-aa31-4347-8b4e-e32f89e3e74c",
+      "flavor": "t2.nano",
+      "networks": "867ba4eb-db42-43e2-ab26-9c566a54ee6e",
+      "floating_ip_network": "bad1960c-c564-43b7-84cc-8795c89974a9"
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "scripts": [
+        "provision-puppetagent.sh"
+      ]
+    }
+  ]
+}

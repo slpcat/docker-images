@@ -44,3 +44,13 @@ autovacuum_vacuum_cost_limit = 10000  # 5000 ~ 10000
 
 如果加了LOG审计的采样插件，再加上对应参数，允许用户修改，以及允许用户可以修改的范围。
 https://www.pgxn.org/dist/pg_sampletolog/
+
+docker run -d --restart=always --name my_postgres \
+  -v /data/postgresql:/var/lib/postgresql \
+  -e POSTGRES_USER=postgres \
+  -e POSTGRES_PASSWORD=postgres_password \
+  -p 5432:5432 \
+  -e POSTGRES_DB=postgres \
+  -e PGDATA=/var/lib/postgresql/data \
+  -e TZ=Asia/Shanghai \
+  postgres:12.1

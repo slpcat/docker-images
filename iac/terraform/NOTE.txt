@@ -1,0 +1,47 @@
+terraforming
+Export existing AWS resources to Terraform style (tf, tfstate)
+https://github.com/dtan4/terraforming
+http://terraforming.dtan4.net/
+
+https://github.com/radekg/terraform-provisioner-ansible
+
+https://github.com/tencentyun/terraform-provider-tencentcloud
+
+The Redis Enterprise Cloud Terraform provider is a plugin for Terraform that allows Redis Enterprise Cloud Flexible customers to manage the full lifecyle of their subscriptions and related Redis databases.
+
+https://github.com/RedisLabs/terraform-provider-rediscloud
+
+https://docs.ksyun.com/documents/27647
+
+专有集群：https://www.terraform.io/docs/providers/alicloud/r/cs_kubernetes.html
+
+托管集群：https://www.terraform.io/docs/providers/alicloud/r/cs_managed_kubernetes.html
+
+terraform-kubernetes-redis
+
+terraform-aws-elasticache-redis
+
+terraform-kubernetes
+terraform-provider-kubernetes
+
+terraform-azurerm-redis
+
+terraform-elasticache-example
+
+terraform-docs
+https://github.com/segmentio/terraform-docs
+
+terraform-landscape
+https://github.com/coinbase/terraform-landscape
+
+tfenv
+Terraform 版本管理的
+
+tflint
+方便检查我们的tf 文件编写是否有问题
+https://github.com/wata727/tflint
+
+blast-radius
+图像可视化交互terraform 定义的资源
+
+https://github.com/28mm/blast-radius

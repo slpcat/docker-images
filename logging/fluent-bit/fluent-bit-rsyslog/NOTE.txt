@@ -2,6 +2,11 @@ RSyslog Configuration
 
 Add a new file to your rsyslog config rules called 60-fluent-bit.conf inside the directory /etc/rsyslog.d/ and add the following content:
 
-action(type="omfwd"Target="127.0.0.1"Port="5140"Protocol="tcp")
+action(type="omfwd" Target="127.0.0.1" Port="514" Protocol="tcp")
 
 sudo service rsyslog restart
+
+docker run -d --restart=always --name fluent-bit-rsyslog \
+  -p 514:514 -e TZ="Asia/Shanghai" \
+  -v /data/fluent-bit/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf \
+  fluent/fluent-bit:1.8-debug /fluent-bit/bin/fluent-bit -c /fluent-bit/etc/fluent-bit.conf

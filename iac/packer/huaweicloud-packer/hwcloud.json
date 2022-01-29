@@ -1,0 +1,34 @@
+{
+  "builders": [{
+    "type": "openstack",
+    "identity_endpoint": "https://iam.xxx.com/v3",
+    "tenant_name": "xxx",
+    "domain_name": "domain_name", 
+    "username": "username",
+    "password": "password",
+    "ssh_username": "root",
+    "region": "xxx",
+    "image_name": "Ubuntu-image-updating-powered-by-Packer",
+    "instance_name": "Ubuntu-image-updating-powered-by-Packer",
+    "source_image": "f1dd2272-7041-479e-9663-646632b6ac00",
+    "availability_zone": "xxx"，
+    "flavor": "s3.medium.2",
+    "use_blockstorage_volume": true,
+    "networks": ["11d661c4-e41f-487f-a6f6-9b88d623dd5d"],
+    "floating_ip": "8f686f9a-3408-4fdd-be75-ea768065800c"
+  }],
+  "provisioners": [{
+    "inline": [
+      "apt-get update -y"
+    ],
+    "inline_shebang": "/bin/sh -x",
+    "type": "shell",
+    "skip_clean": true
+  }],
+  "post-processors": [{
+    "strip_path": true,
+    "output": "packer-template-ubuntu-updating-result.log",
+    "type": "manifest"
+  }]
+}
+

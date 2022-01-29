@@ -1,0 +1,36 @@
+{
+  "variables": {
+    "identity_endpoint": "{{env `OPENSTACK_ENDPOINT`}}",
+    "tenant_name": "{{env `OPENSTACK_TENANT_NAME`}}",
+    "username": "{{env `OPENSTACK_USERNAME`}}",
+    "password": "{{env `OPENSTACK_PASSWORD`}}"
+  },
+  "builders": [
+    {
+      "type": "openstack",
+      "identity_endpoint": "http://controller:5000/v3/",
+      "tenant_name": "admin",
+      "domain_name": "default",
+      "username": "admin",
+      "password": "ADMIN",
+      "ssh_username": "debian",
+      "image_name": "UBUNTU 14.04 JAVA TOMCAT Server PACKER",
+      "source_image": "e528ecb8-ebb5-48ae-96c2-6aca3418f06c",
+      "flavor": "4C-8G-30G",
+      "networks": [
+        "9f3a1915-0b50-4099-bbd5-ea0e03b8b128"
+      ],
+      "insecure": "true"
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "inline": [
+        "sleep 30",
+        "sudo apt-get update",
+        "sudo apt-get install -y tomcat9"
+      ]
+    }
+  ]
+}

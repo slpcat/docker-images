@@ -22,7 +22,7 @@ spec:
       - name: jnlp
         env:
         - name: JENKINS_SECRET
-          value: "751959a0e0c47172ce2234ceda602982a87d74ae6faea53f0eea23be35928f3c"
+          value: "f4c28afc1740baf752db53c48937e37b5e6809ff2779eed28e30be1bdb41e911"
         - name: JAVA_OPTS
           value: -server -Djava.awt.headless=true -Djava.nio.channels.spi.SelectorProvider=sun.nio.ch.EPollSelectorProvider
             -Dfile.encoding=UTF8 -Xverify:none -XX:MetaspaceSize=128m -XX:+UseNUMA -XX:+UseNUMAInterleaving
@@ -76,6 +76,8 @@ spec:
       #- name: ali-vpc
       nodeSelector:
         kubernetes.io/os: linux
+        kubernetes.io/arch: amd64
+        #kubernetes.io/hostname=node001
       volumes:
       - name: docker-sock
         hostPath:

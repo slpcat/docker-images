@@ -1,0 +1,41 @@
+{
+  "variables": {
+    "ucloud_public_key": "{{env `UCLOUD_PUBKEY`}}",
+    "ucloud_private_key": "{{env `UCLOUD_SECRET`}}",
+    "ssh_user": "root",
+    "ssh_password": "password",
+    "ucloud_project_id": "org-projectid",
+    "image_id": "uimage-dpdgyw",
+    "consul_version": "1.5.1",
+    "region": "cn-bj2",
+    "az": "cn-bj2-02"
+  },
+  "builders": [
+    {
+      "type": "ucloud-uhost",
+      "public_key": "{{user `ucloud_public_key`}}",
+      "private_key": "{{user `ucloud_private_key`}}",
+      "project_id": "{{user `ucloud_project_id`}}",
+      "region": "{{user `region`}}",
+      "availability_zone": "{{user `az`}}",
+      "instance_type": "n-basic-2",
+      "source_image_id": "{{user `image_id`}}",
+      "ssh_username": "{{user `ssh_user`}}",
+      "ssh_password": "{{user `ssh_password`}}",
+      "image_name": "consul-server-{{user `consul_version`}}"
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "s": [
+        "s/config-yum.sh",
+        "s/consul-service.sh",
+        "s/consul-server.sh"
+      ],
+      "environment_vars": [
+        "CONSUL_VERSION={{user `consul_version`}}"
+      ]
+    }
+  ]
+}

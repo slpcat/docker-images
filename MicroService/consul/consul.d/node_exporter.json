@@ -4,6 +4,10 @@
     "Tags": [
       "prometheus-target",
       "primary",
+      "instance": "prometheus", 
+      "group": "demo", 
+      "environment": "UAT", 
+      "Project": "Mon"
       "v1"
     ],
     "Port": 9100,
