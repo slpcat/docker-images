@@ -8,6 +8,8 @@ RUN apt-get update -y             \
        apt-transport-https        \
        bison                      \
        ca-certificates            \
+       net-tools                  \
+       procps                     \
        curl                       \
        rsync                      \
        gnupg-agent                \
@@ -50,15 +52,14 @@ ARG VERIFY_CHECKSUM=false
 #    curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 \
 #    && bash get_helm.sh \
 #    && rm get_helm.sh
-
 RUN \
     curl https://baltocdn.com/helm/signing.asc | apt-key add - \
     && echo "deb https://baltocdn.com/helm/stable/debian/ all main" | tee /etc/apt/sources.list.d/helm-stable-debian.list \
     && apt-get update \
-    && apt-get install helm
+    && apt-get install -y helm
 
 #istioctl
-ARG ISTIO_VERSION=1.12.1
+ARG ISTIO_VERSION=1.12.2
 RUN \
     curl -L https://istio.io/downloadIstio | sh - \
     && mv istio-${ISTIO_VERSION}/bin/istioctl /usr/local/bin \
@@ -83,7 +84,7 @@ RUN \
 RUN \
     curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add - \
     && apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main" \
-    && apt-get update -y && apt-get install -y packer terraform
+    && apt-get update -y && apt-get install -y packer terraform consul
 
 #aliyun-cli
 ARG ALIYUN_CLI_VERSION=3.0.60
@@ -116,6 +117,13 @@ RUN \
    && unzip linux-bcecmd-0.3.1.zip \
    && mv linux-bcecmd-0.3.1/bcecmd /usr/local/bin/ \
    && rm -rf linux-bcecmd*
+#dependency-check
+RUN \
+    wget https://github.com/jeremylong/DependencyCheck/releases/download/v6.5.3/dependency-check-6.5.3-release.zip \
+    && unzip dependency-check-6.5.3-release.zip \
+    && mv dependency-check /usr/local/ \
+    && ln -sf /usr/local/dependency-check/bin/dependency-check.sh  /usr/local/bin/dependency-check \
+    && rm -rf dependency-check*
 
 #grype scanner
 RUN \
@@ -146,9 +154,15 @@ RUN \
 #sealer
 
 RUN \
-    wget -c http://sealer.oss-cn-beijing.aliyuncs.com/sealers/sealer-v0.6.1-linux-amd64.tar.gz && \
-    tar -xvf sealer-v0.6.1-linux-amd64.tar.gz -C /usr/local/bin \
-    rm sealer-v0.6.1-linux-amd64.tar.gz
+    wget -c http://sealer.oss-cn-beijing.aliyuncs.com/sealers/sealer-v0.6.1-linux-amd64.tar.gz \
+    && tar -xvf sealer-v0.6.1-linux-amd64.tar.gz -C /usr/local/bin \
+    && rm sealer-v0.6.1-linux-amd64.tar.gz
+
+#allure report
+#RUN \
+#    wget https://github.com/allure-framework/allure2/releases/download/2.17.2/allure_2.17.2-1_all.deb \
+#    &&dpkg -i allure_2.17.2-1_all.deb \
+#    && rm allure_2.17.2-1_all.deb
 
 # jenkins slave
 ENV HOME /home/jenkins

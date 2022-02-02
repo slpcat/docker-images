@@ -58,17 +58,19 @@ COPY executors.groovy /usr/share/jenkins/ref/init.groovy.d/executors.groovy
 #http://mirrors.jenkins.io/war-stable/latest/jenkins.war
 #ARG JENKINS_URL=https://repo.jenkins-ci.org/public/org/jenkins-ci/main/jenkins-war/${JENKINS_VERSION}/jenkins-war-${JENKINS_VERSION}.war
 #ARG JENKINS_URL=http://mirrors.jenkins.io/war-stable/latest/jenkins.war
-ARG JENKINS_URL=http://mirrors.jenkins.io/war/latest/jenkins.war
-
-#ARG JENKINS_URL=https://mirrors.tuna.tsinghua.edu.cn/jenkins/war-stable/latest/jenkins.war
+#ARG JENKINS_URL=http://mirrors.jenkins.io/war/latest/jenkins.war
+ARG JENKINS_URL=https://mirrors.aliyun.com/jenkins/war/latest/jenkins.war
 
 # could use ADD but this one does not check Last-Modified header neither does it allow to control checksum
 # see https://github.com/docker/docker/issues/8331
 RUN curl -fsSL ${JENKINS_URL} -o /usr/share/jenkins/jenkins.war
 #  && echo "${JENKINS_SHA}  /usr/share/jenkins/jenkins.war" | sha256sum -c -
 
-ENV JENKINS_UC https://updates.jenkins.io
-ENV JENKINS_UC_EXPERIMENTAL=https://updates.jenkins.io/experimental
+#ENV JENKINS_UC https://updates.jenkins.io
+#ENV JENKINS_UC_EXPERIMENTAL=https://updates.jenkins.io/experimental
+ENV JENKINS_UC_EXPERIMENTAL=https://mirrors.aliyun.com/jenkins/updates/experimental
+ENV JENKINS_UC=https://mirrors.aliyun.com/jenkins/updates
+ENV JENKINS_UC_DOWNLOAD=https://mirrors.aliyun.com/jenkins
 RUN chown -R ${user} "$JENKINS_HOME" /usr/share/jenkins/ref
 
 # for main web interface:
@@ -391,6 +393,7 @@ ENV JAVA_OPTS="-server -Djava.awt.headless=true -XX:MetaspaceSize=128m \
          -Dorg.csanchez.jenkins.plugins.kubernetes.clients.cacheExpiration=60 \
          -Dhudson.model.LoadStatistics.clock=2000 \
          -Dhudson.model.LoadStatistics.decay=0.5 \
+         -Dhudson.model.UpdateCenter.updateCenterUrl=https://mirrors.aliyun.com/jenkins/updates/update-center.json \
          -Dhudson.slaves.NodeProvisioner.recurrencePeriod=5000 \
          -Dhudson.slaves.NodeProvisioner.initialDelay=0 \
          -Dhudson.slaves.NodeProvisioner.MARGIN=50 \
