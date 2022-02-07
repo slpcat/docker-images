@@ -163,11 +163,17 @@ RUN \
     && tar -xvf sealer-v0.6.1-linux-amd64.tar.gz -C /usr/local/bin \
     && rm sealer-v0.6.1-linux-amd64.tar.gz
 
-#allure report
+#allure report depends on java8-runtime
+#RUN \
+#    wget https://github.com/allure-framework/allure2/releases/download/2.17.2/allure_2.17.2-1_all.deb \
+#    &&dpkg -i allure_2.17.2-1_all.deb \
+#    && rm allure_2.17.2-1_all.deb
+
 RUN \
-    wget https://github.com/allure-framework/allure2/releases/download/2.17.2/allure_2.17.2-1_all.deb \
-    &&dpkg -i allure_2.17.2-1_all.deb \
-    && rm allure_2.17.2-1_all.deb
+    wget https://github.com/allure-framework/allure2/releases/download/2.17.2/allure-2.17.2.tgz \
+    && tar zxf allure-2.17.2.tgz -C /usr/local/ \
+    &&  ln -s /usr/local/allure-2.17.2/bin/allure  /usr/local/bin/allure \
+    && rm allure-2.17.2.tgz
 
 # jenkins slave
 ENV HOME /home/jenkins
