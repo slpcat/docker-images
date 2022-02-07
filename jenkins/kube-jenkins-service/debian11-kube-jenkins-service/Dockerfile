@@ -121,15 +121,16 @@ COPY conf/jenkins/config.xml "${JENKINS_STAGING}/config.xml"
 
 # add plugins
 RUN /usr/local/bin/install-plugins.sh       \
-  blueocean-autofavorite:latest             \
+  blueocean-autofavorite:${BLUEOCEAN_VERSION}             \
   blueocean-commons:${BLUEOCEAN_VERSION}    \
   blueocean-config:${BLUEOCEAN_VERSION}     \
   blueocean-dashboard:${BLUEOCEAN_VERSION}  \
-  blueocean-display-url:latest              \
+  blueocean-display-url:${BLUEOCEAN_VERSION}              \
   blueocean-events:${BLUEOCEAN_VERSION}     \
   blueocean-git-pipeline:${BLUEOCEAN_VERSION}          \
   blueocean-github-pipeline:${BLUEOCEAN_VERSION}       \
   blueocean-i18n:${BLUEOCEAN_VERSION}       \
+  blueocean-jira:${BLUEOCEAN_VERSION}       \
   blueocean-jwt:${BLUEOCEAN_VERSION}        \
   blueocean-personalization:${BLUEOCEAN_VERSION}    \
   blueocean-pipeline-api-impl:${BLUEOCEAN_VERSION}  \
@@ -186,6 +187,7 @@ RUN /usr/local/bin/install-plugins.sh       \
   dashboard-view:latest          \
   delivery-pipeline-plugin:latest \
   dependency-check-jenkins-plugin:latest \
+  dependency-track:latest        \
   description-setter:latest      \
   dingding-notifications:latest  \
   dingding-json-pusher:latest    \
@@ -241,7 +243,9 @@ RUN /usr/local/bin/install-plugins.sh       \
   #icon-shim:latest               \
   ivy:latest                     \
   jackson2-api:latest            \
+  jacoco:latest                  \
   javadoc:latest                 \
+  jira:latest                    \
   jira-trigger:latest            \
   jenkins-multijob-plugin:latest \
   jobConfigHistory:latest        \
@@ -300,6 +304,7 @@ RUN /usr/local/bin/install-plugins.sh       \
   pipeline-stage-view:latest     \ 
   pipeline-utility-steps:latest  \
   plain-credentials:latest       \
+  platformlabeler:latest         \
   plugin-util-api:latest         \
   postbuildscript:latest         \
   postbuild-task:latest          \
@@ -313,6 +318,7 @@ RUN /usr/local/bin/install-plugins.sh       \
   rebuild:latest                 \
   report-info:latest             \
   resource-disposer:latest       \
+  robot:latest                   \
   role-strategy:latest           \
   run-condition:latest           \
   run-selector:latest            \
@@ -389,6 +395,8 @@ ENV JAVA_OPTS="-server -Djava.awt.headless=true -XX:MetaspaceSize=128m \
          -XX:G1MixedGCCountTarget=16 -XX:G1MixedGCLiveThresholdPercent=90 \
          -XX:InitiatingHeapOccupancyPercent=35 -XX:G1HeapRegionSize=32m \
          -XX:-ResizePLAB -Djenkins.install.runSetupWizard=false \
+         -Dorg.apache.tomcat.util.buf.UDecoder.ALLOW_ENCODED_SLASH=true \
+         -Dorg.apache.catalina.connector.CoyoteAdapter.ALLOW_BACKSLASH=true \
          -Dhudson.udp=-1 -Dfile.encoding=UTF-8 \
          -Dorg.csanchez.jenkins.plugins.kubernetes.clients.cacheExpiration=60 \
          -Dhudson.model.LoadStatistics.clock=2000 \

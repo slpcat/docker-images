@@ -164,10 +164,10 @@ RUN \
     && rm sealer-v0.6.1-linux-amd64.tar.gz
 
 #allure report
-RUN \
-    wget https://github.com/allure-framework/allure2/releases/download/2.17.2/allure_2.17.2-1_all.deb \
-    &&dpkg -i allure_2.17.2-1_all.deb \
-    && rm allure_2.17.2-1_all.deb
+#RUN \
+#    wget https://github.com/allure-framework/allure2/releases/download/2.17.2/allure_2.17.2-1_all.deb \
+#    &&dpkg -i allure_2.17.2-1_all.deb \
+#    && rm allure_2.17.2-1_all.deb
 
 # jenkins slave
 ENV HOME /home/jenkins
