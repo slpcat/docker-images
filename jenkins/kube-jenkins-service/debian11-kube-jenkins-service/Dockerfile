@@ -182,6 +182,7 @@ RUN /usr/local/bin/install-plugins.sh       \
   configurationslicing:latest    \
   #copy-to-slave:latest          \
   copyartifact:latest            \
+  convert-to-pipeline:latest     \
   #cvs:latest                    \
   dark-theme:latest              \
   dashboard-view:latest          \
@@ -189,6 +190,7 @@ RUN /usr/local/bin/install-plugins.sh       \
   dependency-check-jenkins-plugin:latest \
   dependency-track:latest        \
   description-setter:latest      \
+  declarative-pipeline-migration-assistant:latest \
   dingding-notifications:latest  \
   dingding-json-pusher:latest    \
   display-url-api:latest         \
@@ -287,6 +289,7 @@ RUN /usr/local/bin/install-plugins.sh       \
   pam-auth:latest                \
   parameterized-trigger:latest   \
   performance:latest             \
+  periodicbackup:latest          \
   pipeline-aws:latest            \
   pipeline-build-step:latest     \
   pipeline-github-lib:latest     \
@@ -316,6 +319,7 @@ RUN /usr/local/bin/install-plugins.sh       \
   python:latest                  \
   python-wrapper:latest          \
   rebuild:latest                 \
+  remote-file:latest             \
   report-info:latest             \
   resource-disposer:latest       \
   robot:latest                   \
@@ -348,6 +352,7 @@ RUN /usr/local/bin/install-plugins.sh       \
   token-macro:latest             \
   #translation:latest             \
   uno-choice:latest              \
+  upload-pgyer:latest            \
   url-auth-sso:latest            \
   variant:latest                 \
   view-cloner:latest             \
