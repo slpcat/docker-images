@@ -69,6 +69,10 @@ RUN \
     && mv istio-${ISTIO_VERSION}/bin/istioctl /usr/local/bin \
     && rm -rf  istio-${ISTIO_VERSION}
 
+#dapr  Distributed Application Runtime
+RUN \
+    wget -q https://raw.githubusercontent.com/dapr/cli/master/install/install.sh -O - | /bin/bash
+
 #packer
 #ARG PACKER_VERSION=1.7.8
 #RUN \

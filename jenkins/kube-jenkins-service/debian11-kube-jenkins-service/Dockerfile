@@ -6,16 +6,6 @@ ARG TARGETARCH
 RUN apt-get update \
     && apt-get upgrade -y \
     && apt-get install -y git curl wget openssh-client unzip jq groff python3 fonts-wqy-microhei
-    #&& curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | bash \
-    #&& apt-get install -y git-lfs unzip \
-    #&& git lfs install && rm -rf /var/lib/apt/lists/*
-
-#awscli
-#RUN \
-#    wget https://awscli.amazonaws.com/awscli-exe-linux-${TARGETARCH}.zip \
-#    && unzip awscli-exe-linux-${TARGETARCH}.zip \
-#    && ./aws/install \
-#    && rm -rf aws*
 
 ARG user=jenkins
 ARG group=jenkins
@@ -68,9 +58,10 @@ RUN curl -fsSL ${JENKINS_URL} -o /usr/share/jenkins/jenkins.war
 
 #ENV JENKINS_UC https://updates.jenkins.io
 #ENV JENKINS_UC_EXPERIMENTAL=https://updates.jenkins.io/experimental
-ENV JENKINS_UC_EXPERIMENTAL=https://mirrors.aliyun.com/jenkins/updates/experimental
-ENV JENKINS_UC=https://mirrors.aliyun.com/jenkins/updates
-ENV JENKINS_UC_DOWNLOAD=https://mirrors.aliyun.com/jenkins
+ENV JENKINS_UC_EXPERIMENTAL=https://mirrors.aliyun.com/jenkins/updates/experimental \
+    JENKINS_UC=https://mirrors.aliyun.com/jenkins/updates \
+    JENKINS_UC_DOWNLOAD=https://mirrors.aliyun.com/jenkins
+
 RUN chown -R ${user} "$JENKINS_HOME" /usr/share/jenkins/ref
 
 # for main web interface:
@@ -259,6 +250,7 @@ RUN /usr/local/bin/install-plugins.sh       \
   kpp-management-plugin:latest   \
   kubernetes:latest              \
   kubernetes-cd:latest           \
+  kubernetes-cli:latest          \
   ldap:latest                    \
   #localization-support:latest    \
   localization-zh-cn:latest      \
