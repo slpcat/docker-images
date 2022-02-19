@@ -1,0 +1,4 @@
+-
++^cron\.
+${SOCKLOG_TIMESTAMP_FORMAT}
+/var/log/socklog/cron

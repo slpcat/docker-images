@@ -1,0 +1,21 @@
+#!/usr/bin/execlineb -P
+
+backtick -D "T" -n SOCKLOG_TIMESTAMP_FORMAT { printcontenv SOCKLOG_TIMESTAMP_FORMAT }
+
+backtick -i -n LOGGING_SCRIPT
+{
+  pipeline { pipeline { s6-ls -0 -- /etc/socklog.rules } s6-sort -0 }
+  forstdin -0 -- i
+  if {
+    importas -u i i
+    redirfd -rb 0 /etc/socklog.rules/${i}
+    s6-cat
+  } s6-echo
+}
+
+importas -C -u -s -d"\r\n" LOGGING_SCRIPT LOGGING_SCRIPT
+importas -C -u -s -d"\r\n" SOCKLOG_TIMESTAMP_FORMAT SOCKLOG_TIMESTAMP_FORMAT
+
+s6-setuidgid nobody
+s6-log -bp $LOGGING_SCRIPT
+

@@ -94,6 +94,12 @@ docker buildx  uninstall
 
 docker build -t slpcat/debian:buster --platform=linux/arm64,linux/amd64,linux/riscv64 . --push
 
+Docker 的镜像签名
+https://docs.docker.com/engine/security/trust/trust_automation/
+export DOCKER_CONTENT_TRUST=1
+export DOCKER_CONTENT_TRUST_SERVER=https://10.211.55.27:4443
+
+
 
 https://github.com/linuxhq/rpmbuild-snoopy
 

@@ -1,0 +1,5 @@
++
+-auth\.
+-authpriv\.
+${SOCKLOG_TIMESTAMP_FORMAT}
+/var/log/socklog/everything

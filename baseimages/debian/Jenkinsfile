@@ -1,0 +1,68 @@
+pipeline {
+    agent {
+        node{
+            label "myslave"
+            customWorkspace "myWorkspace"
+        }
+    environment { 
+        CC = 'clang'
+        AWS_ACCESS_KEY_ID     = credentials('jenkins-aws-secret-key-id')
+        AWS_SECRET_ACCESS_KEY = credentials('jenkins-aws-secret-access-key')
+    }
+    options {
+        timeout(time:30, unit:'SECONDS')
+        buildDiscarder(logRotator(numToKeepStr:'2'))
+        retry(5)
+    }
+    parameters {
+        string(name:'PERSON', defaultValue:'Jenkins', description:'输入的文本参数')
+        }
+    triggers{
+        pollSCM('H */4 * * 1-5')
+    }
+    stages {
+        stage('Test Parameters'){
+            steps{
+                echo "Hello ${params.PERSON}"
+            }
+        }
+        stage('Example') {
+            environment { 
+                DEBUG_FLAGS = '-g'
+            }
+            steps {
+                sh 'printenv'
+            }
+        }
+        stage('git pull source code'){
+            steps{
+                echo 'sync update code'
+                git 'https://github.com/priceqjzh/iPipeline.git'
+            }
+        }
+        stage('Build') {
+            steps {
+                echo 'Building..'
+            }
+        }
+        stage('Test') {
+            steps {
+                echo 'Testing..'
+            }
+        }
+        stage('Deploy') {
+            steps {
+                echo 'Deploying....'
+            }
+        }
+    }
+    post{
+        success{
+            echo 'goodbye pipeline success'
+            sleep 2
+        }
+        always{
+            echo 'always say goodbye'
+        }
+    }
+}

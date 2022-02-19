@@ -1,5 +1,4 @@
-#FROM harbor.loongnix.cn/mirrorloongsoncontainers/openanolis:8.4.beta1-loongarch64
-FROM openanolis/anolisos:8.4-loongarch64
+FROM openanolis/anolisos:8.4-aarch64
 
 MAINTAINER 若虚 <slpcat@qq.com>
 
