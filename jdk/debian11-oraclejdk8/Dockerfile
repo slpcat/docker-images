@@ -4,7 +4,7 @@ MAINTAINER 若虚 <slpcat@qq.com>
 
 #install JDK 8
 ENV JAVA_VERSION=8 \
-    JAVA_UPDATE=301 \
+    JAVA_UPDATE=321 \
     JAVA_HOME="/usr/lib/jvm/default-jvm"
 
 ARG TARGETARCH
