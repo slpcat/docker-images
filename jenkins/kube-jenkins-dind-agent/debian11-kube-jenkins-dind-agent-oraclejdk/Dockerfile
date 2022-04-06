@@ -1,5 +1,5 @@
 #upstream https://github.com/jenkinsci/docker-inbound-agent
-FROM slpcat/oraclejdk:8-bullseye
+FROM slpcat/oraclejdk:lts-bullseye
 MAINTAINER 若虚 <slpcat@qq.com>
 
 RUN apt-get update -y             \
@@ -72,6 +72,13 @@ RUN \
 #dapr  Distributed Application Runtime
 RUN \
     wget -q https://raw.githubusercontent.com/dapr/cli/master/install/install.sh -O - | /bin/bash
+
+#karmada Open, Multi-Cloud, Multi-Cluster Kubernetes Orchestration.
+RUN \
+    wget https://github.com/karmada-io/karmada/releases/download/v1.0.1/kubectl-karmada-linux-amd64.tgz \
+    && tar -zxf kubectl-karmada-linux-amd64.tgz \
+    && mv kubectl-karmada /usr/local/bin/karmada \
+    && rm kubectl-karmada-linux-amd64.tgz
 
 #packer
 #ARG PACKER_VERSION=1.7.8
