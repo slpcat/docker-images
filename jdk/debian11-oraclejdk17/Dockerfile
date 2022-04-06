@@ -14,7 +14,7 @@ ENV JAVA_VERSION=17.0.2 \
 
 ARG TARGETARCH
 
-COPY jdk-17_linux-*_bin.tar.gz install_jdk17.sh /tmp/
+COPY jdk-${JAVA_VERSION}_linux-*_bin.tar.gz install_jdk17.sh /tmp/
 
 RUN \
     /tmp/install_jdk17.sh /tmp/
