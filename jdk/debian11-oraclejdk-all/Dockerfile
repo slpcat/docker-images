@@ -74,5 +74,6 @@ COPY --from=builder-jdk11 /usr/lib/jvm /usr/lib/jvm
 COPY --from=builder-jdk17 /usr/lib/jvm /usr/lib/jvm
 
 RUN  \
-    ln -s "java-${JAVA_VERSION}-oracle" "$JAVA_HOME" && \
-    ln -s "$JAVA_HOME/bin/"* "/usr/bin/"
+    unlink $JAVA_HOME && \
+    ln -sf "java-${JAVA_VERSION}-oracle" "$JAVA_HOME" && \
+    ln -sf "$JAVA_HOME/bin/"* "/usr/bin/"
