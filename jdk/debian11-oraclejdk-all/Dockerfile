@@ -34,7 +34,7 @@ COPY jdk-${JAVA_VERSION}_linux-*_bin.tar.gz install_jdk11.sh /tmp/
 
 RUN \
     /tmp/install_jdk11.sh /tmp/
-FROM slpcat/debian:bullseye as builder
+FROM slpcat/debian:bullseye as builder-jdk17
 
 MAINTAINER 若虚 <slpcat@qq.com>
 
@@ -69,7 +69,9 @@ RUN \
 ENV JAVA_VERSION=8 \
     JAVA_HOME="/usr/lib/jvm/default-jvm"
 
-COPY --from=builder /usr/lib/jvm /usr/lib/jvm
+COPY --from=builder-jdk8 /usr/lib/jvm /usr/lib/jvm
+COPY --from=builder-jdk11 /usr/lib/jvm /usr/lib/jvm
+COPY --from=builder-jdk17 /usr/lib/jvm /usr/lib/jvm
 
 RUN  \
     ln -s "java-${JAVA_VERSION}-oracle" "$JAVA_HOME" && \
