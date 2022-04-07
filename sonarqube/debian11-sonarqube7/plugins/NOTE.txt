@@ -1,0 +1,2 @@
+wget https://github.com/xuhuisheng/sonar-l10n-zh/releases/download/sonar-l10n-zh-plugin-1.28/sonar-l10n-zh-plugin-1.28.jar
+wget https://github.com/mc1arke/sonarqube-community-branch-plugin/releases/download/1.3.2/sonarqube-community-branch-plugin-1.3.2.jar

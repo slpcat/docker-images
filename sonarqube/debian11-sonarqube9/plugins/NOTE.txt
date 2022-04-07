@@ -1,0 +1,19 @@
+#plugin list
+#中文支持
+wget https://github.com/xuhuisheng/sonar-l10n-zh/releases/download/sonar-l10n-zh-plugin-9.4/sonar-l10n-zh-plugin-9.4.jar
+#多分支支持
+wget https://github.com/mc1arke/sonarqube-community-branch-plugin/releases/download/1.10.0/sonarqube-community-branch-plugin-1.10.0.jar
+#阿里巴巴p3c规范,如果已安装原版本sonar-pmd-plugin，需要先删除原插件
+https://github.com/caowenliang/sonar-pmd-p3c
+
+# sonar-gitlab-plugin
+
+#LDAP Plugin for SonarQube
+https://github.com/SonarSource/sonar-ldap
+
+#plsql插件
+#https://github.com/felipebz/zpa/releases
+#findbugs插件
+#https://github.com/spotbugs/sonar-findbugs/releases
+
+#
