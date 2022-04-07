@@ -7,7 +7,7 @@ ENV LANG='en_US.UTF-8' \
 #
 # SonarQube setup
 #
-ARG SONARQUBE_VERSION=7.8.0.26217
+ARG SONARQUBE_VERSION=7.8
 ARG SONARQUBE_ZIP_URL=https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-${SONARQUBE_VERSION}.zip
 ENV SONARQUBE_HOME=/opt/sonarqube \
     SONAR_VERSION="${SONARQUBE_VERSION}" \
