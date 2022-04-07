@@ -1,4 +1,6 @@
 SonarQube代码扫描工具
+
+java8 支持最后的版本 7.8-comunity
 SonarQube 8.9.5 LTS
 
 https://docs.sonarqube.org/latest/setup/get-started-2-minutes/
@@ -32,3 +34,11 @@ docker run -d -p 9000:9000 \
     -v /data/sonarqube/data:/opt/sonarqube/data \
     -v /data/sonarqube/extensions:/opt/sonarqube/extensions \
     --name sonarqube sonarqube:9.2.3-community
+
+plugins
+
+https://github.com/SonarQubeCommunity/sonar-pdf-report
+
+https://github.com/SonarQubeCommunity/sonar-jira
+
+https://github.com/xuhuisheng/sonar-l10n-zh/releases/download/sonar-l10n-zh-plugin-1.28/sonar-l10n-zh-plugin-1.28.jar

@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sonarqube
+  namespace: ci
+  labels:
+    app: sonarqube
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sonarqube
+  template:
+    metadata:
+      labels:
+        app: sonarqube
+    spec:
+      initContainers:
+      - name: init-sysctl
+        image: busybox
+        imagePullPolicy: IfNotPresent
+        command: ["sysctl", "-w", "vm.max_map_count=262144"]
+        securityContext:
+          privileged: true
+      containers:
+      - name: sonarqube
+        image: sonarqube:9.2.3-community
+        ports:
+        - containerPort: 9000
+        env:
+        - name: SONARQUBE_JDBC_USERNAME
+          value: "sonarqube"
+        - name: SONARQUBE_JDBC_PASSWORD
+          value: "123456"
+        - name: SONARQUBE_JDBC_URL
+          value: "jdbc:postgresql://postgres-sonar.external:5432/sonarqube"
+        livenessProbe:
+          httpGet:
+            path: /sessions/new
+            port: 9000
+          initialDelaySeconds: 60
+          periodSeconds: 30
+        readinessProbe:
+          httpGet:
+            path: /sessions/new
+            port: 9000
+          initialDelaySeconds: 60
+          periodSeconds: 30
+          failureThreshold: 6
+        resources:
+          limits:
+            cpu: 2000m
+            memory: 2048Mi
+          requests:
+            cpu: 512m
+            memory: 1024Mi
+        volumeMounts:
+        - mountPath: /opt/sonarqube/conf
+          name: data
+          subPath: conf
+        - mountPath: /opt/sonarqube/data
+          name: data
+          subPath: data
+        - mountPath: /opt/sonarqube/extensions
+          name: data
+          subPath: extensions
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: sonarqube-data  

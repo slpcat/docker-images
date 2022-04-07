@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: sonarqube-svc
+  namespace: ci
+  labels:
+    app: sonarqube
+spec:
+  type: ClusterIP
+  ports:
+    - name: sonarqube
+      port: 80
+      targetPort: 9000
+      protocol: TCP
+  selector:
+    app: sonarqube
