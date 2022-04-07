@@ -7,7 +7,7 @@ ENV LANG='en_US.UTF-8' \
 #
 # SonarQube setup
 #
-ARG SONARQUBE_VERSION=9.2.3.50713
+ARG SONARQUBE_VERSION=9.4.0.54424
 ARG SONARQUBE_ZIP_URL=https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-${SONARQUBE_VERSION}.zip
 ENV SONARQUBE_HOME=/opt/sonarqube \
     SONAR_VERSION="${SONARQUBE_VERSION}" \
@@ -35,6 +35,8 @@ RUN set -eux; \
     chmod -R 777 "${SQ_DATA_DIR}" "${SQ_EXTENSIONS_DIR}" "${SQ_LOGS_DIR}" "${SQ_TEMP_DIR}" 
 
 COPY --chown=sonarqube:sonarqube run.sh sonar.sh ${SONARQUBE_HOME}/bin/
+
+COPY --chown=sonarqube:sonarqube plugins/*.jar /opt/sonarqube/extensions/plugins/
 
 WORKDIR ${SONARQUBE_HOME}
 EXPOSE 9000
