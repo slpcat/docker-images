@@ -9,17 +9,17 @@ RUN \
 
 WORKDIR /xxl-job
 RUN \
-    git checkout v1.9.1 \
+    git checkout v2.3.0 \
     && mvn -Dmaven.test.skip=true clean package install
 
 FROM slpcat/tomcat8:alpine-8.5
 MAINTAINER 若虚 <slpcat@qq.com>
 
-COPY --from=build /xxl-job/xxl-job-admin/target/xxl-job-admin-1.9.1.war /xxl-job-admin-1.9.1.war
+COPY --from=build /xxl-job/xxl-job-admin/target/xxl-job-admin-2.3.0.war /xxl-job-admin.war
 RUN \
     rm -rf /usr/local/tomcat/webapps \
     && mkdir -p /usr/local/tomcat/webapps/ROOT \
-    && unzip /xxl-job-admin-1.9.1.war -d /usr/local/tomcat/webapps/ROOT \
-    && rm /xxl-job-admin-1.9.1.war
+    && unzip /xxl-job-admin.war -d /usr/local/tomcat/webapps/ROOT \
+    && rm /xxl-job-admin.war
 
 EXPOSE 8080
