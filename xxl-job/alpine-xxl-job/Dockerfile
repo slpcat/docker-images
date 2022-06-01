@@ -9,7 +9,7 @@ RUN \
 
 WORKDIR /xxl-job
 RUN \
-    git checkout v2.3.0 \
+    git checkout 2.3.0 \
     && mvn -Dmaven.test.skip=true clean package install
 
 FROM slpcat/tomcat8:alpine-8.5
