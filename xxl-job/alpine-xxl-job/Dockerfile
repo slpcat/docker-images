@@ -12,14 +12,11 @@ RUN \
     git checkout 2.3.0 \
     && mvn -Dmaven.test.skip=true clean package install
 
-FROM slpcat/tomcat8:alpine-8.5
+FROM slpcat/oraclejdk:8-bullseye
 MAINTAINER 若虚 <slpcat@qq.com>
 
-COPY --from=build /xxl-job/xxl-job-admin/target/xxl-job-admin-2.3.0.war /xxl-job-admin.war
-RUN \
-    rm -rf /usr/local/tomcat/webapps \
-    && mkdir -p /usr/local/tomcat/webapps/ROOT \
-    && unzip /xxl-job-admin.war -d /usr/local/tomcat/webapps/ROOT \
-    && rm /xxl-job-admin.war
+COPY --from=build /xxl-job/xxl-job-admin/target/xxl-job-admin-2.3.0.jar /xxl-job-admin.jar
 
 EXPOSE 8080
+
+ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/xxl-job-admin.jar"]
