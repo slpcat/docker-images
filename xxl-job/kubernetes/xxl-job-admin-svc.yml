@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: xxl-job-admin
+  namespace: default
+  labels:
+    app: xxl-job-admin
+spec:
+  ports:
+  - port: 8080
+    protocol: TCP
+    name: http
+  selector:
+    app: xxl-job-admin

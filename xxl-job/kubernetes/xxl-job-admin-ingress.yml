@@ -1,0 +1,21 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: xxl-job-admin
+  namespace: default
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    kubernetes.io/tls-acme: "true"
+spec:
+  tls:
+  - hosts:
+    - xxl.wanfei.wang
+    secretName: xxl-job-tls
+  rules:
+  - host: xxl.wanfei.wang
+    http:
+      paths:
+      - path: '/'
+        backend:
+          serviceName: xxl-job-admin
+          servicePort: 8080

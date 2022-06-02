@@ -1,6 +1,7 @@
 FROM  slpcat/maven:alpine-all AS build
 MAINTAINER 若虚 <slpcat@qq.com
 
+ENV PARAMS=""
 RUN apk add git
 
 # install from source
@@ -15,8 +16,10 @@ RUN \
 FROM slpcat/oraclejdk:8-bullseye
 MAINTAINER 若虚 <slpcat@qq.com>
 
-COPY --from=build /xxl-job/xxl-job-admin/target/xxl-job-admin-2.3.0.jar /xxl-job-admin.jar
+RUN mkdir -p /xxl-job-admin/config
+
+COPY --from=build /xxl-job/xxl-job-admin/target/xxl-job-admin-2.3.0.jar /xxl-job-admin/xxl-job-admin.jar
 
 EXPOSE 8080
 
-ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/xxl-job-admin.jar"]
+ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/xxl-job-admin/xxl-job-admin.jar","PARAMS"]

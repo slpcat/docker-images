@@ -123,7 +123,7 @@ spec:
           - name: net.ipv4.fwmark_reflect
             value: "1"
       containers:
-      - image: slpcat/xxl-job
+      - image: slpcat/xxl-job:v2.3.0
         imagePullPolicy: Always
         livenessProbe:
           failureThreshold: 3
