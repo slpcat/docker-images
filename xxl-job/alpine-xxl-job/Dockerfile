@@ -17,6 +17,7 @@ FROM slpcat/oraclejdk:8-bullseye
 MAINTAINER 若虚 <slpcat@qq.com>
 
 RUN mkdir -p /xxl-job-admin/config
+WORKDIR /xxl-job-admin
 
 COPY --from=build /xxl-job/xxl-job-admin/target/xxl-job-admin-2.3.0.jar /xxl-job-admin/xxl-job-admin.jar
 
