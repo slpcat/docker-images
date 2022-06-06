@@ -11,6 +11,8 @@ Knative的Istio有一些自己定义的资源，所以不要用Istio网站的缺
 
   `curl https://raw.githubusercontent.com/knative/serving/master/third_party/istio-1.0.0/istio.yaml`
   
+https://github.com/knative/serving/raw/knative-v1.2.0/third_party/istio-latest/net-istio.yaml
+
 这个安装需要一点时间，但是是必须的。因为Knative依赖Istio来联接Serverless，而不是直接通过Kubernetes。等到所有的安装完成后，我们要开启Istio 自动injection：
 
 kubectl label namespace default istio-injection=enabled
@@ -18,11 +20,26 @@ kubectl label namespace default istio-injection=enabled
 安装 Knative组件：
 
   执行下面的命令：
-kubectl apply -f https://github.com/knative/serving/releases/download/v0.1.1/release.yaml
+#kubectl apply -f https://github.com/knative/serving/releases/download/v0.1.1/release.yaml
+
+kubectl apply -f https://github.com/knative/serving/releases/download/knative-v1.2.0/serving-crds.yaml
+kubectl apply -f https://github.com/knative/serving/releases/download/knative-v1.2.0/serving-core.yaml
+
+# Configure the magic xip.io DNS name
+kubectl apply -f https://github.com/knative/serving/releases/download/knative-v1.2.0/serving-default-domain.yaml
+
+https://github.com/knative/serving/releases/download/knative-v1.2.0/serving-hpa.yaml
+
+https://github.com/knative/serving/releases/download/knative-v1.2.0/serving-post-install-jobs.yaml
+https://github.com/knative/serving/releases/download/knative-v1.2.0/serving-storage-version-migration.yaml
+
+
   安装后等待一会并确认：
 kubectl get pods -n knative-serving -w
 kubectl get pods -n knative-build -w
 细心的同学会发现这里只安装了两部分：Build 和 Serving，那么Eventing呢？是需要单独安装的。
+
+kubectl apply -f https://gist.githubusercontent.com/jonatasbaldin/bc04de2e376be23f75bb5815041fdd61/raw/d2345ac9aa01d0f3c771e9b3d4a1421dd766e0f9/service.yaml
 
 
 kubectl apply -f https://storage.googleapis.com/knative-releases/eventing/latest/release.yaml
