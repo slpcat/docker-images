@@ -1,0 +1,12 @@
+通过在集群节点上以 Daemonset 的形式运行  NodeLocal DNS Cache，能够大幅提升集群内 DNS 解析性能，以及有效避免  conntrack 冲突引发的 DNS 五秒延迟。
+
+该资源清单文件中包含几个变量，其中：
+
+__PILLAR__DNS__SERVER__ ：表示 kube-dns 这个 Service 的 ClusterIP，可以通过命令 kubectl get svc -n kube-system | grep kube-dns | awk '{ print $3 }' 获取
+__PILLAR__LOCAL__DNS__：表示 DNSCache 本地的 IP，默认为 169.254.20.10
+__PILLAR__DNS__DOMAIN__：表示集群域，默认就是 cluster.local
+
+sed -i 's/k8s.gcr.io/harbor.emarbox.com/g' nodelocaldns.yaml && \ 
+sed -i 's/__PILLAR__DNS__SERVER__/10.96.0.10/g' nodelocaldns.yaml && \ 
+sed -i 's/__PILLAR__LOCAL__DNS__/169.254.20.10/g' nodelocaldns.yaml && \ 
+sed -i 's/__PILLAR__DNS__DOMAIN__/cluster.local/g' nodelocaldns.yaml 
