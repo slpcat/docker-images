@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka-id01-svc
+  namespace: dbaas
+  labels:
+    app: kafka-id01
+spec:
+  ports:
+  - port: 9092
+    name: server
+  - port: 9999
+    name: jmx
+  selector:
+    app: kafka-id01

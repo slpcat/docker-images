@@ -1,0 +1,10 @@
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  name: kafka-id01-pdb
+  namespace: dbaas
+spec:
+  selector:
+    matchLabels:
+      app: kafka-id01
+  minAvailable: 2

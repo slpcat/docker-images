@@ -1,0 +1,18 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka-id01-headless-svc
+  namespace: dbaas
+  labels:
+    app: kafka-id01
+spec:
+  ports:
+  - port: 9092
+    name: server
+  - port: 9999
+    name: jmx
+  publishNotReadyAddresses: true
+  clusterIP: None
+  selector:
+    app: kafka-id01

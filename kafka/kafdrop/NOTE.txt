@@ -1,0 +1,12 @@
+Kafdrop是Apache Kafka的开源Web UI可视化界面 。
+
+主要功能
+
+查看Kafka代理 -主题和分区分配以及控制器状态
+查看主题 -分区数，复制状态和自定义配置
+浏览消息 -JSON，纯文本和Avro编码
+查看消费者组 -每个分区的停放偏移量，合并延迟和每个分区滞后
+创建新主题
+查看ACL
+
+https://github.com/obsidiandynamics/kafdrop
