@@ -1,13 +1,13 @@
 kind: Service
 apiVersion: v1
 metadata:
-  name: mysql-production
+  name: mysql-svc
   namespace: ms
 spec:
   type: ExternalName
   externalName: somedomain.org
   ports:
-    - port: 3306
-      protocol: TCP
-      targetPort: 3306
-
+  - name: mysql-svc
+    port: 3306
+    protocol: TCP
+    targetPort: 3306

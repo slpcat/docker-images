@@ -76,6 +76,19 @@ spec:
       terminationGracePeriodSeconds: 60 #k8s将会给应用发送SIGTERM信号，可以用来正确、优雅地关闭应用,默认为30秒
       #imagePullSecrets:
       #- name: registrykey-ali-ext
+      topologySpreadConstraints:
+      - maxSkew: 1
+        topologyKey: zone
+        whenUnsatisfiable: DoNotSchedule
+        labelSelector:
+          matchLabels:
+            foo: bar
+      - maxSkew: 1
+        topologyKey: node
+        whenUnsatisfiable: DoNotSchedule
+        labelSelector:
+          matchLabels:
+            foo: bar
       affinity:
         nodeAffinity:
           #preferredDuringSchedulingIgnoredDuringExecution
@@ -97,6 +110,19 @@ spec:
               topologyKey: "kubernetes.io/hostname"
       priorityClassName: high-priority # 这里指定高优先的 PriorityClass
       securityContext:
+        capabilities:
+          add:
+          - NET_ADMIN
+          drop:
+          - KILL
+        allowPrivilegeEscalation: false
+      #系统调用访问控制
+      #seccomp规则位置 /var/lib/kubelet/seccomp/
+      #seccompProfile:
+      #  type: RuntimeDefault
+        seccompProfile:
+          type: Localhost
+          localhostProfile: fine-grained.json
         sysctls:
           #kubernetes >= v1.11 and kernel version >= 4.15 needed
           #- name: kernel.msgmax
@@ -168,7 +194,7 @@ spec:
         - 172.21.0.10
         options:
         - name: ndots
-          value: "3"
+          value: "5"
         - name: attempts
           value: "2"
         - name: timeout

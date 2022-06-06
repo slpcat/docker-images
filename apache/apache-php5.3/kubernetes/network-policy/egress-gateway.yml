@@ -1,0 +1,13 @@
+piVersion: cilium.io/v2alpha1
+kind: CiliumEgressNATPolicy
+metadata:
+  name: egress-sample
+spec:
+  egress:
+    - podSelector:
+        matchLabels:
+          # The following label selects default namespace
+          io.kubernetes.pod.namespace: default
+  destinationCIDRs:
+    - 192.168.33.13/32
+  egressSourceIP: '192.168.33.100'

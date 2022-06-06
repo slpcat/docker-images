@@ -2,6 +2,7 @@ kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
   name: nfs-pvc1
+  namespace: default
 spec:
   accessModes:
    - ReadWriteMany
@@ -14,6 +15,7 @@ kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
   name: ceph-rbd-pvc1
+  namespace: default
 spec:
   accessModes:
    - ReadWriteOnce

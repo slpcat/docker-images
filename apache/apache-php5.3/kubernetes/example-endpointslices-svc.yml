@@ -1,0 +1,39 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: gitcode-svc
+  namespace: external
+spec:
+  ports:
+  - name: https-svc
+    protocol: TCP
+    port: 443
+    targetPort: 443
+  - name: ssh-svc
+    protocol: TCP
+    port: 22
+    targetPort: 22
+---
+apiVersion: discovery.k8s.io/v1beta1
+kind: EndpointSlice
+metadata:
+  name: gitcode-svc
+  namespace: external
+  labels:
+    kubernetes.io/service-name: gitcode-svc
+addressType: IPv4
+ports:
+  - name: https-svc
+    port: 443
+    protocol: TCP
+  - name: ssh-svc
+    port: 22
+    protocol: TCP
+endpoints:
+  - addresses:
+      - "10.50.15.69"
+    conditions:
+      ready: true
+    #hostname: gitcode-inc
+    #nodeName: 10.51.16.11
+    #zone: us-west2-a
