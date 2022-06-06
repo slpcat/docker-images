@@ -19,9 +19,6 @@
 package constants
 
 const (
-	// TODO: get paths by container ENV or actual value instead of fixed constant
-	DataPath = "/root"
-
 	// BrokerContainerName is the name of broker container
 	BrokerContainerName = "broker"
 
@@ -29,22 +26,16 @@ const (
 	BasicCommand = "sh"
 
 	// AdminToolDir is the RocketMQ Admin directory in operator image
-	AdminToolDir = "/home/rocketmq/operator/bin/mqadmin"
+	AdminToolDir = "/home/rocketmq/rocketmq-4.5.0/bin/mqadmin"
 
 	// StoreConfigDir is the directory of config file
-	StoreConfigDir = DataPath + "/store/config"
+	StoreConfigDir = "/home/rocketmq/store/config"
 
 	// TopicJsonDir is the directory of topics.json
-	TopicJsonDir = StoreConfigDir + "/topics.json"
+	TopicJsonDir = "/home/rocketmq/store/config/topics.json"
 
 	// SubscriptionGroupJsonDir is the directory of subscriptionGroup.json
-	SubscriptionGroupJsonDir = StoreConfigDir + "/subscriptionGroup.json"
-
-	// BrokerConfigDir is the directory of the mounted config file
-	BrokerConfigPath = DataPath + "/rocketmq/broker/conf"
-
-	// BrokerConfigName is the name of mounted configuration file
-	BrokerConfigName = "broker-common.conf"
+	SubscriptionGroupJsonDir = "/home/rocketmq/store/config/subscriptionGroup.json"
 
 	// UpdateBrokerConfig is update broker config command
 	UpdateBrokerConfig = "updateBrokerConfig"
@@ -54,6 +45,9 @@ const (
 
 	// EnvNameServiceAddress is the container environment variable name of name server list
 	EnvNameServiceAddress = "NAMESRV_ADDR"
+
+	// EnvReplicationMode is the container environment variable name of replication mode
+	EnvReplicationMode = "REPLICATION_MODE"
 
 	// EnvBrokerId is the container environment variable name of broker id
 	EnvBrokerId = "BROKER_ID"
@@ -65,10 +59,10 @@ const (
 	EnvBrokerName = "BROKER_NAME"
 
 	// LogMountPath is the directory of RocketMQ log files
-	LogMountPath = DataPath + "/logs"
+	LogMountPath = "/root/logs"
 
 	// StoreMountPath is the directory of RocketMQ store files
-	StoreMountPath = DataPath + "/store"
+	StoreMountPath = "/root/store"
 
 	// LogSubPathName is the sub-path name of log dir under mounted host dir
 	LogSubPathName = "logs"
@@ -99,12 +93,6 @@ const (
 
 	// BrokerHighAvailabilityContainerPortName is the high availability port name of broker container
 	BrokerHighAvailabilityContainerPortName = "ha"
-
-	// ConsoleContainerPort is the port number of RocketMQ Console container
-	ConsoleContainerPort = 8080
-
-	// ConsoleContainerPortName is the port name of RocketMQ Console container
-	ConsoleContainerPortName = "console"
 
 	// StorageModeStorageClass is the name of StorageClass storage mode
 	StorageModeStorageClass = "StorageClass"

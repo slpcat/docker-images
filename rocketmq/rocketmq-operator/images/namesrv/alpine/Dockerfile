@@ -25,7 +25,7 @@ ARG version
 ENV ROCKETMQ_VERSION ${version}
 
 # Rocketmq home
-ENV ROCKETMQ_HOME  /root/rocketmq/nameserver
+ENV ROCKETMQ_HOME  /root/rocketmq-${ROCKETMQ_VERSION}
 
 WORKDIR  ${ROCKETMQ_HOME}
 
@@ -34,7 +34,9 @@ RUN set -eux; \
     apk add --virtual .build-deps curl gnupg unzip; \
     curl https://archive.apache.org/dist/rocketmq/${ROCKETMQ_VERSION}/rocketmq-all-${ROCKETMQ_VERSION}-bin-release.zip -o rocketmq.zip; \
     curl https://archive.apache.org/dist/rocketmq/${ROCKETMQ_VERSION}/rocketmq-all-${ROCKETMQ_VERSION}-bin-release.zip.asc -o rocketmq.zip.asc; \
+    #https://www.apache.org/dist/rocketmq/KEYS
 	curl https://www.apache.org/dist/rocketmq/KEYS -o KEYS; \
+	\
 	gpg --import KEYS; \
     gpg --batch --verify rocketmq.zip.asc rocketmq.zip; \
     unzip rocketmq.zip; \

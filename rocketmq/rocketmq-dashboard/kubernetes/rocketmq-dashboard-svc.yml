@@ -1,0 +1,15 @@
+kind: Service
+apiVersion: v1
+metadata:
+  labels:
+      app: rocketmq-dashboard
+  name: rocketmq-dashboard-svc
+  namespace: default
+spec:
+  ports:
+  - port: 8080
+    targetPort: 8080
+    name: web
+  selector:
+    app: rocketmq-dashboard
+  type: NodePort
