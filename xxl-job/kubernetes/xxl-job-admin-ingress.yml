@@ -1,21 +1,19 @@
-apiVersion: extensions/v1beta1
+#kubernetes v1.22+
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: xxl-job-admin
-  namespace: default
-  annotations:
-    kubernetes.io/ingress.class: "nginx"
-    kubernetes.io/tls-acme: "true"
+  name: xxl-job-admin-ingress
+  namespace: iov-dev01
 spec:
-  tls:
-  - hosts:
-    - xxl.wanfei.wang
-    secretName: xxl-job-tls
+  ingressClassName: nginx-vpc
   rules:
-  - host: xxl.wanfei.wang
+  - host: xxl-job-admin-dev01.example.com
     http:
       paths:
-      - path: '/'
+      - pathType: Prefix
+        path: "/"
         backend:
-          serviceName: xxl-job-admin
-          servicePort: 8080
+          service:
+            name: xxl-job-admin-svc
+            port:
+              number: 8080

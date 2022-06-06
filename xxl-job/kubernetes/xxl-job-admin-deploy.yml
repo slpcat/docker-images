@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: xxl-job-admin
+  name: xxl-job-admin-deploy
+  namespace: iov-dev01
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: xxl-job-admin
+  template:
+    metadata:
+      labels:
+        app: xxl-job-admin
+      name: xxl-job-admin
+      annotations:
+        #disable istio sidecar injection
+        sidecar.istio.io/inject: "false"
+    spec:
+      containers:
+      - image: slpcat/xxl-job:v2.3.0
+        imagePullPolicy: Always
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /xxl-job-admin
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 5
+        name: xxl-job-admin
+        ports:
+        - containerPort: 8080
+          name: web
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /xxl-job-admin
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 5
+        resources:
+          limits:
+            cpu: "4"
+            memory: 4Gi
+          requests:
+            cpu: 500m
+            memory: 512Mi
+        volumeMounts:
+          - name: xxl-job-conf
+            mountPath: "/xxl-job-admin/config/application.properties"
+            subPath: "application.properties"
+      #imagePullSecrets:
+      #- name: myregistrykey
+      restartPolicy: Always
+      volumes:
+        - name: xxl-job-conf
+          configMap:
+            name: xxl-job-configmap
+            #Add ConfigMap data to a specific path in the Volume
+            items:
+            - key: application.properties
+              path: application.properties

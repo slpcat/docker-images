@@ -1,0 +1,165 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: xxl-job-admin-netpolicy
+  namespace: iov-dev01
+spec:
+  podSelector:
+    matchLabels:
+      app: xxl-job-admin
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  # allow access from prometheus monitoring
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: monitoring
+      podSelector:
+        matchLabels:
+          app: prometheus
+    ports:
+    - protocol: TCP
+      port: 8081
+    - protocol: TCP
+      port: 15090
+  # allow access from ingress controller
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: ingress-nginx
+      podSelector:
+        matchLabels:
+          app.kubernetes.io/name: "ingress-nginx-vpc"
+    ports:
+    - protocol: TCP
+      port: 8080
+  # allow access from istio
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: istio-system
+    ports:
+    - protocol: TCP
+      port: 15001
+    - protocol: TCP
+      port: 15006
+    - protocol: TCP
+      port: 15020
+    - protocol: TCP
+      port: 15021
+  # allow access from istio ingress gateway
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: istio-system
+      podSelector:
+        matchLabels:
+          app: istio-ingressgateway-public
+    ports:
+    - protocol: TCP
+      port: 8080
+  # allow access from microservices
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: iov-dev01
+    ports:
+    - protocol: TCP
+      port: 8080
+
+  egress:
+  #allow access to istio control
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: istio-system
+      podSelector:
+        matchLabels:
+          app: istiod
+    ports:
+    - protocol: TCP
+      #port range
+      port: 443
+    - protocol: TCP
+      #port range
+      port: 15010
+    - protocol: TCP
+      #port range
+      port: 15012
+    - protocol: TCP
+      #port range
+      port: 15014
+    - protocol: TCP
+      #port range
+      port: 15021
+  #allow access to istio jaeger
+  #allow access to tracing by skywalking
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: tracing
+      podSelector:
+        matchLabels:
+          app: app-trace
+          component: oap
+    ports:
+    - protocol: TCP
+      port: 11800
+    - protocol: TCP
+      port: 12800
+  # allow access to mysql
+  - to:
+    - ipBlock:
+        cidr: 10.51.101.0/24
+    ports:
+    - protocol: TCP
+      port: 3306
+  # allow access to redis
+  # allow access to zookeeper
+  #- to:
+  #  - ipBlock:
+  #      cidr: 172.17.0.0/16
+  #  ports:
+  #  - protocol: TCP
+  #    port: 2181
+  # allow access to etcd
+  # allow access to consul
+  # allow access to thirdparty api
+  # allow access to kafka
+  # allow access to rocketmq
+  # allow access to pulsar
+  # allow access to elasticsearch
+  # allow access to clickhouse
+  # allow access to nacos
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: nacos
+      podSelector:
+        matchLabels:
+          app: nacos-cluster
+    ports:
+    - protocol: TCP
+      port: 8848
+  # allow access to seata
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: seata
+      podSelector:
+        matchLabels:
+          app.kubernetes.io/name: seata-ha-server
+    ports:
+    - protocol: TCP
+      port:  8091
+
+  # allow access to xxl-job client in iov-dev01
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: iov-dev01
+    ports:
+    - protocol: TCP
+      port: 9999

@@ -1,8 +1,8 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: xxl-job-admin
-  namespace: default
+  name: xxl-job-admin-svc
+  namespace: iov-dev01
   labels:
     app: xxl-job-admin
 spec:
