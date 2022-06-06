@@ -1,0 +1,6 @@
+https://github.com/ucloud/redis-operator
+
+https://github.com/spotahome/redis-operator
+
+kubectl apply -f https://raw.githubusercontent.com/spotahome/redis-operator/master/manifests/databases.spotahome.com_redisfailovers.yaml
+kubectl apply -f https://raw.githubusercontent.com/spotahome/redis-operator/master/example/operator/all-redis-operator-resources.yaml
