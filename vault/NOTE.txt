@@ -1,0 +1,32 @@
+vault
+1.https://github.com/hashicorp/vault-guides
+helm repo add hashicorp https://helm.releases.hashicorp.com
+helm install consul hashicorp/consul --values helm-consul-values.yml
+helm install vault hashicorp/vault --values helm-vault-values.yml
+
+https://www.jianshu.com/p/0312ab12521d
+
+2.Bank-Vaults project. (荐)
+https://banzaicloud.com/docs/bank-vaults/operator/
+# Install the operator
+helm repo add banzaicloud-stable https://kubernetes-charts.banzaicloud.com
+helm upgrade --install vault-operator banzaicloud-stable/vault-operator
+
+
+# Create a Vault instance with the Vault CR
+kubectl apply -f https://raw.githubusercontent.com/banzaicloud/bank-vaults/master/operator/deploy/rbac.yaml
+kubectl apply -f https://raw.githubusercontent.com/banzaicloud/bank-vaults/master/operator/deploy/cr.yaml
+
+应用：
+enable mysql database dynamic credentials
+
+
+kms-vault-operator:Kubernetes运营商管理KMS加密的Vault机密
+
+https://github.com/ricoberger/vault-secrets-operator
+
+helm repo add ricoberger https://ricoberger.github.io/helm-charts
+helm repo update
+
+helm upgrade --install vault-secrets-operator ricoberger/vault-secrets-operator
+
