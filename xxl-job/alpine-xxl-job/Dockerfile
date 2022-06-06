@@ -23,4 +23,4 @@ COPY --from=build /xxl-job/xxl-job-admin/target/xxl-job-admin-2.3.0.jar /xxl-job
 
 EXPOSE 8080
 
-ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/xxl-job-admin/xxl-job-admin.jar","PARAMS"]
+ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/xxl-job-admin/xxl-job-admin.jar","$PARAMS"]
