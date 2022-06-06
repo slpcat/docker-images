@@ -261,6 +261,7 @@ RUN /usr/local/bin/install-plugins.sh       \
   matrix-auth:latest             \
   matrix-project:latest          \
   maven-plugin:latest            \
+  #maven-deploy-plugin:latest     \
   #maven-release-plugin:latest    \
   #mercurial:latest              \
   #mesos:latest                  \
@@ -270,6 +271,7 @@ RUN /usr/local/bin/install-plugins.sh       \
   #msbuild:latest                 \
   nant:latest                    \
   nexus-artifact-uploader:latest \
+  nexus-jenkins-plugin:latest    \
   node-iterator-api:latest       \
   nodejs:latest                  \
   nomad:latest                   \
@@ -303,6 +305,7 @@ RUN /usr/local/bin/install-plugins.sh       \
   plugin-util-api:latest         \
   postbuildscript:latest         \
   postbuild-task:latest          \
+  prometheus:latest              \
   publish-over-cifs:latest       \
   publish-over-ftp:latest        \
   publish-over-ssh:latest        \
