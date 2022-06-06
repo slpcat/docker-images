@@ -1,0 +1,21 @@
+apiVersion: mysql.oracle.com/v2alpha1
+kind: InnoDBCluster
+metadata:
+  name: mycluster
+  namepsace: dbaas
+spec:
+  secretName: mypwds
+  instances: 3
+  router:
+    instances: 1
+    version: 8.0.3
+  version: 8.0.3
+  edition: community
+  imageRepository: mysql
+  imagePullPolicy: IfNotPresent
+  #imagePullSecrets: reg
+  baseServerId: 1000
+  #datadirVolumeClaimTemplate:
+  mycnf:
+  #backupProfiles:
+  #backupSchedules:

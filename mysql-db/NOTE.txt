@@ -11,3 +11,14 @@ docker run -d --restart=always --name mysql-server \
     slpcat/percona-5.6
 
 推荐版本 percona8.0
+
+Oracle MySQL Operator 
+
+Percona MySQL Operator 
+
+Bitpoke MySQL Operator 
+https://github.com/bitpoke/mysql-operator/
+
+GrdsCloud MySQL Operator
+
+

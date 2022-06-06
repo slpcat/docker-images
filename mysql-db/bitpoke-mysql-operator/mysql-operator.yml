@@ -1,0 +1,398 @@
+---
+# Source: mysql-operator/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: dba-mysql-operator
+  namespace: mysql-operator
+  labels:
+    helm.sh/chart: mysql-operator-0.6.2
+    app.kubernetes.io/name: mysql-operator
+    app.kubernetes.io/instance: dba
+    app.kubernetes.io/version: "v0.6.2"
+    app.kubernetes.io/managed-by: Helm
+---
+# Source: mysql-operator/templates/orchestrator-secret.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: dba-mysql-operator-orc
+  namespace: mysql-operator
+  labels:
+    helm.sh/chart: mysql-operator-0.6.2
+    app.kubernetes.io/name: mysql-operator
+    app.kubernetes.io/instance: dba
+    app.kubernetes.io/version: "v0.6.2"
+    app.kubernetes.io/managed-by: Helm
+data:
+  TOPOLOGY_USER: "b3JjaGVzdHJhdG9y"
+  TOPOLOGY_PASSWORD: "STJLVUgwU1lPRg=="
+---
+# Source: mysql-operator/templates/orchestrator-config.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dba-mysql-operator-orc
+  namespace: mysql-operator
+  labels:
+    helm.sh/chart: mysql-operator-0.6.2
+    app.kubernetes.io/name: mysql-operator
+    app.kubernetes.io/instance: dba
+    app.kubernetes.io/version: "v0.6.2"
+    app.kubernetes.io/managed-by: Helm
+data:
+  orchestrator.conf.json: "{\n  \"ApplyMySQLPromotionAfterMasterFailover\": true,\n  \"BackendDB\": \"sqlite\",\n  \"Debug\": false,\n  \"DetachLostReplicasAfterMasterFailover\": true,\n  \"DetectClusterAliasQuery\": \"SELECT CONCAT(SUBSTRING(@@hostname, 1, LENGTH(@@hostname) - 1 - LENGTH(SUBSTRING_INDEX(@@hostname,'-',-2))),'.',SUBSTRING_INDEX(@@report_host,'.',-1))\",\n  \"DetectInstanceAliasQuery\": \"SELECT @@hostname\",\n  \"DiscoverByShowSlaveHosts\": false,\n  \"FailMasterPromotionIfSQLThreadNotUpToDate\": true,\n  \"HTTPAdvertise\": \"http://{{ .Env.HOSTNAME }}.dba-mysql-operator-orc:3000\",\n  \"HostnameResolveMethod\": \"none\",\n  \"InstancePollSeconds\": 5,\n  \"ListenAddress\": \":3000\",\n  \"MasterFailoverLostInstancesDowntimeMinutes\": 10,\n  \"MySQLHostnameResolveMethod\": \"@@report_host\",\n  \"MySQLTopologyCredentialsConfigFile\": \"/etc/orchestrator/orc-topology.cnf\",\n  \"OnFailureDetectionProcesses\": [\n    \"/usr/local/bin/orc-helper event -w '{failureClusterAlias}' 'OrcFailureDetection' 'Failure: {failureType}, failed host: {failedHost}, lost replcas: {lostReplicas}' || true\",\n    \"/usr/local/bin/orc-helper failover-in-progress '{failureClusterAlias}' '{failureDescription}' || true\"\n  ],\n  \"PostIntermediateMasterFailoverProcesses\": [\n    \"/usr/local/bin/orc-helper event '{failureClusterAlias}' 'OrcPostIntermediateMasterFailover' 'Failure type: {failureType}, failed hosts: {failedHost}, slaves: {countSlaves}' || true\"\n  ],\n  \"PostMasterFailoverProcesses\": [\n    \"/usr/local/bin/orc-helper event '{failureClusterAlias}' 'OrcPostMasterFailover' 'Failure type: {failureType}, new master: {successorHost}, slaves: {slaveHosts}' || true\"\n  ],\n  \"PostUnsuccessfulFailoverProcesses\": [\n    \"/usr/local/bin/orc-helper event -w '{failureClusterAlias}' 'OrcPostUnsuccessfulFailover' 'Failure: {failureType}, failed host: {failedHost} with {countSlaves} slaves' || true\"\n  ],\n  \"PreFailoverProcesses\": [\n    \"/usr/local/bin/orc-helper failover-in-progress '{failureClusterAlias}' '{failureDescription}' || true\"\n  ],\n  \"ProcessesShellCommand\": \"sh\",\n  \"RaftAdvertise\": \"{{ .Env.HOSTNAME }}.dba-mysql-operator-orc\",\n  \"RaftBind\": \"{{ .Env.HOSTNAME }}\",\n  \"RaftDataDir\": \"/var/lib/orchestrator\",\n  \"RaftEnabled\": true,\n  \"RaftNodes\": [],\n  \"RecoverIntermediateMasterClusterFilters\": [\n    \".*\"\n  ],\n  \"RecoverMasterClusterFilters\": [\n    \".*\"\n  ],\n  \"RecoveryIgnoreHostnameFilters\": [],\n  \"RecoveryPeriodBlockSeconds\": 300,\n  \"RemoveTextFromHostnameDisplay\": \":3306\",\n  \"SQLite3DataFile\": \"/var/lib/orchestrator/orc.db\",\n  \"SlaveLagQuery\": \"SELECT TIMESTAMPDIFF(SECOND,ts,UTC_TIMESTAMP()) as drift FROM sys_operator.heartbeat ORDER BY drift ASC LIMIT 1\",\n  \"UnseenInstanceForgetHours\": 1\n}"
+  orc-topology.cnf: |
+    [client]
+    user = {{ .Env.ORC_TOPOLOGY_USER }}
+    password = {{ .Env.ORC_TOPOLOGY_PASSWORD }}
+---
+# Source: mysql-operator/templates/clusterrole.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: dba-mysql-operator
+  namespace: mysql-operator
+  labels:
+    helm.sh/chart: mysql-operator-0.6.2
+    app.kubernetes.io/name: mysql-operator
+    app.kubernetes.io/instance: dba
+    app.kubernetes.io/version: "v0.6.2"
+    app.kubernetes.io/managed-by: Helm
+rules:
+- apiGroups:
+    - apps
+  resources:
+    - statefulsets
+  verbs:
+    - create
+    - delete
+    - get
+    - list
+    - patch
+    - update
+    - watch
+- apiGroups:
+    - batch
+  resources:
+    - jobs
+  verbs:
+    - create
+    - delete
+    - get
+    - list
+    - patch
+    - update
+    - watch
+- apiGroups:
+    - coordination.k8s.io
+  resources:
+    - leases
+  verbs:
+    - create
+    - delete
+    - get
+    - list
+    - patch
+    - update
+    - watch
+- apiGroups:
+    - ""
+  resources:
+    - configmaps
+    - events
+    - jobs
+    - persistentvolumeclaims
+    - pods
+    - secrets
+    - services
+  verbs:
+    - create
+    - delete
+    - get
+    - list
+    - patch
+    - update
+    - watch
+- apiGroups:
+    - ""
+  resources:
+    - pods/status
+  verbs:
+    - create
+    - delete
+    - get
+    - list
+    - patch
+    - update
+    - watch
+- apiGroups:
+    - mysql.presslabs.org
+  resources:
+    - mysqlbackups
+  verbs:
+    - create
+    - delete
+    - get
+    - list
+    - patch
+    - update
+    - watch
+- apiGroups:
+    - mysql.presslabs.org
+  resources:
+    - mysqlclusters
+    - mysqlclusters/status
+  verbs:
+    - create
+    - delete
+    - get
+    - list
+    - patch
+    - update
+    - watch
+- apiGroups:
+    - mysql.presslabs.org
+  resources:
+    - mysqldatabases
+    - mysqldatabases/status
+  verbs:
+    - create
+    - delete
+    - get
+    - list
+    - patch
+    - update
+    - watch
+- apiGroups:
+    - mysql.presslabs.org
+  resources:
+    - mysqlusers
+    - mysqlusers/status
+  verbs:
+    - create
+    - delete
+    - get
+    - list
+    - patch
+    - update
+    - watch
+- apiGroups:
+    - policy
+  resources:
+    - poddisruptionbudgets
+  verbs:
+    - create
+    - delete
+    - get
+    - list
+    - patch
+    - update
+    - watch
+---
+# Source: mysql-operator/templates/clusterrolebinding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: dba-mysql-operator
+  namespace: mysql-operator
+  labels:
+    helm.sh/chart: mysql-operator-0.6.2
+    app.kubernetes.io/name: mysql-operator
+    app.kubernetes.io/instance: dba
+    app.kubernetes.io/version: "v0.6.2"
+    app.kubernetes.io/managed-by: Helm
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: dba-mysql-operator
+subjects:
+  - name: dba-mysql-operator
+    namespace: mysql-operator
+    kind: ServiceAccount
+---
+# Source: mysql-operator/templates/orchestrator-raft-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: dba-mysql-operator-orc
+  namespace: mysql-operator
+  labels:
+    app.kubernetes.io/component: orchestrator-raft
+    helm.sh/chart: mysql-operator-0.6.2
+    app.kubernetes.io/name: mysql-operator
+    app.kubernetes.io/instance: dba
+    app.kubernetes.io/version: "v0.6.2"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  type: ClusterIP
+  clusterIP: None
+  publishNotReadyAddresses: true
+  ports:
+    - name: http
+      port: 80
+      targetPort: 3000
+    - name: raft
+      port: 10008
+      targetPort: 10008
+  selector:
+    app.kubernetes.io/name: mysql-operator
+    app.kubernetes.io/instance: dba
+---
+# Source: mysql-operator/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: dba-mysql-operator
+  namespace: mysql-operator
+  labels:
+    helm.sh/chart: mysql-operator-0.6.2
+    app.kubernetes.io/name: mysql-operator
+    app.kubernetes.io/instance: dba
+    app.kubernetes.io/version: "v0.6.2"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: operator
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      name: http
+      protocol: TCP
+      targetPort: http
+    - port: 9125
+      name: prometheus
+      protocol: TCP
+      targetPort: prometheus
+  selector:
+    app.kubernetes.io/name: mysql-operator
+    app.kubernetes.io/instance: dba
+---
+# Source: mysql-operator/templates/statefulset.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: dba-mysql-operator
+  namespace: mysql-operator
+  labels:
+    helm.sh/chart: mysql-operator-0.6.2
+    app.kubernetes.io/name: mysql-operator
+    app.kubernetes.io/instance: dba
+    app.kubernetes.io/version: "v0.6.2"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  replicas: 1
+  serviceName: dba-mysql-operator-orc
+  podManagementPolicy: Parallel
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: mysql-operator
+      app.kubernetes.io/instance: dba
+  template:
+    metadata:
+      annotations:
+        checksum/orchestrator-config: a104ef858b5b4e060a64256ae21c93a4f9c3efd0503e759e2076d865e8f97537
+        checksum/orchestrator-secret: 6410ea3bae2227154c113f2251800a46a66c3bf9f2cb79dac7873af69e8dc841
+      labels:
+        app.kubernetes.io/name: mysql-operator
+        app.kubernetes.io/instance: dba
+    spec:
+      serviceAccountName: dba-mysql-operator
+      securityContext:
+        fsGroup: 65532
+        runAsGroup: 65532
+        runAsNonRoot: true
+        runAsUser: 65532
+      containers:
+        - name: operator
+          securityContext:
+            {}
+          image: "docker.io/bitpoke/mysql-operator:v0.6.2"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+              name: prometheus
+              protocol: TCP
+          env:
+            - name: ORC_TOPOLOGY_USER
+              valueFrom:
+                secretKeyRef:
+                  name: dba-mysql-operator-orc
+                  key: TOPOLOGY_USER
+            - name: ORC_TOPOLOGY_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: dba-mysql-operator-orc
+                  key: TOPOLOGY_PASSWORD
+          args:
+            - --leader-election-namespace=mysql-operator
+            - --orchestrator-uri=http://dba-mysql-operator.mysql-operator/api
+            - --sidecar-image=docker.io/bitpoke/mysql-operator-sidecar-5.7:v0.6.2
+            - --sidecar-mysql8-image=docker.io/bitpoke/mysql-operator-sidecar-8.0:v0.6.2
+            - --failover-before-shutdown=true
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8081
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: 8081
+          resources:
+            {}
+        - name: orchestrator
+          securityContext:
+            {}
+          image: docker.io/bitpoke/mysql-operator-orchestrator:v0.6.2
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3000
+              name: http
+              protocol: TCP
+            - containerPort: 10008
+              name: raft
+              protocol: TCP
+          env:
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+          envFrom:
+            - prefix: ORC_
+              secretRef:
+                name: dba-mysql-operator-orc
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/orchestrator
+            - name: config
+              mountPath: /usr/local/share/orchestrator/templates
+          livenessProbe:
+            timeoutSeconds: 10
+            initialDelaySeconds: 200
+            httpGet:
+              path: /api/lb-check
+              port: 3000
+          # https://github.com/github/orchestrator/blob/master/docs/raft.md#proxy-healthy-raft-nodes
+          readinessProbe:
+            timeoutSeconds: 10
+            httpGet:
+              path: /api/raft-health
+              port: 3000
+          resources:
+            {}
+
+      volumes:
+        - name: config
+          configMap:
+            name: dba-mysql-operator-orc
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: [ ReadWriteOnce ]
+        resources:
+          requests:
+            storage: 1Gi
+---
+# Source: mysql-operator/templates/servicemonitor.yaml
+# This is a ServicMonitor for the MySQL operator itself.
+# To scrape the operator, we need https://github.com/bitpoke/mysql-operator/issues/151 first.
