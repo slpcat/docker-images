@@ -1,0 +1,19 @@
+#kubernetes v1.22+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name:  jira-ingress
+  namespace: ci
+spec:
+  ingressClassName: nginx-vpc
+  rules:
+  - host: jenkins-dev.example.com
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: jira-svc
+            port:
+              number: 80
