@@ -1,5 +1,5 @@
-8.20.2 (长期支持)
-https://toscode.gitee.com/lonsun/atlassian-agent/blob/master/README.md
+8.20.9 (长期支持)
+https://toscode.gitee.com/pengzhile/atlassian-agent
 
 docker run -d --restart=always --net=host --name mysql-server \
 -e TZ="Asia/Shanghai" \
@@ -8,7 +8,25 @@ docker run -d --restart=always --net=host --name mysql-server \
 mysql:5.7 --character-set-server=utf8mb4 --collation-server=utf8mb4_bin
 注意关闭ssl
 
-[mysqld]
+
+
+[mysqld] 5.7
+...
+default-storage-engine=INNODB
+character_set_server=utf8mb4
+innodb_default_row_format=DYNAMIC
+innodb_large_prefix=ON
+innodb_file_format=Barracuda
+innodb_log_file_size=2G
+skip-ssl
+
+docker run -d --restart=always --net=host --name mysql-server \
+-e TZ="Asia/Shanghai" \
+-e MYSQL_ROOT_PASSWORD="hzk8tfExydyBebs80hketnhq" \
+-v /data/mysql-data:/var/lib/mysql \
+mysql:8.0 --character-set-server=utf8mb4 --collation-server=utf8mb4_bin
+
+[mysqld] 8.0
 ...
 default-storage-engine=INNODB
 character_set_server=utf8mb4
@@ -19,11 +37,10 @@ innodb_log_file_size=2G
 skip-ssl
 
 
-
 docker run -d --restart=always --name jira \
   -p 80:8080 \
   -v /data/jira-home:/var/atlassian/jira \
-  slpcat/jira:8.20.2
+  slpcat/jira:8.20.9
 
 
 apiVersion: v1
