@@ -8,8 +8,6 @@ docker run -d --restart=always --net=host --name mysql-server \
 mysql:5.7 --character-set-server=utf8mb4 --collation-server=utf8mb4_bin
 注意关闭ssl
 
-
-
 [mysqld] 5.7
 ...
 default-storage-engine=INNODB
@@ -35,7 +33,6 @@ innodb_large_prefix=ON
 innodb_file_format=Barracuda
 innodb_log_file_size=2G
 skip-ssl
-
 
 docker run -d --restart=always --name jira \
   -p 80:8080 \

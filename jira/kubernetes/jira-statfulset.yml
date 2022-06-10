@@ -23,14 +23,13 @@ spec:
       #- name: registrykey-ali-ext
       containers:
       - name: jira
-        image: slpcat/jira:7.3.8-20180319a
+        image: slpcat/jira:8.20.9
         imagePullPolicy: Always
         securityContext:
-          #allowPrivilegeEscalation: false
-          capabilities: {}
           privileged: false
-          runAsUser: 1000
-          fsGroup: 1000
+          readOnlyRootFilesystem: false
+          #runAsUser: 1000
+          #fsGroup: 1000
         livenessProbe: #kubernetes认为该pod是存活的,不存活则需要重启
           httpGet:
             path: /
@@ -62,7 +61,7 @@ spec:
             containerPort: 8080
         volumeMounts:
           - name: jira-data
-            mountPath: "/opt/atlassian/jira-home"
+            mountPath: "/var/atlassian/jira"
   volumeClaimTemplates:
   - metadata:
       name: jira-data
@@ -73,4 +72,4 @@ spec:
       #storageClassName: rbd
       resources:
         requests:
-          storage: 80Gi
+          storage: 160Gi

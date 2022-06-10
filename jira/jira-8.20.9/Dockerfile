@@ -9,7 +9,7 @@ ENV JIRA_VERSION  8.20.9
 # directory structure.
 RUN set -x \
     && apt-get update -y \
-    && apt-get install -y curl xmlstarlet bash fonts-dejavu \
+    && apt-get install -y curl xmlstarlet bash fonts-dejavu fonts-wqy-microhei \
     && mkdir -p                "${JIRA_HOME}" \
     && mkdir -p                "${JIRA_HOME}/caches/indexes" \
     && chmod -R 700            "${JIRA_HOME}" \

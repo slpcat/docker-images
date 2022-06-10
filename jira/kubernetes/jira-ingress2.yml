@@ -7,7 +7,7 @@ metadata:
 spec:
   ingressClassName: nginx-vpc
   rules:
-  - host: jenkins-dev.example.com
+  - host: jira-dev.example.com
     http:
       paths:
       - pathType: Prefix
