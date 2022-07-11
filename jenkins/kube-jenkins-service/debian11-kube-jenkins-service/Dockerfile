@@ -163,7 +163,7 @@ RUN /usr/local/bin/install-plugins.sh       \
   build-with-parameters:latest   \
   credentials:latest             \
   credentials-binding:latest     \
-  cloverphp:latest               \
+  #cloverphp:latest               \
   cloud-stats:latest             \
   cloudbees-folder:latest        \
   command-launcher:latest        \
@@ -240,7 +240,7 @@ RUN /usr/local/bin/install-plugins.sh       \
   javadoc:latest                 \
   jira:latest                    \
   jira-trigger:latest            \
-  jenkins-multijob-plugin:latest \
+  #jenkins-multijob-plugin:latest \
   jobConfigHistory:latest        \
   job-dsl:latest                 \
   job-import-plugin:latest       \
@@ -288,6 +288,7 @@ RUN /usr/local/bin/install-plugins.sh       \
   pipeline-build-step:latest     \
   pipeline-github-lib:latest     \
   pipeline-githubnotify-step:latest \
+  pipeline-groovy-lib:latest     \
   pipeline-input-step:latest     \
   pipeline-milestone-step:latest \
   pipeline-multibranch-defaults:latest \
@@ -312,7 +313,7 @@ RUN /usr/local/bin/install-plugins.sh       \
   pubsub-light:latest            \
   puppet:latest                  \ 
   python:latest                  \
-  python-wrapper:latest          \
+  #python-wrapper:latest          \
   rebuild:latest                 \
   remote-file:latest             \
   report-info:latest             \
@@ -359,8 +360,8 @@ RUN /usr/local/bin/install-plugins.sh       \
   workflow-aggregator:latest     \
   workflow-api:latest            \
   workflow-basic-steps:latest    \
-  workflow-cps:latest            \
-  workflow-cps-global-lib:latest \
+  #workflow-cps:latest            \
+  #workflow-cps-global-lib:latest \
   workflow-durable-task-step:latest \
   workflow-job:latest            \
   workflow-multibranch:latest    \
