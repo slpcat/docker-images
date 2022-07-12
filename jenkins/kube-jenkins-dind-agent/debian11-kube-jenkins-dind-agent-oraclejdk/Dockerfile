@@ -199,7 +199,7 @@ RUN rm -rf /root/ \
 
 LABEL Description="This is a base image, which provides the Jenkins agent executable (slave.jar)" Vendor="Jenkins project" Version="4.7"
 
-ARG VERSION=4.9
+ARG VERSION=4.14
 ARG AGENT_WORKDIR=/home/jenkins/agent
 
 RUN curl --create-dirs -sSLo /usr/share/jenkins/agent.jar https://repo.jenkins-ci.org/public/org/jenkins-ci/main/remoting/${VERSION}/remoting-${VERSION}.jar \
