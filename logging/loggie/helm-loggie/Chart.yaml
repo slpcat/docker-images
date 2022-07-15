@@ -1,0 +1,6 @@
+apiVersion: v2
+appVersion: v1.0.0
+description: A Helm chart for Loggie
+name: loggie
+type: application
+version: v1.0.0

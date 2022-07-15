@@ -48,6 +48,8 @@ cerebro
 
 ELKman
 
+elasticvue插件
+
 esrally功能：es的性能测试工具
 
 ElasticHD
@@ -528,7 +530,11 @@ logstash定向索引迁移
 
 
 单节点 
-docker run -d --restart=always --name elasticsearch -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" -v /data/es-data:/usr/share/elasticsearch/data docker.elastic.co/elasticsearch/elasticsearch:7.8.0
+docker run -d --restart=always --name elasticsearch -p 9200:9200 -p 9300:9300 \
+    -e "discovery.type=single-node" \
+    -e "http.cors.enabled=true" \
+    -e "http.cors.allow-origin=/.*/" \
+    -v /data/es-data:/usr/share/elasticsearch/data docker.elastic.co/elasticsearch/elasticsearch:7.8.0
 
 docker run -d --restart=always --name elasticsearch -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" -v /data/es-data:/usr/share/elasticsearch/data elasticsearch:7.8.0
 

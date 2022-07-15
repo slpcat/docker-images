@@ -1,0 +1,50 @@
+# Source: loggie/templates/loggie-rbac.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: loggie-role-loggie-collector
+rules:
+  - apiGroups:
+    - ""
+    resources:
+      - pods
+      - nodes
+    verbs:
+      - get
+      - watch
+      - list
+  - apiGroups:
+    - ""
+    resources:
+      - events
+    verbs:
+      - get
+      - watch
+      - list
+      - update
+      - create
+      - patch
+  - apiGroups:
+    - extensions
+    - apps
+    resources:
+      - deployments
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+    - loggie.io
+    resources:
+      - logconfigs
+      - logconfigs/status
+      - clusterlogconfigs
+      - clusterlogconfigs/status
+      - sinks
+      - interceptors
+    verbs:
+      - get
+      - list
+      - watch
+      - update
+      - patch

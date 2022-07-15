@@ -1,0 +1,6 @@
+# Source: loggie/templates/loggie-rbac.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: loggie-collector
+  namespace: logging

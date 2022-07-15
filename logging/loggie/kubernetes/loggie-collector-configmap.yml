@@ -1,0 +1,34 @@
+# Source: loggie/templates/loggie-configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: loggie-config-loggie-collector
+  namespace: logging
+data:
+  loggie.yml: |-
+    loggie:
+      discovery:
+        enabled: true
+        kubernetes:
+          #containerRuntime: containerd
+          fields:
+            container.name: containername
+            logConfig: logconfig
+            namespace: namespace
+            node.name: nodename
+            pod.name: podname
+      http:
+        enabled: true
+        port: 9196
+      monitor:
+        listeners:
+          filesource: null
+          filewatcher: null
+          reload: null
+          sink: null
+        logger:
+          enabled: true
+          period: 30s
+      reload:
+        enabled: true
+        period: 10s

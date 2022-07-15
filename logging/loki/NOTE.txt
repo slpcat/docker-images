@@ -17,3 +17,15 @@ docker run -v $(pwd):/mnt/config -v /var/log:/var/log grafana/promtail:2.3.0 -co
 
 docker run -d --restart=always -p 3100:3100 grafana/loki:2.3.0
 
+
+loki 缓存 redis
+Loki 索引存储可以是cassandra/bigtable/dynamodb
+loki chunks后端存储推荐使用对象存储
+
+loki-frontend
+
+loki-gateway
+
+loki-redis
+
+loki-system

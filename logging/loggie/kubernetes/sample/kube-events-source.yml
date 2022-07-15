@@ -1,0 +1,13 @@
+apiVersion: loggie.io/v1beta1
+kind: ClusterLogConfig
+metadata:
+  name: kubeevent
+spec:
+  selector:
+    type: cluster
+    cluster: aggregator
+  pipeline:
+    sources: |
+      - type: kubeEvent
+        name: event
+    sinkRef: dev

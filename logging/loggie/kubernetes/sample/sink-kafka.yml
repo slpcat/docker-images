@@ -1,0 +1,15 @@
+apiVersion: loggie.io/v1beta1
+kind: Sink
+metadata:
+  name: kafka
+spec:
+  sink: |
+    type: kafka
+    brokers: ["127.0.0.1:6400"]
+    #topic: "log-${fields.topic}"
+    topic: "${fields.topic}"
+    groupid: "loggie"
+    compression: "lz4"
+    batchSize: 2048
+    batchBytes: 1048576
+    requiredAcks: 0

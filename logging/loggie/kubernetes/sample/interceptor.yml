@@ -1,0 +1,8 @@
+apiVersion: loggie.io/v1beta1
+kind: Interceptor
+metadata:
+  name: default
+spec:
+  interceptors: |
+    - type: rateLimit
+      qps: 90000

@@ -1,0 +1,19 @@
+# Source: loggie/templates/loggie-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: loggie
+    instance: loggie-collector
+  name: loggie-collector
+  namespace: logging
+spec:
+  ports:
+
+    - name: monitor
+      port: 9196
+      targetPort: 9196
+  selector:
+    app: loggie
+    instance: loggie-collector
+  type: ClusterIP

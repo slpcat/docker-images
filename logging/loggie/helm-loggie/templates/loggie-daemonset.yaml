@@ -1,0 +1,73 @@
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  labels:
+    app: loggie
+    instance: {{ template "loggie.name" . }}
+  name: {{ template "loggie.name" . }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  selector:
+    matchLabels:
+      app: loggie
+      instance: {{ template "loggie.name" . }}
+  template:
+    metadata:
+      labels:
+        app: loggie
+        instance: {{ template "loggie.name" . }}
+    spec:
+      containers:
+        - args:
+            - -meta.nodeName=$(HOST_NAME)
+            - -config.system=/opt/loggie/loggie.yml
+            - -config.pipeline=/opt/loggie/pipeline/*.yml
+          {{- range $key, $value := .Values.extraArgs }}
+            - -{{ $key }}={{ $value }}
+          {{- end }}
+          env:
+            - name: HOST_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: spec.nodeName
+          image: {{ .Values.image }}
+          name: loggie
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            {{- if .Values.extraVolumeMounts }}
+              {{ toYaml .Values.extraVolumeMounts | nindent 12}}
+            {{- end }}
+            - mountPath: /opt/loggie/loggie.yml
+              name: loggie-config
+              subPath: loggie.yml
+            - mountPath: /opt/loggie/pipeline
+              name: pipeline
+            - mountPath: /data/
+              name: registry
+
+      serviceAccountName: {{ template "loggie.name" . }}
+      nodeSelector:
+        {{- toYaml .Values.nodeSelector | nindent 8 }}
+      affinity:
+        {{- toYaml .Values.affinity | nindent 8 }}
+      tolerations:
+        {{- toYaml .Values.tolerations | nindent 8 }}
+      volumes:
+{{- if .Values.extraVolumes }}
+{{ toYaml .Values.extraVolumes | indent 8}}
+{{- end }}
+        - configMap:
+            defaultMode: 384
+            name: loggie-config-{{ template "loggie.name" . }}
+          name: loggie-config
+        - hostPath:
+            path: /data/loggie-{{ template "loggie.name" . }}
+            type: DirectoryOrCreate
+          name: registry
+        - emptyDir: {}
+          name: pipeline
+  updateStrategy:
+    {{- toYaml .Values.updateStrategy | nindent 4 }}

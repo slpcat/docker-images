@@ -1,0 +1,91 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: tomcat
+  name: tomcat
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tomcat
+  template:
+    metadata:
+      labels:
+        app: tomcat
+    spec:
+      containers:
+      - name: tomcat
+        image: tomcat
+        volumeMounts:
+        - mountPath: /usr/local/tomcat/logs
+          name: log
+
+      - name: loggie
+        args:
+        - -config.system=/opt/loggie/loggie.yml
+        - -config.pipeline=/opt/loggie/pipeline.yml
+        image: hub.c.163.com/loggie-io/loggie:lastest
+        volumeMounts:
+        # loggie和业务container挂载相同的log volume
+        - mountPath: /usr/local/tomcat/logs
+          name: log
+        # 挂载日志配置configMap
+        - mountPath: /opt/loggie
+          name: loggie-config
+        # 挂载loggie自身持久化的数据
+        - mountPath: /data
+          name: registry
+
+      volumes:
+      - emptyDir: {}
+        name: log
+      - emptyDir: {}
+        name: registry
+      - name: loggie-config
+        configMap:
+          name: tomcat-loggie-config
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tomcat-loggie-config
+  namespace: default
+data:
+  loggie.yml: |
+    loggie:
+      reload:
+        enabled: true
+        period: 10s
+      monitor:
+        logger:
+          period: 30s
+          enabled: true
+        listeners:
+          filesource: ~
+          filewatcher: ~
+          reload: ~
+          sink: ~
+      http:
+        enabled: true
+        port: 9196
+  pipeline.yml: |
+    pipelines:
+    - name: "tomcat"
+      sources:
+        - type: "file"
+          name: "tomcatlog"
+          paths:
+            - "/usr/local/tomcat/logs/*.log"
+          fields:
+            namespace: default
+            deployment: tomcat
+          fieldsFromEnv:
+            podname: HOSTNAME
+      sink:
+        type: "dev"
+        printEvents: true
+        codec:
+          pretty: true

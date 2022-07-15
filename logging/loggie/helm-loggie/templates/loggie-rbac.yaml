@@ -1,0 +1,71 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: loggie-role-{{ template "loggie.name" . }}
+rules:
+  - apiGroups:
+    - ""
+    resources:
+      - pods
+      - nodes
+    verbs:
+      - get
+      - watch
+      - list
+  - apiGroups:
+    - ""
+    resources:
+      - events
+    verbs:
+      - get
+      - watch
+      - list
+      - update
+      - create
+      - patch
+  - apiGroups:
+    - extensions
+    - apps
+    resources:
+      - deployments
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+    - loggie.io
+    resources:
+      - logconfigs
+      - logconfigs/status
+      - clusterlogconfigs
+      - clusterlogconfigs/status
+      - sinks
+      - interceptors
+    verbs:
+      - get
+      - list
+      - watch
+      - update
+      - patch
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: loggie-rolebinding-{{ template "loggie.name" . }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: loggie-role-{{ template "loggie.name" . }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ template "loggie.name" . }}
+    namespace: {{ .Release.Namespace }}
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ template "loggie.name" . }}
+  namespace: {{ .Release.Namespace }}

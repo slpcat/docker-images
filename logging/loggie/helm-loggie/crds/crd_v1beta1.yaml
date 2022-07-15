@@ -1,0 +1,82 @@
+---
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  name: clusterlogconfigs.loggie.io
+spec:
+  group: loggie.io
+  versions:
+  - name: v1beta1
+    served: true
+    storage: true
+  scope: Cluster
+  names:
+    plural: clusterlogconfigs
+    singular: clusterlogconfig
+    kind: ClusterLogConfig
+    listKind: ClusterLogConfigList
+    shortNames:
+    - clgc
+  subresources:
+    status: {}
+
+---
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  name: logconfigs.loggie.io
+spec:
+  group: loggie.io
+  versions:
+  - name: v1beta1
+    served: true
+    storage: true
+  scope: Namespaced
+  names:
+    plural: logconfigs
+    singular: logconfig
+    kind: LogConfig
+    listKind: LogConfigList
+    shortNames:
+    - lgc
+  subresources:
+    status: {}
+
+---
+
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  name: interceptors.loggie.io
+spec:
+  group: loggie.io
+  versions:
+  - name: v1beta1
+    served: true
+    storage: true
+  scope: Cluster
+  names:
+    kind: Interceptor
+    listKind: InterceptorList
+    plural: interceptors
+    shortNames:
+      - icp
+    singular: interceptor
+
+---
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  name: sinks.loggie.io
+spec:
+  group: loggie.io
+  versions:
+  - name: v1beta1
+    served: true
+    storage: true
+  scope: Cluster
+  names:
+    kind: Sink
+    listKind: SinkList
+    plural: sinks
+    singular: sink

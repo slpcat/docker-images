@@ -1,0 +1,122 @@
+
+image: hub.c.163.com/loggie/loggie:v1.0.0
+
+resources:
+  limits:
+    cpu: 2
+    memory: 2Gi
+  requests:
+    cpu: 100m
+    memory: 100Mi
+
+extraArgs: 
+  log.level: info
+  log.jsonFormat: false
+
+extraVolumeMounts:
+  - mountPath: /var/log/pods
+    name: podlogs
+  - mountPath: /var/lib/kubelet/pods
+    name: kubelet
+  - mountPath: /var/lib/docker
+    name: docker
+
+
+extraVolumes:
+  - hostPath:
+      path: /var/log/pods
+      type: DirectoryOrCreate
+    name: podlogs
+  - hostPath:
+      path: /var/lib/kubelet/pods
+      type: DirectoryOrCreate
+    name: kubelet
+  - hostPath:
+      path: /var/lib/docker
+      type: DirectoryOrCreate
+    name: docker
+
+
+## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/
+nodeSelector: {}
+
+## Affinity for pod assignment
+## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
+affinity:
+  podAntiAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+    - labelSelector:
+        matchExpressions:
+        - key: app
+          operator: In
+          values:
+          - loggie
+      topologyKey: "kubernetes.io/hostname"
+
+## Tolerations for pod assignment
+## ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+tolerations: []
+# - effect: NoExecute
+#   operator: Exists
+# - effect: NoSchedule
+#   operator: Exists
+
+updateStrategy:
+  type: RollingUpdate
+
+## Agent global config
+config:
+  loggie:
+    reload:
+      enabled: true
+      period: 10s
+    monitor:
+      logger:
+        period: 30s
+        enabled: true
+      listeners:
+        filesource: ~
+        filewatcher: ~
+        reload: ~
+        sink: ~
+    discovery:
+      enabled: true
+      kubernetes:
+        containerRuntime: containerd
+        fields:
+          container.name: containername
+          logConfig: logconfig
+          namespace: namespace
+          node.name: nodename
+          pod.name: podname
+    http:
+      enabled: true
+      port: 9196
+
+## Aggregator global config
+# config:
+#   loggie:
+#     reload:
+#       enabled: true
+#       period: 10s
+#     monitor:
+#       logger:
+#         period: 30s
+#         enabled: true
+#       listeners:
+#         reload: ~
+#         sink: ~
+#     discovery:
+#       enabled: true
+#       kubernetes:
+#         cluster: aggregator
+#     http:
+#       enabled: true
+#       port: 9196
+
+
+servicePorts:
+  - name: monitor
+    port: 9196
+    targetPort: 9196
+  

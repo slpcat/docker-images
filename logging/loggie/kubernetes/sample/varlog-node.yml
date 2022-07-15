@@ -1,0 +1,17 @@
+apiVersion: loggie.io/v1beta1
+kind: ClusterLogConfig
+metadata:
+  name: varlog
+spec:
+  selector:
+    type: node
+    nodeSelector:
+      nodepool: demo
+  pipeline:
+    sources: |
+      - type: file
+        name: varlog
+        paths:
+          - /var/log/*.log
+    sinkRef: default
+    interceptorRef: default

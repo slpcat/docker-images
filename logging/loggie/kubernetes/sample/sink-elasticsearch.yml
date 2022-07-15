@@ -1,0 +1,9 @@
+apiVersion: loggie.io/v1beta1
+kind: Sink
+metadata:
+  name: default
+spec:
+  sink: |
+    type: elasticsearch
+    index: "loggie"
+    hosts: ["elasticsearch-master.default.svc:9200"]

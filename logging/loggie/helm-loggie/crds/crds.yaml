@@ -1,0 +1,118 @@
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: clusterlogconfigs.loggie.io
+spec:
+  conversion:
+    strategy: None
+  group: loggie.io
+  names:
+    kind: ClusterLogConfig
+    listKind: ClusterLogConfigList
+    plural: clusterlogconfigs
+    shortNames:
+      - clgc
+    singular: clusterlogconfig
+  scope: Cluster
+  versions:
+    - name: v1beta1
+      served: true
+      storage: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              x-kubernetes-preserve-unknown-fields: true
+              type: object
+      subresources:
+        status: {}
+
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: logconfigs.loggie.io
+spec:
+  conversion:
+    strategy: None
+  group: loggie.io
+  names:
+    kind: LogConfig
+    listKind: LogConfigList
+    plural: logconfigs
+    shortNames:
+      - lgc
+    singular: logconfig
+  scope: Namespaced
+  versions:
+    - name: v1beta1
+      served: true
+      storage: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              x-kubernetes-preserve-unknown-fields: true
+              type: object
+      subresources:
+        status: {}
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: interceptors.loggie.io
+spec:
+  conversion:
+    strategy: None
+  group: loggie.io
+  names:
+    kind: Interceptor
+    listKind: InterceptorList
+    plural: interceptors
+    shortNames:
+      - icp
+    singular: interceptor
+  scope: Cluster
+  versions:
+    - name: v1beta1
+      served: true
+      storage: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              x-kubernetes-preserve-unknown-fields: true
+              type: object
+
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: sinks.loggie.io
+spec:
+  conversion:
+    strategy: None
+  group: loggie.io
+  names:
+    kind: Sink
+    listKind: SinkList
+    plural: sinks
+    singular: sink
+  scope: Cluster
+  versions:
+    - name: v1beta1
+      served: true
+      storage: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              x-kubernetes-preserve-unknown-fields: true
+              type: object
+
+

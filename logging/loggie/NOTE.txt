@@ -1,0 +1,4 @@
+Loggie是一个基于Golang的轻量级、高性能、云原生日志采集Agent和中转处理Aggregator，支持多Pipeline和组件热插拔.
+
+Loggie项目地址：https://github.com/loggie-io/loggie/
+Loggie项目文档：https://loggie-io.github.io/docs/

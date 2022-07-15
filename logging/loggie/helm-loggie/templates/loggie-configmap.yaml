@@ -1,0 +1,9 @@
+---
+apiVersion: v1
+data:
+  loggie.yml: |-
+    {{- toYaml .Values.config | nindent 4 }}
+kind: ConfigMap
+metadata:
+  name: loggie-config-{{ template "loggie.name" . }}
+  namespace: {{ .Release.Namespace }}

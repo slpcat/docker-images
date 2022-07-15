@@ -1,0 +1,8 @@
+apiVersion: loggie.io/v1beta1
+kind: Sink
+metadata:
+  name: aggregator
+spec:
+  sink: |
+    type: grpc
+    host: "loggie-aggregator.loggie-aggregator:6166"
