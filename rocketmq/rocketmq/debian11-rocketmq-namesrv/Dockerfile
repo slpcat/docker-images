@@ -7,7 +7,7 @@ RUN apt-get update && apt-get install -y gnupg2 unzip
 ENV ROCKETMQ_VERSION 4.9.1
 
 # Rocketmq home
-ENV ROCKETMQ_HOME  /opt/rocketmq/nameserver
+ENV ROCKETMQ_HOME  /root/rocketmq/nameserver
 
 WORKDIR  ${ROCKETMQ_HOME}
 
