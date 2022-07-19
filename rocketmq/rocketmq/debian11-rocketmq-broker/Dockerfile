@@ -1,5 +1,5 @@
 #upstream: https://github.com/apache/rocketmq-operator/raw/master/images/broker/alpine/Dockerfile
-FROM slpcat/oraclejdk:11-bullseye
+FROM slpcat/oraclejdk:8-bullseye
 
 RUN apt-get update && apt-get install -y gnupg2 unzip 
 
