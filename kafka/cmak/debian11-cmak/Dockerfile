@@ -12,7 +12,7 @@ RUN set -xe \
     && apt-get update -y \
     && apt-get dist-upgrade -y \
     && wget -q https://downloads.lightbend.com/scala/$SCALA_VERSION/scala-$SCALA_VERSION.deb -O scala.deb \
-    && wget -q https://dl.bintray.com/sbt/debian/sbt-$SBT_VERSION.deb -O sbt.deb \
+    && wget -q https://scala.jfrog.io/artifactory/debian/sbt-$SBT_VERSION.deb -O sbt.deb \
     && dpkg -i scala.deb sbt.deb \
     && rm scala.deb sbt.deb \
     && rm -rf /var/lib/apt/lists/*
