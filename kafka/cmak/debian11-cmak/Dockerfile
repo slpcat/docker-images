@@ -2,7 +2,7 @@
 FROM slpcat/oraclejdk:11-bullseye as builder
 MAINTAINER 若虚 <slpcat@qq.com>
 
-ENV SBT_VERSION=1.7.1 \
+ENV SBT_VERSION=1.3.8 \
     SCALA_VERSION=2.12.10 \
     CMAK_VERSION=3.0.0.6 \
     ZK_HOSTS=localhost:2181
