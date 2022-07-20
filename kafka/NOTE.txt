@@ -2,9 +2,9 @@ https://cwiki.apache.org/confluence/display/KAFKA/Ecosystem
 https://docs.cloudera.com/documentation/kafka/latest/topics/kafka_performance.html
 
 kafka-operator: 
-Banzai Cloud(荐)
+Banzai Cloud
 Krallistic
-Strimzi
+Strimzi(荐)
 Confluent
 
 docker run -d --restart=always --net=host --hostname=kafka-0 \
