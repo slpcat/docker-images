@@ -2,7 +2,7 @@
 FROM slpcat/oraclejdk:11-bullseye as builder
 MAINTAINER 若虚 <slpcat@qq.com>
 
-ENV SBT_VERSION=1.3.8 \
+ENV SBT_VERSION=1.7.1 \
     SCALA_VERSION=2.12.10 \
     CMAK_VERSION=3.0.0.6 \
     ZK_HOSTS=localhost:2181
@@ -11,10 +11,10 @@ ENV SBT_VERSION=1.3.8 \
 RUN set -xe \
     && apt-get update -y \
     && apt-get dist-upgrade -y \
-    && wget -q https://downloads.lightbend.com/scala/$SCALA_VERSION/scala-$SCALA_VERSION.deb -O scala.deb \
+    #&& wget -q https://downloads.lightbend.com/scala/$SCALA_VERSION/scala-$SCALA_VERSION.deb -O scala.deb \
     && wget -q https://scala.jfrog.io/artifactory/debian/sbt-$SBT_VERSION.deb -O sbt.deb \
-    && dpkg -i scala.deb sbt.deb \
-    && rm scala.deb sbt.deb \
+    && dpkg -i sbt.deb \
+    && rm sbt.deb \
     && rm -rf /var/lib/apt/lists/*
 
 #change sbt repo
