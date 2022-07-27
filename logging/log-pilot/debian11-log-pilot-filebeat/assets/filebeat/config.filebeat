@@ -148,6 +148,7 @@ output.kafka:
     hosts: [$KAFKA_BROKERS]
     topic: '%{[topic]}'
     ${KAFKA_VERSION:+version: ${KAFKA_VERSION}}
+    ${KAFKA_SASL_MECHANISM:+sasl.mechanism: ${KAFKA_SASL_MECHANISM}}
     ${KAFKA_USERNAME:+username: ${KAFKA_USERNAME}}
     ${KAFKA_PASSWORD:+password: ${KAFKA_PASSWORD}}
     ${KAFKA_WORKER:+worker: ${KAFKA_WORKER}}
