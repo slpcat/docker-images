@@ -5,7 +5,7 @@ metadata:
   namespace: monitoring
 data:
   config.yaml: |
-    logLevel: error
+    logLevel: info
     logFormat: json
     route:
       routes:
@@ -13,4 +13,6 @@ data:
             - receiver: "dump"
     receivers:
       - name: "dump"
-        stdout: {}
+        file:
+          path: "/var/log/kube-events.log"
+          layout: # Optional

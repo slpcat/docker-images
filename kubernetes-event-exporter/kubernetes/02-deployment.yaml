@@ -5,6 +5,10 @@ metadata:
   namespace: monitoring
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: event-exporter
+      version: v1
   template:
     metadata:
       labels:
@@ -14,7 +18,7 @@ spec:
       serviceAccountName: event-exporter
       containers:
         - name: event-exporter
-          image: slpcat/kubernetes-event-exporter:v0.10
+          image: slpcat/kubernetes-event-exporter:v0.11
           imagePullPolicy: IfNotPresent
           args:
             - -conf=/data/config.yaml
@@ -25,7 +29,3 @@ spec:
         - name: cfg
           configMap:
             name: event-exporter-cfg
-  selector:
-    matchLabels:
-      app: event-exporter
-      version: v1
