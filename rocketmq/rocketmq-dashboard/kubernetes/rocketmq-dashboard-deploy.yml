@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: rocketmq-dashboard
+  name: rocketmq-app-dashboard
   namespace: dbaas
   labels:
-    app: rocketmq-dashboard
+    app: rocketmq-app-dashboard
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: rocketmq-dashboard
+      app: rocketmq-app-dashboard
   template:
     metadata:
       labels:
-        name: rocketmq-dashboard
-        app: rocketmq-dashboard
+        name: rocketmq-app-dashboard
+        app: rocketmq-app-dashboard
       annotations:
         #disable istio sidecar injection
         #sidecar.istio.io/inject: "false"
@@ -22,7 +22,8 @@ spec:
     spec:
       containers:
       - name: rocketmq-dashboard
-        image: apacherocketmq/rocketmq-dashboard
+        #image: apacherocketmq/rocketmq-dashboard
+        image: slpcat/rocketmq-dashboard
         imagePullPolicy: Always
         resources:
           requests:
@@ -33,8 +34,14 @@ spec:
             memory: 4Gi
         env:
           - name: JAVA_OPTS
-            value: "-Drocketmq.namesrv.addr=rocketmq-app-svc.dbaas:9876 -Dcom.rocketmq.sendMessageWithVIPChannel=true -server -Djava.awt.headless=true -Djava.nio.channels.spi.SelectorProvider=sun.nio.ch.EPollSelectorProvider -Xverify:none -XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=512m -XX:ReservedCodeCacheSize=240M -XX:MaxRAMFraction=2 -XshowSettings:vm -XX:+AggressiveOpts -XX:-UseBiasedLocking -XX:+UseFastAccessorMethods -XX:+UnlockExperimentalVMOptions -XX:+UseG1GC -XX:+ExplicitGCInvokesConcurrent -XX:SoftRefLRUPolicyMSPerMB=0 -XX:G1ReservePercent=25 -XX:G1NewSizePercent=10 -XX:G1MaxNewSizePercent=25 -XX:MaxGCPauseMillis=20 -XX:-OmitStackTraceInFastThrow -XX:+ParallelRefProcEnabled -XX:ParallelGCThreads=8 -XX:MaxTenuringThreshold=1 -XX:G1HeapWastePercent=10 -XX:SurvivorRatio=8 -XX:G1MixedGCCountTarget=16 -XX:G1MixedGCLiveThresholdPercent=90 -XX:InitiatingHeapOccupancyPercent=35 -XX:G1HeapRegionSize=32m -XX:+PerfDisableSharedMem -XX:-ResizePLAB"
-#export HBASE_OPTS="-XX:+UseConcMarkSweepGC"
+            value: "-server -Djava.awt.headless=true -Djava.nio.channels.spi.SelectorProvider=sun.nio.ch.EPollSelectorProvider -Xverify:none -XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=512m -XX:ReservedCodeCacheSize=240M -XX:MaxRAMFraction=2 -XshowSettings:vm -XX:+AggressiveOpts -XX:-UseBiasedLocking -XX:+UseFastAccessorMethods -XX:+UnlockExperimentalVMOptions -XX:+UseG1GC -XX:+ExplicitGCInvokesConcurrent -XX:SoftRefLRUPolicyMSPerMB=0 -XX:G1ReservePercent=25 -XX:G1NewSizePercent=10 -XX:G1MaxNewSizePercent=25 -XX:MaxGCPauseMillis=20 -XX:-OmitStackTraceInFastThrow -XX:+ParallelRefProcEnabled -XX:ParallelGCThreads=8 -XX:MaxTenuringThreshold=1 -XX:G1HeapWastePercent=10 -XX:SurvivorRatio=8 -XX:G1MixedGCCountTarget=16 -XX:G1MixedGCLiveThresholdPercent=90 -XX:InitiatingHeapOccupancyPercent=35 -XX:G1HeapRegionSize=32m -XX:+PerfDisableSharedMem -XX:-ResizePLAB"
         ports:
           - name: web
             containerPort: 8080
+        volumeMounts:
+          - name: config
+            mountPath: "/opt/rocketmq-dashboard/config/"
+      volumes:
+      - name: config
+        configMap:
+          name: rocketmq-app-dashboard-config

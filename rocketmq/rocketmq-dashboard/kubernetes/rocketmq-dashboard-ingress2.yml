@@ -1,0 +1,19 @@
+#kubernetes v1.22+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name:  rocketmq-app-dashboard-ingress
+  namespace: dbaas
+spec:
+  ingressClassName: nginx-vpc
+  rules:
+  - host: rocketmq-app-dashboard-dev.example.com
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: rocketmq-app-dashboard-svc
+            port:
+              number: 8080

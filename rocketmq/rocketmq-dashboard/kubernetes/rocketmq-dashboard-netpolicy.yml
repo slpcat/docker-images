@@ -1,0 +1,61 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: rocketmq-app-dashboard-netpolicy
+  namespace: dbaas
+spec:
+  egress:
+  #allow access to nameservice
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: dbaas
+      podSelector:
+        matchLabels:
+          app: name_service
+    ports:
+    - port: 9876
+      protocol: TCP
+
+  #allow access to  broker
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: dbaas
+      podSelector:
+        matchLabels:
+          app: broker
+    ports:
+    - port: 10909
+      protocol: TCP
+    - port: 10911
+      protocol: TCP
+
+  ingress:
+  #allow from bce blb
+  - from:
+    - ipBlock:
+        cidr: 100.64.0.0/10
+    ports:
+    - port: 8080
+      protocol: TCP
+  - from:
+    - ipBlock:
+        cidr: 10.50.0.0/16
+    ports:
+    - port: 8080
+      protocol: TCP
+  - from:
+    - ipBlock:
+        cidr: 10.51.0.0/16
+    ports:
+    - port: 8080
+      protocol: TCP
+
+  podSelector:
+    matchLabels:
+      app: rocketmq-app-dashboard
+
+  policyTypes:
+  - Egress
+  - Ingress

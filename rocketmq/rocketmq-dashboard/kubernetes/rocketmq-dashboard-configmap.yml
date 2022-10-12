@@ -1,0 +1,140 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rocketmq-app-dashboard-config
+  namespace: dbaas
+data:
+  application.yml: |-
+    server:
+      port: 8080
+      servlet:
+        encoding:
+          charset: UTF-8
+          enabled: true
+          force: true
+    ## SSL setting
+    #  ssl:
+    #    key-store: classpath:rmqcngkeystore.jks
+    #    key-store-password: rocketmq
+    #    key-store-type: PKCS12
+    #    key-alias: rmqcngkey
+
+    spring:
+      application:
+        name: rocketmq-dashboard
+
+    logging:
+      config: classpath:logback.xml
+
+    rocketmq:
+      config:
+        # if this value is empty,use env value rocketmq.config.namesrvAddr  NAMESRV_ADDR | now, default localhost:9876
+        # configure multiple namesrv addresses to manage multiple different clusters
+        namesrvAddrs:
+          - rocketmq-app-svc.dbaas:9876
+        # if you use rocketmq version < 3.5.8, rocketmq.config.isVIPChannel should be false.default true
+        isVIPChannel:
+        # timeout for mqadminExt, default 5000ms
+        timeoutMillis:
+        # rocketmq-console's data path:dashboard/monitor
+        dataPath: /tmp/rocketmq-console/data
+        # set it false if you don't want use dashboard.default true
+        enableDashBoardCollect: true
+        # set the message track trace topic if you don't want use the default one
+        msgTrackTopicName:
+        ticketKey: ticket
+        # must create userInfo file: ${rocketmq.config.dataPath}/users.properties if the login is required
+        loginRequired: false
+        useTLS: false
+        # set the accessKey and secretKey if you used acl
+        accessKey: # if version > 4.4.0
+        secretKey: # if version > 4.4.0
+
+    threadpool:
+      config:
+        coreSize: 10
+        maxSize: 10
+        keepAliveTime: 3000
+        queueSize: 5000
+
+  logback.xml: |-
+    <?xml version="1.0" encoding="UTF-8"?>
+    <!--
+      ~ Licensed to the Apache Software Foundation (ASF) under one or more
+      ~ contributor license agreements.  See the NOTICE file distributed with
+      ~ this work for additional information regarding copyright ownership.
+      ~ The ASF licenses this file to You under the Apache License, Version 2.0
+      ~ (the "License"); you may not use this file except in compliance with
+      ~ the License.  You may obtain a copy of the License at
+      ~
+      ~     http://www.apache.org/licenses/LICENSE-2.0
+      ~
+      ~ Unless required by applicable law or agreed to in writing, software
+      ~ distributed under the License is distributed on an "AS IS" BASIS,
+      ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      ~ See the License for the specific language governing permissions and
+      ~ limitations under the License.
+      -->
+
+    <configuration>
+    	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    		<encoder charset="UTF-8">
+    			<pattern>[%d{yyyy-MM-dd HH:mm:ss.SSS}] %p %t - %m%n</pattern>
+    		</encoder>
+    	</appender>
+
+    	<appender name="FILE"
+    		class="ch.qos.logback.core.rolling.RollingFileAppender">
+    		<file>${user.home}/logs/consolelogs/rocketmq-console.log</file>
+    		<append>true</append>
+    		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+    			<fileNamePattern>${user.home}/logs/consolelogs/rocketmq-console-%d{yyyy-MM-dd}.%i.log
+    			</fileNamePattern>
+    			<timeBasedFileNamingAndTriggeringPolicy
+    				class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+    				<maxFileSize>104857600</maxFileSize>
+    			</timeBasedFileNamingAndTriggeringPolicy>
+    			<MaxHistory>10</MaxHistory>
+    		</rollingPolicy>
+    		<encoder>
+                <pattern>[%d{yyyy-MM-dd HH:mm:ss.SSS}] %p %t - %m%n</pattern>
+    			<charset class="java.nio.charset.Charset">UTF-8</charset>
+    		</encoder>
+    	</appender>
+
+    	<root level="INFO">
+    		<appender-ref ref="STDOUT" />
+    		<appender-ref ref="FILE" />
+    	</root>
+
+    </configuration>
+
+  role-permission.yml: |-
+    rolePerms:
+      ordinary:
+        - /rocketmq/*.query
+        - /ops/*.query
+        - /dashboard/*.query
+        - /topic/*.query
+        - /topic/sendTopicMessage.do
+        - /producer/*.query
+        - /message/*.query
+        - /messageTrace/*.query
+        - /monitor/*.query
+        - /consumer/*.query
+        - /cluster/*.query
+        - /dlqMessage/*.query
+        - /dlqMessage/exportDlqMessage.do
+        - /dlqMessage/batchResendDlqMessage.do
+        - /acl/*.query
+
+  users.properties: |-
+    # This file supports hot change, any change will be auto-reloaded without Dashboard restarting.
+    # Format: a user per line, username=password[,N] #N is optional, 0 (Normal User); 1 (Admin)
+
+    # Define Admin
+    admin=admin,1
+
+    # Define Users
+    user1=user1
+    user2=user2
