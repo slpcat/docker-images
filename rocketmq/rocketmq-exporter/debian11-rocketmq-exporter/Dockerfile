@@ -21,7 +21,7 @@ FROM slpcat/oraclejdk:8-bullseye
 RUN \
     mkdir -p /opt/rocketmq-exporter
 
-COPY --from=build /opt/rocketmq-exporter/target/rocketmq-exporter-1.0.1-SNAPSHOT.jar  /opt/rocketmq-exporter
+COPY --from=build /opt/rocketmq-exporter/target/rocketmq-exporter-0.0.2-SNAPSHOT.jar  /opt/rocketmq-exporter
 
 WORKDIR /opt/rocketmq-exporter
 
