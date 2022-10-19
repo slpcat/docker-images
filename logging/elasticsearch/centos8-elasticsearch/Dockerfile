@@ -34,7 +34,7 @@ RUN set -eux ; \
 RUN mkdir /usr/share/elasticsearch
 WORKDIR /usr/share/elasticsearch
 
-RUN curl --retry 10 -S -L --output /opt/elasticsearch.tar.gz https://artifacts-no-kpi.elastic.co/downloads/elasticsearch/elasticsearch-7.14.0-linux-$(arch).tar.gz
+RUN curl --retry 10 -S -L --output /opt/elasticsearch.tar.gz https://artifacts-no-kpi.elastic.co/downloads/elasticsearch/elasticsearch-8.3.2-linux-$(arch).tar.gz
 
 RUN tar -zxf /opt/elasticsearch.tar.gz --strip-components=1
 
@@ -122,8 +122,8 @@ LABEL org.label-schema.build-date="2021-07-29T20:49:32.864135063Z" \
   org.label-schema.vcs-ref="dd5a0a2acaa2045ff9624f3729fc8a6f40835aa1" \
   org.label-schema.vcs-url="https://github.com/elastic/elasticsearch" \
   org.label-schema.vendor="Elastic" \
-  org.label-schema.version="7.14.0" \
-  org.opencontainers.image.created="2021-07-29T20:49:32.864135063Z" \
+  org.label-schema.version="8.3.2" \
+  org.opencontainers.image.created="2022-09-29T20:49:32.864135063Z" \
   org.opencontainers.image.documentation="https://www.elastic.co/guide/en/elasticsearch/reference/index.html" \
   org.opencontainers.image.licenses="Elastic-License-2.0" \
   org.opencontainers.image.revision="dd5a0a2acaa2045ff9624f3729fc8a6f40835aa1" \
@@ -131,7 +131,7 @@ LABEL org.label-schema.build-date="2021-07-29T20:49:32.864135063Z" \
   org.opencontainers.image.title="Elasticsearch" \
   org.opencontainers.image.url="https://www.elastic.co/products/elasticsearch" \
   org.opencontainers.image.vendor="Elastic" \
-  org.opencontainers.image.version="7.14.0"
+  org.opencontainers.image.version="8.3.2"
 
 ENTRYPOINT ["/bin/tini", "--", "/usr/local/bin/docker-entrypoint.sh"]
 # Dummy overridable parameter parsed by entrypoint
@@ -141,4 +141,17 @@ CMD ["eswrapper"]
 # End of multi-stage Dockerfile
 ################################################################################
 
+#install elasticsearch plugins
 #RUN bin/elasticsearch-plugin install --batch repository-gcs
+RUN bin/elasticsearch-plugin install --batch https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v8.3.2/elasticsearch-analysis-ik-8.3.2.zip 
+
+#analysis-pinyin
+#analysis-stconvert
+#ingest-attachment
+#ingest-geoip
+#ingest-user-agent
+#repository-bos
+#repository-oss
+#repository-hdfs
+#elasticsearch-sql
+
