@@ -9,7 +9,7 @@
 # Extract Elasticsearch artifact
 ################################################################################
 
-FROM centos:8 AS builder
+FROM slpcat/centos:8 AS builder
 
 # `tini` is a tiny but valid init for containers. This is used to cleanly
 # control how ES and any child processes are shut down.
