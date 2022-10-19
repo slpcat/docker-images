@@ -72,7 +72,7 @@ RUN sed -i -e 's/ES_DISTRIBUTION_TYPE=tar/ES_DISTRIBUTION_TYPE=docker/' bin/elas
 # Add entrypoint
 ################################################################################
 
-FROM centos:8
+FROM slpcat/centos:8
 
 RUN for iter in {1..10}; do \
       yum update --setopt=tsflags=nodocs -y && \
