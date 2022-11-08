@@ -1,0 +1,40 @@
+#!/bin/bash
+   ./configure \
+        --user=nginx \
+        --group=nginx \
+        --prefix=/etc/nginx \
+        --sbin-path=/usr/sbin/nginx \
+        --conf-path=/etc/nginx/nginx.conf \
+        --lock-path=/var/lock/nginx.lock \
+        --pid-path=/var/run/nginx.pid \
+        --error-log-path=/var/log/nginx/error.log \
+        --http-log-path=/var/log/nginx/access.log \
+        --http-client-body-temp-path=/var/cache/nginx/client_temp \
+        --http-proxy-temp-path=/var/cache/nginx/proxy_temp \
+        --http-fastcgi-temp-path=/var/cache/nginx/fastcgi_temp \
+        --http-uwsgi-temp-path=/var/cache/nginx/uwsgi_temp \
+        --http-scgi-temp-path=/var/cache/nginx/scgi_temp \
+        --with-threads \
+        --without-http_upstream_zone_module \
+        --with-http_gzip_static_module \
+        --with-http_gunzip_module \
+        --with-http_auth_request_module \
+        --with-http_image_filter_module \
+        --with-http_addition_module \
+        --with-http_dav_module \
+        --with-http_realip_module \
+        --with-http_v2_module \
+        --with-http_stub_status_module \
+        --with-http_sub_module \
+        --with-http_xslt_module \
+        --with-http_flv_module \
+        --with-http_mp4_module \
+        --with-http_degradation_module \
+        --with-file-aio \
+        --with-pcre \
+        --with-pcre-jit \
+        --add-module=modules/ngx_openssl_ntls \
+        --with-openssl=/usr/src/Tongsuo \
+        --with-openssl-opt="--strict-warnings enable-ntls" \
+        --with-http_ssl_module --with-stream \
+        --with-stream_ssl_module --with-stream_sni
