@@ -4,7 +4,7 @@ MAINTAINER 若虚 <slpcat@qq.com>
 #https://nginx.org/en/docs/configure.html
 
 RUN \
-    apt-get update && apt-get install -y git libpcre3 libpcre3-dev zlib1g zlib1g-dev unzip wget cmake build-essential libxslt-dev libgd-dev libjemalloc-dev
+    apt-get update && apt-get dist-upgrade -y && apt-get install -y git libpcre3 libpcre3-dev zlib1g zlib1g-dev unzip wget cmake build-essential libxslt-dev libgd-dev libjemalloc-dev
 
 COPY *.sh /
 
