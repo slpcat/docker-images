@@ -4,7 +4,7 @@ MAINTAINER 若虚 <slpcat@qq.com>
 #https://nginx.org/en/docs/configure.html
 
 RUN \
-    apt-get update && apt-get dist-upgrade -y && apt-get install -y git libpcre3 libpcre3-dev zlib1g zlib1g-dev unzip wget cmake build-essential libxslt-dev libgd-dev libjemalloc-dev
+    apt-get update && apt-get dist-upgrade -y && apt-get install -y git libpcre3 libpcre3-dev zlib1g zlib1g-dev unzip wget cmake build-essential libxslt-dev libgd-dev libjemalloc-dev libgeoip1 libgeoip-dev
 
 COPY *.sh /
 
@@ -14,6 +14,12 @@ RUN \
 ARG PKG_ROOT=/fpm_install
 ARG CFLAGS="-O2"
 
+#gmcurl
+RUN \
+    wget https://www.gmssl.cn/gmssl/down/gmcurl \
+    && chmod +x gmcurl \
+    && mkdir -p $PKG_ROOT/usr/local/bin \
+    && mv gmcurl $PKG_ROOT/usr/local/bin
 
 #babassl
 RUN \
@@ -57,7 +63,7 @@ RUN \
 
 COPY --from=builder /fpm_install /
 RUN apt-get update && apt-get dist-upgrade -y && \
-    apt-get install -y libxslt1.1 libxml2 libjemalloc2 libgd3 \
+    apt-get install -y libxslt1.1 libxml2 libjemalloc2 libgd3 libgeoip1 \
     && ldconfig
 
 #COPY nginx.conf /etc/nginx/nginx.conf
