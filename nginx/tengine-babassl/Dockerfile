@@ -22,7 +22,8 @@ RUN \
 
 RUN \
     git clone https://github.com/Tongsuo-Project/Tongsuo.git \
-    && cd Tongsuo \
+    && mv Tongsuo babassl \
+    && cd babassl \
     && git checkout 8.3.1 \
     && mkdir build \
     && cd build \
@@ -30,15 +31,13 @@ RUN \
     && make \
     && make install \
     && make install DESTDIR=$PKG_ROOT
+
 RUN \
     cd /usr/src \
     && git clone https://github.com/alibaba/tengine.git \
     && cd tengine \
-    && git checkout 2.3.4 
-
-COPY tengine-config.sh /usr/src/tengine
-RUN \
-    cd /usr/src/tengine \
+    && git checkout 2.3.4 \
+    && mv  /tengine-config.sh . \
     && ./tengine-config.sh \
     && make \
     #&& make install \
