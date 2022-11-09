@@ -34,7 +34,7 @@
         --with-pcre \
         --with-pcre-jit \
         --add-module=modules/ngx_openssl_ntls \
-        --with-openssl=/usr/src/Tongsuo \
+        --with-openssl=/usr/src/babassl \
         --with-openssl-opt="--strict-warnings enable-ntls" \
         --with-http_ssl_module --with-stream \
         --with-stream_ssl_module --with-stream_sni
