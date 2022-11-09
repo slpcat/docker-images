@@ -18,10 +18,8 @@ ARG CFLAGS="-O2"
 #babassl
 RUN \
     mkdir -p /usr/src \
-    && cd /usr/src
-
-RUN \
-    git clone https://github.com/Tongsuo-Project/Tongsuo.git \
+    && cd /usr/src \
+    && git clone https://github.com/Tongsuo-Project/Tongsuo.git \
     && mv Tongsuo babassl \
     && cd babassl \
     && git checkout 8.3.1 \

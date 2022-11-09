@@ -7,6 +7,7 @@
         --conf-path=/etc/nginx/nginx.conf \
         --lock-path=/var/lock/nginx.lock \
         --pid-path=/var/run/nginx.pid \
+        --modules-path=/usr/lib/nginx/modules \
         --error-log-path=/var/log/nginx/error.log \
         --http-log-path=/var/log/nginx/access.log \
         --http-client-body-temp-path=/var/cache/nginx/client_temp \
@@ -19,23 +20,32 @@
         --with-http_gzip_static_module \
         --with-http_gunzip_module \
         --with-http_auth_request_module \
-        --with-http_image_filter_module \
         --with-http_addition_module \
         --with-http_dav_module \
         --with-http_realip_module \
         --with-http_v2_module \
         --with-http_stub_status_module \
         --with-http_sub_module \
-        --with-http_xslt_module \
         --with-http_flv_module \
         --with-http_mp4_module \
         --with-http_degradation_module \
+        --with-http_xslt_module=dynamic \
+        --with-http_image_filter_module=dynamic \
+        --with-http_geoip_module=dynamic \
+        --with-http_slice_module \
         --with-file-aio \
         --with-pcre \
         --with-pcre-jit \
         --with-jemalloc \
-        --add-module=modules/ngx_openssl_ntls \
         --with-openssl=../babassl \
         --with-openssl-opt="--strict-warnings enable-ntls" \
-        --with-http_ssl_module --with-stream \
-        --with-stream_ssl_module --with-stream_sni
+        --with-http_ssl_module \
+        --with-stream \
+        --with-stream_ssl_module \
+        --with-stream_ssl_preread_module \
+        --with-stream_realip_module \
+        --with-stream_geoip_module=dynamic \
+        --with-stream_sni \
+        --add-module=modules/ngx_openssl_ntls \
+        --add-module=modules/ngx_http_upstream_check_module \
+	--add-module=modules/ngx_http_upstream_session_sticky_module
