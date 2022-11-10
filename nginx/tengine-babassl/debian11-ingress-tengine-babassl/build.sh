@@ -76,43 +76,7 @@ get_src()
 }
 
 # install required packages to build
-apk add \
-  bash \
-  gcc \
-  clang \
-  libc-dev \
-  make \
-  automake \
-  openssl-dev \
-  pcre-dev \
-  zlib-dev \
-  linux-headers \
-  libxslt-dev \
-  gd-dev \
-  geoip-dev \
-  perl-dev \
-  libedit-dev \
-  mercurial \
-  alpine-sdk \
-  findutils \
-  curl ca-certificates \
-  patch \
-  libaio-dev \
-  openssl \
-  cmake \
-  util-linux \
-  lmdb-tools \
-  wget \
-  curl-dev \
-  libprotobuf \
-  git g++ pkgconf flex bison doxygen yajl-dev lmdb-dev libtool autoconf libxml2 libxml2-dev \
-  python3 \
-  libmaxminddb-dev \
-  bc \
-  unzip \
-  dos2unix \
-  yaml-cpp \
-  coreutils
+apt-get update && apt-get dist-upgrade -y && apt-get install -y git libpcre3 libpcre3-dev zlib1g zlib1g-dev unzip wget cmake build-essential libxslt-dev libgd-dev libjemalloc-dev libgeoip1 libgeoip-dev
 
 mkdir -p /etc/nginx
 
