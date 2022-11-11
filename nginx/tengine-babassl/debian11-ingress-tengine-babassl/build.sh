@@ -19,6 +19,7 @@ set -o nounset
 set -o pipefail
 
 export NGINX_VERSION=1.18.0
+export TENGINE_VERSION=2.3.4
 export NDK_VERSION=0.3.1
 export SETMISC_VERSION=0.32
 export MORE_HEADERS_VERSION=0.33
@@ -57,7 +58,7 @@ export LUA_RESTY_REDIS_VERSION=0.29
 export LUA_RESTY_IPMATCHER_VERSION=1a0a1c58fd085b15eedee58de8b5f45c27aff7bc
 export LUA_RESTY_GLOBAL_THROTTLE_VERSION=0.2.0
 
-export BUILD_PATH=/tmp/build
+export BUILD_PATH=/usr/src
 
 ARCH=$(uname -m)
 
@@ -76,7 +77,7 @@ get_src()
 }
 
 # install required packages to build
-apt-get update && apt-get dist-upgrade -y && apt-get install -y git libpcre3 libpcre3-dev zlib1g zlib1g-dev unzip wget cmake build-essential libxslt-dev libgd-dev libjemalloc-dev libgeoip1 libgeoip-dev
+apt-get update && apt-get dist-upgrade -y && apt-get install -y git libpcre3 libpcre3-dev zlib1g zlib1g-dev unzip wget cmake build-essential libxslt-dev libgd-dev libjemalloc-dev libgeoip1 libcurl4-nss-dev libgeoip-dev autoconf libtool libmaxminddb-dev
 
 mkdir -p /etc/nginx
 
@@ -84,8 +85,11 @@ mkdir --verbose -p "$BUILD_PATH"
 cd "$BUILD_PATH"
 
 # download, verify and extract the source files
-get_src 4c373e7ab5bf91d34a4f11a0c9496561061ba5eee6020db272a17a7228d35f99 \
-        "https://nginx.org/download/nginx-$NGINX_VERSION.tar.gz"
+#get_src 4c373e7ab5bf91d34a4f11a0c9496561061ba5eee6020db272a17a7228d35f99 \
+#        "https://nginx.org/download/nginx-$NGINX_VERSION.tar.gz"
+
+get_src 9a8d1e83ec7664f799255b0dec5baebde2d12b6578b29cfadf92316b3d3e221c \
+        "https://github.com/alibaba/tengine/archive/refs/tags/$TENGINE_VERSION.tar.gz"
 
 get_src 0e971105e210d272a497567fa2e2c256f4e39b845a5ba80d373e26ba1abfbd85 \
         "https://github.com/simpl/ngx_devel_kit/archive/v$NDK_VERSION.tar.gz"
@@ -193,6 +197,28 @@ export MAKEFLAGS=-j${CORES}
 export CTEST_BUILD_FLAGS=${MAKEFLAGS}
 export HUNTER_JOBS_NUMBER=${CORES}
 export HUNTER_USE_CACHE_SERVERS=true
+
+export PKG_ROOT=/fpm_install
+export CFLAGS="-O2"
+
+#gmcurl
+    wget https://www.gmssl.cn/gmssl/down/gmcurl \
+    && chmod +x gmcurl \
+    && mkdir -p /usr/local/bin \
+    && mv gmcurl /usr/local/bin
+
+#babassl
+    mkdir -p /usr/src \
+    && cd /usr/src \
+    && git clone https://github.com/Tongsuo-Project/Tongsuo.git \
+    && mv Tongsuo babassl \
+    && cd babassl \
+    && git checkout 8.3.1 \
+    && mkdir build \
+    && cd build \
+    && ../config enable-ntls no-shared \
+    && make \
+    && make install
 
 # Install luajit from openresty fork
 export LUAJIT_LIB=/usr/local/lib
@@ -411,7 +437,10 @@ Include /etc/nginx/owasp-modsecurity-crs/rules/RESPONSE-999-EXCLUSION-RULES-AFTE
 " > /etc/nginx/owasp-modsecurity-crs/nginx-modsecurity.conf
 
 # build nginx
-cd "$BUILD_PATH/nginx-$NGINX_VERSION"
+#cd "$BUILD_PATH/nginx-$NGINX_VERSION"
+
+#build tengine
+cd "$BUILD_PATH/tengine-$TENGINE_VERSION"
 
 # apply nginx patches
 #for PATCH in `ls /patches`;do
@@ -421,8 +450,11 @@ cd "$BUILD_PATH/nginx-$NGINX_VERSION"
 
 WITH_FLAGS="--with-debug \
   --with-compat \
+  --with-jemalloc \
   --with-pcre-jit \
   --with-http_ssl_module \
+  --with-openssl=../babassl \
+  --with-http_gunzip_module \
   --with-http_stub_status_module \
   --with-http_realip_module \
   --with-http_auth_request_module \
@@ -431,10 +463,13 @@ WITH_FLAGS="--with-debug \
   --with-http_gzip_static_module \
   --with-http_sub_module \
   --with-http_v2_module \
+  --with-http_slice_module \
   --with-stream \
   --with-stream_ssl_module \
   --with-stream_realip_module \
   --with-stream_ssl_preread_module \
+  --with-stream_geoip_module=dynamic \
+  --with-stream_sni \
   --with-threads \
   --with-http_secure_link_module \
   --with-http_gunzip_module"
@@ -443,7 +478,6 @@ WITH_FLAGS="--with-debug \
 # https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html
 CC_OPT="-g -Og -fPIE -fstack-protector-strong \
   -Wformat \
-  -Werror=format-security \
   -Wno-deprecated-declarations \
   -fno-strict-aliasing \
   -D_FORTIFY_SOURCE=2 \
@@ -464,6 +498,9 @@ if [[ ${ARCH} == "x86_64" ]]; then
 fi
 
 WITH_MODULES=" \
+  --add-module=modules/ngx_openssl_ntls \
+  --add-module=modules/ngx_http_upstream_check_module \
+  --add-module=modules/ngx_http_upstream_session_sticky_module \
   --add-module=$BUILD_PATH/ngx_devel_kit-$NDK_VERSION \
   --add-module=$BUILD_PATH/set-misc-nginx-module-$SETMISC_VERSION \
   --add-module=$BUILD_PATH/headers-more-nginx-module-$MORE_HEADERS_VERSION \
@@ -493,6 +530,7 @@ WITH_MODULES=" \
   --http-scgi-temp-path=/var/lib/nginx/scgi \
   --http-uwsgi-temp-path=/var/lib/nginx/uwsgi \
   ${WITH_FLAGS} \
+  --with-openssl-opt="--strict-warnings enable-ntls" \
   --without-mail_pop3_module \
   --without-mail_smtp_module \
   --without-mail_imap_module \
@@ -581,8 +619,8 @@ writeDirs=( \
   /var/log/nginx \
 );
 
-addgroup -Sg 101 www-data
-adduser -S -D -H -u 101 -h /usr/local/nginx -s /sbin/nologin -G www-data -g www-data www-data
+#groupadd -r -g 88 www-data
+#useradd -r -D -M -u 88 -d /usr/local/nginx -s /sbin/nologin -G www-data -g www-data www-data
 
 for dir in "${writeDirs[@]}"; do
   mkdir -p ${dir};

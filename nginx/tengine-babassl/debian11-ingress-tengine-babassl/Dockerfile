@@ -18,42 +18,24 @@ COPY --from=builder /usr/local /usr/local
 COPY --from=builder /opt /opt
 COPY --from=builder /etc/nginx /etc/nginx
 
-RUN apk update \
-  && apk upgrade \
-  && apk add -U --no-cache \
-    bash \
-    openssl \
-    pcre \
-    zlib \
-    geoip \
-    curl ca-certificates \
-    patch \
-    yajl \
-    lmdb \
-    libxml2 \
-    libmaxminddb \
-    yaml-cpp \
-    dumb-init \
-    nano \
-    tzdata \
-  && ln -s /usr/local/nginx/sbin/nginx /sbin/nginx \
-  && addgroup -Sg 101 www-data \
-  && adduser -S -D -H -u 101 -h /usr/local/nginx \
-    -s /sbin/nologin -G www-data -g www-data www-data \
-  && bash -eu -c ' \
-  writeDirs=( \
-    /var/log/nginx \
-    /var/lib/nginx/body \
-    /var/lib/nginx/fastcgi \
-    /var/lib/nginx/proxy \
-    /var/lib/nginx/scgi \
-    /var/lib/nginx/uwsgi \
-    /var/log/audit \
-  ); \
-  for dir in "${writeDirs[@]}"; do \
-    mkdir -p ${dir}; \
-    chown -R www-data.www-data ${dir}; \
-  done'
+RUN apt-get update && apt-get dist-upgrade -y && \
+    apt-get install -y libxslt1.1 libxml2 libjemalloc2 libgd3 libgeoip1 libmaxminddb0 \
+    && ldconfig \
+    && ln -s /usr/local/nginx/sbin/nginx /sbin/nginx \
+    && bash -eu -c ' \
+    writeDirs=( \
+      /var/log/nginx \
+      /var/lib/nginx/body \
+      /var/lib/nginx/fastcgi \
+      /var/lib/nginx/proxy \
+      /var/lib/nginx/scgi \
+      /var/lib/nginx/uwsgi \
+      /var/log/audit \
+    ); \
+    for dir in "${writeDirs[@]}"; do \
+      mkdir -p ${dir}; \
+      chown -R www-data.www-data ${dir}; \
+    done'
 
 EXPOSE 80 443
 

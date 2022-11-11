@@ -31,7 +31,7 @@ RUN \
     && git checkout 8.3.1 \
     && mkdir build \
     && cd build \
-    && ../config \
+    && ../config enable-ntls no-shared \
     && make \
     && make install \
     && make install DESTDIR=$PKG_ROOT
