@@ -25,15 +25,14 @@ spec:
       port: 22
     #  keyPath: /root/.ssh/id_rsa
     #role: controller
-    role: worker
-
+    role: controller+worker
   - ssh:
       address: 10.52.8.29
       user: root
       port: 22
     #  keyPath: /root/.ssh/id_rsa
     #role: controller
-    role: worker
+    role: controller+worker
 #  - ssh:
 #      address: 10.0.0.2
 #      user: root
@@ -41,7 +40,7 @@ spec:
 #      keyPath: /root/.ssh/id_rsa
 #    role: worker
   k0s:
-    version: 1.23.1+k0s.1
+    version: 1.26.2+k0s.1
     config:
       apiVersion: k0s.k0sproject.io/v1beta1
       kind: Cluster
@@ -55,34 +54,34 @@ spec:
           calico:
             cni:
               image: docker.io/calico/cni
-              version: v3.18.1
+              version: v3.25.0
             kubecontrollers:
               image: docker.io/calico/kube-controllers
-              version: v3.18.1
+              version: v3.25.0
             node:
               image: docker.io/calico/node
-              version: v3.18.1
+              version: v3.25.0
           coredns:
             image: docker.io/coredns/coredns
-            version: 1.7.0
+            version: 1.10.1
           default_pull_policy: IfNotPresent
           #default_pull_policy: Never
           konnectivity:
-            image: slpcat/proxy-agent
-            version: v0.0.24
+            image: slpcat/apiserver-network-proxy-agent
+            version: 0.0.33-k0s
           kubeproxy:
             image: slpcat/kube-proxy
-            version: v1.22.1
+            version: v1.26.2
           kuberouter:
             cni:
-              image: docker.io/cloudnativelabs/kube-router
-              version: v1.2.1
+              image: slpcat/kube-router
+              version: v1.5.1
             cniInstaller:
-              image: quay.io/k0sproject/cni-node
-              version: 0.1.0
+              image: slpcat/cni-node
+              version: 1.1.1-k0s.0
           metricsserver:
             image: slpcat/metrics-server
-            version: v0.5.0
+            version: v0.6.3
         installConfig:
           users:
             etcdUser: etcd
@@ -96,7 +95,7 @@ spec:
         network:
           kubeProxy:
             disabled: false
-            mode: iptables
+            mode: ipvs
           kuberouter:
             autoMTU: true
             mtu: 0
@@ -105,8 +104,6 @@ spec:
           podCIDR: 10.244.0.0/16
           provider: kuberouter
           serviceCIDR: 10.96.0.0/12
-        podSecurityPolicy:
-          defaultPolicy: 00-k0s-privileged
         storage:
           type: etcd
           #type: kine

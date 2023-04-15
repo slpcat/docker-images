@@ -1,0 +1,134 @@
+apiVersion: k0s.k0sproject.io/v1beta1
+kind: ClusterConfig
+metadata:
+  creationTimestamp: null
+  name: k0s
+spec:
+  api:
+    address: 10.50.224.68
+    k0sApiPort: 9443
+    port: 6443
+    sans:
+    - 10.50.224.68
+    tunneledNetworkingMode: false
+  controllerManager: {}
+  extensions:
+    helm:
+      charts: null
+      repositories: null
+    storage:
+      create_default_storage_class: false
+      type: external_storage
+  images:
+    calico:
+      cni:
+        image: docker.io/calico/cni
+        version: v3.24.5
+      kubecontrollers:
+        image: docker.io/calico/kube-controllers
+        version: v3.24.5
+      node:
+        image: docker.io/calico/node
+        version: v3.24.5
+    coredns:
+      image: docker.io/coredns/coredns
+      version: 1.10.1
+    default_pull_policy: IfNotPresent
+    konnectivity:
+      image: quay.io/k0sproject/apiserver-network-proxy-agent
+      version: 0.0.33-k0s
+    kubeproxy:
+      image: registry.k8s.io/kube-proxy
+      version: v1.26.2
+    kuberouter:
+      cni:
+        image: docker.io/cloudnativelabs/kube-router
+        version: v1.5.1
+      cniInstaller:
+        image: quay.io/k0sproject/cni-node
+        version: 1.1.1-k0s.0
+    metricsserver:
+      image: registry.k8s.io/metrics-server/metrics-server
+      version: v0.6.2
+    pushgateway:
+      image: quay.io/k0sproject/pushgateway-ttl
+      version: edge@sha256:7031f6bf6c957e2fdb496161fe3bea0a5bde3de800deeba7b2155187196ecbd9
+  installConfig:
+    users:
+      etcdUser: etcd
+      kineUser: kube-apiserver
+      konnectivityUser: konnectivity-server
+      kubeAPIserverUser: kube-apiserver
+      kubeSchedulerUser: kube-scheduler
+  konnectivity:
+    adminPort: 8133
+    agentPort: 8132
+  network:
+    calico: null
+    clusterDomain: cluster.local
+    dualStack: {}
+    kubeProxy:
+      iptables:
+        masqueradeAll: true
+        minSyncPeriod: 0s
+        syncPeriod: 0s
+      ipvs:
+        excludeCIDRs: null
+        scheduler: ""
+        strictARP: true
+        minSyncPeriod: 0s
+        syncPeriod: 0s
+        tcpFinTimeout: 0s
+        tcpTimeout: 0s
+        udpTimeout: 0s
+      metricsBindAddress: 0.0.0.0:10249
+      mode: ipvs
+    kuberouter:
+      autoMTU: true
+      hairpin: Enabled
+      ipMasq: false
+      metricsPort: 8080
+      mtu: 0
+      peerRouterASNs: ""
+      peerRouterIPs: ""
+    nodeLocalLoadBalancing:
+      envoyProxy:
+        apiServerBindPort: 7443
+        image:
+          image: docker.io/envoyproxy/envoy-distroless
+          version: v1.24.1
+        konnectivityServerBindPort: 7132
+      type: EnvoyProxy
+    podCIDR: 10.244.0.0/16
+    provider: custom
+    serviceCIDR: 10.96.0.0/12
+  scheduler: {}
+  storage:
+    etcd:
+      externalCluster: null
+      peerAddress: 10.50.224.68
+    type: etcd
+  workerProfiles:
+    - name: custom-feature-gate      # name of the worker profile
+      values:
+        featureGates:        # feature gates mapping
+          DevicePlugins: true
+          Accelerators: true
+          AllowExtTrafficLocalEndpoints: false
+    - name: custom-eviction
+      values:
+        evictionHard:
+          memory.available: "500Mi"
+          nodefs.available: "1Gi"
+          imagefs.available: "10Gi"
+        evictionMinimumReclaim:
+          memory.available: "0Mi"
+          nodefs.available: "500Mi"
+          imagefs.available: "2Gi"
+    - name: custom-sysctl
+      values:
+        allowedUnsafeSysctls:
+          - net.*
+  telemetry:
+    enabled: true
+status: {}

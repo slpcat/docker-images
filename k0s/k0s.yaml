@@ -1,0 +1,87 @@
+apiVersion: k0s.k0sproject.io/v1beta1
+kind: ClusterConfig
+metadata:
+  creationTimestamp: null
+  name: k0s
+spec:
+  api:
+    address: 192.168.238.128
+    k0sApiPort: 9443
+    port: 6443
+    sans:
+    - 192.168.238.128
+    - 172.17.0.1
+    - fe80::20c:29ff:fee6:4d4a
+    tunneledNetworkingMode: false
+  controllerManager: {}
+  extensions:
+    helm:
+      charts: null
+      repositories: null
+    storage:
+      create_default_storage_class: false
+      type: external_storage
+  images:
+    calico:
+      cni:
+        image: docker.io/calico/cni
+        version: v3.21.2
+      kubecontrollers:
+        image: docker.io/calico/kube-controllers
+        version: v3.21.2
+      node:
+        image: docker.io/calico/node
+        version: v3.21.2
+    coredns:
+      image: docker.io/coredns/coredns
+      version: 1.7.0
+    default_pull_policy: IfNotPresent
+    konnectivity:
+      image: docker.io/slpcat/apiserver-network-proxy-agent
+      version: 0.0.27-k0s1
+    kubeproxy:
+      image: docker.io/slpcat/kube-proxy
+      version: v1.22.1
+    kuberouter:
+      cni:
+        image: docker.io/cloudnativelabs/kube-router
+        version: v1.3.2
+      cniInstaller:
+        image: docker.io/slpcat/cni-node
+        version: 0.1.0
+    metricsserver:
+      image: docker.io/slpcat/metrics-server
+      version: v0.5.0
+  installConfig:
+    users:
+      etcdUser: etcd
+      kineUser: kube-apiserver
+      konnectivityUser: konnectivity-server
+      kubeAPIserverUser: kube-apiserver
+      kubeSchedulerUser: kube-scheduler
+  konnectivity:
+    adminPort: 8133
+    agentPort: 8132
+  network:
+    calico: null
+    dualStack: {}
+    kubeProxy:
+      mode: ipvs
+    kuberouter:
+      autoMTU: true
+      mtu: 0
+      peerRouterASNs: ""
+      peerRouterIPs: ""
+    podCIDR: 10.244.0.0/16
+    provider: kuberouter
+    serviceCIDR: 10.96.0.0/12
+  podSecurityPolicy:
+    defaultPolicy: 00-k0s-privileged
+  scheduler: {}
+  storage:
+    etcd:
+      peerAddress: 192.168.238.128
+    type: etcd
+  telemetry:
+    enabled: true
+status: {}
