@@ -1,9 +1,65 @@
 https://github.com/goharbor/harbor
 
+https://mp.weixin.qq.com/s/EAiC_zIdiA0kTdhMGM8QDw
+
 # 新建目录
 mkdir /home/harbor
 cd /home/harbor
-# 下载harbor版本安装包
-wget https://storage.googleapis.com/harbor-releases/release-1.5.0/harbor-offline-installer-v1.5.1.tgz
-# 解压
-tar xvf harbor-offline-installer-v1.5.1.tgz
+
+# 下载Harbor
+wget -P /usr/local wget https://github.com/goharbor/harbor/releases/download/v2.3.2/harbor-online-installer-v2.3.2.tgz
+
+tar zxf /usr/local/harbor-online-installer-v2.3.2.tgz -C /data/harbor
+
+# 修改配置文件，根据自己的需求进行修改
+cd /data/harbor
+cp harbor.yml.tmpl harbor.yml
+# harbor.yml中按需修改或添加如下内容
+# Configuration file of Harbor
+
+# The IP address or hostname to access admin UI and registry service.
+# DO NOT use localhost or 127.0.0.1, because Harbor needs to be accessed by external clients.
+hostname: harbor.unixsre.com
+
+# http related config
+http:
+  # port for http, default is 80. If https enabled, this port will redirect to https port
+  port: 80
+
+# https related config
+https:
+  # https port for harbor, default is 443
+  port: 443
+  # The path of cert and key files for nginx
+  certificate: /data/harbor/ssl/unixsre.com.cer
+  private_key: /data/harbor/ssl/unixsre.com.key
+
+# # Uncomment following will enable tls communication between all harbor components
+# internal_tls:
+#   # set enabled to true means internal tls is enabled
+#   enabled: true
+#   # put your cert and key files on dir
+#   dir: /etc/harbor/tls/internal
+
+# Uncomment external_url if you want to enable external proxy
+# And when it enabled the hostname will no longer used
+# external_url: https://reg.mydomain.com:8433
+
+# The initial password of Harbor admin
+# It only works in first time to install harbor
+# Remember Change the admin password from UI after launching Harbor.
+# 初始密码，可以修改成自己需要的，然后后续在WEBUI上自行修改。
+harbor_admin_password: 1234567
+## 添加禁止用户自注册
+self_registration: off
+## 设置只有管理员可以创建项目
+project_creation_restriction: adminonly
+# The default data volume
+data_volume: /data/harbor
+# 执行安装命令
+bash /data/harbor/install.sh
+# 如果对配置文件harbor.yml，需要使用./prepare脚本重新生成
+./prepare
+# 重启
+docker-compose restart
+

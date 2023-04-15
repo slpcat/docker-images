@@ -1,0 +1,2 @@
+https://github.com/goharbor/harbor-operator/blob/master/docs/installation/kustomization-custom.md
+
