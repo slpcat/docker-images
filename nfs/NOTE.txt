@@ -1,0 +1,10 @@
+下面介绍kubernetes中使用nfs作为存储卷的几种方式
+
+在deployment/statefulset中直接使用
+创建类型为nfs的持久化存储卷，用于为PersistentVolumClaim提供存储卷
+使用csi-driver-nfs提供StorageClass
+使用NFS Subdir External Provisioner提供StorageClass
+使用nfs-ganesha-server-and-external-provisioner提供StorageClass
+
+已废弃：
+nfs-client-provisioner	nfs-server-provisioner 

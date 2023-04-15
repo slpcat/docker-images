@@ -1,0 +1,4 @@
+NFS CSI Driver是K8s官方提供的CSI示例程序，只实现了CSI的最简功能，这个插件驱动本身只提供了集群中的资源和NFS服务器之间的通信层，使用这个驱动之前需要 Kubernetes 集群 1.14 或更高版本和预先存在的 NFS 服务器。
+
+https://github.com/kubernetes-csi/csi-driver-nfs
+推荐使用
