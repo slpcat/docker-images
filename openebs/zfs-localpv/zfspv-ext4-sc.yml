@@ -1,0 +1,18 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: openebs-zfspv
+parameters:
+  volblocksize: "4k"
+  compression: "off"
+  dedup: "off"
+  fstype: "ext4"
+  poolname: "zfspv-pool"
+provisioner: zfs.csi.openebs.io
+volumeBindingMode: WaitForFirstConsumer
+#allowedTopologies:
+#- matchLabelExpressions:
+#  - key: kubernetes.io/hostname
+#    values:
+#      - cce-n6kyqj5d-yujo31n4
+#      - host01

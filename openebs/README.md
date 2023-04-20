@@ -1,4 +1,4 @@
-https://docs.openebs.io/docs/next/installation.html
+https://openebs.io/docs/user-guides/installation
 
 https://docs.openebs.io/docs/next/prerequisites.html
 iSCSI Root
@@ -32,13 +32,13 @@ systemctl start iscsid
 2.使用Operator安装运行OpenEBS
 宿主机数据存储目录: /var/openebs
 宿主机标签
-# kubectl label node <node-name> "openebs.io/nodegroup"="storage-node"
-#nodeSelector:
-#  "openebs.io/nodegroup": "storage-node"
-
-kubectl label nodes <node-name> node=openebs
+kubectl label node <node-name> "openebs.io/nodegroup"="storage-node"
 nodeSelector:
-  node: openebs
+  "openebs.io/nodegroup": "storage-node"
+
+#kubectl label nodes <node-name> node=openebs
+#nodeSelector:
+#  node: openebs
 
 kubectl apply -f openebs-operator.yaml
 #或者使用helm安装OpenEBS

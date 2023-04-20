@@ -946,8 +946,8 @@ spec:
       #
       # e.g. label the storage nodes with - "openebs.io/nodegroup"="storage-node"
       # kubectl label node <node-name> "openebs.io/nodegroup"="storage-node"
-      #nodeSelector:
-      #  "openebs.io/nodegroup": "storage-node"
+      nodeSelector:
+        "openebs.io/nodegroup": "storage-node"
       serviceAccountName: openebs-maya-operator
       hostNetwork: true
       # host PID is used to check status of iSCSI Service when the NDM

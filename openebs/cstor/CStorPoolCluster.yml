@@ -1,0 +1,64 @@
+apiVersion: cstor.openebs.io/v1
+kind: CStorPoolCluster
+metadata:
+  name: cspc-stripe
+  namespace: openebs
+spec:
+  resources:
+    requests:
+      memory: "2Gi"
+      cpu: "250m"
+    limits:
+      memory: "4Gi"
+      cpu: "500m"
+
+  auxResources:
+    requests:
+      memory: "500Mi"
+      cpu: "100m"
+    limits:
+      memory: "1Gi"
+      cpu: "200m"
+  pools:
+    - nodeSelector:
+        kubernetes.io/hostname: "worker-1"
+      dataRaidGroups:
+      - blockDevices:
+          - blockDeviceName: "blockdevice-d1cd029f5ba4ada0db75adc8f6c88653"
+      poolConfig:
+        dataRaidGroupType: "stripe"
+
+    - nodeSelector:
+        kubernetes.io/hostname: "worker-2" 
+      dataRaidGroups:
+        - blockDevices:
+            - blockDeviceName: "blockdevice-79fe8245efd25bd7e7aabdf29eae4d71"
+      poolConfig:
+        dataRaidGroupType: "stripe"
+
+    # New node spec added -- to create a cStor pool on worker-3
+    - nodeSelector:
+        kubernetes.io/hostname: "worker-3"
+      dataRaidGroups:
+        - blockDevices:
+            - blockDeviceName: "blockdevice-46vda0923fdae209bdd489fe56775d"
+      poolConfig:
+        #dataRaidGroupType: mirror
+        dataRaidGroupType: "stripe"
+        roThresholdLimit : 90
+        compression: lz
+        resources:
+          requests:
+            memory: 70Mi
+            cpu: 300m
+          limits:
+            memory: 130Mi
+            cpu: 600m
+
+        auxResources:
+          requests:
+            memory: 60Mi
+            cpu: 500m
+          limits:
+            memory: 120Mi
+            cpu: 500m

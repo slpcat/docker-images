@@ -1,0 +1,12 @@
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: cstor-standard
+provisioner: cstor.csi.openebs.io
+allowVolumeExpansion: true
+parameters:
+  cas-type: cstor
+  # cstorPoolCluster should have the name of the CSPC
+  cstorPoolCluster: cstor-storage
+  # replicaCount should be <= no. of CSPI
+  replicaCount: "3"
