@@ -1,0 +1,3 @@
+Uptime Kuma[1] 是一个开源的监控工具，功能类似于 Uptime Robot。相较于其它同类工具，Uptime Kuma 支持自托管服务，并且限制更少。
+docker run -d --restart=always -p 3001:3001 -v /opt/uptime-kuma/data:/app/data --name uptime-kuma louislam/uptime-kuma 
+

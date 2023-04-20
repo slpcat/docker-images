@@ -75,7 +75,11 @@ ID: 8919 1 Node Exporter for Prometheus Dashboard CN v20201010
 
 ID: 12559 Grafana Loki Dashboard for NGINX Service Mesh
 https://grafana.com/grafana/dashboards/12559
+ID: 11098 Prometheus Alerts
 
+ID: 9578 Alertmanager Grafana dashboard
+
+ID: 12539 CoreDNS 1.7.0+
 
 Clock Panel可以用来显示当前（各国）时间或用于倒计时，并支持每秒更新一次。
 grafana-cli plugins install grafana-clock-panel

@@ -80,14 +80,16 @@ RUN \
     zip unzip  && \
     apt-get clean all
 
+ENV ELASTIC_CONTAINER true
+RUN mkdir /usr/share/elasticsearch
+
+WORKDIR /usr/share/elasticsearch
+
 RUN groupadd -g 1000 elasticsearch && \
-    adduser -u 1000 -g 1000 -G 0 -d /usr/share/elasticsearch elasticsearch && \
+    useradd -u 1000 -g 1000 -G 0 -d /usr/share/elasticsearch elasticsearch && \
     chmod 0775 /usr/share/elasticsearch && \
     chown -R 1000:0 /usr/share/elasticsearch
 
-ENV ELASTIC_CONTAINER true
-
-WORKDIR /usr/share/elasticsearch
 COPY --from=builder --chown=1000:0 /usr/share/elasticsearch /usr/share/elasticsearch
 COPY --from=builder --chown=0:0 /bin/tini /bin/tini
 
@@ -104,8 +106,7 @@ COPY bin/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 #    REF: https://github.com/elastic/elasticsearch-docker/issues/171
 RUN chmod g=u /etc/passwd && \
     chmod 0775 /usr/local/bin/docker-entrypoint.sh && \
-    find / -xdev -perm -4000 -exec chmod ug-s {} + && \
-    ln -sf /etc/pki/ca-trust/extracted/java/cacerts /usr/share/elasticsearch/jdk/lib/security/cacerts
+    find / -xdev -perm -4000 -exec chmod ug-s {} +
 
 EXPOSE 9200 9300
 
@@ -139,7 +140,7 @@ CMD ["eswrapper"]
 
 #install elasticsearch plugins
 #RUN bin/elasticsearch-plugin install --batch repository-gcs
-RUN bin/elasticsearch-plugin install --batch https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v8.3.2/elasticsearch-analysis-ik-8.3.2.zip 
+RUN bin/elasticsearch-plugin install --batch https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v8.3.2/elasticsearch-analysis-ik-8.3.2.zip
 
 #analysis-pinyin
 #analysis-stconvert

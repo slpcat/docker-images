@@ -110,9 +110,9 @@ grafana agent
 功能类似opentelemetry-collector，但是主要是agent 模式的支持，支持log，trace，metrics，prometheus remote write 
 同时对于prometheus 分服务发现支持也是很不错的，功能很丰富
 
-docker run -d --restart=always --name=grafana -e JAEGER_SERVICE_NAME=my-grafana -e JAEGER_RPC_METRICS=true -e JAEGER_AGENT_HOST=jaeger.ip -e GF_TRACING_JAEGER_ADDRESS=jaeger.ip:6831 -e GF_TRACING_JAEGER_ZIPKIN_PROPAGATION=true -p 3000:3000 -v /data/grafana-data:/var/lib/grafana grafana/grafana:7.1.5
+docker run -d --restart=always --name=grafana -e JAEGER_SERVICE_NAME=my-grafana -e JAEGER_RPC_METRICS=true -e JAEGER_AGENT_HOST=jaeger.ip -e GF_TRACING_JAEGER_ADDRESS=jaeger.ip:6831 -e GF_TRACING_JAEGER_ZIPKIN_PROPAGATION=true -p 3000:3000 -v /data/grafana-data:/var/lib/grafana grafana/grafana:9.0.2
 
 docker run -d --restart=always --name=grafana  \
   -e "GF_SERVER_ROOT_URL=http://grafana.server.name"  \
   -e "GF_INSTALL_PLUGINS=grafana-clock-panel,grafana-piechart-panel,grafana-simple-json-datasource" \
-  -p 3000:3000 -v /data/grafana-data:/var/lib/grafana slpcat/grafana:8.1.3
+  -p 3000:3000 -v /data/grafana-data:/var/lib/grafana slpcat/grafana:9.3.6-ubuntu

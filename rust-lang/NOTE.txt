@@ -1,3 +1,37 @@
+https://www.rust-lang.org/zh-CN/tools/install
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+
+1 设置环境变量
+RUSTUP_DIST_SERVER （用于更新 toolchain）：
+
+export RUSTUP_DIST_SERVER=https://mirrors.ustc.edu.cn/rust-static
+
+RUSTUP_UPDATE_ROOT （用于更新 rustup）：
+
+export RUSTUP_UPDATE_ROOT=https://mirrors.ustc.edu.cn/rust-static/rustup
+
+2 下载安装脚本
+
+wget https://cdn.jsdelivr.net/gh/rust-lang-nursery/rustup.rs/rustup-init.sh
+
+3 设置执行权限并执行
+
+chmod 777 rustup-init.sh 
+
+sh rustup-init.sh 
+查看版本
+rust 安装后，会在home目录创建 .cargo/env，为了以后都从国内镜像源下载包，可以将下面的环境变量加入到env文件
+
+echo "RUSTUP_DIST_SERVER=https://mirrors.ustc.edu.cn/rust-static"  >> ~/.cargo/env
+
+配置环境变量
+source $HOME/.cargo/env
+
+查看版本
+rustc --version
+
+
+
 更换Crates源
 ~/.cargo/config
 

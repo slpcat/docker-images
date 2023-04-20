@@ -530,7 +530,7 @@ WITH_MODULES=" \
   --http-scgi-temp-path=/var/lib/nginx/scgi \
   --http-uwsgi-temp-path=/var/lib/nginx/uwsgi \
   ${WITH_FLAGS} \
-  --with-openssl-opt="--strict-warnings enable-ntls" \
+  --with-openssl-opt=enable-ntls \
   --without-mail_pop3_module \
   --without-mail_smtp_module \
   --without-mail_imap_module \

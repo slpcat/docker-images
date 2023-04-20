@@ -1,0 +1,36 @@
+# Source: skywalking/templates/ui-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: release-name-skywalking-ui
+  labels:
+    app: release-name
+    chart: skywalking-4.2.0
+    component: "ui"
+    heritage: Helm
+    release: release-name
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: release-name
+      component: "ui"
+      release: release-name
+  template:
+    metadata:
+      labels:
+        app: release-name
+        component: "ui"
+        release: release-name
+    spec:
+      affinity:
+      containers:
+      - name: ui
+        image: skywalking.docker.scarf.sh/apache/skywalking-ui:8.8.1
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+          name: page
+        env:
+        - name: SW_OAP_ADDRESS
+          value: http://release-name-skywalking-oap:12800

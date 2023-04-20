@@ -54,3 +54,13 @@ docker run -d --restart=always --name my_postgres \
   -e PGDATA=/var/lib/postgresql/data \
   -e TZ=Asia/Shanghai \
   postgres:12.1
+
+
+目前在Kubernetes上部署PostgreSQL集群的方案有Stolon、Crunchy、Patroni
+Crunchy Data Postgres Operator
+Zalando Postgres Operator
+KubeDB Postgres Operator
+StackGres
+Percona Postgres Operator
+
+https://github.com/zalando/patroni

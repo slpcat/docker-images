@@ -1,0 +1,863 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "description": "Alibaba Cloud Monitor For SLB Dashboard from CloudMonitor using aliyun-cms-grafana",
+  "editable": true,
+  "gnetId": 13474,
+  "graphTooltip": 0,
+  "id": 77,
+  "iteration": 1628581986445,
+  "links": [],
+  "panels": [
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "aliyun-monitor",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 0
+      },
+      "hiddenSeries": false,
+      "id": 2,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.1.5",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "describe": "rx",
+          "dimensions": [
+            "$instance"
+          ],
+          "group": "",
+          "metric": "InstanceTrafficRX",
+          "period": "60",
+          "project": "acs_slb_dashboard",
+          "refId": "A",
+          "target": [
+            "Average"
+          ],
+          "type": "timeserie",
+          "xcol": "timestamp",
+          "ycol": [
+            "Average"
+          ]
+        },
+        {
+          "describe": "tx",
+          "dimensions": [
+            "$instance"
+          ],
+          "group": "",
+          "metric": "InstanceTrafficTX",
+          "period": "60",
+          "project": "acs_slb_dashboard",
+          "refId": "B",
+          "target": [
+            "Average"
+          ],
+          "type": "timeserie",
+          "xcol": "timestamp",
+          "ycol": [
+            "Average"
+          ]
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "InstanceTraffic",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "bps",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "aliyun-monitor",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 0
+      },
+      "hiddenSeries": false,
+      "id": 4,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.1.5",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "describe": "RX",
+          "dimensions": [
+            "$instance"
+          ],
+          "group": "",
+          "metric": "InstancePacketRX",
+          "period": "60",
+          "project": "acs_slb_dashboard",
+          "refId": "A",
+          "target": [
+            "Average"
+          ],
+          "type": "timeserie",
+          "xcol": "timestamp",
+          "ycol": [
+            "Average"
+          ]
+        },
+        {
+          "describe": "TX",
+          "dimensions": [
+            "$instance"
+          ],
+          "group": "",
+          "metric": "InstancePacketTX",
+          "period": "60",
+          "project": "acs_slb_dashboard",
+          "refId": "B",
+          "target": [
+            "Average"
+          ],
+          "type": "timeserie",
+          "xcol": "timestamp",
+          "ycol": [
+            "Average"
+          ]
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "InstancePacket",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "cps",
+          "label": "Count/s",
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "aliyun-monitor",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 0
+      },
+      "hiddenSeries": false,
+      "id": 6,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.1.5",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "describe": "Active",
+          "dimensions": [
+            "$instance"
+          ],
+          "group": "",
+          "metric": "InstanceActiveConnection",
+          "period": "60",
+          "project": "acs_slb_dashboard",
+          "refId": "A",
+          "target": [
+            "Average"
+          ],
+          "type": "timeserie",
+          "xcol": "timestamp",
+          "ycol": [
+            "Average"
+          ]
+        },
+        {
+          "describe": "Inactive",
+          "dimensions": [
+            "$instance"
+          ],
+          "group": "",
+          "metric": "InstanceInactiveConnection",
+          "period": "60",
+          "project": "acs_slb_dashboard",
+          "refId": "B",
+          "target": [
+            "Average"
+          ],
+          "type": "timeserie",
+          "xcol": "timestamp",
+          "ycol": [
+            "Average"
+          ]
+        },
+        {
+          "describe": "Max",
+          "dimensions": [
+            "$instance"
+          ],
+          "group": "",
+          "metric": "InstanceMaxConnection",
+          "period": "60",
+          "project": "acs_slb_dashboard",
+          "refId": "C",
+          "target": [
+            "Average"
+          ],
+          "type": "timeserie",
+          "xcol": "timestamp",
+          "ycol": [
+            "Average"
+          ]
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "InstanceConnection",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "cps",
+          "label": "Count/s",
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "aliyun-monitor",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 8
+      },
+      "hiddenSeries": false,
+      "id": 8,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.1.5",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "describe": "RX",
+          "dimensions": [
+            "$instance"
+          ],
+          "group": "",
+          "metric": "DropTrafficRX",
+          "period": "60",
+          "project": "acs_slb_dashboard",
+          "refId": "A",
+          "target": [
+            "Average"
+          ],
+          "type": "timeserie",
+          "xcol": "timestamp",
+          "ycol": [
+            "Average"
+          ]
+        },
+        {
+          "describe": "TX",
+          "dimensions": [
+            "$instance"
+          ],
+          "group": "",
+          "metric": "DropTrafficTX",
+          "period": "60",
+          "project": "acs_slb_dashboard",
+          "refId": "B",
+          "target": [
+            "Average"
+          ],
+          "type": "timeserie",
+          "xcol": "timestamp",
+          "ycol": [
+            "Average"
+          ]
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "DropTraffic",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "bps",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "aliyun-monitor",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 8
+      },
+      "hiddenSeries": false,
+      "id": 10,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.1.5",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "describe": "RX",
+          "dimensions": [
+            "$instance"
+          ],
+          "group": "",
+          "metric": "InstanceDropPacketRX",
+          "period": "60",
+          "project": "acs_slb_dashboard",
+          "refId": "A",
+          "target": [
+            "Average"
+          ],
+          "type": "timeserie",
+          "xcol": "timestamp",
+          "ycol": [
+            "Average"
+          ]
+        },
+        {
+          "describe": "TX",
+          "dimensions": [
+            "$instance"
+          ],
+          "group": "",
+          "metric": "InstanceDropPacketTX",
+          "period": "60",
+          "project": "acs_slb_dashboard",
+          "refId": "B",
+          "target": [
+            "Average"
+          ],
+          "type": "timeserie",
+          "xcol": "timestamp",
+          "ycol": [
+            "Average"
+          ]
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "InstanceDropPacket",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "cps",
+          "label": "Count/s",
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "aliyun-monitor",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 8
+      },
+      "hiddenSeries": false,
+      "id": 12,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.1.5",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "describe": "",
+          "dimensions": [
+            "$instance"
+          ],
+          "group": "",
+          "metric": "InstanceDropConnection",
+          "period": "60",
+          "project": "acs_slb_dashboard",
+          "refId": "A",
+          "target": [
+            "Average"
+          ],
+          "type": "timeserie",
+          "xcol": "timestamp",
+          "ycol": [
+            "Average"
+          ]
+        },
+        {
+          "describe": "TX",
+          "dimensions": [
+            "$instance"
+          ],
+          "group": "",
+          "metric": "InstanceDropPacketTX",
+          "period": "60",
+          "project": "acs_slb_dashboard",
+          "refId": "B",
+          "target": [
+            "Average"
+          ],
+          "type": "timeserie",
+          "xcol": "timestamp",
+          "ycol": [
+            "Average"
+          ]
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "InstanceDropConnection",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "cps",
+          "label": "Count/s",
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    }
+  ],
+  "schemaVersion": 26,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "allValue": null,
+        "current": {
+          "selected": false,
+          "text": "{\"instanceId\":\"lb-wz9y30aubi6zmj1o5tgop\"}",
+          "value": "{\"instanceId\":\"lb-wz9y30aubi6zmj1o5tgop\"}"
+        },
+        "datasource": "aliyun-monitor",
+        "definition": "dimension(acs_slb_dashboard, InstanceTrafficRX, null, null)",
+        "hide": 0,
+        "includeAll": false,
+        "label": null,
+        "multi": false,
+        "name": "instance",
+        "options": [],
+        "query": "dimension(acs_slb_dashboard, InstanceTrafficRX, null, null)",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      }
+    ]
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "5s",
+      "10s",
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "2h",
+      "1d"
+    ]
+  },
+  "timezone": "",
+  "title": "Alibaba Cloud Monitor For SLB Dashboard",
+  "uid": "6OiNNIAMz",
+  "version": 2
+}

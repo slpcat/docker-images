@@ -1,0 +1,18 @@
+PX-Backup允许用户通过简单的点击即可备份和恢复所有的Kubernetes应用，从而提供了强有力的数据保护，而数据保护对DevOps团队和CIO来说非常重要。Portworx最近被GigaOm评为世界第一的Kubernetes数据存储和管理平台。Portworx产品正在被全球Kubernetes用户所使用，包括Comcast、T-Mobile、Ford、和Kroger等。Portworx企业版已经成为了在Kubernetes上运行关键应用的业界标准，在金融、零售、制造、制药、汽车、电信运营商等行业都有广泛的应用。
+
+curl -fsL -o stork-spec.yaml "https://install.portworx.com/2.5?comp=stork&storkNonPx=true"
+
+kubectl apply -f stork-spec.yaml
+
+https://backup.docs.portworx.com/install/on-premise/
+
+1.Download the pxcentral-ag-install-backup.sh air-gapped bootstrap PX-Backup install script.
+curl -o pxcentral-ag-install-backup.sh -L "https://install.portworx.com/pxcentral-air-gapped?version=2.0.1&px-backup=true"
+
+2.Pull the container images using the pxcentral-ag-install-backup.sh script.
+
+./pxcentral-ag-install-backup.sh pull
+
+3.Push the images to a local registry server, accessible by the air-gapped nodes. Replace <repo> with your registry location.
+
+./pxcentral-ag-install-backup.sh push <repo>

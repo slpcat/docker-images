@@ -3,7 +3,7 @@ MAINTAINER 若虚 <slpcat@qq.com>
 
 # Container variables
 ENV \ 
-    TERM="xterm" \
+    TERM="xterm-256color" \
     LANG="en_US.UTF-8" \ 
     LANGUAGE="en_US.UTF-8" \
     LC_ALL="en_US.UTF-8" \
@@ -28,6 +28,7 @@ RUN \
 
 # Install required packages
 RUN \
-    apt-get dist-upgrade -y
+    apt-get dist-upgrade -y && \
+    apt-get install -y vim-tiny net-tools iproute2 procps curl wget telnet less
 
 CMD ["/bin/bash"]

@@ -10,12 +10,12 @@ helm upgrade --install fluent-bit --namespace=loki loki/fluent-bit --set loki.se
 
 https://grafana.com/docs/loki/latest/installation/docker/
 
-wget https://raw.githubusercontent.com/grafana/loki/v2.3.0/cmd/loki/loki-local-config.yaml -O loki-config.yaml
-docker run -v $(pwd):/mnt/config -p 3100:3100 grafana/loki:2.3.0 -config.file=/mnt/config/loki-config.yaml
-wget https://raw.githubusercontent.com/grafana/loki/v2.3.0/cmd/promtail/promtail-docker-config.yaml -O promtail-config.yaml
-docker run -v $(pwd):/mnt/config -v /var/log:/var/log grafana/promtail:2.3.0 -config.file=/mnt/config/promtail-config.yaml
+wget https://raw.githubusercontent.com/grafana/loki/v2.7.2/cmd/loki/loki-local-config.yaml -O loki-config.yaml
+docker run --name loki -d -v $(pwd):/mnt/config -p 3100:3100 grafana/loki:2.7.2 -config.file=/mnt/config/loki-config.yaml
+wget https://raw.githubusercontent.com/grafana/loki/v2.7.2/clients/cmd/promtail/promtail-docker-config.yaml -O promtail-config.yaml
+docker run --name promtail -d -v $(pwd):/mnt/config -v /var/log:/var/log --link loki grafana/promtail:2.7.2 -config.file=/mnt/config/promtail-config.yaml
 
-docker run -d --restart=always -p 3100:3100 grafana/loki:2.3.0
+docker run -d --restart=always -p 3100:3100 -v /data/loki-data:/tmp/loki grafana/loki:2.7.2
 
 
 loki 缓存 redis

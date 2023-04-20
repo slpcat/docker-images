@@ -1,0 +1,1 @@
+https://www.percona.com/doc/kubernetes-operator-for-postgresql/kubernetes.html

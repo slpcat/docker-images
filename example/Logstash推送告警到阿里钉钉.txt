@@ -1,0 +1,50 @@
+前段时间我们公司开始使用“钉钉”作为企业沟通工具。在知道钉钉群还能设置机器人接收定制的通知信息时，我就寻思如何把它和 logstash 结合在一起了。
+
+首先要了解钉钉的“机器人”是如何设置的。文档在此
+
+然后我们使用 logstash 的 http output 和 throttle filter 插件。
+
+首先设置 throttle 的条件，以我们的 monit 日志为例，先给 logstash 配置一个 filter 文件：
+
+filter {
+  if "monit" in [tags] {
+    grok {
+      match => { "message" => "\[CST %{SYSLOGTIMESTAMP:[monit][timestamp]}\]%{SPACE}%{LOGLEVEL:[monit][level]}%{SPACE}\:%{SPACE}%{GREEDYDATA:[monit][log]}" }
+      remove_field => "message"
+    }
+    if [monit][level] == "error" {
+      throttle {
+        before_count => -1 # 最小值
+        after_count => 1 # 最大值
+        period => 1800 # 统计周期 1800 秒, 这个时间内不再触发同一个条件。
+        max_age => 3600 # 最大有效周期 3600 秒
+        key => "%{[monit][log]}" # 要统计的字段
+        add_tag => "monit-throttle" # 注意：不符合以上条件的才会添加 tag。相应的 output 里要注意。
+      }
+    }
+    date {
+      match => [ "[monit][timestamp]", "MMM dd HH:mm:ss", "MMM  d HH:mm:ss" ]
+      remove_field => "[monit][timestamp]"
+    }
+    mutate {
+      add_field => { "indexname" => "monit" }
+    }
+  }
+}
+
+然后在 output 里配置：
+
+output {
+  if "monit-throttle" not in [tags] and [monit][level] == "error" {
+    http {
+      url => "{{ dingtalk_webhook_url }}"
+      http_method => "post"
+      content_type => "application/json; charset=utf-8"
+      format => "message"
+      message => '{"msgtype":"text","text":{"content":"[Monit] %{[monit][log]}"}}'
+    }
+  }
+}
+
+把 {{ dingtalk_webhook_url }} 替换成你的钉钉机器人 webhook url 即可。
+

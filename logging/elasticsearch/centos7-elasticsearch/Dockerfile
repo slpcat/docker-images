@@ -9,7 +9,7 @@
 # Extract Elasticsearch artifact
 ################################################################################
 
-FROM slpcat/centos:8 AS builder
+FROM slpcat/centos:7 AS builder
 
 # `tini` is a tiny but valid init for containers. This is used to cleanly
 # control how ES and any child processes are shut down.
@@ -72,7 +72,7 @@ RUN sed -i -e 's/ES_DISTRIBUTION_TYPE=tar/ES_DISTRIBUTION_TYPE=docker/' bin/elas
 # Add entrypoint
 ################################################################################
 
-FROM slpcat/centos:8
+FROM slpcat/centos:7
 
 RUN for iter in {1..10}; do \
       yum update --setopt=tsflags=nodocs -y && \

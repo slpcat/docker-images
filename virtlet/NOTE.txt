@@ -1,0 +1,7 @@
+目前Redhat开源的kubevirt和Mirantis开源的virtlet都提供了以容器方式运行虚拟机的方案。
+
+kubevirt 是 Redhat 开源的以容器方式运行虚拟机的项目，以 k8s add-on方式，利用 k8s CRD 为增加资源类型Virtual Machine Instance（VMI）， 使用容器的image registry去创建虚拟机并提供VM生命周期管理。 用pod管理能力，要自主去实现，目前kubevirt实现了类似RS的功能。
+
+那Virtlet是什么呢？
+
+Virtlet 来自于 Mirantis，跟 kubevirt 的不同之处在于它使用 POD 来描述一个 VM（Virtual Machine,虚拟机)。Virtlet 是 Kubernetes 一个运行时服务，能够根据 QCOW2 映像运行 VM 工作负载。Virtlet是是K8S的一个插件，CRI接口兼容的插件，能够在 Kubernetes 集群上运行基于虚拟机的 Pods。

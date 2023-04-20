@@ -1,0 +1,17 @@
+1、拉取镜像：docker pull ibmcom/websphere-traditional:9.0.0.10
+
+2、docker run -p 9043:9043  -p 9443:9443 -d ibmcom/websphere-traditional:9.0.0.10  #后台运行该镜像生成的容器
+
+3、查询websphere的密码：
+
+docker ps查看部署的镜像，websphere的name为gracious_einstein
+
+根据name进入容器docker exec -it gracious_einstein bash
+
+获取其密码，在tmp/PASSWORD，记录密码zFz4qJAe
+
+4、访问websphere
+
+https://IP:9043/ibm/console/login.do?action=secure
+
+9043为此前运行时配置的端口号

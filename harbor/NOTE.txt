@@ -7,7 +7,7 @@ mkdir /home/harbor
 cd /home/harbor
 
 # 下载Harbor
-wget -P /usr/local wget https://github.com/goharbor/harbor/releases/download/v2.3.2/harbor-online-installer-v2.3.2.tgz
+wget https://github.com/goharbor/harbor/releases/download/v2.8.0/harbor-offline-installer-v2.8.0.tgz
 
 tar zxf /usr/local/harbor-online-installer-v2.3.2.tgz -C /data/harbor
 

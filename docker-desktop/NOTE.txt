@@ -66,3 +66,6 @@ If you use glamor when building xorgxrdp (--enable-glamor) you should be hardwar
 
 Anbox（Android in a box），一款通过沙盒直接运行安卓程序的软件
 
+
+
+docker run -d --restart=always -p 8080:8080 -p 1022:22  blackarchlinux/blackarch:novnc

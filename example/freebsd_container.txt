@@ -1,0 +1,5 @@
+1.底层运行机制zfs和jail 但是不直接面向最终用户
+2.dockerd on freebsd 已经报废，不再使用
+3.容器运行时采用containerd 支持freebsd容器和linux容器
+4.集群编排工具kubernetes 当前没完整支持
+5.freebsd原生镜像构建？

@@ -1,0 +1,82 @@
+安装rsyslog+rsyslog-kafka
+
+2.1通过yum安装
+
+运行下列命令（如果没有yum源 1.进入/etc/yum.repos.d  2. 运行：wget http://rpms.adiscon.com/v8-stable/rsyslog.repo）
+
+# yum install rsyslog
+
+# yum install rsyslog-kafka.x86_64
+
+安装完成后查看 /lib64/rysylog/(32为系统为/lib/rsyslog)中是否存在omkafka.so,验证rsyslog-kafka是否安装成功
+
+2.2 rsyslog配置
+
+编辑配置文件（路径：/etc/rsyslog.conf ），在配置文件#### MODULES ####的下面添加如下配置
+
+# 加载omkafka和imfile模块
+module(load="omkafka")
+module(load="imfile")
+ 
+# nginx template
+template(name="nginxAccessTemplate" type="string" string="%hostname%<-+>%syslogtag%<-+>%msg%\n")
+ 
+# ruleset
+ruleset(name="nginx-kafka") {
+    #日志转发kafka
+    action (
+        type="omkafka"
+	template="nginxAccessTemplate"
+        topic="test_nginx"
+        broker="localhost:9092"
+    )
+}
+ 
+# 定义消息来源及设置相关的action
+input(type="imfile" Tag="nginx-accesslog" File="/var/log/access.log" Ruleset="nginx-kafka")
+
+配置简单说明：localhost:9092需要修改为你自己的kafka地址（如果为集群多个地址逗号分隔），/var/log/access.log是监控的nginx日志文件（可以在此目录下自己创建个access.log，当然正式使用此目录改为nginx的日志目录）
+
+修改完配置后运行：rsyslogd -N 1 或者 rsyslogd -dn 查看配置是否报错
+
+然后重启rsyslog：service rsyslog restart，重启后查看/var/log/message中日志是否报错
+
+
+
+
+nginx_kafka.conf
+#加载omkafka和imfile模块
+module(load="omkafka")
+module(load="imfile")
+
+# nginx template
+template(name="nginxAccessTemplate" type="string" string="%hostname%<-+>%syslogtag%<-+>%msg%\n")
+
+# ruleset
+ruleset(name="nginx-kafka") {
+    #日志转发kafka
+    action (
+        type="omkafka"
+        template="nginxAccessTemplate"
+        confParam=["compression.codec=snappy", "queue.buffering.max.messages=400000"]
+        partitions.number="4"
+        topic="test_nginx"
+        broker="localhost:9092"
+        queue.spoolDirectory="/tmp"
+        queue.filename="test_nginx_kafka"
+        queue.size="360000"
+        queue.maxdiskspace="2G"
+        queue.highwatermark="216000"
+        queue.discardmark="350000"
+        queue.type="LinkedList"
+        queue.dequeuebatchsize="4096"
+        queue.timeoutenqueue="0"
+        queue.maxfilesize="10M"
+        queue.saveonshutdown="on"
+        queue.workerThreads="4"
+    )
+}
+
+# 定义消息来源及设置相关的action
+input(type="imfile" Tag="nginx,aws" File="/usr/local/nginx/logs/access.log" Ruleset="nginx-kafka")
+

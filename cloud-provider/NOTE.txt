@@ -1,0 +1,5 @@
+Kubernetes 从 Cloud Provider 到 Cloud Controller Mananger（CCM) 的演变过程及其实现细节
+
+部署aliyun-cloud-provider
+参考地址:https://github.com/kubernetes/cloud-provider-alibaba-cloud/blob/master/docs/examples/master.policy
+

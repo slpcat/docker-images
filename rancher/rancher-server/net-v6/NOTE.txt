@@ -1,0 +1,12 @@
+https://docs.cilium.io/en/stable/gettingstarted/cni-chaining-generic-veth/
+Generic Veth Chaining
+Deploy Cilium with the portmap plugin enabled
+
+helm install cilium cilium/cilium --version 1.11.1 \
+  --namespace=kube-system \
+  --set cni.chainingMode=generic-veth \
+  --set cni.customConf=true \
+  --set cni.configMap=cni-configuration \
+  --set tunnel=disabled \
+  --set enableIPv4Masquerade=false
+

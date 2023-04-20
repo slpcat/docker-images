@@ -1,0 +1,10 @@
+kafka-eagle
+
+官网地址 https://www.kafka-eagle.org/
+github地址:https://github.com/smartloli/kafka-eagle
+
+EFAK (Eagle For Apache Kafka, previously known as Kafka Eagle). This topic provides a high-level look at EFAK, the EFAK process, and EFAK features. It’s a good place to start if you want to learn more about EFAK software. To jump right in, refer to Getting started.
+
+EFAK is open source visualization and management software. It allows you to query, visualize, alert on, and explore your metrics no matter where they are stored. In plain English, it provides you with tools to turn your kafka cluster data into beautiful graphs and visualizations.
+
+After installed EFAK like you do in Getting started, there are many possible things you might do next. It all depends on your needs and your use case.

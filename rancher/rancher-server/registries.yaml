@@ -1,0 +1,14 @@
+mirrors:
+  # 私有仓库域名
+  harbor.kingsd.top:
+    endpoint:
+      - "https://harbor.kingsd.top"
+configs:
+  "harbor.kingsd.top":
+    auth:
+      username: admin  # 这是私有镜像仓库的用户名
+      password: Password  # 这是私有镜像仓库的密码
+    tls:
+      ca_file: /opt/certs/ca.crt # 镜像仓库中使用的ca文件的路径。
+      cert_file: /opt/certs/harbor.kingsd.top.cert  # 镜像仓库中使用的cert文件的路径。
+      key_file: /opt/certs/harbor.kingsd.top.key # 镜像仓库中使用的key文件的路径。

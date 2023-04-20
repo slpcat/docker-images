@@ -1,0 +1,38 @@
+初始化 服务端和客户端
+
+#https://gitee.com/mirrors/ceph/blob/quincy/src/cephadm/cephadm
+curl -O https://raw.githubusercontent.com/ceph/ceph/v17.2.6/src/cephadm/cephadm
+chmod +x cephadm
+
+./cephadm add-repo --release quincy
+./cephadm install
+
+#cephadm install ceph-common
+
+cephadm --image slpcat/ceph:v17.2.6 --docker -v  bootstrap --mon-ip 10.51.0.239 --config init-ceph.conf
+
+
+–ssh-user
+--registry-json
+{"url":"REGISTRY_URL", "username":"REGISTRY_USERNAME", "password":"REGISTRY_PASSWORD"}
+
+--skip-monitoring stack
+
+--cluster-network 10.0.0.0/19
+
+启用监控
+
+ceph mgr module enable prometheus
+
+
+
+# 执行以下命令安装ceph-common包
+cephadm add-repo --release quincy
+cephadm install ceph-common
+
+# 检验ceph命令在主机上安装成功
+ceph -v
+
+# 检验主机上的ceph命令能成功连接集群，获取集群状态
+ceph status
+

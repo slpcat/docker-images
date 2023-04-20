@@ -1,0 +1,22 @@
+version: '3'
+services:
+  gvm:
+      restart: always
+      image: securecompliance/gvm
+      hostname: openvas
+      #expose:
+        #- "444"
+      ports:
+         - 9390:9392
+         - 8081:8081
+         - 5432:5432
+      volumes:
+        - "./data/openvas:/var/lib/openvas/mgr/"
+  # Daily updates to openvas
+  cron:
+      restart: always
+      image: funkyfuture/deck-chores:1.2
+      #volumes:
+        #- "/var/run/docker.sock:/var/run/docker.sock"
+
+

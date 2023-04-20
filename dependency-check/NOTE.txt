@@ -1,0 +1,65 @@
+Dependency-Check简介
+使用 "存在已知漏洞的组件" 已经成为OWASP TOP 10的漏洞之一了。所以，越来越有必要对上线前的项目做好三方依赖库的检测，寻找中已知的漏洞，降低上线后的安全风险。Dependency-Check 就是这样的一款工具。他会分析软件构成，检测项目中依赖项的公开披露漏洞。Dependency-Check 常用于扫描java和.NET程序，另外还有些实验性的分析器，例如：python、ruby、php以及nodejs等，这些作为实验性研究是因为他们的高误报率。如果你公司主要使用c#，java开发程序，那这款工具作为项目上线前的漏洞扫描不乏是个好选择。
+
+Dependency-Check 发行的版本主要有jenkins插件、命令行工具、maven插件等，详解介绍可查看https://github.com/jeremylong/DependencyCheck，以下是基于命令行工作模式的介绍。
+
+
+以Jenkins插件形式运行
+
+安装OWASP Dependency-Check插件
+
+全局工具配置下配置dependency插件路径及版本（可单独下载）
+
+
+以Sonarqube插件形式运行
+1）github上下载插件jar包，地址：
+
+https://github.com/dependency-check/dependency-check-sonar-plugin（注意插件版本与soanr版本的兼容关系）
+
+2）上传到%SONAR_HOME%/extensions/plugins目录下
+
+3）重启sonar
+
+4）验证查看
+
+
+搭建本地NVD Mirror库
+实际企业中内网环境可能CI服务器不会开放对外网的访问权限，故需要搭建一个本地的NVDMirror
+
+具体搭建步骤参考：
+
+https://jeremylong.github.io/DependencyCheck/data/mirrornvd.html
+
+实际操作步骤如下：
+
+主要需要变更两个东西，一个是nvd库，还有一个是jsrepository.json
+
+1、搭建nvd库：
+
+官方提供了对应jar包来作为mirror的服务，具体github地址：
+
+https://github.com/stevespringett/nist-data-mirror/
+
+1）下载release jar包，如需定制请自行改写代码
+
+2）服务器上执行java -jar nist-data-mirror.jar ，改命令会把2002-最近一年的所有*.json.gz 和 *.meta 文件下载下来
+
+3）搭建本地apache服务
+
+使用官方docker镜像直接启动即可，具体命令：
+
+docker run -d --name mirror   -p 30006:80 \
+  -v /data/mirror-repo:/usr/local/apache2/htdocs sspringett/nvdmirror:latest
+
+其中source为宿主机目录
+
+
+5、搭建成功后执行dependency check命令行中添加参数应用mirror地址即可
+
+以pipeline为例：
+
+dependencyCheck additionalArguments: '–cveUrlModified http://x.x.x.x:8080/nvdcve-1.1-2019.json.gz --cveUrlBase http://x.x.x.x:8080/nvdcve-1.1-2019.json.gz ', odcInstallation: ‘dependency-check’
+
+
+https://github.com/divan/depscheck
+Dependency checker for Golang (Go) packages. Prints stats and suggests to remove small LeftPad-like imports if any.

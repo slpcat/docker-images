@@ -21,3 +21,4 @@ docker run --net=host -d -p 6060-6061:6060-6061 -v /root/clair_config:/config qu
 
 7.安装辅助工具clairctl
 clairctl一个轻量级命令行工具，用于在本地使用clair并生成HTML报告。
+

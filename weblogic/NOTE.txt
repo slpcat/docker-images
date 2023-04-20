@@ -1,0 +1,18 @@
+https://github.com/oracle/docker-images.git
+
+docker run -d -ti -p 7001：7001 vulhub/weblogic:12.2.1.3
+1、拉取镜像：docker pull ismaleiva90/weblogic12:latest
+
+2、启动镜像：docker run -d -p 7001:7001 -p 7002:7002  ismaleiva90/weblogic12
+
+3、登陆weblogic：
+
+http://IP:7001/console
+
+IP为部署的服务IP，端口号为启动镜像时配置的7001（密码为weblogic welcome1）。
+
+
+Weblogic Kubernetes Operator
+
+https://oracle.github.io/weblogic-kubernetes-operator/
+

@@ -1,0 +1,78 @@
+# Source: logstash/templates/pipeline-config.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ingress-logstash-pipeline
+  namespace: logging
+  labels:
+    app: logstash
+    chart: logstash-2.3.0
+    release: ingress
+    heritage: Helm
+data:
+  input_main.conf: |-
+    input{
+          kafka{
+            bootstrap_servers => "b-2.elk-kafka.com:9092,b-1.elk-kafka.com:9092"
+            group_id => "ingress-prod-db"
+            auto_offset_reset => "earliest"
+            consumer_threads => 5
+            decorate_events => true
+            topics => ["ingress-access-log"]
+            codec => json { charset => "UTF-8" }
+            #type => "student"
+            }
+    }
+
+    filter {
+        json {
+            source => "message"
+        }
+
+        if "_grokparsefailure" in [tags] {
+            drop {}
+        }
+
+        grok{
+            match => {"log" => "\[%{DATA:remote_addr}\] - %{DATA:remote_user} \[%{HTTPDATE:time_local}\] \"%{DATA:server_protocol}\" \"%{DATA:request_method}\" \"%{DATA:uri}\" \"%{DATA:request_body}\" %{NUMBER:status} %{NUMBER:body_bytes_sent} \"%{DATA:http_referer}\" \"%{DATA:http_user_agent}\" %{NUMBER:request_length} %{NUMBER:request_time} \[%{DATA:proxy_upstream_name}\] %{GREEDYDATA:upstream_addr} %{NUMBER:upstream_response_length} %{NUMBER:upstream_response_time} %{NUMBER:upstream_status} %{DATA:req_id} %{DATA:domain} \[%{DATA:proxy_alternative_upstream_name}\] \"%{DATA:request_filename}\""}
+        }
+
+        mutate{
+            remove_field => ['log','agent','host','k8s_container_name','k8s_pod_namespace','ecs','k8s_pod','index','input','@verson','k8s_pod_namespace','topic','docker_container', 'message']
+        }
+
+        useragent {
+            source => "http_user_agent"
+            target => "ua"
+        # 过滤useragent没用的字段
+            remove_field => [ "[ua][minor]","[ua][major]","[ua][build]","[ua][patch]","[ua][os_minor]","[ua][os_major]" ]
+        }
+        geoip {
+            source => "remote_addr"
+            #source => "http_x_forwarded_for"
+            #target => "geoip"
+            #database =>"/usr/share/GeoIP/GeoLite2-City.mmdb"   ##### 下载GeoIP库
+            #add_field => [ "[geoip][coordinates]", "%{[geoip][longitude]}" ]
+            #add_field => [ "[geoip][coordinates]", "%{[geoip][latitude]}"  ]
+        }
+        if "_geoip_lookup_failure" in [tags] { drop { } } ### 如果解析的地址是内网IP geoip解析将会失败，会生成_geoip_lookup_failure字段，这段话的意思是如果内网地址 drop掉这个字段。
+    }
+
+    output {
+        opensearch {
+            hosts => ["https://es.com:443"]
+            ssl => "true"
+            user => "elastic"
+            password => "password"
+            index => "ingress_access_log_db_%{+YYYY.MM.dd}"
+            #ilm_enabled => false
+            #document_type => "test" #索引的类型，旧的配置会使用index_type，但是这个字段在新版本中已经被舍弃了，推荐使用document_type
+            #manage_template => true #注意默认为true,一定不能设置为false
+            #template_overwrite => true #如果设置为true，模板名字一样的时候，新的模板会覆盖旧的模板
+            #template_name => "logstash-ingress" #注意这个名字是用来查找映射配置的，尽量设置成全局唯一的
+            #template => "/tmp/logstash-ingress.json" #映射配置文件的位置
+        }
+        #stdout {
+        #   codec => rubydebug
+        #}
+    }

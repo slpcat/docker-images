@@ -4,7 +4,7 @@ MAINTAINER 若虚 <slpcat@qq.com>
 
 # Container variables
 ENV \
-    TERM="xterm" \
+    TERM="xterm-256color" \
     LANG="en_US.UTF-8" \
     LANGUAGE="en_US.UTF-8" \
     LC_ALL="en_US.UTF-8" \

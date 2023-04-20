@@ -4,8 +4,11 @@ docker run -it \
   -p 6650:6650 \
   -p 8080:8080 \
   -v $PWD/pulsardata:/pulsar/data \
-  apachepulsar/pulsar:2.8.1 \
+  apachepulsar/pulsar:2.9.1 \
   bin/pulsar standalone
+
+
+
 
 Pulsar Manager
 Pulsar Manager 是一个网页式可视化管理与监测工具，支持多环境下的动态配置。可用于管理和监测租户、命名空间、topic、订阅、broker、集群等。
@@ -25,3 +28,26 @@ curl \
    -d '{"name": "admin", "password": "apachepulsar", "description": "test", "email": "username@test.org"}'
 
 https://pulsar.apache.org/docs/zh-CN/next/administration-pulsar-manager/
+
+pulsar-admin 是 Pulsar 的 CLI（命令行客户端） 工具。 这一步中，你可以使用 pulsar-admin 来创建资源，包括租户、命名空间和主题。
+
+
+KoP（Kafka on Pulsar）
+目前 StreamNative 联合合作伙伴已推出了 KoP 项目，主要满足想要从 Kafka 应用程序切换到 Pulsar 的用户的强烈需求。
+
+KoP 将 Kafka 协议处理插件引入 Pulsar broker，从而实现 Apache Pulsar 对原生 Apache Kafka 协议的支持。将 KoP 协议处理插件添加到现有 Pulsar 集群后，用户不用修改代码就可以将现有的 Kafka 应用程序和服务迁移到 Pulsar，从而使用 Pulsar 的强大功能。
+
+KoP 相关特性：
+
+Broker 的插件，Client 不需要做任何的改动；
+共享访问；
+支持 Kafka 0.10-2.x 版本；
+连续 Offset：增加对连续 ID 的支持。
+性能改进：实现与 Kafka broker 类似的机制，无需 KoP 针对 Kafka 发送的 batch 消息进行拆包解包，将 Kafka 发送过来的消息直接以 Kafka 格式进行存储，并在 Pulsar Client 增加对 kafka 协议的解析器。
+支持 Envoy，并实现 Pulsar Schema 与 Kafka Schema 的兼容。
+
+AoP（AMQP on Pulsar）
+AoP（AMQP on Pulsar）是 StreamNative 联合中国移动共同开发推进的项目，类似 KoP，主要解决 AMQP 应用程序迁移到 Pulsar 的需求。当前 AoP 实现了对 AMQP 协议 0.9.1 版本的支持，2021 年计划对 AMQP 1.0 协议进行整合支持。目前除了中国移动正在大规模应用 AoP 外，国外也有越来越多的用户正在使用 AoP，希望更多小伙伴加入到 AoP 使用中来，共同丰富 AoP 场景，协作增强 AoP 功能。
+
+MoP（MQTT on Pulsar）
+MQTT 协议在物联网应用十分广泛，类似 KoP、AoP，当前 Pulsar 也通过 MoP 项目提供了对 MQTT 协议的支持。当前 MoP 支持 QoS level 0、QoS level 1 协议，2021 年计划实现对 QoS level 2 协议的支持。

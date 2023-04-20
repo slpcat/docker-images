@@ -6,3 +6,7 @@ docker run -it --rm ghcr.io/graalvm/graalvm-ce:21.2.0 bash
 
 docker pull springci/graalvm-ce:master-java8
 docker pull springci/graalvm-ce:master-java11
+
+GraalWasm 
+GraalWasm 是在 GraalVM 中实现的 WebAssembly 引擎，它可以以二进制格式解释和编译 WebAssembly
+程序，或者嵌入到其它程序中。

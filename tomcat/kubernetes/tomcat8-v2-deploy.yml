@@ -9,7 +9,7 @@ metadata:
 spec:
   #保留历史版本数量
   revisionHistoryLimit: 3
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: tomcat8

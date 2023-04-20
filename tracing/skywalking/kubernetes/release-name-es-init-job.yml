@@ -1,0 +1,51 @@
+# Source: skywalking/templates/es-init.job.yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: "release-name-es-init"
+  labels:
+    app: release-name
+    chart: skywalking-4.2.0
+    component: "release-name-skywalking-job"
+    heritage: Helm
+    release: release-name
+spec:
+  template:
+    metadata:
+      name: "release-name-es-init"
+      labels:
+        app: release-name
+        component: "release-name-skywalking-job"
+        release: release-name
+    spec:
+      serviceAccountName: release-name-skywalking-oap
+      restartPolicy: Never
+      initContainers:
+      - name: wait-for-elasticsearch
+        image: busybox:1.30
+        imagePullPolicy: IfNotPresent
+        command: ['sh', '-c', 'for i in $(seq 1 60); do nc -z -w3 your.elasticsearch.host.or.ip 9200 && exit 0 || sleep 5; done; exit 1']
+      containers:
+      - name: oap
+        image: skywalking.docker.scarf.sh/apache/skywalking-oap-server:8.8.1
+        imagePullPolicy: IfNotPresent
+        resources:
+          limits:
+            cpu: 8
+            memory: 8Gi
+          requests:
+            cpu: 1
+            memory: 2Gi
+        env:
+        - name: JAVA_OPTS
+          value: "-Xmx2g -Xms2g -Dmode=init"
+        - name: SW_STORAGE
+          value: elasticsearch
+        - name: SW_STORAGE_ES_CLUSTER_NODES
+          value: "your.elasticsearch.host.or.ip:9200"
+        - name: SW_ES_USER
+          value: "xxx"
+        - name: SW_ES_PASSWORD
+          value: "xxx"
+        volumeMounts:
+      volumes:

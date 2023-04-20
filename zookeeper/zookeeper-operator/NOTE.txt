@@ -1,3 +1,4 @@
+ Pravega’s Zookeeper Operator
 helm repo add pravega https://charts.pravega.io
 helm repo update
 helm install zookeeper-operator --namespace=zookeeper --create-namespace pravega/zookeeper-operator

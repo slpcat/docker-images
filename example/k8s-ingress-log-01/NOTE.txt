@@ -1,0 +1,38 @@
+数据流程 ingress-nginx log --> log-pilot --> kafka --> logstash --> elasticsearch -->grafana
+
+1.ingress-nginx 日志字段配置
+  log-format-upstream: $remote_addr - [$remote_addr] - $remote_user [$time_local]
+    "$server_protocol" "$request_method" "$uri" "$request_body" $status $body_bytes_sent
+    "$http_referer" "$http_user_agent" $request_length $request_time [$proxy_upstream_name]
+    $upstream_addr $upstream_response_length $upstream_response_time $upstream_status
+    $req_id $host [$proxy_alternative_upstream_name] "$request_filename"
+
+  log-format-upstream: '{"time": "$time_iso8601","remote_addr": "$remote_addr","x-forward-for":
+    "$proxy_add_x_forwarded_for","request_id": "$req_id","remote_user": "$remote_user","bytes_sent":
+    "$bytes_sent","request_time": "$request_time","status": "$status","vhost": "$host","request_proto":
+    "$server_protocol","path": "$uri","request_query": "$args","request_length": "$request_length","duration":
+    "$request_time","method": "$request_method","http_referrer": "$http_referer","http_user_agent":
+    "$http_user_agent"}'
+
+2.kafka
+
+topics ingress-access-log
+
+3.logstash配置
+logstash-filter-geoip
+
+
+4.es相关
+配置索引模版 mapping
+
+5.grafana展示
+grafana-cli plugins install grafana-worldmap-panel
+grafana-cli plugins install grafana-piechart-panel
+
+bash-5.1$ sed -i 's/https:\/\/cartodb-basemaps{s}.global.ssl.fastly.net\/light_all\/{z}\/{x}\/{y}.png/http:\/\/{s}.basemaps.cartocdn.com\/light_all\/{z}\/{x}\/{y}.png/' \
+grafana-worldmap-panel/module.js \
+grafana-worldmap-panel/module.js.map
+bash-5.1$ sed -i 's/https:\/\/cartodb-basemaps-{s}.global.ssl.fastly.net\/dark_all\/{z}\/{x}\/{y}.png/http:\/\/{s}.basemaps.cartocdn.com\/dar
+k_all\/{z}\/{x}\/{y}.png/'  \
+grafana-worldmap-panel/module.js \
+grafana-worldmap-panel/module.js.map

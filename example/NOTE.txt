@@ -5,3 +5,46 @@ QOR是首个使用Go语言开发的电商系统、CMS的SDK
 https://getqor.com/cn
 
 
+CDN日志分析
+访问日志字段包括：请求时间、客户端IP、访问域名、文件路径、字节数大小、省份、运营商、HTTP返回码、Referer、 request-time（毫秒）、UA、Range、HTTP Method、HTTP协议标识、缓存Hit/Miss。查看地域及运营商编码映射表
+
+使用ELK分析腾讯云CLB日志
+
+https://www.jianshu.com/p/e75305eee59c
+
+Logstash Kv filter plugin（安全设备日志字段解析）
+https://cloud.tencent.com/developer/article/1819303
+
+Zabbix与ELK整合实现对安全日志数据的实时监控告警
+
+https://cloud.tencent.com/developer/article/1586647?from=article.detail.1819303
+ELK 联动 ZABBIX 实现异常日志告警
+
+https://cloud.tencent.com/developer/article/1586590?from=article.detail.1586647
+
+aliyun cdn 日志
+https://developer.aliyun.com/article/610256
+
+CDN日志格式说明
+
+字段名字	类型	说明
+client_ip	text	客户端ip
+content_type	text	数据类型
+domain		text	域名
+hit_info	text	缓存命中信息 HIT 或者 MISS
+method		text	请求方法
+refer_domain	text	请求来源域名
+refer_param	text	请求来源url 参数
+refer_uri	text	请求来源uri
+remote_ip	text	remote ip
+remote_port	long	remote 端口
+request_size	long	请求输入大小，单位byte
+request_time	long	响应延时，单位毫秒
+response_size	long	请求返回大小，单位byte
+return_code	long	http 状态码
+scheme		text	请求协议， 如http
+uri		text	请求uri
+uri_param	text	请求参数
+user_agent	text	请求Agent信息
+uuid		text	标识请求的唯一id
+xforwordfor	text	forword ip 地址

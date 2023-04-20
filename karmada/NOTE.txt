@@ -1,0 +1,25 @@
+https://github.com/karmada-io/karmada
+
+部署karmada控制面组件到host集群
+
+创建CRD，也就是karmada自定义的多云工作负载API资源，包含：propgation policy，override policy，work，resource binding等
+
+创建webhook
+
+部署完成后，形成kubeconfig文件$HOME/kube/karmada.config，包含karmada-host和karmada-apiserver两个context，分别对应支撑karmada控制面运行的host集群，以及karmada控制面本身
+
+使用karmadactl管理member集群
+
+切换到karmada控制面
+
+执行karmadactl join member1 --cluster-kubeconfig=$HOME/.kube/karmada.config以push的方式把member1加入karmada集群
+
+注意：karmada中的host集群和member集群之间的同步方式有push和pull两种，这里的上手过程采用push的方式，感兴趣的读者可以参考karmada的readme尝试pull同步方式
+
+使用kubectl管理工作负载
+
+切换到karmada控制面
+
+执行kubectl create -f samples/nginx/deployment.yaml创建deployment资源如前面所述，由于kamada控制面没有部署deployment controller，nginx不会在karmada控制面所在集群跑起来，而是仅仅保存在etcd里这时候如果去member1集群查看pod资源的情况，可以发现nginx也没有在member1集群中运行起来
+
+执行kubectl create -f samples/nginx/propagationpolicy.yaml

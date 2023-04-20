@@ -1,0 +1,8 @@
+使用Grafana监控AWS的 EC2, S3, ELB, EBS, RDS等(多图)
+
+https://codeload.github.com/monitoringartist/grafana-aws-cloudwatch-dashboards/zip/master
+
+https://github.com/monitoringartist/grafana-aws-cloudwatch-dashboards
+
+
+AWS 和 Grafana Labs 推出了 AWS X-Ray 数据源插件

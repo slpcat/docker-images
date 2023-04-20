@@ -1,0 +1,53 @@
+elero 工具，它提供以下功能：
+
+灾备场景：提供备份恢复k8s集群的能力
+
+迁移场景：提供拷贝集群资源到其他集群的能力（复制同步开发，测试，生产环境的集群配置，简化环境配置）
+
+Velero 项目地址：https://github.com/vmware-tanzu/velero
+
+下载官方 velero 客户端 （ https://github.com/vmware-tanzu/velero/releases ）
+
+Velero 阿里云插件地址：https://github.com/AliyunContainerService/velero-plugin
+
+velero install \
+--namespace=velero
+--provider  
+
+
+      --no-default-backup-location
+      --image=velero/velero:v1.8.1
+--features=EnableCSI \
+--features=EnableAPIGroupVersions \
+--plugins=<object storage plugin>,velero/velero-plugin-for-csi:v0.1.0 \
+velero/velero-plugin-for-csi:v0.1.0
+...
+
+velero install \
+--namespace=velero
+    --provider aws \
+      --image=velero/velero:v1.8.1
+    --plugins velero/velero-plugin-for-aws:v1.2.1 \
+    --bucket velero \
+    --secret-file ./credentials-velero \
+    --use-volume-snapshots=false \
+    --backup-location-config region=minio,s3ForcePathStyle="true",s3Url=http://minio.velero.svc:9000
+
+    --backup-location-config region=bj,s3ForcePathStyle="true",s3Url=http://s3.bj.bcebos.com
+
+velero client config set features=EnableCSI
+
+
+velero backup create nginx-backup --snapshot-volumes --selector app=nginx
+
+velero schedule create nginx-daily --schedule="0 1 * * *" --selector app=nginx
+
+velero restore create --from-backup nginx-backup
+
+velero restore get
+velero restore describe <RESTORE_NAME>
+
+velero backup delete BACKUP_NAME
+
+
+https://github.com/konveyor/mig-operator

@@ -1,0 +1,4 @@
+https://wasmedge.org
+docker pull wasmedge/slim:0.11.2
+
+docker pull wasmedge/slim-tf:0.11.2

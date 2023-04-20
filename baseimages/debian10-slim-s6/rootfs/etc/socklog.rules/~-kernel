@@ -1,4 +1,0 @@
--
-+^kern\.
-${SOCKLOG_TIMESTAMP_FORMAT}
-/var/log/socklog/kernel

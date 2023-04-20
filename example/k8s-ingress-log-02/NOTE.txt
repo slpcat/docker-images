@@ -1,0 +1,1 @@
+数据流程 ingress-nginx log --> log-pilot --> kafka --> logstash --> loki -->grafana

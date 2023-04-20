@@ -1,0 +1,166 @@
+PUT _index_template/ingress_access_log
+{
+        "index_patterns" : [
+          "ingress_access_log_*"
+        ],
+        "template" : {
+          "settings" : {
+            "index" : {
+              "number_of_shards" : "7",
+              "number_of_replicas": "0",
+              "refresh_interval": "60s",
+              "translog.sync_interval": "120s",
+              "translog.durability": "async",
+              "translog.flush_threshold_size": "5g",
+              "merge.policy.max_merged_segment": "2gb",
+              "merge.scheduler.max_thread_count": 20,
+              "merge.policy.segments_per_tier": "24"
+            }
+          },
+          "mappings" : {
+            "dynamic_templates" : [ ],
+            "properties" : {
+              "request" : {
+                "type" : "text"
+              },
+              "upstream_addr" : {
+                "type" : "keyword"
+              },
+              "body_bytes_sent" : {
+                "type" : "long"
+              },
+              "request_method" : {
+                "type" : "keyword"
+              },
+              "ua" : {
+                "type" : "object",
+                "properties" : {
+                  "os" : {
+                    "type" : "keyword"
+                  },
+                  "name" : {
+                    "type" : "keyword"
+                  },
+                  "os_name" : {
+                    "type" : "keyword"
+                  },
+                  "device" : {
+                    "type" : "keyword"
+                  }
+                }
+              },
+              "http_user_agent" : {
+                "type" : "text"
+              },
+              "remote_user" : {
+                "type" : "keyword"
+              },
+              "req_id" : {
+                "type" : "keyword"
+              },
+              "k8s_node_name" : {
+                "type" : "keyword"
+              },
+              "upstream_status" : {
+                "type" : "keyword"
+              },
+              "request_time" : {
+                "type" : "double"
+              },
+              "stream" : {
+                "type" : "keyword"
+              },
+              "remote_addr" : {
+                "type" : "keyword"
+              },
+              "geoip" : {
+                "type" : "object",
+                "properties" : {
+                  "city_name" : {
+                    "type" : "keyword"
+                  },
+                  "timezone" : {
+                    "type" : "keyword"
+                  },
+                  "ip" : {
+                    "type" : "keyword"
+                  },
+                  "latitude" : {
+                    "type" : "float",
+                    "doc_values" : true
+                  },
+                  "country_code2" : {
+                    "type" : "keyword"
+                  },
+                  "country_name" : {
+                    "type" : "keyword"
+                  },
+                  "continent_code" : {
+                    "type" : "keyword"
+                  },
+                  "country_code3" : {
+                    "type" : "keyword"
+                  },
+                  "location" : {
+                    "type" : "geo_point",
+                    "doc_values" : true
+                  },
+                  "region_name" : {
+                    "type" : "keyword"
+                  },
+                  "longitude" : {
+                    "type" : "float",
+                    "doc_values" : true
+                  },
+                  "region_code" : {
+                    "type" : "keyword"
+                  }
+                }
+              },
+              "upstream_response_length" : {
+                "type" : "long"
+              },
+              "time_local" : {
+                "type" : "keyword"
+              },
+              "uri" : {
+                "type" : "keyword"
+              },
+              "@timestamp" : {
+                "type" : "date"
+              },
+              "request_body" : {
+                "type" : "text"
+              },
+              "request_length" : {
+                "type" : "long"
+              },
+              "http_referer" : {
+                "type" : "keyword"
+              },
+              "request_filename" : {
+                "type" : "text"
+              },
+              "domain" : {
+                "type" : "keyword"
+              },
+              "proxy_alternative_upstream_name" : {
+                "type" : "keyword"
+              },
+              "upstream_response_time" : {
+                "type" : "double"
+              },
+              "time" : {
+                "type" : "keyword"
+              },
+              "server_protocol" : {
+                "type" : "keyword"
+              },
+              "status" : {
+                "type" : "keyword"
+              }
+            }
+          }
+        }
+}
+

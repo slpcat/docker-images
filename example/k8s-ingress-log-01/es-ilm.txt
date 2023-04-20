@@ -1,0 +1,35 @@
+PUT _ilm/policy/aliyun_default_ilm_policy
+{
+  "policy": {
+    "phases": {
+      "hot": {
+        "min_age": "0ms",
+        "actions": {
+          "set_priority": {
+            "priority": 100
+          }
+        }
+      },
+      "warm": {
+        "min_age": "3d",
+        "actions": {
+          "set_priority": {
+            "priority": 50
+          }
+        }
+      },
+      "cold": {
+        "min_age": "7d",
+        "actions": {
+          "set_priority": {
+            "priority": 1
+          }
+        }
+      },
+      "delete": {
+        "min_age": "30d",
+        "actions": {}
+      }
+    }
+  }
+}

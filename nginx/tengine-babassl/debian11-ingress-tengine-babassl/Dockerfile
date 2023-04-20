@@ -19,7 +19,7 @@ COPY --from=builder /opt /opt
 COPY --from=builder /etc/nginx /etc/nginx
 
 RUN apt-get update && apt-get dist-upgrade -y && \
-    apt-get install -y libxslt1.1 libxml2 libjemalloc2 libgd3 libgeoip1 libmaxminddb0 \
+    apt-get install -y libxslt1.1 libxml2 libjemalloc2 libgd3 libgeoip1 libmaxminddb0 libcurl3-nss \
     && ldconfig \
     && ln -s /usr/local/nginx/sbin/nginx /sbin/nginx \
     && bash -eu -c ' \

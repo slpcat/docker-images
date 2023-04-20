@@ -1,0 +1,11 @@
+# Source: skywalking/templates/oap-serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    app: release-name
+    chart: skywalking-4.2.0
+    component: "oap"
+    heritage: Helm
+    release: release-name
+  name: release-name-skywalking-oap

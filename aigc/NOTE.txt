@@ -1,0 +1,18 @@
+civitai 
+https://github.com/civitai/civitai
+http://civitai.com
+
+novelai
+https://novelai.net/
+
+
+stable-diffusion-webui
+https://github.com/AUTOMATIC1111/stable-diffusion-webui
+https://www.codewithgpu.com/i/AUTOMATIC1111/stable-diffusion-webui/Stable-Diffusion-for-NovelAI
+
+ControlNet
+ https://github.com/lllyasviel/ControlNet.git
+https://huggingface.co/lllyasviel/ControlNet/tree/main/models
+
+模型库
+huggingface

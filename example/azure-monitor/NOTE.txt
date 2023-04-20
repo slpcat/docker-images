@@ -1,0 +1,5 @@
+关于Azure Monitor插件的Github 
+
+    https://github.com/grafana/azure-monitor-datasource
+
+

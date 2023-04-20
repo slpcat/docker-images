@@ -1,0 +1,3 @@
+openvas 
+
+9390映射openvas9392端口，8081监听管理，5432为PostgreSQL数据库端口。默认securecompliance/gvm镜像集成了所有需要的依赖

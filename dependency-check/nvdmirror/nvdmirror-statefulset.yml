@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    app: nvdmirror
+  name: nvdmirror
+  namespace: ci
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nvdmirror
+  serviceName: nvdmirror
+  template:
+    metadata:
+      labels:
+        app: nvdmirror
+      name: nvdmirror
+      annotations:
+        #disable istio sidecar injection
+        sidecar.istio.io/inject: "false"
+    spec:
+      containers:
+      - image: sspringett/nvdmirror
+        imagePullPolicy: Always
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /
+            port: 80
+            scheme: HTTP
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 5
+        name: nvdmirror
+        ports:
+        - containerPort: 80
+          name: web
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /
+            port: 80
+            scheme: HTTP
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 5
+        resources:
+          limits:
+            cpu: "4"
+            memory: 4Gi
+          requests:
+            cpu: 500m
+            memory: 512Mi
+        volumeMounts:
+        - mountPath: /usr/local/apache2/htdocs
+          name: nvdmirror-data
+      #imagePullSecrets:
+      #- name: myregistrykey
+      restartPolicy: Always
+  volumeClaimTemplates:
+  - metadata:
+      name: nvdmirror-data
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      #ceph rbd storageclass
+      #storageClassName: rbd
+      resources:
+        requests:
+          storage: 20Gi

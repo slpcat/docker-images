@@ -1,0 +1,1241 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "description": "Alibaba Cloud Monitor For ECS Dashboard from CloudMonitor using aliyun-cms-grafana",
+  "editable": true,
+  "gnetId": 13476,
+  "graphTooltip": 0,
+  "id": 79,
+  "iteration": 1628581880328,
+  "links": [],
+  "panels": [
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "aliyun-monitor",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 0
+      },
+      "hiddenSeries": false,
+      "id": 2,
+      "legend": {
+        "avg": false,
+        "current": true,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.1.5",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "describe": "total",
+          "dimensions": [
+            "$instance"
+          ],
+          "group": "",
+          "metric": "cpu_total",
+          "period": "60",
+          "project": "acs_ecs_dashboard",
+          "rawQuery": true,
+          "refId": "A",
+          "target": [
+            "Average"
+          ],
+          "type": "timeserie",
+          "xcol": "timestamp",
+          "ycol": [
+            "Average"
+          ]
+        },
+        {
+          "describe": "user",
+          "dimensions": [
+            "$instance"
+          ],
+          "group": "",
+          "metric": "cpu_user",
+          "period": "60",
+          "project": "acs_ecs_dashboard",
+          "rawQuery": true,
+          "refId": "B",
+          "target": [
+            "Average"
+          ],
+          "type": "timeserie",
+          "xcol": "timestamp",
+          "ycol": [
+            "Average"
+          ]
+        },
+        {
+          "describe": "system",
+          "dimensions": [
+            "$instance"
+          ],
+          "group": "",
+          "metric": "cpu_system",
+          "period": "60",
+          "project": "acs_ecs_dashboard",
+          "rawQuery": true,
+          "refId": "C",
+          "target": [
+            "Average"
+          ],
+          "type": "timeserie",
+          "xcol": "timestamp",
+          "ycol": [
+            "Average"
+          ]
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "cpu",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "percent",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "datasource": "aliyun-monitor",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "#EAB839",
+                "value": 60
+              },
+              {
+                "color": "red",
+                "value": 90
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 0
+      },
+      "id": 8,
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "mean"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
+      },
+      "pluginVersion": "7.1.5",
+      "targets": [
+        {
+          "describe": "memory",
+          "dimensions": [
+            "$instance"
+          ],
+          "group": "",
+          "metric": "memory_usedutilization",
+          "period": "",
+          "project": "acs_ecs_dashboard",
+          "refId": "A",
+          "target": [
+            "Average"
+          ],
+          "type": "timeserie",
+          "xcol": "timestamp",
+          "ycol": [
+            "Average"
+          ]
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "memory_usedutilization",
+      "type": "gauge"
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "aliyun-monitor",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 0
+      },
+      "hiddenSeries": false,
+      "id": 6,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.1.5",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "describe": "load_1",
+          "dimensions": [
+            "$instance"
+          ],
+          "group": "",
+          "metric": "load_1m",
+          "period": "60",
+          "project": "acs_ecs_dashboard",
+          "refId": "A",
+          "target": [
+            "Average"
+          ],
+          "type": "timeserie",
+          "xcol": "timestamp",
+          "ycol": [
+            "Average"
+          ]
+        },
+        {
+          "describe": "load_5",
+          "dimensions": [
+            "$instance"
+          ],
+          "group": "",
+          "metric": "load_5m",
+          "period": "60",
+          "project": "acs_ecs_dashboard",
+          "refId": "B",
+          "target": [
+            "Average"
+          ],
+          "type": "timeserie",
+          "xcol": "timestamp",
+          "ycol": [
+            "Average"
+          ]
+        },
+        {
+          "describe": "load_15",
+          "dimensions": [
+            "$instance"
+          ],
+          "group": "",
+          "metric": "load_15m",
+          "period": "60",
+          "project": "acs_ecs_dashboard",
+          "refId": "C",
+          "target": [
+            "Average"
+          ],
+          "type": "timeserie",
+          "xcol": "timestamp",
+          "ycol": [
+            "Average"
+          ]
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "sys_load",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "datasource": "aliyun-monitor",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": null,
+            "filterable": false
+          },
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "#EAB839",
+                "value": 50
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 8
+      },
+      "id": 4,
+      "options": {
+        "displayMode": "lcd",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true
+      },
+      "pluginVersion": "7.1.5",
+      "targets": [
+        {
+          "describe": "",
+          "dimensions": [
+            "$instance"
+          ],
+          "group": "",
+          "metric": "diskusage_utilization",
+          "period": "60",
+          "project": "acs_ecs_dashboard",
+          "refId": "A",
+          "target": [
+            "Average"
+          ],
+          "type": "timeserie",
+          "xcol": "timestamp",
+          "ycol": [
+            "Average"
+          ]
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "disk_usage",
+      "type": "bargauge"
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "aliyun-monitor",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 8
+      },
+      "hiddenSeries": false,
+      "id": 10,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "hideEmpty": false,
+        "hideZero": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.1.5",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "describe": "read",
+          "dimensions": [
+            "$disk"
+          ],
+          "group": "",
+          "metric": "disk_readbytes",
+          "period": "60",
+          "project": "acs_ecs_dashboard",
+          "refId": "A",
+          "target": [
+            "Average"
+          ],
+          "type": "timeserie",
+          "xcol": "timestamp",
+          "ycol": [
+            "Average"
+          ]
+        },
+        {
+          "describe": "write",
+          "dimensions": [
+            "$disk"
+          ],
+          "group": "",
+          "metric": "disk_writebytes",
+          "period": "60",
+          "project": "acs_ecs_dashboard",
+          "refId": "B",
+          "target": [
+            "Average"
+          ],
+          "type": "timeserie",
+          "xcol": "timestamp",
+          "ycol": [
+            "Average"
+          ]
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "disk_io_bytes",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "Bps",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "aliyun-monitor",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 8
+      },
+      "hiddenSeries": false,
+      "id": 12,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.1.5",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "describe": "read",
+          "dimensions": [
+            "$disk"
+          ],
+          "group": "",
+          "metric": "disk_readiops",
+          "period": "60",
+          "project": "acs_ecs_dashboard",
+          "refId": "A",
+          "target": [
+            "Average"
+          ],
+          "type": "timeserie",
+          "xcol": "timestamp",
+          "ycol": [
+            "Average"
+          ]
+        },
+        {
+          "describe": "write",
+          "dimensions": [
+            "$disk"
+          ],
+          "group": "",
+          "metric": "disk_writeiops",
+          "period": "60",
+          "project": "acs_ecs_dashboard",
+          "refId": "B",
+          "target": [
+            "Average"
+          ],
+          "type": "timeserie",
+          "xcol": "timestamp",
+          "ycol": [
+            "Average"
+          ]
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "disk_io_count",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "cps",
+          "label": "count/s",
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "aliyun-monitor",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 16
+      },
+      "hiddenSeries": false,
+      "id": 14,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.1.5",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "describe": "in",
+          "dimensions": [
+            "$network"
+          ],
+          "group": "",
+          "metric": "networkin_rate",
+          "period": "60",
+          "project": "acs_ecs_dashboard",
+          "refId": "A",
+          "target": [
+            "Average"
+          ],
+          "type": "timeserie",
+          "xcol": "timestamp",
+          "ycol": [
+            "Average"
+          ]
+        },
+        {
+          "describe": "out",
+          "dimensions": [
+            "$network"
+          ],
+          "group": "",
+          "metric": "networkout_rate",
+          "period": "60",
+          "project": "acs_ecs_dashboard",
+          "refId": "B",
+          "target": [
+            "Average"
+          ],
+          "type": "timeserie",
+          "xcol": "timestamp",
+          "ycol": [
+            "Average"
+          ]
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "network",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "bps",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "aliyun-monitor",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 16
+      },
+      "hiddenSeries": false,
+      "id": 16,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.1.5",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "describe": "in",
+          "dimensions": [
+            "$network"
+          ],
+          "group": "",
+          "metric": "networkin_packages",
+          "period": "60",
+          "project": "acs_ecs_dashboard",
+          "refId": "A",
+          "target": [
+            "Average"
+          ],
+          "type": "timeserie",
+          "xcol": "timestamp",
+          "ycol": [
+            "Average"
+          ]
+        },
+        {
+          "describe": "in_error",
+          "dimensions": [
+            "$network"
+          ],
+          "group": "",
+          "metric": "networkin_errorpackages",
+          "period": "60",
+          "project": "acs_ecs_dashboard",
+          "refId": "B",
+          "target": [
+            "Average"
+          ],
+          "type": "timeserie",
+          "xcol": "timestamp",
+          "ycol": [
+            "Average"
+          ]
+        },
+        {
+          "describe": "out",
+          "dimensions": [
+            "$network"
+          ],
+          "group": "",
+          "metric": "networkout_packages",
+          "period": "60",
+          "project": "acs_ecs_dashboard",
+          "refId": "C",
+          "target": [
+            "Average"
+          ],
+          "type": "timeserie",
+          "xcol": "timestamp",
+          "ycol": [
+            "Average"
+          ]
+        },
+        {
+          "describe": "out_error",
+          "dimensions": [
+            "$network"
+          ],
+          "group": "",
+          "metric": "networkout_errorpackages",
+          "period": "60",
+          "project": "acs_ecs_dashboard",
+          "refId": "D",
+          "target": [
+            "Average"
+          ],
+          "type": "timeserie",
+          "xcol": "timestamp",
+          "ycol": [
+            "Average"
+          ]
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "network_pps",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "pps",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "aliyun-monitor",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 16
+      },
+      "hiddenSeries": false,
+      "id": 18,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.1.5",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "describe": "",
+          "dimensions": [
+            "$instance"
+          ],
+          "group": "",
+          "metric": "net_tcpconnection",
+          "period": "60",
+          "project": "acs_ecs_dashboard",
+          "refId": "A",
+          "target": [
+            "Average"
+          ],
+          "type": "timeserie",
+          "xcol": "timestamp",
+          "ycol": [
+            "Average"
+          ]
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "tcp连接数",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    }
+  ],
+  "schemaVersion": 26,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "allValue": null,
+        "current": {
+          "selected": false,
+          "text": "{\"instanceId\":\"i-2ze1vgwkexat8nj7u4x3\"}",
+          "value": "{\"instanceId\":\"i-2ze1vgwkexat8nj7u4x3\"}"
+        },
+        "datasource": "aliyun-monitor",
+        "definition": "dimension(acs_ecs_dashboard,cpu_total,null,null)",
+        "hide": 0,
+        "includeAll": false,
+        "label": null,
+        "multi": false,
+        "name": "instance",
+        "options": [],
+        "query": "dimension(acs_ecs_dashboard,cpu_total,null,null)",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {
+          "selected": false,
+          "text": "{\"instanceId\":\"i-2ze1vgwkexat8nj7u4x3\";\"device\":\"/dev/vda1\"}",
+          "value": "{\"instanceId\":\"i-2ze1vgwkexat8nj7u4x3\";\"device\":\"/dev/vda1\"}"
+        },
+        "datasource": "aliyun-monitor",
+        "definition": "dimension(acs_ecs_dashboard,disk_readiops,$instance,null)",
+        "hide": 0,
+        "includeAll": false,
+        "label": null,
+        "multi": true,
+        "name": "disk",
+        "options": [],
+        "query": "dimension(acs_ecs_dashboard,disk_readiops,$instance,null)",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {
+          "selected": false,
+          "text": "{\"instanceId\":\"i-2ze1vgwkexat8nj7u4x3\";\"device\":\"docker0\"}",
+          "value": "{\"instanceId\":\"i-2ze1vgwkexat8nj7u4x3\";\"device\":\"docker0\"}"
+        },
+        "datasource": "aliyun-monitor",
+        "definition": "dimension(acs_ecs_dashboard,networkin_rate,$instance,null)",
+        "hide": 0,
+        "includeAll": false,
+        "label": null,
+        "multi": true,
+        "name": "network",
+        "options": [],
+        "query": "dimension(acs_ecs_dashboard,networkin_rate,$instance,null)",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      }
+    ]
+  },
+  "time": {
+    "from": "now-1h",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "5s",
+      "10s",
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "2h",
+      "1d"
+    ]
+  },
+  "timezone": "",
+  "title": "Alibaba Cloud Monitor For ECS Dashboard",
+  "uid": "FysjgSAMk",
+  "version": 2
+}
