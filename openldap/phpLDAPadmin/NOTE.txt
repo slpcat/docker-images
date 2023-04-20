@@ -1,0 +1,7 @@
+docker run \
+-p 8080:80 \
+--privileged \
+--name phpldapadmin \
+--env PHPLDAPADMIN_HTTPS=false \
+--env PHPLDAPADMIN_LDAP_HOSTS=192.168.1.83  \
+--detach osixia/phpldapadmin
