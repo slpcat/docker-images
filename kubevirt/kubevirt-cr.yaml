@@ -1,0 +1,23 @@
+---
+apiVersion: kubevirt.io/v1
+kind: KubeVirt
+metadata:
+  name: kubevirt
+  namespace: kubevirt
+spec:
+  certificateRotateStrategy: {}
+  configuration:
+    developerConfiguration:
+      featureGates: []
+  customizeComponents: {}
+  imageRegistry: docker.io/slpcat
+  imageTag: v0.52.0
+  imagePullPolicy: IfNotPresent
+  infra:
+    replicas: 2
+  workloadUpdateStrategy:
+    workloadUpdateMethods:
+      - LiveMigrate
+      - Evict
+    batchEvictionSize: 10
+    batchEvictionInterval: "1m"
