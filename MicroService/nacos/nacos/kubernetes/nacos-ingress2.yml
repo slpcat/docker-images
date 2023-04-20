@@ -1,0 +1,19 @@
+#kubernetes v1.22+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: nacos-ingress
+  namespace: dev01
+spec:
+  ingressClassName: nginx-vpc
+  rules:
+  - host: nacos-dev.dev.com
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: nacos-svc
+            port:
+              number: 8848

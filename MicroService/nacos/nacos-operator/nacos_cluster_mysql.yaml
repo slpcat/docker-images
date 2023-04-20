@@ -1,0 +1,34 @@
+apiVersion: nacos.io/v1alpha1
+kind: Nacos
+metadata:
+  name: nacos-cluster
+  namespace: nacos
+spec:
+  type: cluster
+  image: nacos/nacos-server:v2.0.4
+  replicas: 3
+  env:
+  - key: JVM_XMS
+    value: 2g
+  resources:
+    requests:
+      cpu: 100m
+      memory: 512Mi
+    limits:
+      cpu: 2
+      memory: 4Gi
+  #mysqlInitImage: "slpcat/nacos-mysql-client:10.2.15-r0"
+  database:
+    type: mysql
+    mysqlHost: mysql-server.dbaas
+    mysqlDb: nacos_devtest
+    mysqlUser: nacos
+    mysqlPort: "3306"
+    mysqlPassword: "nacos_password"
+  volume:
+    enabled: true
+    requests:
+      storage: 20Gi
+    #storageClass: default
+  config: |
+    management.endpoints.web.exposure.include=*

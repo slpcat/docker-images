@@ -131,3 +131,110 @@ Vistio
 
 5.限流
 
+
+改善 istiod 性能
+避免 XDS 不断被断开
+通过给 istiod 配置 PILOT_XDS_SEND_TIMEOUT 环境变量，我们可以设定 istiod 推送的超时时间，默认为5s，在大规模集群下，建议适度调高此配置。
+
+减少推送量
+我们将 istiod 的 PILOT_FILTER_GATEWAY_CLUSTER_CONFIG 环境变量配置为 "true"，这样 istio 将仅推送 gateway 所需的服务信息 (参考VirtualService的gateway配置), 这个配置将极大的减少每次推送的量。 开启这个特性之后，笔者集群内的 istiod 每次向 gateway 推送的服务信息从四万多降低到两千。
+
+开启流控
+我们将 istiod 的 PILOT_ENABLE_FLOW_CONTROL 环境变量配置为 "true"。这个时候istiod 将会等待接收完成后，再进行下一次推送。
+
+配置 Envoy 工作线程数
+修改 Gateway 启动参数，加入 --concurrency=20 ，20 是期望 Gateway 运行的 worker 数量
+
+提高吞吐
+默认情况下，单个 istiod 的推送并发数只有 100，这在较大的集群内，可能会导致配置生效的延迟。istiod 环境变量 PILOT_PUSH_THROTTLE 可以配置这个并发数。建议匹配集群规模进行配置。
+
+避免频发推送
+PILOT_DEBOUNCE_AFTER 与 PILOT_DEBOUNCE_MAX 是配置 istiod 去抖动的两个参数。
+
+默认配置是 100ms 与 10s ，这也就意味着，当集群中有任何事件发生时，istio 会等待 100ms。
+
+若 100ms 内无任何事件进入，istio 会立即触发推送。否则 istio 将会等待另一个 100ms，重复这一操作，直到总共等待的时间达到 10s 时，会强制触发推送。
+
+实践中可以适当调整这两个值以匹配集群规模和实际应用。
+
+由于我们的集群内服务的 pod 均配置了 preStop 为 sleep 35
+
+因此，我们调高了 PILOT_DEBOUNCE_AFTER 到 500ms，以避免频繁推送对性能产生影响（主要是 Gateway ）。
+
+同时，我们调低了 PILOT_DEBOUNCE_MAX 为 3s，以避免极端情况下推送不及时导致的 503 问题。
+
+
+通过查看 Envoy 文档， Envoy 是支持opencensus 协议的，因此我们选用了支持 opencensus 协议的OpenTelemetry 的 Agent 来替代 Jaeger Agent。
+
+istio-operator 的配置如下:
+
+tracing:
+    openCensusAgent:
+        address: ipv4:$(HOST_IP):55678 # 这里是支持使用环境变量的.
+        context:
+        - W3C_TRACE_CONTEXT
+        - B3
+    sampling: 1
+
+兼容性问题
+HTTP1.0 兼容性问题
+默认情况下，istio 并不兼容 HTTP1.0协议。
+
+这会使某些流量出现异常，比如某些组件的健康检查。
+
+配置 istiod 的 PILOT_HTTP10 环境变量，设置为 "true",就可以修复这个问题。
+
+服务启动异常问题
+服务可能会遇到无法启动的情况,这是因为istio-proxy还没有准备好. 需要开启 holdApplicationUntilProxyStarts: true ,并配置 postStart 等待 istio-proxy 准备好之后再启动服务容器.
+
+proxy: 
+    lifecycle:
+        postStart:
+            exec:
+                command:
+                - pilot-agent
+                - wait
+服务部署/重启过程中各种连接异常问题
+在 POD 退出时,需要至少比服务容器更长的 prestop 时间,以保证服务进程存活的周期内,sidecar持续可用. 比如我们服务进程 preStop 的经验值是30s,那么 istio-proxy 的 preStop 至少要比 30s 更长.
+
+proxy: 
+    lifecycle:
+        preStop:
+            exec:
+              command:
+              - sleep
+              - "35"
+
+服务间透传 Host
+
+
+默认重试问题
+istio 默认给所有流量都加了默认重试策略.
+
+retryPolicy:
+    hostSelectionRetryMaxAttempts: "5"
+    numRetries: 2
+    retriableStatusCodes:
+    - 503
+    retryHostPredicate:
+    - name: envoy.retry_host_predicates.previous_hosts
+    retryOn: connect-failure,refused-stream,unavailable,cancelled,retriable-status-codes
+
+无 Service 关联容器的问题
+区域感知失效
+像 Cronjob 这样类型的服务，很难为其创建 Service，但是它仍然有需求去访问其他服务.
+
+在目前的 istio 版本中，这样的 CronJob服务就会丢失区域感知的能力。
+
+这个问题也并不是无解的,只需要在 pod 上添加一个叫 istio-locality 的 Label 即可。
+
+istio 会使用这个 Label 作为 pod 的区域信息。
+
+
+默认 sidecar 配置失效
+如果你的 namespace 中，没有任何 Service，那么你的容器也不能使用配置好的全局默认的 Sidecar 配置。
+
+如果你的集群很大，那么在你注入边车的时候，你的 POD 很可能会直接 OOM 掉。
+
+解决这个问题，需要为所有 namespace 都配置默认 Sidecar。
+
