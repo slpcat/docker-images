@@ -1,0 +1,90 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: zentao
+  namespace: ci
+  labels:
+    app: zentao
+spec:
+  selector:
+    matchLabels:
+      app: zentao
+  serviceName: zentao
+  replicas: 1
+  #minReadySeconds: 60     #滚动升级时60s后认为该pod就绪
+  template:
+    metadata:
+      labels:
+        app: zentao
+    spec:
+      terminationGracePeriodSeconds: 60 ##k8s将会给应用发送SIGTERM信号，可以用来正确、优雅地关闭应用,默认为30秒
+      #从私有仓库下载镜像
+      #imagePullSecrets:
+      #- name: registrykey-ali-ext
+      containers:
+      - name: zentao
+        image: easysoft/zentao:17.5
+        imagePullPolicy: Always
+        livenessProbe: #kubernetes认为该pod是存活的,不存活则需要重启
+          httpGet:
+            path: /
+            port: 80
+            scheme: HTTP
+          initialDelaySeconds: 60 # equals to the maximum startup time of the application + couple of seconds
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 5
+        readinessProbe: #kubernetes认为该pod是启动成功的
+          httpGet:
+            path: /
+            port: 80
+            scheme: HTTP
+          initialDelaySeconds: 30 # equals to minimum startup time of the application
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 5
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: "root99999"
+        - name: BIND_ADDRESS
+          value: "true"
+        - name: ADMINER_USER
+          value: 'root'
+        - name: ADMINER_PASSWD
+          value: '0ckrtsxmdfg_4z7uvR'
+        - name: SMTP_HOST
+          value: 'smtp.example.cn'
+        resources:
+          # keep request = limit to keep this container in guaranteed class
+          requests:
+            cpu: 500m
+            memory: 1Gi
+          limits:
+            cpu: 2000m
+            memory: 4Gi
+        ports:
+          - name: web
+            containerPort: 80
+        volumeMounts:
+          - name: zentao-data 
+            mountPath: /www/zentaopms
+          - name: zentao-mysql
+            mountPath: /var/lib/mysql
+  volumeClaimTemplates:
+  - metadata:
+      name: zentao-data
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      #storageClassName: rbd
+      resources:
+        requests:
+          storage: 80Gi
+  - metadata:
+      name: zentao-mysql
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      #storageClassName: rbd
+      resources:
+        requests:
+          storage: 20Gi

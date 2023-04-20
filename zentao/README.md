@@ -58,3 +58,4 @@ docker build -t zentao .
 ```
         
         
+docker run --name zentao -p 80:80  -v /www/zentaopms:/www/zentaopms -v /www/mysqldata:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=123456 -d easysoft/zentao:17.5
