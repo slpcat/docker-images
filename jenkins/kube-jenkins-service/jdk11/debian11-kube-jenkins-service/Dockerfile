@@ -194,6 +194,7 @@ RUN /usr/local/bin/install-plugins.sh       \
   durable-task:latest            \
   ec2:latest                     \
   echarts-api:latest             \
+  ecutest:latest                 \
   email-ext:latest               \
   embeddable-build-status:latest \
   envinject:latest               \

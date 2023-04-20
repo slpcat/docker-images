@@ -10,10 +10,37 @@ docker pull jenkins/jenkins:jdk11
 
 docker run -d -it --restart=always \
   -p 80:8080 -p 50000:50000 \
-  -v jenkins-home:/var/jenkins_home \
-  slpcat/kube-jenkins-service:2.328-jdk11
 
-  jenkins/jenkins:jdk11
+  -e JAVA_OPTS='-server -Djava.awt.headless=true -XshowSettings:vm
+            -Xms1g -Xmx4g -Xmn1512m  -Xss256k
+            -XX:MetaspaceSize=256m -XX:MaxMetaspaceSize=512m -XX:ReservedCodeCacheSize=240M
+            -XX:-UseBiasedLocking -XX:+UnlockExperimentalVMOptions -XX:+UnlockDiagnosticVMOptions
+            -XX:-UseLargePages -XX:SoftRefLRUPolicyMSPerMB=0
+            -XX:+PrintGCDetails -Xlog:gc:/tmp/gc.log
+            -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/tmp/jvmdump/
+            -XX:CMSInitiatingOccupancyFraction=75
+            -XX:+UseCMSInitiatingOccupancyOnly
+            -XX:+CMSClassUnloadingEnabled -XX:+TieredCompilation
+            -XX:-OmitStackTraceInFastThrow -XX:+ParallelRefProcEnabled -XX:ParallelGCThreads=8
+            -XX:MaxTenuringThreshold=1 -XX:G1HeapWastePercent=10
+            -XX:InitiatingHeapOccupancyPercent=35
+            -XX:-ResizePLAB -XX:+UseStringDeduplication
+            -Djenkins.install.runSetupWizard=false
+            -Dorg.apache.tomcat.util.buf.UDecoder.ALLOW_ENCODED_SLASH=true
+            -Dorg.apache.catalina.connector.CoyoteAdapter.ALLOW_BACKSLASH=true
+            -Dhudson.udp=-1 -Dfile.encoding=UTF-8
+            -Dorg.csanchez.jenkins.plugins.kubernetes.clients.cacheExpiration=60
+            -Dhudson.model.LoadStatistics.clock=2000
+            -Dhudson.model.LoadStatistics.decay=0.5
+            -Dhudson.model.UpdateCenter.updateCenterUrl=https://mirrors.aliyun.com/jenkins/updates/update-center.json
+            -Dhudson.slaves.NodeProvisioner.recurrencePeriod=5000
+            -Dhudson.slaves.NodeProvisioner.initialDelay=0
+            -Dhudson.slaves.NodeProvisioner.MARGIN=50
+            -Dhudson.slaves.NodeProvisioner.MARGIN0=0.85
+            -Dhudson.DNSMultiCast.disabled=true' \
+  -v jenkins-home:/var/jenkins_home \
+  slpcat/kube-jenkins-service:2.364-jdk11
+
 
 版本说明
 1. alpine + jdk 8

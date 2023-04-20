@@ -69,6 +69,18 @@ RUN \
     && mv istio-${ISTIO_VERSION}/bin/istioctl /usr/local/bin \
     && rm -rf  istio-${ISTIO_VERSION}
 
+#Datree prevents Kubernetes misconfigurations from reaching production.
+RUN curl https://get.datree.io | /bin/bash
+
+#Terrascan is a static code analyzer for Infrastructure as Code.
+RUN \
+    curl -L "$(curl -s https://api.github.com/repos/tenable/terrascan/releases/latest | grep -o -E "https://.+?_Darwin_x86_64.tar.gz")" > terrascan.tar.gz \
+    && tar -xf terrascan.tar.gz terrascan && rm terrascan.tar.gz
+    && install terrascan /usr/local/bin && rm terrascan
+
+#Kubescape is a K8s open-source tool providing a multi-cloud K8s single pane of glass, including risk analysis, security compliance, RBAC visualizer and image vulnerabilities scanning. 
+RUN curl -s https://raw.githubusercontent.com/armosec/kubescape/master/install.sh | /bin/bash
+
 #dapr  Distributed Application Runtime
 RUN \
     wget -q https://raw.githubusercontent.com/dapr/cli/master/install/install.sh -O - | /bin/bash

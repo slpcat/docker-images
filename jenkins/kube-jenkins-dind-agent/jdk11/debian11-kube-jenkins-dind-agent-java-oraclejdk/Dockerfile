@@ -41,8 +41,8 @@ MAINTAINER 若虚 <slpcat@qq.com>
 
 USER root
 
-COPY --from=builder-jdk8 /usr/lib/jvm /usr/lib/jvm
-COPY --from=builder-jdk17 /usr/lib/jvm /usr/lib/jvm
+COPY --from=builder-jdk8 /usr/lib/jvm/java-8-oracle  /usr/lib/jvm/java-8-oracle
+COPY --from=builder-jdk17 /usr/lib/jvm/java-17.0.2-oracle /usr/lib/jvm/java-17.0.2-oracle
 
 #Apache Ant is a Java library and command-line tool that help building software.
 

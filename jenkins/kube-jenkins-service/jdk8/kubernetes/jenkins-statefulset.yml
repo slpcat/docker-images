@@ -77,7 +77,7 @@ spec:
           - name: net.ipv4.fwmark_reflect
             value: "1"
       containers:
-      - image: slpcat/kube-jenkins-service:2.358-jdk11
+      - image: slpcat/kube-jenkins-service:2.350-jdk11
         imagePullPolicy: Always
         livenessProbe:
           failureThreshold: 3
@@ -110,10 +110,10 @@ spec:
         resources:
           limits:
             cpu: "4"
-            memory: 4Gi
+            memory: 8Gi
           requests:
-            cpu: 500m
-            memory: 512Mi
+            cpu: 1
+            memory: 1Gi
         terminationMessagePath: /dev/termination-log
         terminationMessagePolicy: File
         volumeMounts:

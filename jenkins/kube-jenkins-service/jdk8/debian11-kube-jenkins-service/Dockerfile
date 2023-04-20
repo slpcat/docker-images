@@ -384,18 +384,20 @@ RUN echo 2.0 > /usr/share/jenkins/ref/jenkins.install.UpgradeWizard.state
 COPY src/main/docker/master-executors.groovy /usr/share/jenkins/ref/init.groovy.d/
 
 # ENV JAVA_OPTS="-Djava.util.logging.config.file=/var/jenkins_home/log.properties"
-ENV JAVA_OPTS="-server -Djava.awt.headless=true -XX:MetaspaceSize=128m \
-         -XX:MaxMetaspaceSize=512m -XX:ReservedCodeCacheSize=240M \
-         -XshowSettings:vm \
-         -XX:-UseBiasedLocking -XX:+UnlockExperimentalVMOptions \
-         -XX:-UseLargePages -XX:+UseG1GC \
-         -XX:SoftRefLRUPolicyMSPerMB=0 -XX:+DisableExplicitGC -XX:G1ReservePercent=25 \
+ENV JAVA_OPTS="-server -Djava.awt.headless=true -XshowSettings:vm \
+         -XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=512m -XX:ReservedCodeCacheSize=240M \
+         -XX:-UseBiasedLocking -XX:+UnlockExperimentalVMOptions -XX:+UnlockDiagnosticVMOptions \
+         -XX:-UseLargePages -XX:SoftRefLRUPolicyMSPerMB=0 \
+         -XX:+UseG1GC -XX:+DisableExplicitGC \
+         -XX:G1ReservePercent=25 \
          -XX:G1NewSizePercent=10 -XX:G1MaxNewSizePercent=25 -XX:MaxGCPauseMillis=20 \
+         -XX:G1MixedGCCountTarget=16 -XX:G1MixedGCLiveThresholdPercent=90 \
          -XX:-OmitStackTraceInFastThrow -XX:+ParallelRefProcEnabled -XX:ParallelGCThreads=8 \
          -XX:MaxTenuringThreshold=1 -XX:G1HeapWastePercent=10 \
-         -XX:G1MixedGCCountTarget=16 -XX:G1MixedGCLiveThresholdPercent=90 \
          -XX:InitiatingHeapOccupancyPercent=35 -XX:G1HeapRegionSize=32m \
-         -XX:-ResizePLAB -Djenkins.install.runSetupWizard=false \
+         -XX:-ResizePLAB -XX:+UseStringDeduplication \
+         -Xms1g -Xmx6g \
+         -Djenkins.install.runSetupWizard=false \
          -Dorg.apache.tomcat.util.buf.UDecoder.ALLOW_ENCODED_SLASH=true \
          -Dorg.apache.catalina.connector.CoyoteAdapter.ALLOW_BACKSLASH=true \
          -Dhudson.udp=-1 -Dfile.encoding=UTF-8 \
