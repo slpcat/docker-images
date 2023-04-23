@@ -7,5 +7,5 @@ cpu环境
 docker run -it -d \
   -p 7860:7860 \
   -e CUDA_VISIBLE_DEVICES=-1 \
-  -e COMMANDLINE_ARGS="--use-cpu all --no-half --precision full --skip-torch-cuda-test --share" \
+  -e COMMANDLINE_ARGS="--use-cpu all --no-half --precision full --skip-torch-cuda-test --api --share" \
   -v /data/sd:/opt/sd/model slpcat/stable-diffusion-webui:bullseye

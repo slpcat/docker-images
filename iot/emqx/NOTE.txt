@@ -1,0 +1,20 @@
+docker run -d --name emqx -p 1883:1883 -p 8083:8083 -p 8084:8084 -p 8883:8883 -p 18083:18083 -v /data/emqx:/opt/emqx/data emqx/emqx:5.0.23
+
+docker run -d --name emqx \
+  -p 1883:1883 -p 8083:8083 \
+  -p 8084:8084 -p 8883:8883 \
+  -p 18083:18083 \
+  -p 14567:14567/udp \
+  -e EMQX_LISTENERS__QUIC__DEFAULT__keyfile="etc/certs/key.pem" \
+  -e EMQX_LISTENERS__QUIC__DEFAULT__certfile="etc/certs/cert.pem" \
+  -e EMQX_LISTENERS__QUIC__DEFAULT__ENABLED=true \
+emqx/emqx:5.0.21
+
+# etc/emqx.conf
+listeners.quic.default {
+  enabled = true
+  bind = "0.0.0.0:14567"
+  max_connections = 1024000
+  keyfile = "etc/certs/key.pem"
+  certfile = "etc/certs/cert.pem"
+}

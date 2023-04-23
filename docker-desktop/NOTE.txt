@@ -78,3 +78,4 @@ docker run -d --restart=always \
   --device /dev/dri:/dev/dri `#optional` \
   --shm-size="1gb" `#optional` \
   blackarchlinux/blackarch:novnc
+  slpcat/blackarchlinux:novnc-full
