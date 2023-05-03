@@ -5,6 +5,7 @@ http://civitai.com
 novelai
 https://novelai.net/
 
+https://github.com/zqq-nuli/Midjourney_api
 
 stable-diffusion-webui
 https://github.com/AUTOMATIC1111/stable-diffusion-webui
@@ -16,3 +17,25 @@ https://huggingface.co/lllyasviel/ControlNet/tree/main/models
 
 模型库
 huggingface
+
+ The GUI allows you to set the training parameters and generate and run the required CLI commands to train the model.
+https://github.com/bmaltais/kohya_ss
+
+AI 法律助手
+https://github.com/lvwzhen/law-cn-ai
+
+https://minigpt-4.github.io/
+https://github.com/Vision-CAIR/MiniGPT-4
+https://github.com/Vision-CAIR/MiniGPT-4/blob/main/MiniGPT_4.pdf
+
+https://github.com/THUDM/ChatGLM-6B
+https://github.com/wangzhaode/ChatGLM-MNN
+https://github.com/Jittor/JittorLLMs
+https://github.com/l15y/wenda
+https://github.com/binary-husky/chatgpt_academic
+https://github.com/initialencounter/glm-bot
+
+LLM 大预言模型的压测工具
+https://github.com/AlibabaResearch/DAMO-ConvAI/tree/main/api-bank
+
+https://huggingface.co/prompthero/openjourney/tree/main

@@ -1,11 +1,93 @@
 gpu环境
 docker run -it -d --gpus all \
   -p 7860:7860 \
-  -e COMMANDLINE_ARGS="--xformers --share" \
+  -e COMMANDLINE_ARGS="--xformers --enable-insecure-extension-access --listen --api" \
   -v /data/sd:/opt/sd/model slpcat/stable-diffusion-webui:bullseye
 cpu环境
 docker run -it -d \
   -p 7860:7860 \
   -e CUDA_VISIBLE_DEVICES=-1 \
-  -e COMMANDLINE_ARGS="--use-cpu all --no-half --precision full --skip-torch-cuda-test --api --share" \
+  -e COMMANDLINE_ARGS="--use-cpu all --no-half --precision full --skip-torch-cuda-test --enable-insecure-extension-access --listen --api --share" \
   -v /data/sd:/opt/sd/model slpcat/stable-diffusion-webui:bullseye
+
+sudo apt-get install python-tk
+#python3安装tkinter
+sudo apt-get install python3-tk
+ 
+sudo apt install tk-dev
+
+apt install google-perftools tk
+
+
+插件
+openpose-editor
+https://github.com/fkunn1326/openpose-editor
+sd-webui-controlnet
+
+stable-diffusion-webui 的扩展
+https://github.com/Coyote-A/ultimate-upscale-for-automatic1111.git
+
+https://github.com/Mikubill/sd-webui-controlnet
+Dreambooth自训练
+
+https://github.com/d8ahazard/sd_dreambooth_extension
+
+aesthetic-gradients(根据美学权重优化图片)
+
+https://github.com/AUTOMATIC1111/stable-diffusion-webui-aesthetic-gradients
+
+images-browser(历史记录画廊、原来是webui自带的)
+
+https://github.com/yfszzx/stable-diffusion-webui-images-browser
+
+Deforum(输入:文本/图像/视频 生成 2D/3D动画)
+
+https://github.com/deforum-art/deforum-for-automatic1111-webui
+
+aesthetic-image-scorer(美学评分器)
+
+https://github.com/tsngo/stable-diffusion-webui-aesthetic-image-scorer
+
+https://github.com/AUTOMATIC1111/stable-diffusion-webui/wiki/Extensions
+https://github.com/AUTOMATIC1111/stable-diffusion-webui/wiki/Custom-Scripts%23prompt-interpolation
+
+Bilingual Localization
+https://github.com/journey-ad/sd-webui-bilingual-localization
+
+Prompt Translator
+https://github.com/butaixianran/Stable-Diffusion-Webui-Prompt-Translator
+
+A integrated translator for translating prompts to English using Deepl or Baidu.
+
+Video Loopback
+https://github.com/fishslot/video_loopback_for_webui
+
+Promptgen
+https://github.com/AUTOMATIC1111/stable-diffusion-webui-promptgen
+
+Use transformers models to generate prompts.
+
+Kohya-ss Additional Networks
+https://github.com/kohya-ss/sd-webui-additional-networks
+
+Allows the Web UI to use networks (LoRA) trained by their scripts to generate images. Edit safetensors prompt and additional metadata, and use 2.X LoRAs.
+
+sd-model-preview
+https://github.com/Vetchems/sd-model-preview
+
+Allows you to create a txt file and jpg/png's with the same name as your model and have this info easily displayed for later reference in webui.
+
+NSFW checker
+https://github.com/AUTOMATIC1111/stable-diffusion-webui-nsfw-censor
+
+Replaces NSFW images with black.
+
+
+prompt travel
+https://github.com/Kahsolt/stable-diffusion-webui-prompt-travel
+
+Extension script for AUTOMATIC1111/stable-diffusion-webui to travel between prompts in latent space.
+
+depth2mask 插件教程
+yolo自动做mask 插件教程
+stylepile 插件教程

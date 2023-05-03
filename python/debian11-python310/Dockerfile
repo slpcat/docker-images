@@ -64,6 +64,7 @@ RUN \
     apt-get update && apt-get -y upgrade && apt-get install -y libexpat1 git
 
 COPY --from=builder /fpm_install /
+COPY pip.conf /etc/pip.conf
 
 RUN \
     ldconfig \
@@ -79,9 +80,9 @@ RUN set -eux; \
         done
 
 # if this is called "PIP_VERSION", pip explodes with "ValueError: invalid truth value '<VERSION>'"
-ARG PYTHON_PIP_VERSION=22.3.1
+ARG PYTHON_PIP_VERSION=23.1.2
 # https://github.com/docker-library/python/issues/365
-ARG PYTHON_SETUPTOOLS_VERSION=65.6.0
+ARG PYTHON_SETUPTOOLS_VERSION=67.7.2
 # https://github.com/pypa/get-pip
 ARG PYTHON_GET_PIP_URL=https://bootstrap.pypa.io/pip/get-pip.py
 #ARG PYTHON_GET_PIP_SHA256=1e501cf004eac1b7eb1f97266d28f995ae835d30250bec7f8850562703067dc6

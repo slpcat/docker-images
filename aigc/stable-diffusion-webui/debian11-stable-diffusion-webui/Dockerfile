@@ -1,8 +1,7 @@
 FROM slpcat/python:3.10.11-bullseye
 #FROM pytorch/pytorch:1.13.1-cuda11.6-cudnn8-runtime
 
-
-RUN apt-get  install -y  libgl1-mesa-glx  libglib2.0-dev
+RUN apt-get install -y libgl1-mesa-glx libglib2.0-dev tk google-perftools git git-lfs
 RUN useradd -s /bin/bash -d /app sd \
     && mkdir -p /app/ \
     && chown -R sd:sd /app
