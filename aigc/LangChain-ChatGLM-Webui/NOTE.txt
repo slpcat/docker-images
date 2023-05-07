@@ -1,0 +1,24 @@
+Docker 基础环境运行
+运行镜像：docker run -it --rm --runtime=nvidia --gpus all --network host registry.cn-beijing.aliyuncs.com/public-development-resources/langchain-chatglm-webui:Base bash
+git clone项目: git clone https://github.com/thomas-yanxin/LangChain-ChatGLM-Webui.git
+进入本项目目录：cd LangChain-ChatGLM-Webui
+安装依赖包：pip3 install -r requirements.txt
+执行app.py：python3 app.py
+
+
+Docker 小白运行
+运行镜像：docker run -d --name langchain-ChatGLM-webui --runtime=nvidia --gpus all --network host registry.cn-beijing.aliyuncs.com/public-development-resources/langchain-chatglm-webui:latest
+
+访问服务：http://ip:7860
+
+运行环境，镜像大小约14G。
+
+nvidia-runtime 请参考: container-toolkit
+
+本地模型放置目录：
+BELLE-LLaMA-Local:/pretrainmodel/belle
+Vicuna-Local:/pretrainmodel/vicuna
+ChatGLM-Local:/pretrainmodel/chatglm
+
+挂载cache目录，容器重启或更新无需重新下载相关模型。
+-v langchain-ChatGLM-webui-cache:/root/.cache/

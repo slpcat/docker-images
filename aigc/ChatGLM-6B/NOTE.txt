@@ -1,0 +1,15 @@
+https://github.com/THUDM/ChatGLM-6B/blob/main/README_en.md
+git clone https://huggingface.co/THUDM/chatglm-6b
+git checkout v0.1.0
+
+gpu环境
+docker run -it -d --gpus all \
+  -p 7860:7860 \
+  -e COMMANDLINE_ARGS="--xformers --enable-insecure-extension-access --listen --api --no-gradio-queue" \
+  -v /data/sd:/opt/sd/model slpcat/stable-diffusion-webui:bullseye
+cpu环境
+docker run -it -d \
+  -p 7860:7860 \
+  -e CUDA_VISIBLE_DEVICES=-1 \
+  -e COMMANDLINE_ARGS="--use-cpu all --no-half --precision full --skip-torch-cuda-test --enable-insecure-extension-access --listen --api --no-gradio-queue --share" \
+  -v /data/sd:/opt/sd/model slpcat/stable-diffusion-webui:bullseye

@@ -1,13 +1,13 @@
 gpu环境
 docker run -it -d --gpus all \
   -p 7860:7860 \
-  -e COMMANDLINE_ARGS="--xformers --enable-insecure-extension-access --listen --api" \
+  -e COMMANDLINE_ARGS="--xformers --enable-insecure-extension-access --listen --api --no-gradio-queue" \
   -v /data/sd:/opt/sd/model slpcat/stable-diffusion-webui:bullseye
 cpu环境
 docker run -it -d \
   -p 7860:7860 \
   -e CUDA_VISIBLE_DEVICES=-1 \
-  -e COMMANDLINE_ARGS="--use-cpu all --no-half --precision full --skip-torch-cuda-test --enable-insecure-extension-access --listen --api --share" \
+  -e COMMANDLINE_ARGS="--use-cpu all --no-half --precision full --skip-torch-cuda-test --enable-insecure-extension-access --listen --api --no-gradio-queue --share" \
   -v /data/sd:/opt/sd/model slpcat/stable-diffusion-webui:bullseye
 
 sudo apt-get install python-tk
@@ -91,3 +91,16 @@ Extension script for AUTOMATIC1111/stable-diffusion-webui to travel between prom
 depth2mask 插件教程
 yolo自动做mask 插件教程
 stylepile 插件教程
+
+txt2video插件地址：https://github.com/deforum-art/sd-webui-text2video.git
+
+model kept地址：https://huggingface.co/kabachuha/videocrafter-pruned-weights/tree/main
+
+四个文件的地址：https://huggingface.co/damo-vilab/modelscope-damo-text-to-video-synthesis/tree/main
+
+四个文件如下：
+vQGAN_autoencoder.pth
+configurationjson
+open_clip_pytorch_model.bin
+text2video_pytorch_model.pth
+
