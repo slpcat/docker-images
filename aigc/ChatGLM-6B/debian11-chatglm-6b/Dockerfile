@@ -15,5 +15,4 @@ RUN \
     && pip3 install -r requirements.txt
 
 WORKDIR /app/ChatGLM-6B
-
-#CMD ["webui.sh"]
+CMD ["python3", "./web_demo.py"]%
