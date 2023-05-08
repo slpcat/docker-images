@@ -34,8 +34,14 @@ https://github.com/Jittor/JittorLLMs
 https://github.com/l15y/wenda
 https://github.com/binary-husky/chatgpt_academic
 https://github.com/initialencounter/glm-bot
+https://github.com/VideoCrafter/VideoCrafter
 
 LLM 大预言模型的压测工具
 https://github.com/AlibabaResearch/DAMO-ConvAI/tree/main/api-bank
 
 https://huggingface.co/prompthero/openjourney/tree/main
+
+https://modelscope.cn/models
+
+https://openi.pcl.ac.cn/
+

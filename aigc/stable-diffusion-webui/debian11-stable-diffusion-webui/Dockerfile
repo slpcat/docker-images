@@ -18,4 +18,4 @@ WORKDIR /app/stable-diffusion-webui
 RUN \
     bash webui.sh --skip-torch-cuda-test  --xformers --no-download-sd-model || true
 
-CMD ["webui.sh"]
+CMD ["bash", "-c", "webui.sh"]
