@@ -5,11 +5,22 @@ git checkout v0.1.0
 gpu环境
 docker run -it -d --gpus all \
   -p 7860:7860 \
-  -e COMMANDLINE_ARGS="--xformers --enable-insecure-extension-access --listen --api --no-gradio-queue" \
-  -v /data/sd:/opt/sd/model slpcat/stable-diffusion-webui:bullseye
+  -v /data/chatglm-6b-models:/app/ChatGLM-6B/THUDM \
+  slpcat/chatglm-6b
+
 cpu环境
 docker run -it -d \
   -p 7860:7860 \
   -e CUDA_VISIBLE_DEVICES=-1 \
   -e COMMANDLINE_ARGS="--use-cpu all --no-half --precision full --skip-torch-cuda-test --enable-insecure-extension-access --listen --api --no-gradio-queue --share" \
   -v /data/sd:/opt/sd/model slpcat/stable-diffusion-webui:bullseye
+
+docker run -d --runtime=nvidia --gpus all \
+   -p 7862:7860 \
+   -v /data1/chatglm-6b-models/:/app/ChatGLM-6B/ChatGLM-webui/THUDM/  \
+   slpcat/chatglm-6b:webui
+
+docker run -d --runtime=nvidia --gpus all \
+   -p 8000:8000 \
+   -v /data1/chatglm-6b-models/:/app/ChatGLM-6B/THUDM/  \
+   slpcat/chatglm-6b:api

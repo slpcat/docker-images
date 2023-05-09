@@ -15,6 +15,6 @@ RUN \
     && pip3 install -r requirements.txt \
     && git clone https://github.com/Akegarasu/ChatGLM-webui
 
-WORKDIR /app/ChatGLM-6B
+WORKDIR /app/ChatGLM-6B/ChatGLM-webui
 #CMD ["python3", "./web_demo.py"]
-CMD ["python3", "./ChatGLM-webui/webui.py",  "--port 7860"]
+CMD ["python3", "webui.py", "--listen", "--port", "7860"]
