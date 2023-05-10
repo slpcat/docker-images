@@ -134,3 +134,18 @@ runtime
 
 https://github.com/gotoz/runq
 
+
+genie，可用用它来加载 systemd
+udo apt install apt-transport-https
+
+sudo wget -O /etc/apt/trusted.gpg.d/wsl-transdebian.gpg https://arkane-systems.github.io/wsl-transdebian/apt/wsl-transdebian.gpg
+
+sudo chmod a+r /etc/apt/trusted.gpg.d/wsl-transdebian.gpg
+
+sudo cat << EOF > /etc/apt/sources.list.d/wsl-transdebian.list
+deb https://arkane-systems.github.io/wsl-transdebian/apt/ $(lsb_release -cs) main
+deb-src https://arkane-systems.github.io/wsl-transdebian/apt/ $(lsb_release -cs) main
+EOF
+
+sudo apt update
+sudo apt -y install systemd-genie

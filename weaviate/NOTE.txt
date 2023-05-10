@@ -1,0 +1,6 @@
+https://weaviate.io/
+an open source vector database.
+
+helm repo add weaviate https://weaviate.github.io/weaviate-helm
+
+

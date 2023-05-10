@@ -1,0 +1,166 @@
+answers: {}
+docker_root_dir: /var/lib/docker
+enable_cluster_alerting: false
+enable_cluster_monitoring: false
+enable_network_policy: false
+fleet_workspace_name: fleet-default
+local_cluster_auth_endpoint:
+  enabled: true
+name: k8s-home01
+rancher_kubernetes_engine_config:
+  addon_job_timeout: 45
+  authentication:
+    strategy: x509|webhook
+  authorization: {}
+  bastion_host:
+    ignore_proxy_env_vars: false
+    ssh_agent_auth: false
+  cloud_provider: {}
+  dns:
+    linear_autoscaler_params:
+      cores_per_replica: 128
+      max: 0
+      min: 1
+      nodes_per_replica: 4
+      prevent_single_point_failure: true
+    node_selector: null
+    nodelocal:
+      node_selector: null
+      update_strategy:
+        rolling_update: {}
+    options: null
+    reversecidrs: null
+    stubdomains: null
+    tolerations: null
+    update_strategy:
+      rolling_update: {}
+    upstreamnameservers: null
+  enable_cri_dockerd: true
+  ignore_docker_version: true
+  ingress:
+    default_backend: false
+    default_ingress_class: true
+    http_port: 0
+    https_port: 0
+    provider: none
+  kubernetes_version: v1.25.9-rancher2-1
+  monitoring:
+    provider: none
+    replicas: 0
+  network:
+    mtu: 0
+    options:
+      flannel_backend_type: vxlan
+    plugin: flannel
+  restore:
+    restore: false
+  rotate_encryption_key: false
+  services:
+    etcd:
+      backup_config:
+        enabled: true
+        interval_hours: 12
+        retention: 6
+        safe_timestamp: false
+        timeout: 300
+      creation: 12h
+      extra_args:
+        election-timeout: '5000'
+        heartbeat-interval: '500'
+        quota-backend-bytes: '5368709120'
+      gid: 0
+      retention: 72h
+      snapshot: false
+      uid: 0
+    kube-api:
+      always_pull_images: false
+      extra_args:
+        delete-collection-workers: '3'
+        event-ttl: 24h0m0s
+        kubelet-timeout: 10s
+        max-mutating-requests-inflight: '400'
+        max-requests-inflight: '3200'
+        v: '2'
+      pod_security_policy: false
+      secrets_encryption_config:
+        enabled: false
+      service_cluster_ip_range: 172.18.0.0/21
+      service_node_port_range: 30000-32767
+    kube-controller:
+      cluster_cidr: 10.96.0.0/21
+      extra_args:
+        concurrent-deployment-syncs: '5'
+        concurrent-endpoint-syncs: '5'
+        concurrent-gc-syncs: '20'
+        concurrent-namespace-syncs: '10'
+        concurrent-replicaset-syncs: '5'
+        concurrent-service-syncs: '4'
+        concurrent-serviceaccount-token-syncs: '5'
+        node-cidr-mask-size: '24'
+        node-monitor-grace-period: 20s
+        node-monitor-period: 5s
+        node-startup-grace-period: 30s
+        pod-eviction-timeout: 1m
+        pvclaimbinder-sync-period: 15s
+        v: '2'
+      service_cluster_ip_range: 172.18.0.0/21
+    kubelet:
+      cluster_dns_server: 172.18.0.10
+      cluster_domain: k8s-home01.local
+      extra_args:
+        allowed-unsafe-sysctls: net.*
+        cgroup-driver: cgroupfs
+        cgroups-per-qos: 'true'
+        enforce-node-allocatable: pods
+        event-qps: '0'
+        eviction-hard: >-
+          memory.available<512Mi,nodefs.available<10%,imagefs.available<15%,nodefs.inodesFree<5%
+        eviction-max-pod-grace-period: '30'
+        eviction-pressure-transition-period: 30s
+        eviction-soft-grace-period: memory.available=1m30s
+        global-housekeeping-interval: 1m0s
+        housekeeping-interval: 10s
+        kube-api-burst: '30'
+        kube-api-qps: '15'
+        kube-reserved: 'cpu=0.25,memory=512Mi'
+        max-open-files: '500000'
+        max-pods: '110'
+        node-status-update-frequency: 20s
+        protect-kernel-defaults: 'false'
+        registry-burst: '30'
+        registry-qps: '0'
+        runtime-request-timeout: 2m0s
+        serialize-image-pulls: 'false'
+        streaming-connection-idle-timeout: 1800s
+        sync-frequency: 10s
+        system-reserved: 'cpu=0.25,memory=200Mi'
+        v: '2'
+        volume-stats-agg-period: 1m0s
+      fail_swap_on: true
+      generate_serving_certificate: false
+    kubeproxy:
+      extra_args:
+        conntrack-max-per-core: '262144'
+        conntrack-min: '1048576'
+        conntrack-tcp-timeout-close-wait: 30s
+        conntrack-tcp-timeout-established: 120s
+        ipvs-min-sync-period: 10s
+        ipvs-strict-arp: 'true'
+        ipvs-sync-period: 30s
+        kube-api-burst: '20'
+        kube-api-qps: '10'
+        proxy-mode: ipvs
+        v: '2'
+    scheduler: {}
+  ssh_agent_auth: false
+  upgrade_strategy:
+    drain: false
+    max_unavailable_controlplane: '1'
+    max_unavailable_worker: 50%
+    node_drain_input:
+      delete_local_data: false
+      force: false
+      grace_period: -1
+      ignore_daemon_sets: true
+      timeout: 120
+

@@ -1,12 +1,19 @@
 FROM slpcat/blackarchlinux:novnc-base
 
-COPY etc /
+COPY etc /etc/
 
 RUN \
 #    pacman-key --init && \
-#    pacman-key --refresh-keys && \
+    pacman-key --init && \
+    pacman-key --populate && \
     pacman -Syu --noconfirm yay archlinuxcn-keyring 
 #    yay --aururl "https://aur.archlinux.org" --save
+
+#RUN \
+#    yay -S lilac genie-systemd
+
+#修改 systemd 默认目标 
+#systemctl set-default multi-user.target
 
 RUN \
     pacman -Syu --noconfirm fcitx5-im fcitx5-gtk fcitx5-chinese-addons  \

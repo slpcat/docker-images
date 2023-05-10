@@ -1,5 +1,6 @@
 https://docs.k0sproject.io/
 https://github.com/Mirantis/cri-dockerd
+https://docs.k0sproject.io/v1.27.1+k0s.0/dockershim/
 
 https://github.com/k0sproject/k0s/blob/main/docs/k0s-multi-node.md
 

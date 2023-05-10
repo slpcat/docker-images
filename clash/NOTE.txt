@@ -1,0 +1,10 @@
+在配置文件 config.yaml 中添加修改如下设置，分别为 RESTful API 监听地址、RESTful API 密钥，另一个是认证代理的用户名密码。
+
+external-controller: '0.0.0.0:9090'
+secret: "your-secret"
+#authentication:
+# - "username:passwd"
+
+
+docker run -d --name clash --restart=unless-stopped  -v "/etc/clash/config.yaml:/root/.config/clash/config.yaml" -p 9090:9090 -p 7890:7890 dreamacro/clash
+docker run -p 1234:80 -d --name yacd haishanh/yacd:master

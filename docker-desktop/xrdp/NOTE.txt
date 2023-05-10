@@ -7,6 +7,6 @@ docker run --rm -p 33890:3389 frxyt/xrdp:lxde
 
 user debian, password ChangeMe
 
-docker run -d --privileged -p 3389:3389  slpcat/desktop-rdesktop:focal
+docker run -d --privileged -p 3389:3389 -v /var/run/docker.sock:/var/run/docker.sock slpcat/desktop-rdesktop:focal
 user abc password abc
 user ubuntu password sPcza48aOoapd!bk
