@@ -2,13 +2,13 @@ gpu环境
 docker run -it -d --gpus all \
   -p 7860:7860 \
   -e COMMANDLINE_ARGS="--xformers --enable-insecure-extension-access --listen --api --no-gradio-queue" \
-  -v /data/sd:/opt/sd/model slpcat/stable-diffusion-webui:bullseye
+  -v /data/sd/models:/app/stable-diffusion-webui/models slpcat/stable-diffusion-webui:bullseye
 cpu环境
 docker run -it -d \
   -p 7860:7860 \
   -e CUDA_VISIBLE_DEVICES=-1 \
   -e COMMANDLINE_ARGS="--use-cpu all --no-half --precision full --skip-torch-cuda-test --enable-insecure-extension-access --listen --api --no-gradio-queue --share" \
-  -v /data/sd:/opt/sd/model slpcat/stable-diffusion-webui:bullseye
+  -v /data/sd/models:/app/stable-diffusion-webui/models slpcat/stable-diffusion-webui:bullseye
 
 sudo apt-get install python-tk
 #python3安装tkinter

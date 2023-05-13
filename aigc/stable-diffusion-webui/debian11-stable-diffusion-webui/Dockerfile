@@ -13,11 +13,13 @@ RUN \
     && git clone https://github.com/butaixianran/Stable-Diffusion-Webui-Civitai-Helper \
     && git clone https://github.com/fkunn1326/openpose-editor \
     && git clone https://github.com/hnmr293/posex \
+    && git clone https://github.com/zanllp/sd-webui-infinite-image-browsing.git \
+    && git clone https://github.com/AUTOMATIC1111/stable-diffusion-webui-rembg.git \
     && git clone https://github.com/Mikubill/sd-webui-controlnet \
     #https://github.com/d8ahazard/sd_dreambooth_extension
     && git clone https://github.com/AUTOMATIC1111/stable-diffusion-webui-aesthetic-gradients \
     && git clone https://github.com/deforum-art/deforum-for-automatic1111-webui \
-    && git clone https://github.com/tsngo/stable-diffusion-webui-aesthetic-image-scorer \
+    #&& git clone https://github.com/tsngo/stable-diffusion-webui-aesthetic-image-scorer \
     && git clone https://github.com/journey-ad/sd-webui-bilingual-localization \
     && git clone https://github.com/butaixianran/Stable-Diffusion-Webui-Prompt-Translator \
     && git clone https://github.com/fishslot/video_loopback_for_webui \
