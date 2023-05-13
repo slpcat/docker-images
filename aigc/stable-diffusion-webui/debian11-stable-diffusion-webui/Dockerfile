@@ -16,6 +16,7 @@ RUN \
     && git clone https://github.com/zanllp/sd-webui-infinite-image-browsing.git \
     && git clone https://github.com/AUTOMATIC1111/stable-diffusion-webui-rembg.git \
     && git clone https://github.com/Mikubill/sd-webui-controlnet \
+    && git clone https://github.com/alexandersokol/sd-model-organizer.git \
     #https://github.com/d8ahazard/sd_dreambooth_extension
     && git clone https://github.com/AUTOMATIC1111/stable-diffusion-webui-aesthetic-gradients \
     && git clone https://github.com/deforum-art/deforum-for-automatic1111-webui \
