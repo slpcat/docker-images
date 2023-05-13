@@ -1,5 +1,4 @@
 FROM slpcat/python:3.10.11-bullseye
-#FROM pytorch/pytorch:1.13.1-cuda11.6-cudnn8-runtime
 
 RUN apt-get install -y libgl1-mesa-glx libglib2.0-dev tk google-perftools git git-lfs pkg-config libcairo2-dev libreadline8 gcc
 RUN useradd -s /bin/bash -d /app sd \
@@ -13,8 +12,9 @@ RUN \
     && git clone https://github.com/KohakuBlueleaf/a1111-sd-webui-locon \
     && git clone https://github.com/butaixianran/Stable-Diffusion-Webui-Civitai-Helper \
     && git clone https://github.com/fkunn1326/openpose-editor \
+    && git clone https://github.com/hnmr293/posex \
     && git clone https://github.com/Mikubill/sd-webui-controlnet \
-#https://github.com/d8ahazard/sd_dreambooth_extension
+    #https://github.com/d8ahazard/sd_dreambooth_extension
     && git clone https://github.com/AUTOMATIC1111/stable-diffusion-webui-aesthetic-gradients \
     && git clone https://github.com/deforum-art/deforum-for-automatic1111-webui \
     && git clone https://github.com/tsngo/stable-diffusion-webui-aesthetic-image-scorer \
