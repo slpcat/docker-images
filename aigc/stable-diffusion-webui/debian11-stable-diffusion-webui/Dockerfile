@@ -33,6 +33,8 @@ RUN \
     && git clone https://github.com/volotat/SD-CN-Animation \
     && git clone https://github.com/ilian6806/stable-diffusion-webui-state \
     && git clone https://github.com/nonnonstop/sd-webui-3d-open-pose-editor \
+    && git clone https://github.com/jtydhr88/sd-3dmodel-loader.git \
+    && git clone https://github.com/AUTOMATIC1111/stable-diffusion-webui-pixelization.git \
     && git clone https://github.com/WildBanjos/DiffusionDefender \
     && git clone https://github.com/vladmandic/sd-extension-system-info \
     && git clone https://github.com/Zyin055/Config-Presets \
