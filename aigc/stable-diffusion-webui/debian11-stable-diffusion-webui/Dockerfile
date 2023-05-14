@@ -28,7 +28,7 @@ RUN \
     && git clone https://github.com/Malisius/booru2prompt.git \
     && git clone https://github.com/Extraltodeus/multi-subject-render.git \
     && git clone https://github.com/thygate/stable-diffusion-webui-depthmap-script.git \
-    && git clone https://github.com/dr413677671/PromptGallery-stable-diffusion-webui.git \
+    #&& git clone https://github.com/dr413677671/PromptGallery-stable-diffusion-webui.git \
     && git clone https://github.com/tkalayci71/embedding-inspector.git \
     && git clone https://github.com/kex0/batch-face-swap.git \
     && git clone https://github.com/alemelis/sd-webui-ar.git \
@@ -56,9 +56,9 @@ RUN \
     && git clone https://github.com/WildBanjos/DiffusionDefender \
     && git clone https://github.com/vladmandic/sd-extension-system-info \
     && git clone https://github.com/Zyin055/Config-Presets \
-    && git clone https://github.com/camenduru/stable-diffusion-webui-artists-to-study \
+    && git clone https://github.com/camenduru/stable-diffusion-webui-artists-to-study
     #fix permissions
-    chmod -R 755 extensions
+    #chmod -R 755 extensions
 
 #reinstall torchvision
 
