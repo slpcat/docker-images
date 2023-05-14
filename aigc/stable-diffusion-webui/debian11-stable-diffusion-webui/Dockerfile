@@ -56,10 +56,11 @@ RUN \
     && git clone https://github.com/WildBanjos/DiffusionDefender \
     && git clone https://github.com/vladmandic/sd-extension-system-info \
     && git clone https://github.com/Zyin055/Config-Presets \
-    && git clone https://github.com/camenduru/stable-diffusion-webui-artists-to-study
+    && git clone https://github.com/camenduru/stable-diffusion-webui-artists-to-study \
+    #fix permissions
+    chmod -R 755 extensions
 
 #reinstall torchvision
-#fix permissions
 
 WORKDIR /app/stable-diffusion-webui
 ##cpu mode # Linux版
