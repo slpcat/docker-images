@@ -18,6 +18,20 @@ RUN \
     && git clone https://github.com/Mikubill/sd-webui-controlnet \
     && git clone https://github.com/toshiaki1729/stable-diffusion-webui-text2prompt.git \
     && git clone https://github.com/alexandersokol/sd-model-organizer.git \
+    && git clone https://github.com/muerrilla/stable-diffusion-NPW.git \
+    && git clone https://github.com/GeorgLegato/sd-webui-panorama-viewer.git \
+    && git clone https://github.com/Kahsolt/stable-diffusion-webui-sonar.git \
+    && git clone https://github.com/toshiaki1729/stable-diffusion-webui-dataset-tag-editor.git \
+    && git clone https://github.com/CodeExplode/stable-diffusion-webui-embedding-editor.git \
+    && git clone https://github.com/Maurdekye/training-picker.git \
+    && git clone https://github.com/7eu7d7/DreamArtist-sd-webui-extension.git \
+    && git clone https://github.com/Malisius/booru2prompt.git \
+    && git clone https://github.com/Extraltodeus/multi-subject-render.git \
+    && git clone https://github.com/thygate/stable-diffusion-webui-depthmap-script.git \
+    && git clone https://github.com/dr413677671/PromptGallery-stable-diffusion-webui.git \
+    && git clone https://github.com/tkalayci71/embedding-inspector.git \
+    && git clone https://github.com/kex0/batch-face-swap.git \
+    && git clone https://github.com/alemelis/sd-webui-ar.git \
     #https://github.com/d8ahazard/sd_dreambooth_extension
     && git clone https://github.com/AUTOMATIC1111/stable-diffusion-webui-aesthetic-gradients \
     && git clone https://github.com/deforum-art/deforum-for-automatic1111-webui \
