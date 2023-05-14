@@ -32,6 +32,8 @@ RUN \
     && git clone https://github.com/tkalayci71/embedding-inspector.git \
     && git clone https://github.com/kex0/batch-face-swap.git \
     && git clone https://github.com/alemelis/sd-webui-ar.git \
+    && git clone https://github.com/AIrjen/OneButtonPrompt \
+    && git clone https://github.com/Physton/sd-webui-prompt-all-in-one \
     #https://github.com/d8ahazard/sd_dreambooth_extension
     && git clone https://github.com/AUTOMATIC1111/stable-diffusion-webui-aesthetic-gradients \
     && git clone https://github.com/deforum-art/deforum-for-automatic1111-webui \
@@ -55,6 +57,9 @@ RUN \
     && git clone https://github.com/vladmandic/sd-extension-system-info \
     && git clone https://github.com/Zyin055/Config-Presets \
     && git clone https://github.com/camenduru/stable-diffusion-webui-artists-to-study
+
+#reinstall torchvision
+#fix permissions
 
 WORKDIR /app/stable-diffusion-webui
 ##cpu mode # Linux版
