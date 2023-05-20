@@ -15,6 +15,9 @@ ControlNet
  https://github.com/lllyasviel/ControlNet.git
 https://huggingface.co/lllyasviel/ControlNet/tree/main/models
 
+https://github.com/riffusion/riffusion
+用这个转音频
+
 模型库
 huggingface
 
