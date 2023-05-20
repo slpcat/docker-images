@@ -10,6 +10,8 @@ ENV \
     #LC_ALL="en_US.UTF-8" \
     TZ="Asia/Shanghai"
 
+COPY mirrorlist /etc/pacman.d/mirrorlist
+
 # set timezone
 RUN ln -sf /usr/share/zoneinfo/${TZ} /etc/localtime
 
