@@ -1,0 +1,14 @@
+FROM alpine:3.17 AS verify
+RUN apk add --no-cache curl wget tar zstd gzip
+
+RUN \
+    wget https://mirrors.wsyu.edu.cn/loongarch/archlinux/iso/latest/archlinux-bootstrap-loong64.tar.gz && \
+    mkdir /rootfs && \
+    tar -C /rootfs --extract --file "archlinux-bootstrap-loong64.tar.gz"
+
+FROM scratch AS root
+MAINTAINER 若虚 <slpcat@qq.com>
+
+COPY --from=verify /rootfs/root.loong64/ /
+
+CMD ["/bin/bash"]

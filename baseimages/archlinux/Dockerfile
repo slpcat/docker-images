@@ -14,6 +14,6 @@ ENV \
 RUN ln -sf /usr/share/zoneinfo/${TZ} /etc/localtime
 
 RUN  \
-    pacman -Syu
+    pacman -Syu --noconfirm
 
 CMD ["/bin/bash"]
