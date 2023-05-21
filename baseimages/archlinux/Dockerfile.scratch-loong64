@@ -1,5 +1,5 @@
-FROM alpine:3.17 AS verify
-RUN apk add --no-cache curl wget tar zstd gzip
+FROM slpcat/debian:bookworm-loong64 AS verify
+RUN apt-get update && apt-get install -y wget tar gzip
 
 RUN \
     wget https://mirrors.wsyu.edu.cn/loongarch/archlinux/iso/latest/archlinux-bootstrap-loong64.tar.gz && \
@@ -10,5 +10,9 @@ FROM scratch AS root
 MAINTAINER 若虚 <slpcat@qq.com>
 
 COPY --from=verify /rootfs/root.loong64/ /
+RUN \
+    pacman-key --init && \
+    pacman-key --populate && \
+    pacman -Syu --noconfirm
 
 CMD ["/bin/bash"]
