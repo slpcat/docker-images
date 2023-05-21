@@ -17,8 +17,10 @@ RUN \
     && git clone https://github.com/fkunn1326/openpose-editor \
     && git clone https://github.com/hnmr293/posex \
     && git clone https://github.com/zanllp/sd-webui-infinite-image-browsing.git \
+    && git clone https://github.com/yfszzx/stable-diffusion-webui-images-browser \
     && git clone https://github.com/AUTOMATIC1111/stable-diffusion-webui-rembg.git \
     && git clone https://github.com/Mikubill/sd-webui-controlnet \
+    && git clone https://github.com/camenduru/stable-diffusion-webui-huggingface \
     #&& git clone https://github.com/toshiaki1729/stable-diffusion-webui-text2prompt.git \
     #&& git clone https://github.com/alexandersokol/sd-model-organizer.git \
     && git clone https://github.com/muerrilla/stable-diffusion-NPW.git \
@@ -30,6 +32,10 @@ RUN \
     && git clone https://github.com/7eu7d7/DreamArtist-sd-webui-extension.git \
     && git clone https://github.com/Malisius/booru2prompt.git \
     && git clone https://github.com/Extraltodeus/multi-subject-render.git \
+    && git clone https://github.com/pkuliyi2015/multidiffusion-upscaler-for-automatic1111 \
+    && git clone https://github.com/opparco/stable-diffusion-webui-composable-lora \
+    && git clone https://github.com/jexom/sd-webui-depth-lib \
+    && git clone https://github.com/etherealxx/batchlinks-webui \
     && git clone https://github.com/thygate/stable-diffusion-webui-depthmap-script.git \
     #&& git clone https://github.com/dr413677671/PromptGallery-stable-diffusion-webui.git \
     && git clone https://github.com/rifeWithKaiju/model_preset_manager.git \
@@ -37,9 +43,9 @@ RUN \
     && git clone https://github.com/kex0/batch-face-swap.git \
     #&& git clone https://github.com/alemelis/sd-webui-ar.git \
     && git clone https://github.com/KohakuBlueleaf/a1111-sd-webui-lycoris \
-    #&& git clone https://github.com/AIrjen/OneButtonPrompt \
+    && git clone https://github.com/AIrjen/OneButtonPrompt \
     #&& git clone https://github.com/Physton/sd-webui-prompt-all-in-one \
-    #https://github.com/d8ahazard/sd_dreambooth_extension
+    && git clone https://github.com/d8ahazard/sd_dreambooth_extension \
     && git clone https://github.com/AUTOMATIC1111/stable-diffusion-webui-aesthetic-gradients \
     && git clone https://github.com/deforum-art/deforum-for-automatic1111-webui \
     #&& git clone https://github.com/tsngo/stable-diffusion-webui-aesthetic-image-scorer \
