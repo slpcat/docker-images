@@ -1,13 +1,13 @@
 gpu环境
 docker run -it -d --gpus all \
   -p 7860:7860 \
-  -e COMMANDLINE_ARGS="--xformers --enable-insecure-extension-access --listen --api" \
+  -e COMMANDLINE_ARGS="--xformers --enable-insecure-extension-access --listen --api --gradio-queue" \
   -v /data/sd/models:/app/stable-diffusion-webui/models slpcat/stable-diffusion-webui:bullseye
 cpu环境
 docker run -it -d \
   -p 7860:7860 \
   -e CUDA_VISIBLE_DEVICES=-1 \
-  -e COMMANDLINE_ARGS="--use-cpu all --no-half --precision full --skip-torch-cuda-test --enable-insecure-extension-access --listen --api --share" \
+  -e COMMANDLINE_ARGS="--use-cpu all --no-half --precision full --skip-torch-cuda-test --enable-insecure-extension-access --listen --api --share --gradio-queue" \
   -v /data/sd/models:/app/stable-diffusion-webui/models slpcat/stable-diffusion-webui:bullseye
 
 sudo apt-get install python-tk
@@ -17,6 +17,11 @@ sudo apt-get install python3-tk
 sudo apt install tk-dev
 
 apt install google-perftools tk
+
+
+https://github.com/AbdBarho/stable-diffusion-webui-docker/
+https://github.com/invoke-ai/InvokeAI
+https://github.com/comfyanonymous/ComfyUI
 
 
 插件
