@@ -1,0 +1,63 @@
+https://tailscale.com/kb/
+
+windows
+tunsafe
+
+mac
+brew install wireguard-tools
+android
+
+linux server
+https://www.wireguard.com/install/
+Wg Gen Web: https://github.com/vx3r/wg-gen-web
+
+Wireguard-ui
+Web用户界面，用于管理WireGuard设置。
+
+Wireguard Web界面旨在提供直观的用户界面和易于使用的REST API，从而可以动态控制客户端。
+
+docker run -d --restart=always -v /etc/wireguard:/data -p 8080:8080 -e "WG_CONF_DIR=/data" vx3r/wg-gen-web:latest
+
+/etc/wireguard/wg0.conf
+[Interface]
+Address = 10.6.6.253/24
+ListenPort = 51820
+PrivateKey = GJjC4e9sqLJXOtBqCDECNGZbKufR2fBXrnsVvmPpUE8=
+
+PreUp = echo WireGuard PreUp
+PreDown = echo WireGuard PreDown
+#replace eth0 with the interface open to the internet (e.g might be wlan0 if wifi)
+PostUp = iptables -A FORWARD -i %i -j ACCEPT; iptables -A FORWARD -o %i -j ACCEPT; iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+PostDown = iptables -D FORWARD -i %i -j ACCEPT; iptables -D FORWARD -o %i -j ACCEPT; iptables -t nat -D POSTROUTING -o eth0 -j MASQUERADE
+[Peer]
+PublicKey = kuMX/dSSYumlKeguqZZXXCGNSqxp2PjkotHuNxtEEWI=
+PresharedKey = kjzVV4jH/cOhYH6aB9b+/pXLOetjd88/ke9Fe0ktkBI=
+AllowedIPs = fd9f:6666::1/128, 10.6.6.1/32
+
+
+# /etc/systemd/system/wg-gen-web.service
+[Unit]
+Description=Restart WireGuard
+After=network.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/systemctl reload wg-quick@wg0.service
+
+[Install]
+WantedBy=multi-user.target
+
+
+# /etc/systemd/system/wg-gen-web.path
+[Unit]
+Description=Watch /etc/wireguard for changes
+
+[Path]
+PathModified=/etc/wireguard
+
+[Install]
+WantedBy=multi-user.target
+
+
+systemctl enable wg-gen-web.service wg-gen-web.path --now
+
