@@ -82,7 +82,7 @@ RUN \
 
 #reinstall torchvision
 RUN . ./venv/bin/activate \
-    && pip3 uninstall torchvision \
+    && pip3 uninstall -y torchvision \
     && pip3 install torchvision
 
 CMD ["bash", "-c", "./webui.sh"]
