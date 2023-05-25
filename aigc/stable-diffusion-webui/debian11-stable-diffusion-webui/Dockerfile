@@ -71,7 +71,6 @@ RUN \
     #fix permissions
     #chmod -R 755 extensions
 
-#reinstall torchvision
 
 WORKDIR /app/stable-diffusion-webui
 ##cpu mode # Linux版
@@ -80,5 +79,10 @@ WORKDIR /app/stable-diffusion-webui
 
 RUN \
     bash webui.sh --skip-torch-cuda-test  --xformers --no-download-sd-model || true
+
+#reinstall torchvision
+RUN . ./venv/bin/activate \
+    && pip3 uninstall torchvision \
+    && pip3 install torchvision
 
 CMD ["bash", "-c", "./webui.sh"]
