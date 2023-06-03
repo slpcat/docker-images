@@ -3,6 +3,13 @@ docker run -it -d --gpus all \
   -p 7860:7860 \
   -e COMMANDLINE_ARGS='--theme dark --xformers --enable-insecure-extension-access --listen --api --gradio-auth "user01:password01,user02:password02" --gradio-queue --enable-console-prompts --ui-settings-file "config.json" --ckpt-dir "models/Stable-diffusion" --embeddings-dir "embeddings/" --hypernetwork-dir "models/hypernetworks/" --codeformer-models-path "models/Codeformer/" --gfpgan-models-path "models/GFPGAN" --esrgan-models-path "models/ESRGAN" --bsrgan-models-path "models/BSRGAN" --realesrgan-models-path "models/RealESRGAN" --scunet-models-path "models/ScuNET" --swinir-models-path "models/SwinIR" --ldsr-models-path "models/LDSR" --clip-models-path "models/CLIP" ' \
   -v /data/sd/models:/app/stable-diffusion-webui/models slpcat/stable-diffusion-webui:bullseye
+
+docker run --restart=always -d --runtime=nvidia --gpus all \
+  -p 7860:7860 \
+  -e COMMANDLINE_ARGS="--theme dark --xformers --enable-insecure-extension-access --listen --api --gradio-queue --enable-console-prompts" \
+  -w /var/sd/stable-diffusion-webui \
+  -v /data/sd:/var/sd slpcat/stable-diffusion-webui:v1.2.1-bullseye
+
 cpu环境
 docker run -it -d \
   -p 7860:7860 \
@@ -110,3 +117,5 @@ configurationjson
 open_clip_pytorch_model.bin
 text2video_pytorch_model.pth
 
+
+https://github.com/AbdullahAlfaraj/Auto-Photoshop-StableDiffusion-Plugin

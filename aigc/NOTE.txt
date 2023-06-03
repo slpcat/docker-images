@@ -7,6 +7,10 @@ https://novelai.net/
 
 https://github.com/zqq-nuli/Midjourney_api
 
+https://github.com/hpcaitech/ColossalAI
+https://github.com/taichi-dev/taichi-nerfs
+https://github.com/ashawkey/stable-dreamfusion
+
 stable-diffusion-webui
 https://github.com/AUTOMATIC1111/stable-diffusion-webui
 https://www.codewithgpu.com/i/AUTOMATIC1111/stable-diffusion-webui/Stable-Diffusion-for-NovelAI

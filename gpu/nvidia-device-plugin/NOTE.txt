@@ -1,0 +1,5 @@
+https://github.com/NVIDIA/k8s-device-plugin
+
+阿里云的代码在
+https://github.com/AliyunContainerService/gpushare-scheduler-extender
+https://github.com/AliyunContainerService/gpushare-device-plugin

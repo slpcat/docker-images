@@ -65,6 +65,7 @@ RUN \
 
 COPY --from=builder /fpm_install /
 COPY pip.conf /etc/pip.conf
+RUN chmod 644 /etc/pip.conf
 
 RUN \
     ldconfig \

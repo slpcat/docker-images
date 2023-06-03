@@ -1,0 +1,4 @@
+curl -O https://raw.githubusercontent.com/adamwalach/openvpn-web-ui/master/docs/docker-compose.yml
+docker-compose up -d
+
+https://eddie.website/

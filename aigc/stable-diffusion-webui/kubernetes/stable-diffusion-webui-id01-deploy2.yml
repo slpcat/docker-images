@@ -29,7 +29,7 @@ spec:
         #sidecar.istio.io/inject: "true"
     spec:
       nodeSelector:
-        gpu: 4090
+        gpu: "4090"
       terminationGracePeriodSeconds: 60 ##k8s将会给应用发送SIGTERM信号，可以用来正确、优雅地关闭应用,默认为30秒
       #imagePullSecrets:
       #- name: registrykey
@@ -45,42 +45,48 @@ spec:
               topologyKey: "kubernetes.io/hostname"
       containers:
       - name: stable-diffusion-webui
-        image: slpcat/stable-diffusion-webui:bullseye
+        image: turbo-ai.cn:5000/slpcat/stable-diffusion-webui:v1.2.1-bullseye
         workingDir: '/opt/stable-diffusion-webui'
         command:
-          - python3
+          - '/bin/bash'
         args:
-          - '-server'
-          - '-Djava.awt.headless=true'
-          - '-XX:+UseG1GC'
-          - '-XX:MaxGC'
+          - '-c'
+          - './webui.sh'
         imagePullPolicy: Always
-        livenessProbe: #kubernetes认为该pod是存活的,不存活则需要重启
-          httpGet:
-            path: /
-            port: 7860
-            scheme: HTTP
-          initialDelaySeconds: 60 ## equals to the maximum startup time of the application + couple of seconds
-          timeoutSeconds: 5
-          successThreshold: 1
-          failureThreshold: 5
-        readinessProbe: #kubernetes认为该pod是启动成功的
-          httpGet:
-            path: /
-            port: 7860
-            scheme: HTTP
-          initialDelaySeconds: 30 ## equals to minimum startup time of the application
-          timeoutSeconds: 5
-          successThreshold: 1
-          failureThreshold: 5
+        #livenessProbe: #kubernetes认为该pod是存活的,不存活则需要重启
+        #  httpGet:
+        #    path: /
+        #    port: 7860
+        #    scheme: HTTP
+        #  initialDelaySeconds: 60 ## equals to the maximum startup time of the application + couple of seconds
+        #  timeoutSeconds: 5
+        #  successThreshold: 1
+        #  failureThreshold: 5
+        #readinessProbe: #kubernetes认为该pod是启动成功的
+        #  httpGet:
+        #    path: /
+        #    port: 7860
+        #    scheme: HTTP
+        #  initialDelaySeconds: 30 ## equals to minimum startup time of the application
+        #  timeoutSeconds: 5
+        #  successThreshold: 1
+        #  failureThreshold: 5
         resources:
           # keep request = limit to keep this container in guaranteed class
+    resources:
+      requests:
+      limits:
           requests:
             cpu: 1
             memory: 1Gi
+            tencent.com/vcuda-core: 20
+            tencent.com/vcuda-memory: 30
           limits:
             cpu: 16
-            memory: 16Gi
+            #nvidia.com/gpu: 1 # requesting 1 GPU
+            memory: 32Gi
+            tencent.com/vcuda-core: 20
+            tencent.com/vcuda-memory: 30
         env:
           # cpu 
           - name: CUDA_VISIBLE_DEVICES
@@ -89,7 +95,7 @@ spec:
             value: "--use-cpu all --no-half --precision full --skip-torch-cuda-test --enable-insecure-extension-access --listen --api"
           #gpu
           #- name: COMMANDLINE_ARGS
-          #  value: "--xformers --enable-insecure-extension-access --listen --api"
+          #  value: "--theme dark --xformers --enable-insecure-extension-access --listen --api --gradio-queue --enable-console-prompts"
         #日志采集
           #- name: aliyun_logs_liveops-k8s-access-serverlog
           #  value: "stdout"
@@ -99,24 +105,11 @@ spec:
           - name: tcp
             containerPort: 7860
         volumeMounts:
-          - name: log
-            mountPath: /opt/logs
-           #mountPropagation: HostToContainer
-          - name: embeddings
-            mountPath: /app/stable-diffusion-webui/embeddings
-          - name: models
-            mountPath: /app/stable-diffusion-webui/models
-          - name: outputs
-            mountPath: /app/stable-diffusion-webui/outputs
+          - name: data
+            mountPath: /opt
       volumes:
       #- name: log
       #  emptyDir: {}
-      - name: embeddings
+      - name: data
         persistentVolumeClaim:
-          claimName: stable-diffusion-webui-id01-embeddings
-      - name: models
-        persistentVolumeClaim:
-          claimName: stable-diffusion-webui-id01-models
-      - name: outputs
-        persistentVolumeClaim:
-          claimName: stable-diffusion-webui-id01-outputs
+          claimName: stable-diffusion-webui-id01-data

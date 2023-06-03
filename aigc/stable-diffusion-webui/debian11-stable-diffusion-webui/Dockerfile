@@ -52,6 +52,7 @@ RUN \
     #&& git clone https://github.com/journey-ad/sd-webui-bilingual-localization \
     #&& git clone https://github.com/butaixianran/Stable-Diffusion-Webui-Prompt-Translator \
     && git clone https://github.com/fishslot/video_loopback_for_webui \
+    && git clone https://github.com/Scholar01/sd-webui-mov2mov \
     #&& git clone https://github.com/AUTOMATIC1111/stable-diffusion-webui-promptgen \
     && git clone https://github.com/kohya-ss/sd-webui-additional-networks \
     #&& git clone https://github.com/Vetchems/sd-model-preview \
