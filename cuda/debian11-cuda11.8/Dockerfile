@@ -61,7 +61,7 @@ ENV PATH /usr/local/bin:$PATH
 USER root
 
 RUN \
-    apt-get update && apt-get -y upgrade && apt-get install -y libexpat1 git
+    apt-get update && apt-get -y upgrade && apt-get install -y libexpat1 git gnupg2
 
 COPY --from=builder /fpm_install /
 COPY pip.conf /etc/pip.conf
