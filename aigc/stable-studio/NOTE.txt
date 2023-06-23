@@ -1,1 +1,2 @@
 https://github.com/Stability-AI/StableStudio
+docker run -d --restart=always -p 3000:3000 slpcat/stable-studio

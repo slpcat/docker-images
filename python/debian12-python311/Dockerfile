@@ -1,4 +1,4 @@
-FROM buildpack-deps:bullseye AS builder
+FROM buildpack-deps:bookworm AS builder
 
 # ensure local python is preferred over distribution python
 ENV PATH /usr/local/bin:$PATH
@@ -19,7 +19,7 @@ RUN set -eux; \
 
 ARG PKG_ROOT=/fpm_install
 ENV GPG_KEY E3FF2839C048B25C084DEBE9B26995E310250568
-ENV PYTHON_VERSION 3.10.11
+ENV PYTHON_VERSION 3.11.4
 
 RUN set -eux; \
 	\
@@ -53,7 +53,7 @@ RUN set -eux; \
 	python3 --version
 
 #upstream https://github.com/jenkinsci/docker-inbound-agent
-FROM slpcat/debian:bullseye
+FROM slpcat/debian:bookworm
 MAINTAINER 若虚 <slpcat@qq.com>
 
 ENV PATH /usr/local/bin:$PATH
@@ -61,7 +61,7 @@ ENV PATH /usr/local/bin:$PATH
 USER root
 
 RUN \
-    apt-get update && apt-get -y upgrade && apt-get install -y libexpat1 git gnupg2 software-properties-common
+    apt-get update && apt-get -y upgrade && apt-get install -y libexpat1 git
 
 COPY --from=builder /fpm_install /
 COPY pip.conf /etc/pip.conf
@@ -83,7 +83,7 @@ RUN set -eux; \
 # if this is called "PIP_VERSION", pip explodes with "ValueError: invalid truth value '<VERSION>'"
 ARG PYTHON_PIP_VERSION=23.1.2
 # https://github.com/docker-library/python/issues/365
-ARG PYTHON_SETUPTOOLS_VERSION=67.7.2
+ARG PYTHON_SETUPTOOLS_VERSION=68.0.0
 # https://github.com/pypa/get-pip
 ARG PYTHON_GET_PIP_URL=https://bootstrap.pypa.io/pip/get-pip.py
 #ARG PYTHON_GET_PIP_SHA256=1e501cf004eac1b7eb1f97266d28f995ae835d30250bec7f8850562703067dc6
@@ -100,19 +100,3 @@ RUN set -eux; \
         ; \
         rm -f get-pip.py; \
         pip --version
-
-#install cuda
-ENV OS=debian11
-
-#RUN wget https://developer.download.nvidia.com/compute/cuda/repos/${OS}/x86_64/cuda-${OS}.pin
-
-#RUN mv cuda-${OS}.pin /etc/apt/preferences.d/cuda-repository-pin-600
-RUN apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/${OS}/x86_64/3bf863cc.pub
-RUN add-apt-repository "deb https://developer.download.nvidia.com/compute/cuda/repos/${OS}/x86_64/ /"
-RUN apt-get update
-
-ENV cudnn_version=8.9.2.26
-ENV cuda_version=cuda11.8
-
-RUN apt-get install libcudnn8=${cudnn_version}-1+${cuda_version}
-RUN apt-get install libcudnn8-dev=${cudnn_version}-1+${cuda_version}

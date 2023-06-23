@@ -1,4 +1,5 @@
-FROM slpcat/python:3.10.11-bullseye
+#FROM slpcat/python:3.10.11-bullseye
+FROM slpcat/python:3.11.4-bookworm
 
 RUN \
     apt-get update -y && \
@@ -18,9 +19,14 @@ RUN \
     && git clone https://github.com/hnmr293/posex \
     && git clone https://github.com/zanllp/sd-webui-infinite-image-browsing.git \
     && git clone https://github.com/yfszzx/stable-diffusion-webui-images-browser \
+    && git clone https://github.com/studyzy/sd-prompt-translator \
     && git clone https://github.com/AUTOMATIC1111/stable-diffusion-webui-rembg.git \
     && git clone https://github.com/Mikubill/sd-webui-controlnet \
+    && git clone https://github.com/Bing-su/adetailer.git \
+    && git clone https://github.com/civitai/sd_civitai_extension.git \
+    && git clone https://github.com/Vetchems/sd-civitai-browser.git \
     && git clone https://github.com/camenduru/stable-diffusion-webui-huggingface \
+    && git clone https://github.com/comfyanonymous/ComfyUI \
     #&& git clone https://github.com/toshiaki1729/stable-diffusion-webui-text2prompt.git \
     #&& git clone https://github.com/alexandersokol/sd-model-organizer.git \
     && git clone https://github.com/muerrilla/stable-diffusion-NPW.git \

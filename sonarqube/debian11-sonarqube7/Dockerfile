@@ -38,6 +38,9 @@ COPY --chown=sonarqube:sonarqube run.sh sonar.sh ${SONARQUBE_HOME}/bin/
 
 COPY --chown=sonarqube:sonarqube plugins/*.jar /opt/sonarqube/extensions/plugins/
 
+RUN \
+    rm /opt/sonarqube/extensions/plugins/sonar-java-plugin-5.13.0.18197.jar
+
 WORKDIR ${SONARQUBE_HOME}
 EXPOSE 9000
 
