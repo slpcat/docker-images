@@ -13,8 +13,6 @@ RUN set -eux; \
 	apt-get install -y --no-install-recommends \
 		libbluetooth-dev \
 		tk-dev \
-                libgl1-mesa-dev \
-                libglfw3-dev mesa-utils freeglut3-dev libglew-dev libsdl2-dev libsdl2-image-dev libglm-dev libfreetype6-dev \
 		uuid-dev \
 	; \
 	rm -rf /var/lib/apt/lists/*
@@ -63,7 +61,8 @@ ENV PATH /usr/local/bin:$PATH
 USER root
 
 RUN \
-    apt-get purge -y python3.9 python3.9-minimal libpython3.9-minimal python-apt-common python-pip-whl
+    apt-get purge -y python3.9 python3.9-minimal libpython3.9-minimal python-apt-common python-pip-whl libgl1-mesa-dev \
+                libglfw3-dev mesa-utils freeglut3-dev libglew-dev libsdl2-dev libsdl2-image-dev libglm-dev libfreetype6-dev 
 
 COPY --from=builder /fpm_install /
 
