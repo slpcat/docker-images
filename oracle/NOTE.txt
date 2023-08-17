@@ -1,1 +1,70 @@
 https://github.com/oracle/oracle-database-operator
+https://github.com/oracle/docker-images
+docker run -d -p 8080:8080 -p 1521:1521 --name oracle slpcat/oracle:11g
+docker exec -it oracle bash -c "source /home/oracle/.bashrc; sqlplus /nolog"
+docker run -d -p 8080:8080 -p 1521:1521 -v /var/oracle/data:u01/app/oracle truevoly/oracle-12c
+docker run -d -p 8080:8080 -p 1521:1521 -v /my/oracle/data:/u01/app/oracle -e DBCA_TOTAL_MEMORY=1024 slpcat/oracle:11g-ee
+docker run -d --name oracle   --privileged -v $(pwd)/oradata:/u01/app/oracle   -p 8080:8080 -p 1521:1521 slpcat/oracle:12c-ee
+docker run -d -it --name oracle19c -p 1521:1521 -p 5500:5500 -v /opt/oradata:/opt/oracle/oradata slpcat/oracle:19c-ee
+
+
+docker run -d  \
+-p 1524:1521 -p 5502:5500 \
+-e ORACLE_SID=ORCLCDB \
+-e ORACLE_PDB=ORCLPDB1 \
+# 此处是oracle密码
+-e ORACLE_PWD=Oracle@123456 \
+-e ORACLE_EDITION=standard \
+-e ORACLE_CHARACTERSET=AL32UTF8 \
+-v /mydata/oracle/oradata:/opt/oracle/oradata \
+--name orcl19c_03 \
+slpcat/oracle:19c
+
+docker run -d --name container_name \
+ -p host_port:1521 -p host_port:5500 \
+ -e ORACLE_SID=cdb-system-identifer \
+ -e ORACLE_PDB=pdb-name \
+ -e ORACLE_PWD=oracle-user-password \
+ -e INIT_SGA_SIZE=cdb-database-sga-memory-in-mb \
+ -e INIT_PGA_SIZE=cdb-database-pga-memory-in-mb \
+ -e ORACLE_EDITION=ee-or-se-database-edition \ 
+ -e ORACLE_CHARACTERSET=character-set \
+ -e ENABLE_ARCHIVELOG=[true|false]
+ -v [host-mount-point:]/opt/oracle/oradata \
+container-registry.oracle.com/database/enterprise:21.3.0
+
+Parameters:
+ --name:                 The name of the container. (Default: auto-generated
+ -p:                     The port mapping of the host port to the container port.
+                         Two ports are exposed: 1521 (Oracle Listener), 5500 (OEM Express)
+ -e ORACLE_SID:          The Oracle Database SID that should be used.(Default:ORCLCDB)
+ -e ORACLE_PDB:          The Oracle Database PDB name that should be used. (Default: ORCLPDB1)
+ -e ORACLE_PWD:          The Oracle Database SYS, SYSTEM and PDBADMIN password. (Default: auto-generated)
+ -e INIT_SGA_SIZE:       The total memory in MB that should be used for all SGA components (Optional)
+ -e INIT_PGA_SIZE:       The target aggregate PGA memory in MB that should be used for all server processes attached to the instance (Optional)
+ -e ORACLE_EDITION:      The Oracle Database Edition [enterprise|standard]. (Default: enterprise)
+ -e ORACLE_CHARACTERSET: The character set that you want used when creating the database. (Default: AL32UTF8)
+ -e ENABLE_ARCHIVELOG    The ARCHIVELOG mode. By default, set to false. 
+                         If set to true, then ARCHIVLOG mode is enabled in the database (for fresh database creation only)
+ -v /opt/oracle/oradata
+                         The data volume that you want used for the database. Must be writable by the oracle user (uid: 54321) inside the container
+                         If omitted, then the database will not be persisted over container recreation.
+ -v /opt/oracle/scripts/startup | /docker-entrypoint-initdb.d/startup
+                         Optional: A volume with custom scripts to be run after database startup.
+                         For further details see the section "Running scripts after setup and on
+                         startup" section below.
+ -v /opt/oracle/scripts/setup | /docker-entrypoint-initdb.d/setup
+                         Optional: A volume with custom scripts that you want run after database setup.
+                         For further details see the "Running scripts after setup and on startup" section below.
+
+
+  docker run -it -d \
+  --privileged \
+  --name c_Oracle12cEE \
+  -p 15222:1521 \
+  -p 15223:5500 \
+  -p 15224:8080 \
+  -v /home/dockerImages/rede_dataOfContainer/oracle12cee/app/:/u01/app/oracle \
+  -e ORACLE_ALLOW_REMOTE=true \
+  absolutapps/oracle-12c-ee        
+

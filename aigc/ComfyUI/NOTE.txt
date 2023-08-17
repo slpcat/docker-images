@@ -1,0 +1,8 @@
+docker run --restart=always -d --runtime=nvidia --gpus all \
+  -p 7860:7860 \
+  -e CLI_ARGS="" \
+  -w /var/cf/ComfyUI \
+  -v /data/cf:/var/cf  slpcat/comfyui:bullseye
+
+https://github.com/SeargeDP/SeargeSDXL
+https://github.com/ltdrdata/ComfyUI-Manager/tree/main

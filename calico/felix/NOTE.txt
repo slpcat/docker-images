@@ -1,0 +1,5 @@
+docker run --privileged \
+           --net=host \
+           -v /run:/run \
+           -e FELIX_LOGSEVERITYSCREEN=INFO \
+           calico/felix

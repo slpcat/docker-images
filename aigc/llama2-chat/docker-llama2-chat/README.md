@@ -1,0 +1,148 @@
+# Docker LLaMA2 Chat / 羊驼二代
+
+<p style="text-align: center;">
+  <a href="README.md"  target="_blank">中文文档</a> | <a href="README_EN.md">ENGLISH</a>
+</p>
+
+[![](https://img.shields.io/badge/LLaMA2-Official_7B_/_13B-blue)](https://huggingface.co/meta-llama) [![](https://img.shields.io/badge/LLaMA2-Chinese_7B-blue)](https://huggingface.co/soulteary/Chinese-Llama-2-7b-4bit) [![](https://img.shields.io/badge/LLaMA2-Chinese_GGMLQ4-blue)](https://huggingface.co/soulteary/Chinese-Llama-2-7b-ggml-q4) [![](https://img.shields.io/badge/License-Apache_v2-blue)](https://github.com/soulteary/docker-llama2-chat/blob/main/LICENSE)
+
+<img src=".github/llama2.jpg" width="40%">
+
+三步上手 LLaMA2，一起玩！相关博客教程已更新，**同样欢迎“一键三连”** 🌟🌟🌟。
+
+> 使用 Docker 快速上手，本地部署 7B 或 13B 官方模型，或者 7B 中文模型。
+
+### 博客教程
+
+| 类型 | 显存需求 | 特点 | 教程地址 | 教程时间 |
+| --- | --- | --- | --- | --- |
+| 官方版（英文） | 8~14GB | 原汁原味 | [使用 Docker 快速上手官方版 LLaMA2 开源大模型](https://soulteary.com/2023/07/21/use-docker-to-quickly-get-started-with-the-official-version-of-llama2-open-source-large-model.html) | 2023.07.21 |
+| LinkSoul 中文版（双语）| 8~14GB | 支持中文 | [使用 Docker 快速上手中文版 LLaMA2 开源大模型](https://soulteary.com/2023/07/21/use-docker-to-quickly-get-started-with-the-chinese-version-of-llama2-open-source-large-model.html) | 2023.07.21 |
+| Transformers 量化（中文/官方） | 5GB | 加速推理、节约显存 | [使用 Transformers 量化 Meta AI LLaMA2 中文版大模型](https://soulteary.com/2023/07/22/quantizing-meta-ai-llama2-chinese-version-large-models-using-transformers.html) | 2023.07.22 |
+| GGML (Llama.cpp) 量化 （中文/官方）| 可以不需要显存 | CPU 推理 | [构建能够使用 CPU 运行的 MetaAI LLaMA2 中文大模型](https://soulteary.com/2023/07/23/build-llama2-chinese-large-model-that-can-run-on-cpu.html) | 2023.07.23 |
+
+
+你可以参考项目代码，举一反三，把模型跑起来，接入到你想玩的地方，包括并不局限于支持 LLaMA 1代的各种开源软件中。
+
+## 预览图
+
+![](.github/preview.png)
+
+![](.github/llama2-cn-4bit.jpg)
+
+![](.github/clip.gif)
+
+## 使用方法
+
+1. 一条命令，从项目中构建官方版（7B或13B）模型镜像，或中文版镜像（7B或INT4量化版）：
+
+```bash
+# 7B
+bash scripts/make-7b.sh
+
+# 或 13B
+bash scripts/make-13b.sh
+
+# 或 7B Chinese
+bash scripts/make-7b-cn.sh
+
+# 或 7B Chinese 4bit
+bash scripts/make-7b-cn-4bit.sh
+```
+
+2. 选择适合你的命令，从 HuggingFace 下载 LLaMA2 或中文模型：
+
+```bash
+# MetaAI LLaMA2 Models (10~14GB vRAM)
+git clone https://huggingface.co/meta-llama/Llama-2-7b-chat-hf
+git clone https://huggingface.co/meta-llama/Llama-2-13b-chat-hf
+
+mkdir meta-llama
+mv Llama-2-7b-chat-hf meta-llama/
+mv Llama-2-13b-chat-hf meta-llama/
+
+# 或 Chinese LLaMA2 (10~14GB vRAM)
+git clone https://huggingface.co/LinkSoul/Chinese-Llama-2-7b
+
+mkdir LinkSoul
+mv Chinese-Llama-2-7b LinkSoul/
+
+# 或 Chinese LLaMA2 4BIT (5GB vRAM)
+git clone https://huggingface.co/soulteary/Chinese-Llama-2-7b-4bit
+
+mkdir soulteary
+mv Chinese-Llama-2-7b-4bit soulteary/
+```
+
+将下载好的模型，保持在一个正确的目录结构中。
+
+```bash
+tree -L 2 meta-llama
+soulteary
+└── ...
+LinkSoul
+└── ...
+meta-llama
+├── Llama-2-13b-chat-hf
+│   ├── added_tokens.json
+│   ├── config.json
+│   ├── generation_config.json
+│   ├── LICENSE.txt
+│   ├── model-00001-of-00003.safetensors
+│   ├── model-00002-of-00003.safetensors
+│   ├── model-00003-of-00003.safetensors
+│   ├── model.safetensors.index.json
+│   ├── pytorch_model-00001-of-00003.bin
+│   ├── pytorch_model-00002-of-00003.bin
+│   ├── pytorch_model-00003-of-00003.bin
+│   ├── pytorch_model.bin.index.json
+│   ├── README.md
+│   ├── Responsible-Use-Guide.pdf
+│   ├── special_tokens_map.json
+│   ├── tokenizer_config.json
+│   ├── tokenizer.model
+│   └── USE_POLICY.md
+└── Llama-2-7b-chat-hf
+    ├── added_tokens.json
+    ├── config.json
+    ├── generation_config.json
+    ├── LICENSE.txt
+    ├── model-00001-of-00002.safetensors
+    ├── model-00002-of-00002.safetensors
+    ├── model.safetensors.index.json
+    ├── models--meta-llama--Llama-2-7b-chat-hf
+    ├── pytorch_model-00001-of-00003.bin
+    ├── pytorch_model-00002-of-00003.bin
+    ├── pytorch_model-00003-of-00003.bin
+    ├── pytorch_model.bin.index.json
+    ├── README.md
+    ├── special_tokens_map.json
+    ├── tokenizer_config.json
+    ├── tokenizer.json
+    ├── tokenizer.model
+    └── USE_POLICY.md
+```
+
+3. 选择使用下面的适合你的命令，一键运行 LLaMA2 模型应用：
+
+```bash
+# 7B
+bash scripts/run-7b.sh
+# 或 13B
+bash scripts/run-13b.sh
+# 或 Chinese 7B
+bash scripts/run-7b-cn.sh
+# 或 Chinese 7B 4BIT
+bash scripts/run-7b-cn-4bit.sh
+```
+
+模型运行之后，在浏览器中访问 `http://localhost7860` 或者 `http://你的IP地址:7860` 就可以开始玩了。
+
+## 相关项目
+
+- MetaAI LLaMA2: https://ai.meta.com/llama/ ❤️
+- Meta LLaMA2 7B Chat: https://huggingface.co/meta-llama/Llama-2-7b-chat
+- Meta LLaMA2 13B Chat: https://huggingface.co/meta-llama/Llama-2-13b-chat
+- Chinese LLaMA2 7B: https://huggingface.co/LinkSoul/Chinese-Llama-2-7b ❤️
+- Chinese LLaMA2 7B GGML q4: https://huggingface.co/soulteary/Chinese-Llama-2-7b-ggml-q4
+- LLaMA2 GGML Converter: https://hub.docker.com/r/soulteary/llama2

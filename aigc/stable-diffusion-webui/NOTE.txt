@@ -127,3 +127,8 @@ text2video_pytorch_model.pth
 
 
 https://github.com/AbdullahAlfaraj/Auto-Photoshop-StableDiffusion-Plugin
+
+text2video
+https://huggingface.co/cerspense/zeroscope_v2_576w
+
+AMD版 用户量最大的“lshqqytiger”版本： https://github.com/lshqqytiger/stable-diffusion-webui-directml.git

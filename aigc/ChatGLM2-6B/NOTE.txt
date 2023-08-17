@@ -1,0 +1,25 @@
+https://github.com/THUDM/ChatGLM2-6B/blob/main/README_en.md
+git clone https://huggingface.co/THUDM/chatglm2-6b
+
+gpu环境
+docker run -it -d --gpus all \
+  -p 7860:7860 \
+  -v /data/chatglm2-6b-models:/app/ChatGLM-6B/THUDM \
+  slpcat/chatglm2-6b
+
+cpu环境
+docker run -it -d \
+  -p 7860:7860 \
+  -e CUDA_VISIBLE_DEVICES=-1 \
+  -e COMMANDLINE_ARGS="--use-cpu all --no-half --precision full --skip-torch-cuda-test --enable-insecure-extension-access --listen --api --no-gradio-queue --share" \
+  -v /data/sd:/opt/sd/model slpcat/stable-diffusion-webui:bullseye
+
+docker run -d --runtime=nvidia --gpus all \
+   -p 7862:7860 \
+   -v /data1/chatglm2-6b-models/:/app/ChatGLM2-6B/ChatGLM-webui/THUDM/  \
+   slpcat/chatglm2-6b:webui
+
+docker run -d --runtime=nvidia --gpus all \
+   -p 8000:8000 \
+   -v /data1/chatglm2-6b-models/:/app/ChatGLM-6B/THUDM/  \
+   slpcat/chatglm2-6b:api

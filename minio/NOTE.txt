@@ -17,3 +17,24 @@ docker run --name minio \
 -v /data/minio-data:/data \
 -v /data/minio-config:/root/.minio \
 minio/minio server /data --console-address ":9001"
+
+cat >> /etc/hosts << EOF
+    10.10.63.71 minio1
+    10.10.63.72 minio2
+    10.10.63.73 minio3
+    10.10.63.74 minio4
+    EOF
+
+docker run --name minio \
+--net=host \
+-d --restart=always \
+-e "MINIO_ROOT_USER=admin" \
+-e "MINIO_ROOT_PASSWORD=jY7pshc3jrakb]Xo" \
+-v /data/minio-data1:/data1 \
+-v /data/minio-data2:/data2 \
+-v /data/minio-config:/root/.minio \
+minio/minio server http://minio{1...4}/data{1...2} \
+--address ":9000" \
+--console-address ":9001" \
+--ftp="address=:8021"                         \
+--ftp="passive-port-range=30000-40000"        \

@@ -1,9 +1,8 @@
-#FROM slpcat/python:3.10.11-bullseye
-FROM slpcat/python:3.11.4-bookworm
+FROM slpcat/python:3.10.11-bullseye
 
 RUN \
     apt-get update -y && \
-    apt-get install -y libgl1-mesa-glx libglib2.0-dev tk google-perftools git git-lfs pkg-config libcairo2-dev libreadline8 gcc
+    apt-get install -y libgl1-mesa-glx libglib2.0-dev tk google-perftools git git-lfs pkg-config libcairo2-dev libreadline8 gcc g++
 
 RUN useradd -s /bin/bash -d /app sd \
     && mkdir -p /app/ \
@@ -78,6 +77,7 @@ RUN \
     #fix permissions
     #chmod -R 755 extensions
 
+#pip install torch==2.0.1 torchvision --extra-index-url https://download.pytorch.org/whl/cu118
 
 WORKDIR /app/stable-diffusion-webui
 ##cpu mode # Linux版
