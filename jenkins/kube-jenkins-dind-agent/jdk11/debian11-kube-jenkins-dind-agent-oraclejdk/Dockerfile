@@ -30,11 +30,28 @@ RUN apt-get update -y             \
 COPY pip.conf /etc/pip.conf
 
 #install docker-ce
-RUN \    
-    curl -fsSL http://mirrors.aliyun.com/docker-ce/linux/debian/gpg | apt-key add - && \
-    echo 'deb [arch=amd64] http://mirrors.aliyun.com/docker-ce/linux/debian bullseye stable' > /etc/apt/sources.list.d/docker-ce.list && \
-    apt-get update -y &&\
-    apt-get install -y docker-ce 
+#RUN \    
+#    curl -fsSL http://mirrors.aliyun.com/docker-ce/linux/debian/gpg | apt-key add - && \
+#    echo 'deb [arch=amd64] http://mirrors.aliyun.com/docker-ce/linux/debian bullseye stable' > /etc/apt/sources.list.d/docker-ce.list && \
+#    apt-get update -y &&\
+#    apt-get install -y docker-ce 
+
+# Add Docker's official GPG key:
+RUN \
+    apt-get update && \
+    apt-get install ca-certificates curl gnupg && \
+    install -m 0755 -d /etc/apt/keyrings && \
+    curl -fsSL https://download.docker.com/linux/debian/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg && \
+    chmod a+r /etc/apt/keyrings/docker.gpg && \
+
+# Add the repository to Apt sources:
+    echo \
+      "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian \
+      "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
+       tee /etc/apt/sources.list.d/docker.list > /dev/null && \
+    apt-get update && \
+    apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
 
 #install ansible
 RUN \
