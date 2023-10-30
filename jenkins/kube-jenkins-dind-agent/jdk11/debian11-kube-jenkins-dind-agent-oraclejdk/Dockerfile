@@ -146,7 +146,7 @@ RUN \
     && rm -rf aws*
 
 #tccli 
-RUN pip3 install tccli
+#RUN pip3 install tccli
 
 #COPY daemon.json /etc/docker/daemon.json
 #COPY rootfs /
