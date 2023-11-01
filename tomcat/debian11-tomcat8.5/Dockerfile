@@ -1,49 +1,6 @@
 #upstream https://github.com/docker-library/tomcat/tree/master/8.5/jre8
-FROM debian:stretch
+FROM slpcat/oraclejdk:8-bullseye
 MAINTAINER 若虚 <slpcat@qq.com>
-
-# Container variables
-ENV \
-    TERM="xterm" \
-    LANG="en_US.UTF-8" \
-    LANGUAGE="en_US.UTF-8" \
-    LC_ALL="en_US.UTF-8" \
-    TIMEZONE="Asia/Shanghai"
-
-RUN echo 'deb http://mirrors.aliyun.com/debian stretch-backports main' > /etc/apt/sources.list.d/backports.list \
-    && sed -i 's/deb.debian.org/mirrors.aliyun.com/' /etc/apt/sources.list \
-    && sed -i 's/security.debian.org/mirrors.aliyun.com\/debian-security/' /etc/apt/sources.list
-
-# Set timezone and locales
-RUN \
-    echo "${TIMEZONE}" > /etc/timezone \
-    && echo "$LANG UTF-8" > /etc/locale.gen \
-    && apt-get update -q \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -yq apt-utils curl dialog vim-tiny locales openssl\
-    && ln -sf /usr/share/zoneinfo/${TIMEZONE} /etc/localtime \
-    && update-locale LANG=$LANG \
-    && locale-gen $LANG \
-    && DEBIAN_FRONTEND=noninteractive dpkg-reconfigure locales
-
-# Install required packages
-RUN \
-    apt-get dist-upgrade -y
-
-# Add Oracle Java PPA
-RUN \
-    apt-get -y update && \
-    apt-get -y install software-properties-common apt-transport-https gnupg2 ca-certificates && \
-    #add-apt-repository -y ppa:webupd8team/java && \
-    echo 'deb http://ppa.launchpad.net/webupd8team/java/ubuntu xenial main' > etc/apt/sources.list.d/webupd8team-ubuntu-java-xenial.list && \
-    apt-key adv --keyserver keyserver.ubuntu.com --recv-keys EEA14886 && \
-    apt-get -y update && \
-    # Auto-accept the Oracle License
-    #echo "debconf shared/accepted-oracle-license-v1-1 select true" | debconf-set-selections && \
-    #echo "debconf shared/accepted-oracle-license-v1-1 seen true" | debconf-set-selections && \
-    echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | debconf-set-selections && \
-    apt-get -y install libpq-dev oracle-java8-installer && \
-    # Clean up
-    rm -f /var/cache/oracle-jdk8-installer/jdk-*.tar.g
 
 ENV CATALINA_HOME /usr/local/tomcat
 ENV PATH $CATALINA_HOME/bin:$PATH
@@ -61,33 +18,6 @@ ENV LD_LIBRARY_PATH ${LD_LIBRARY_PATH:+$LD_LIBRARY_PATH:}$TOMCAT_NATIVE_LIBDIR
 # > configure: error: Your version of OpenSSL is not compatible with this version of tcnative
 # see http://tomcat.10.x6.nabble.com/VOTE-Release-Apache-Tomcat-8-0-32-tp5046007p5046024.html (and following discussion)
 # and https://github.com/docker-library/tomcat/pull/31
-ENV OPENSSL_VERSION 1.1.0f-3+deb9u2
-RUN set -ex; \
-	currentVersion="$(dpkg-query --show --showformat '${Version}\n' openssl)"; \
-	if dpkg --compare-versions "$currentVersion" '<<' "$OPENSSL_VERSION"; then \
-		if ! grep -q stretch /etc/apt/sources.list; then \
-# only add stretch if we're not already building from within stretch
-			{ \
-				echo 'deb http://deb.debian.org/debian stretch main'; \
-				echo 'deb http://security.debian.org stretch/updates main'; \
-				echo 'deb http://deb.debian.org/debian stretch-updates main'; \
-			} > /etc/apt/sources.list.d/stretch.list; \
-			{ \
-# add a negative "Pin-Priority" so that we never ever get packages from stretch unless we explicitly request them
-				echo 'Package: *'; \
-				echo 'Pin: release n=stretch*'; \
-				echo 'Pin-Priority: -10'; \
-				echo; \
-# ... except OpenSSL, which is the reason we're here
-				echo 'Package: openssl libssl*'; \
-				echo "Pin: version $OPENSSL_VERSION"; \
-				echo 'Pin-Priority: 990'; \
-			} > /etc/apt/preferences.d/stretch-openssl; \
-		fi; \
-		apt-get update; \
-		apt-get install -y --no-install-recommends openssl="$OPENSSL_VERSION"; \
-		rm -rf /var/lib/apt/lists/*; \
-	fi
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
 		libapr1 \
@@ -95,11 +25,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # see https://www.apache.org/dist/tomcat/tomcat-$TOMCAT_MAJOR/KEYS
 # see also "update.sh" (https://github.com/docker-library/tomcat/blob/master/update.sh)
-ENV GPG_KEYS 05AB33110949707C93A279E3D3EFE6B686867BA6 07E48665A34DCAFAE522E5E6266191C37C037D42 47309207D818FFD8DCD3F83F1931D684307A10A5 541FBE7D8F78B25E055DDEE13C370389288584E7 61B832AC2F1C5A90F0F9B00A1C506407564C17A3 713DA88BE50911535FE716F5208B0AB1D63011C7 79F7026C690BAA50B92CD8B66A3AD3F4F22C4FED 9BA44C2621385CB966EBA586F72C284D731FABEE A27677289986DB50844682F8ACB77FC2E86E29AC A9C5DF4D22E99998D9875A5110C01C5A2F6059E7 DCFD35E0BF8CA7344752DE8B6FB21E8933C60243 F3A04C595DB5B6A5F1ECA43E3B7BBB100D811BBE F7DA48BB64BCB84ECBA7EE6935CD23C10D498E23
+ENV GPG_KEYS 05AB33110949707C93A279E3D3EFE6B686867BA6 07E48665A34DCAFAE522E5E6266191C37C037D42 47309207D818FFD8DCD3F83F1931D684307A10A5 541FBE7D8F78B25E055DDEE13C370389288584E7 5C3C5F3E314C866292F359A8F3AD5C94A67F707E 765908099ACF92702C7D949BFA0C35EA8AA299F1 79F7026C690BAA50B92CD8B66A3AD3F4F22C4FED 9BA44C2621385CB966EBA586F72C284D731FABEE A27677289986DB50844682F8ACB77FC2E86E29AC A9C5DF4D22E99998D9875A5110C01C5A2F6059E7 DCFD35E0BF8CA7344752DE8B6FB21E8933C60243 F3A04C595DB5B6A5F1ECA43E3B7BBB100D811BBE F7DA48BB64BCB84ECBA7EE6935CD23C10D498E23
+
 
 ENV TOMCAT_MAJOR 8
-ENV TOMCAT_VERSION 8.5.30
-ENV TOMCAT_SHA512 f7e84fed604dc183dc1bdad07f3b025547d95d024ccfb05da68f5f45256f3082af6ba28c7f0148ae4ee43637248a0074c92bb12198ab58331d0c4f04906b86b6
+ENV TOMCAT_VERSION 8.5.95
+ENV TOMCAT_SHA512 1c36d0de6ef0c1bab090bfb30908f8cf848510ab83d6140890e2e1db001e8a4d0d5982a53c92e4cc7a736de304b22f461706689c48160e24c299dae7a148a673
 
 ENV TOMCAT_TGZ_URLS \
 # https://issues.apache.org/jira/browse/INFRA-8753?focusedCommentId=14735394#comment-14735394

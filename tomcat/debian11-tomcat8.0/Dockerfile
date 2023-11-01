@@ -1,49 +1,6 @@
 #upstream https://github.com/docker-library/tomcat/tree/master/8.5/jre8
-FROM debian:stretch
+FROM slpcat/oraclejdk:8-bullseye
 MAINTAINER 若虚 <slpcat@qq.com>
-
-# Container variables
-ENV \
-    TERM="xterm" \
-    LANG="en_US.UTF-8" \
-    LANGUAGE="en_US.UTF-8" \
-    LC_ALL="en_US.UTF-8" \
-    TIMEZONE="Asia/Shanghai"
-
-RUN echo 'deb http://mirrors.aliyun.com/debian stretch-backports main' > /etc/apt/sources.list.d/backports.list \
-    && sed -i 's/deb.debian.org/mirrors.aliyun.com/' /etc/apt/sources.list \
-    && sed -i 's/security.debian.org/mirrors.aliyun.com\/debian-security/' /etc/apt/sources.list
-
-# Set timezone and locales
-RUN \
-    echo "${TIMEZONE}" > /etc/timezone \
-    && echo "$LANG UTF-8" > /etc/locale.gen \
-    && apt-get update -q \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -yq apt-utils curl dialog vim-tiny locales openssl\
-    && ln -sf /usr/share/zoneinfo/${TIMEZONE} /etc/localtime \
-    && update-locale LANG=$LANG \
-    && locale-gen $LANG \
-    && DEBIAN_FRONTEND=noninteractive dpkg-reconfigure locales
-
-# Install required packages
-RUN \
-    apt-get dist-upgrade -y
-
-# Add Oracle Java PPA
-RUN \
-    apt-get -y update && \
-    apt-get -y install software-properties-common apt-transport-https gnupg2 ca-certificates && \
-    #add-apt-repository -y ppa:webupd8team/java && \
-    echo 'deb http://ppa.launchpad.net/webupd8team/java/ubuntu xenial main' > etc/apt/sources.list.d/webupd8team-ubuntu-java-xenial.list && \
-    apt-key adv --keyserver keyserver.ubuntu.com --recv-keys EEA14886 && \
-    apt-get -y update && \
-    # Auto-accept the Oracle License
-    #echo "debconf shared/accepted-oracle-license-v1-1 select true" | debconf-set-selections && \
-    #echo "debconf shared/accepted-oracle-license-v1-1 seen true" | debconf-set-selections && \
-    echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | debconf-set-selections && \
-    apt-get -y install libpq-dev oracle-java8-installer && \
-    # Clean up
-    rm -f /var/cache/oracle-jdk8-installer/jdk-*.tar.g
 
 ENV CATALINA_HOME /usr/local/tomcat
 ENV PATH $CATALINA_HOME/bin:$PATH
@@ -61,33 +18,6 @@ ENV LD_LIBRARY_PATH ${LD_LIBRARY_PATH:+$LD_LIBRARY_PATH:}$TOMCAT_NATIVE_LIBDIR
 # > configure: error: Your version of OpenSSL is not compatible with this version of tcnative
 # see http://tomcat.10.x6.nabble.com/VOTE-Release-Apache-Tomcat-8-0-32-tp5046007p5046024.html (and following discussion)
 # and https://github.com/docker-library/tomcat/pull/31
-ENV OPENSSL_VERSION 1.1.0f-3+deb9u2
-RUN set -ex; \
-	currentVersion="$(dpkg-query --show --showformat '${Version}\n' openssl)"; \
-	if dpkg --compare-versions "$currentVersion" '<<' "$OPENSSL_VERSION"; then \
-		if ! grep -q stretch /etc/apt/sources.list; then \
-# only add stretch if we're not already building from within stretch
-			{ \
-				echo 'deb http://deb.debian.org/debian stretch main'; \
-				echo 'deb http://security.debian.org stretch/updates main'; \
-				echo 'deb http://deb.debian.org/debian stretch-updates main'; \
-			} > /etc/apt/sources.list.d/stretch.list; \
-			{ \
-# add a negative "Pin-Priority" so that we never ever get packages from stretch unless we explicitly request them
-				echo 'Package: *'; \
-				echo 'Pin: release n=stretch*'; \
-				echo 'Pin-Priority: -10'; \
-				echo; \
-# ... except OpenSSL, which is the reason we're here
-				echo 'Package: openssl libssl*'; \
-				echo "Pin: version $OPENSSL_VERSION"; \
-				echo 'Pin-Priority: 990'; \
-			} > /etc/apt/preferences.d/stretch-openssl; \
-		fi; \
-		apt-get update; \
-		apt-get install -y --no-install-recommends openssl="$OPENSSL_VERSION"; \
-		rm -rf /var/lib/apt/lists/*; \
-	fi
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
 		libapr1 \
