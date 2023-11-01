@@ -1,31 +1,14 @@
 #upstream https://github.com/docker-library/tomcat/tree/master/8.5/jre8
-FROM centos:7
+FROM slpcat/oraclejdk:8-centos7
 
 MAINTAINER 若虚 <slpcat@qq.com>
 
-# Container variables
-ENV \
-    TERM="xterm" \
-    LANG="en_US.UTF-8" \
-    LANGUAGE="en_US.UTF-8" \
-    TIMEZONE="Asia/Shanghai"
-
-COPY epel.repo /etc/yum.repos.d/
-COPY java.sh /etc/profile.d/
-
-# set timezone
-RUN ln -sf /usr/share/zoneinfo/${TIMEZONE} /etc/localtime
-
 RUN \
     yum update -y && \
-    yum install -y wget && \
-    wget --no-check-certificate --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie" http://download.oracle.com/otn-pub/java/jdk/8u161-b12/2f38c3b165be4555a1fa6e98c45e0808/jdk-8u161-linux-x64.rpm && \
-    rpm -ivh jdk-8u161-linux-x64.rpm && \
-    rm jdk-8u161-linux-x64.rpm
+    yum install -y gcc gcc-c++ autoconf automake make which zlib zlib-devel pcre-devel apr-devel openssl-devel wget 
 
 ENV CATALINA_HOME /usr/local/tomcat
 ENV PATH $CATALINA_HOME/bin:$PATH
-ENV JAVA_HOME /usr/java/jdk1.8.0_161
 RUN mkdir -p "$CATALINA_HOME" 
 
 WORKDIR $CATALINA_HOME
@@ -33,7 +16,6 @@ WORKDIR $CATALINA_HOME
 # let "Tomcat Native" live somewhere isolated
 ENV TOMCAT_NATIVE_LIBDIR $CATALINA_HOME/native-jni-lib
 ENV LD_LIBRARY_PATH ${LD_LIBRARY_PATH:+$LD_LIBRARY_PATH:}$TOMCAT_NATIVE_LIBDIR
-RUN yum install -y gcc gcc-c++ autoconf automake make which zlib zlib-devel pcre-devel apr-devel openssl-devel
 
 # runtime dependencies for Tomcat Native Libraries
 # Tomcat Native 1.2+ requires a newer version of OpenSSL than debian:jessie has available
@@ -67,8 +49,8 @@ RUN yum install -y gcc gcc-c++ autoconf automake make which zlib zlib-devel pcre
 ENV GPG_KEYS 05AB33110949707C93A279E3D3EFE6B686867BA6 07E48665A34DCAFAE522E5E6266191C37C037D42 47309207D818FFD8DCD3F83F1931D684307A10A5 541FBE7D8F78B25E055DDEE13C370389288584E7 61B832AC2F1C5A90F0F9B00A1C506407564C17A3 713DA88BE50911535FE716F5208B0AB1D63011C7 79F7026C690BAA50B92CD8B66A3AD3F4F22C4FED 9BA44C2621385CB966EBA586F72C284D731FABEE A27677289986DB50844682F8ACB77FC2E86E29AC A9C5DF4D22E99998D9875A5110C01C5A2F6059E7 DCFD35E0BF8CA7344752DE8B6FB21E8933C60243 F3A04C595DB5B6A5F1ECA43E3B7BBB100D811BBE F7DA48BB64BCB84ECBA7EE6935CD23C10D498E23
 
 ENV TOMCAT_MAJOR 8
-ENV TOMCAT_VERSION 8.0.50
-ENV TOMCAT_SHA512 c8923e610f1d3f7f13d5d0cc765a97ef1b5b34a527b57dfb7058f0bd65555cec748b83198859e6bba41b29cc3d5071ed05618097edc5d6cfad2f380f8230e7f5
+ENV TOMCAT_VERSION 8.0.53
+ENV TOMCAT_SHA512 cd8a4e48a629a2f2bb4ce6b101ebcce41da52b506064396ec1b2915c0b0d8d82123091242f2929a649bcd8b65ecf6cd1ab9c7d90ac0e261821097ab6fbe22df9
 
 ENV TOMCAT_TGZ_URLS \
 # https://issues.apache.org/jira/browse/INFRA-8753?focusedCommentId=14735394#comment-14735394
