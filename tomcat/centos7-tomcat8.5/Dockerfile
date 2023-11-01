@@ -7,7 +7,6 @@ RUN \
     yum update -y \
     && yum install -y gcc gcc-c++ autoconf automake make which zlib zlib-devel pcre-devel apr-devel openssl-devel wget curl gnupg
 
-
 ENV CATALINA_HOME /usr/local/tomcat
 ENV PATH $CATALINA_HOME/bin:$PATH
 RUN mkdir -p "$CATALINA_HOME"
@@ -26,6 +25,28 @@ ENV TOMCAT_VERSION 8.5.95
 ENV TOMCAT_SHA512 1c36d0de6ef0c1bab090bfb30908f8cf848510ab83d6140890e2e1db001e8a4d0d5982a53c92e4cc7a736de304b22f461706689c48160e24c299dae7a148a673
 
 RUN set -eux; \
+	\
+# http://yum.baseurl.org/wiki/YumDB.html
+	if ! command -v yumdb > /dev/null; then \
+		yum install -y --setopt=skip_missing_names_on_install=False yum-utils; \
+		yumdb set reason dep yum-utils; \
+	fi; \
+# a helper function to "yum install" things, but only if they aren't installed (and to set their "reason" to "dep" so "yum autoremove" can purge them for us)
+	_yum_install_temporary() { ( set -eu +x; \
+		local pkg todo=''; \
+		for pkg; do \
+			if ! rpm --query "$pkg" > /dev/null 2>&1; then \
+				todo="$todo $pkg"; \
+			fi; \
+		done; \
+		if [ -n "$todo" ]; then \
+			set -x; \
+			yum install -y --setopt=skip_missing_names_on_install=False $todo; \
+			yumdb set reason dep $todo; \
+		fi; \
+	) }; \
+	_yum_install_temporary gzip tar; \
+	\
 	ddist() { \
 		local f="$1"; shift; \
 		local distFile="$1"; shift; \
@@ -62,7 +83,6 @@ RUN set -eux; \
 	tar -xf tomcat.tar.gz --strip-components=1; \
 	rm bin/*.bat; \
 	rm tomcat.tar.gz*; \
-	gpgconf --kill all; \
 	rm -rf "$GNUPGHOME"; \
 	\
 # https://tomcat.apache.org/tomcat-9.0-doc/security-howto.html#Default_web_applications
@@ -72,13 +92,17 @@ RUN set -eux; \
 	\
 	nativeBuildDir="$(mktemp -d)"; \
 	tar -xf bin/tomcat-native.tar.gz -C "$nativeBuildDir" --strip-components=1; \
+	_yum_install_temporary \
+		apr-devel \
+		gcc \
+		make \
+		openssl11-devel \
+	; \
 	( \
 		export CATALINA_HOME="$PWD"; \
 		cd "$nativeBuildDir/native"; \
-		gnuArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)"; \
 		aprConfig="$(command -v apr-1-config)"; \
 		./configure \
-			--build="$gnuArch" \
 			--libdir="$TOMCAT_NATIVE_LIBDIR" \
 			--prefix="$CATALINA_HOME" \
 			--with-apr="$aprConfig" \
@@ -92,15 +116,21 @@ RUN set -eux; \
 	rm -rf "$nativeBuildDir"; \
 	rm bin/tomcat-native.tar.gz; \
 	\
+# mark any explicit dependencies as manually installed
 	find "$TOMCAT_NATIVE_LIBDIR" -type f -executable -exec ldd '{}' ';' \
-		| awk '/=>/ { print $(NF-1) }' \
+		| awk '/=>/ && $(NF-1) != "=>" { print $(NF-1) }' \
 		| xargs -rt readlink -e \
 		| sort -u \
-		| xargs -rt dpkg-query --search \
-		| cut -d: -f1 \
+		| xargs -rt rpm --query --whatprovides \
 		| sort -u \
 		| tee "$TOMCAT_NATIVE_LIBDIR/.dependencies.txt" \
+		| xargs -r yumdb set reason user \
 	; \
+	\
+# clean up anything added temporarily and not later marked as necessary
+	yum autoremove -y; \
+	yum clean all; \
+	rm -rf /var/cache/yum; \
 	\
 # sh removes env vars it doesn't support (ones with periods)
 # https://github.com/docker-library/tomcat/issues/77
@@ -125,8 +155,4 @@ RUN set -eux; \
 	fi
 
 EXPOSE 8080
-
-# upstream eclipse-temurin-provided entrypoint script caused https://github.com/docker-library/tomcat/issues/77 to come back as https://github.com/docker-library/tomcat/issues/302; use "/entrypoint.sh" at your own risk
-ENTRYPOINT []
-
 CMD ["catalina.sh", "run"]
