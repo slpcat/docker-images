@@ -2,7 +2,7 @@ FROM slpcat/python:3.11-archlinux
 
 RUN \
     pacman -Syu --noconfirm \
-    && pacman -S --noconfirm  mesa  tk  git git-lfs pkg-config  gcc
+    && pacman -S --noconfirm  mesa  tk  git git-lfs pkg-config gperftools gcc
 
 RUN useradd -s /bin/bash -d /app sd \
     && mkdir -p /app/ \
