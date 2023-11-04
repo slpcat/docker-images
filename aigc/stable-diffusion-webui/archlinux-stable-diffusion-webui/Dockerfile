@@ -22,13 +22,13 @@ RUN \
     && git clone https://github.com/AUTOMATIC1111/stable-diffusion-webui-rembg.git \
     && git clone https://github.com/Mikubill/sd-webui-controlnet \
     && git clone https://github.com/Bing-su/adetailer.git \
-    && git clone https://github.com/civitai/sd_civitai_extension.git \
-    && git clone https://github.com/Vetchems/sd-civitai-browser.git \
+    #&& git clone https://github.com/civitai/sd_civitai_extension.git \
+    #&& git clone https://github.com/Vetchems/sd-civitai-browser.git \
     && git clone https://github.com/camenduru/stable-diffusion-webui-huggingface \
     && git clone https://github.com/comfyanonymous/ComfyUI \
     #&& git clone https://github.com/toshiaki1729/stable-diffusion-webui-text2prompt.git \
     #&& git clone https://github.com/alexandersokol/sd-model-organizer.git \
-    && git clone https://github.com/muerrilla/stable-diffusion-NPW.git \
+    #&& git clone https://github.com/muerrilla/stable-diffusion-NPW.git \
     && git clone https://github.com/GeorgLegato/sd-webui-panorama-viewer.git \
     && git clone https://github.com/Kahsolt/stable-diffusion-webui-sonar.git \
     && git clone https://github.com/toshiaki1729/stable-diffusion-webui-dataset-tag-editor.git \
@@ -48,7 +48,7 @@ RUN \
     && git clone https://github.com/kex0/batch-face-swap.git \
     #&& git clone https://github.com/alemelis/sd-webui-ar.git \
     && git clone https://github.com/KohakuBlueleaf/a1111-sd-webui-lycoris \
-    && git clone https://github.com/AIrjen/OneButtonPrompt \
+    #&& git clone https://github.com/AIrjen/OneButtonPrompt \
     #&& git clone https://github.com/Physton/sd-webui-prompt-all-in-one \
     && git clone https://github.com/d8ahazard/sd_dreambooth_extension \
     && git clone https://github.com/AUTOMATIC1111/stable-diffusion-webui-aesthetic-gradients \
