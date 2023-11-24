@@ -1,6 +1,12 @@
-FROM slpcat/centos:7 as builder
+FROM slpcat/debian:bookworm as builder
 
 MAINTAINER 若虚 <slpcat@qq.com>
+
+# Install required packages
+RUN \
+    apt-get update -y && \
+    apt-get dist-upgrade -y && \
+    rm -rf /var/lib/apt/lists/
 
 #install JDK 11
 ENV JAVA_VERSION=11.0.20 \
@@ -13,14 +19,15 @@ COPY jdk-${JAVA_VERSION}_linux-*_bin.tar.gz install_jdk11.sh /tmp/
 RUN \
     /tmp/install_jdk11.sh /tmp/
 
-FROM slpcat/centos:7
+FROM slpcat/debian:bookworm
 
 MAINTAINER 若虚 <slpcat@qq.com>
 
 # Install required packages
 RUN \
-    yum update -y && \
-    yum clean all
+    apt-get update -y && \
+    apt-get dist-upgrade -y && \
+    rm -rf /var/lib/apt/lists/
 
 #install JDK 11
 ENV JAVA_VERSION=11.0.20 \

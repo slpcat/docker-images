@@ -2,5 +2,6 @@ https://github.com/frekele/oracle-java/releases/
 
 openjdk 11 长期支持
 openjdk 17 长期支持
+openjdk 21 长期支持
 
 阿里jdk dragonwell

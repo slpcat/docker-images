@@ -2,16 +2,16 @@ FROM slpcat/centos:7 as builder
 
 MAINTAINER 若虚 <slpcat@qq.com>
 
-#install JDK 17
-ENV JAVA_VERSION=17.0.9 \
+#install JDK 21
+ENV JAVA_VERSION=21.0.1 \
     JAVA_HOME="/usr/lib/jvm/default-jvm"
 
 ARG TARGETARCH
 
-COPY jdk-${JAVA_VERSION}_linux-*_bin.tar.gz install_jdk17.sh /tmp/
+COPY jdk-${JAVA_VERSION}_linux-*_bin.tar.gz install_jdk21.sh /tmp/
 
 RUN \
-    /tmp/install_jdk17.sh /tmp/
+    /tmp/install_jdk21.sh /tmp/
 
 FROM slpcat/centos:7
 
@@ -22,8 +22,8 @@ RUN \
     yum update -y && \
     yum clean all
 
-#install JDK 17
-ENV JAVA_VERSION=17.0.9 \
+#install JDK 21
+ENV JAVA_VERSION=21.0.1 \
     JAVA_HOME="/usr/lib/jvm/default-jvm"
 
 COPY --from=builder /usr/lib/jvm /usr/lib/jvm

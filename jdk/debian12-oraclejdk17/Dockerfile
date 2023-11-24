@@ -1,6 +1,12 @@
-FROM slpcat/centos:7 as builder
+FROM slpcat/debian:bullseye as builder
 
 MAINTAINER 若虚 <slpcat@qq.com>
+
+# Install required packages
+RUN \
+    apt-get update -y && \
+    apt-get dist-upgrade -y && \
+    rm -rf /var/lib/apt/lists/
 
 #install JDK 17
 ENV JAVA_VERSION=17.0.9 \
@@ -13,14 +19,15 @@ COPY jdk-${JAVA_VERSION}_linux-*_bin.tar.gz install_jdk17.sh /tmp/
 RUN \
     /tmp/install_jdk17.sh /tmp/
 
-FROM slpcat/centos:7
+FROM slpcat/debian:bullseye
 
 MAINTAINER 若虚 <slpcat@qq.com>
 
 # Install required packages
 RUN \
-    yum update -y && \
-    yum clean all
+    apt-get update -y && \
+    apt-get dist-upgrade -y && \
+    rm -rf /var/lib/apt/lists/
 
 #install JDK 17
 ENV JAVA_VERSION=17.0.9 \
