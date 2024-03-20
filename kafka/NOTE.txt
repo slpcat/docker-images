@@ -107,3 +107,26 @@ docker run -d --restart=always --net=host --hostname=kafka-0 \
 kafka-exporter 整个集群的一个broker安装即可
 docker run -d --restart=always -p 9308:9308 danielqsj/kafka-exporter --kafka.server=kafka:9092 [--kafka.server=another-server ...]
 
+
+bitnami 
+
+docker run -d --name zookeeper-server \
+    --network kafka-app \
+    -e ALLOW_ANONYMOUS_LOGIN=yes \
+    -e TZ="Asia/Shanghai" \
+    bitnami/zookeeper:latest
+
+docker run -d --name kafka-server \
+    --network kafka-app \
+    -p 9092:9092 \
+    -e TZ="Asia/Shanghai" \
+    -e ALLOW_PLAINTEXT_LISTENER=yes \
+    -e KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper-server:2181 \
+    -e KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://192.168.0.101:9092 \
+    bitnami/kafka:latest
+
+ALLOW_PLAINTEXT_LISTENER任何人可以访问
+KAFKA_CFG_ZOOKEEPER_CONNECT链接的zookeeper
+ALLOW_PLAINTEXT_LISTENER任何人可以访问
+KAFKA_CFG_ZOOKEEPER_CONNECT链接的zookeeper
+KAFKA_CFG_ADVERTISED_LISTENERS当前主机IP或地址（重点：如果是服务器部署则配服务器IP或域名否则客户端监听消息会报地址错误）
