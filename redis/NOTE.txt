@@ -5,4 +5,4 @@ redis
 3.集群 高可用，读写分离
 redis-ha
 
-docker run -d --restart=always --name redis -p 6379:6379 -v /data/redis:/var/lib/redis redis:4.0 --requirepass "redis123"
+docker run -d --restart=always --name redis -p 6379:6379 -v /data/redis:/var/lib/redis redis:7.2 --requirepass "redis123"

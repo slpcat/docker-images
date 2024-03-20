@@ -1,12 +1,20 @@
+为了保障最佳性能 pod推荐使用静态ip直连
 1. https://github.com/ucloud/redis-operator
 https://github.com/ucloud/redis-cluster-operator
 
 2. https://github.com/spotahome/redis-operator
-
+哨兵+主从
 kubectl apply -f https://raw.githubusercontent.com/spotahome/redis-operator/master/manifests/databases.spotahome.com_redisfailovers.yaml
 kubectl apply -f https://raw.githubusercontent.com/spotahome/redis-operator/master/example/operator/all-redis-operator-resources.yaml
 
-3. https://github.com/ot-container-kit/redis-operator
+3. https://github.com/ot-container-kit/redis-operator 推荐
+
+单机完全满足
+主从复制 replica
+分片（slot）集群模式
+缺点
+主从复制 哨兵不能适应动态ip，需要客户端发现 不是k8s endpoint切换主从
+
 
 $ kubectl apply -f https://raw.githubusercontent.com/OT-CONTAINER-KIT/redis-operator/master/config/crd/bases/redis.redis.opstreelabs.in_redis.yaml
 $ kubectl apply -f https://raw.githubusercontent.com/OT-CONTAINER-KIT/redis-operator/master/config/crd/bases/redis.redis.opstreelabs.in_redisclusters.yaml
@@ -14,3 +22,10 @@ $ kubectl apply -f https://raw.githubusercontent.com/OT-CONTAINER-KIT/redis-oper
 $ kubectl apply -f https://raw.githubusercontent.com/OT-CONTAINER-KIT/redis-operator/master/config/rbac/role.yaml
 $ kubectl apply -f https://raw.githubusercontent.com/OT-CONTAINER-KIT/redis-operator/master/config/rbac/role_binding.yaml
 $ kubectl apply -f https://raw.githubusercontent.com/OT-CONTAINER-KIT/redis-operator/master/config/manager/manager.yaml
+
+4.Redis Enterprise databases for Kubernetes
+https://docs.redis.com/latest/kubernetes/re-databases/db-controller/
+单机
+主从复制 replica
+Active-Active database
+cluster
