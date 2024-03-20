@@ -47,17 +47,17 @@ COPY --from=builder-jdk17 /usr/lib/jvm/java-17.0.2-oracle /usr/lib/jvm/java-17.0
 #Apache Ant is a Java library and command-line tool that help building software.
 
 RUN \
-    wget https://dlcdn.apache.org/ant/binaries/apache-ant-1.10.12-bin.tar.gz \
-    && tar zxf apache-ant-1.10.12-bin.tar.gz -C /usr/local \
-    && ln -s /usr/local/apache-ant-1.10.12/bin/ant /usr/local/bin/ant \
-    && rm apache-ant-1.10.12-bin.tar.gz
+    wget https://dlcdn.apache.org/ant/binaries/apache-ant-1.10.14-bin.tar.gz \
+    && tar zxf apache-ant-1.10.14-bin.tar.gz -C /usr/local \
+    && ln -s /usr/local/apache-ant-1.10.14/bin/ant /usr/local/bin/ant \
+    && rm apache-ant-1.10.14-bin.tar.gz
 
 #jmeter
 RUN \
-    wget https://dlcdn.apache.org/jmeter/binaries/apache-jmeter-5.4.3.tgz \
-    && tar zxf apache-jmeter-5.4.3.tgz -C /usr/local \
-    && ln -sf /usr/local/apache-jmeter-5.4.3/bin/jmeter /usr/local/bin/jmeter \
-    && rm apache-jmeter-5.4.3.tgz
+    wget https://dlcdn.apache.org/jmeter/binaries/apache-jmeter-5.6.2.tgz \
+    && tar zxf apache-jmeter-5.6.2.tgz -C /usr/local \
+    && ln -sf /usr/local/apache-jmeter-5.6.2/bin/jmeter /usr/local/bin/jmeter \
+    && rm apache-jmeter-5.6.2.tgz
 
 
 #gradle
@@ -67,9 +67,9 @@ RUN \
     && ln -s /usr/local/gradle-7.3.3/bin/gradle /usr/local/bin/gradle \
     && rm gradle-7.3.3-bin.zip
 
-ARG MAVEN_VERSION=3.6.3
+ARG MAVEN_VERSION=3.9.5
 ARG USER_HOME_DIR="/home/jenkins"
-ARG SHA512=c35a1803a6e70a126e80b2b3ae33eed961f83ed74d18fcd16909b2d44d7dada3203f1ffe726c17ef8dcca2dcaa9fca676987befeadc9b9f759967a8cb77181c0
+ARG SHA512=4810523ba025104106567d8a15a8aa19db35068c8c8be19e30b219a1d7e83bcab96124bf86dc424b1cd3c5edba25d69ec0b31751c136f88975d15406cab3842b
 #ARG BASE_URL=https://apache.osuosl.org/maven/maven-3/${MAVEN_VERSION}/binaries
 ARG BASE_URL=http://mirrors.tuna.tsinghua.edu.cn/apache/maven/maven-3/${MAVEN_VERSION}/binaries
 

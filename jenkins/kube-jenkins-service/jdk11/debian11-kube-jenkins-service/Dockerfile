@@ -151,7 +151,6 @@ RUN /usr/local/bin/install-plugins.sh       \
   azure-credentials:latest       \
   azure-container-registry-tasks \
   azure-vm-agents:latest         \
-  bootstrap4-api:latest          \
   bouncycastle-api:latest        \
   branch-api:latest              \
   build-monitor-plugin:latest    \
@@ -258,6 +257,7 @@ RUN /usr/local/bin/install-plugins.sh       \
   #localization-support:latest    \
   localization-zh-cn:latest      \
   mac:latest                     \
+  machine-learning:latest        \
   mailer:latest                  \
   mapdb-api:latest               \
   #marathon:latest               \
@@ -415,5 +415,11 @@ ENV JAVA_OPTS="-server -Djava.awt.headless=true -XshowSettings:vm \
          -Dhudson.DNSMultiCast.disabled=true"
 
 ENV JENKINS_OPTS="--webroot=${JENKINS_FOLDER}/war --httpListenAddress=0.0.0.0"
+
+# Add Tini
+ENV TINI_VERSION v0.19.0
+ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
+RUN chmod +x /tini
+ENTRYPOINT ["/tini", "--"]
 
 CMD ["/usr/local/bin/jenkins.sh"]

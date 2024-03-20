@@ -8,11 +8,34 @@ https://www.infoq.com/articles/scaling-docker-with-kubernetes/
 
 docker pull jenkins/jenkins:jdk11
 
-docker run -d -it --restart=always \
-  -p 80:8080 -p 50000:50000 \
+docker run -d --restart=always --ip 10.0.0.8 --mac-address fa:20:20:2c:79:73 --network hostnic --name static-java8-0 \
+    -v /var/run/docker.sock:/var/run/docker.sock \
+    -v /zdata/data/jenkins-slave-java:/home/jenkins \
+    -e JENKINS_AGENT_NAME=static-java8-0 \
+    -e JENKINS_AGENT_WORKDIR=/home/jenkins \
+    -e JENKINS_URL=http://jenkins-vm-dev.deepway-inc.com:8080 \
+    -e JENKINS_SECRET=38ac5dd08338ca65e13ccd4670e58a5b054d98298932981083b8f23f526dbef7 \
+    -e JAVA_OPTS='-server -Djava.awt.headless=true -Djava.nio.channels.spi.SelectorProvider=sun.nio.ch.EPollSelectorProvider
+            -Dfile.encoding=UTF8 -Xverify:none -XX:MetaspaceSize=128m
+            -XX:NUMAInterleaveGranularity=65536 -XX:+UseLargePages -XX:+UseCompressedOops
+            -XX:MaxMetaspaceSize=512m -XX:ReservedCodeCacheSize=240M
+            -XshowSettings:vm -Djute.maxbuffer=41943040 -XX:-UseBiasedLocking
+            -XX:+UnlockExperimentalVMOptions
+            -XX:+UseCompressedOops -XX:+CMSClassUnloadingEnabled  -XX:+CMSScavengeBeforeRemark
+            -XX:+DisableExplicitGC -XX:+UseG1GC -XX:+ExplicitGCInvokesConcurrent -XX:SoftRefLRUPolicyMSPerMB=0
+            -XX:G1ReservePercent=25 -XX:G1NewSizePercent=10 -XX:G1MaxNewSizePercent=25
+            -XX:MaxGCPauseMillis=20 -XX:-OmitStackTraceInFastThrow -XX:+ParallelRefProcEnabled
+            -XX:ParallelGCThreads=8 -XX:MaxTenuringThreshold=1 -XX:G1HeapWastePercent=10
+            -XX:SurvivorRatio=8 -XX:G1MixedGCCountTarget=16 -XX:G1MixedGCLiveThresholdPercent=90
+            -XX:InitiatingHeapOccupancyPercent=35 -XX:G1HeapRegionSize=32m -XX:+PerfDisableSharedMem
+            -XX:-ResizePLAB' \
+    slpcat/kube-jenkins-dind-agent:oraclejdk11-bullseye-java
 
+
+docker run -d -it --restart=always \
+  --ip 10.0.0.9 --mac-address fa:20:20:2e:a2:de --network hostnic \
   -e JAVA_OPTS='-server -Djava.awt.headless=true -XshowSettings:vm
-            -Xms1g -Xmx4g -Xmn1512m  -Xss256k
+            -Xms2g -Xmx8g -Xmn1512m  -Xss256k
             -XX:MetaspaceSize=256m -XX:MaxMetaspaceSize=512m -XX:ReservedCodeCacheSize=240M
             -XX:-UseBiasedLocking -XX:+UnlockExperimentalVMOptions -XX:+UnlockDiagnosticVMOptions
             -XX:-UseLargePages -XX:SoftRefLRUPolicyMSPerMB=0
@@ -32,13 +55,12 @@ docker run -d -it --restart=always \
             -Dorg.csanchez.jenkins.plugins.kubernetes.clients.cacheExpiration=60
             -Dhudson.model.LoadStatistics.clock=2000
             -Dhudson.model.LoadStatistics.decay=0.5
-            -Dhudson.model.UpdateCenter.updateCenterUrl=https://mirrors.aliyun.com/jenkins/updates/update-center.json
             -Dhudson.slaves.NodeProvisioner.recurrencePeriod=5000
             -Dhudson.slaves.NodeProvisioner.initialDelay=0
             -Dhudson.slaves.NodeProvisioner.MARGIN=50
             -Dhudson.slaves.NodeProvisioner.MARGIN0=0.85
             -Dhudson.DNSMultiCast.disabled=true' \
-  -v jenkins-home:/var/jenkins_home \
+  -v /zdata/data/jenkins-home:/var/jenkins_home \
   slpcat/kube-jenkins-service:2.364-jdk11
 
 
