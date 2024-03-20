@@ -81,6 +81,7 @@ rancher_kubernetes_engine_config:
         max-mutating-requests-inflight: '400'
         max-requests-inflight: '3200'
         v: '2'
+        feature-gates: 'RemoveSelfLink=false'
       pod_security_policy: false
       secrets_encryption_config:
         enabled: false
@@ -140,6 +141,7 @@ rancher_kubernetes_engine_config:
       generate_serving_certificate: false
     kubeproxy:
       extra_args:
+        ipvs-scheduler: lc
         conntrack-max-per-core: '262144'
         conntrack-min: '1048576'
         conntrack-tcp-timeout-close-wait: 30s
