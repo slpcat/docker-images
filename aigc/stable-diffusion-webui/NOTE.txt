@@ -1,15 +1,16 @@
 gpu环境
 docker run -it -d --gpus all \
   -p 7860:7860 \
-  -e COMMANDLINE_ARGS='--theme dark --xformers --enable-insecure-extension-access --listen --api --gradio-auth "user01:password01,user02:password02" --gradio-queue --enable-console-prompts --ui-settings-file "config.json" --ckpt-dir "models/Stable-diffusion" --embeddings-dir "embeddings/" --hypernetwork-dir "models/hypernetworks/" --codeformer-models-path "models/Codeformer/" --gfpgan-models-path "models/GFPGAN" --esrgan-models-path "models/ESRGAN" --bsrgan-models-path "models/BSRGAN" --realesrgan-models-path "models/RealESRGAN" --scunet-models-path "models/ScuNET" --swinir-models-path "models/SwinIR" --ldsr-models-path "models/LDSR" --clip-models-path "models/CLIP" ' \
+  -e COMMANDLINE_ARGS='--theme dark --xformers --enable-insecure-extesion-access --listen --api --gradio-auth "user01:password01,user02:password02" --gradio-queue --enable-console-prompts --ui-settings-file "config.json" --ckpt-dir "models/Stable-diffusion" --embeddings-dir "embeddings/" --hypernetwork-dir "models/hypernetworks/" --codeformer-models-path "models/Codeformer/" --gfpgan-models-path "models/GFPGAN" --esrgan-models-path "models/ESRGAN" --bsrgan-models-path "models/BSRGAN" --realesrgan-models-path "models/RealESRGAN" --scunet-models-path "models/ScuNET" --swinir-models-path "models/SwinIR" --ldsr-models-path "models/LDSR" --clip-models-path "models/CLIP" ' \
   -v /data/sd/models:/app/stable-diffusion-webui/models slpcat/stable-diffusion-webui:bullseye
 
 docker run --restart=always -d --runtime=nvidia --gpus all \
   -p 7860:7860 \
   -e PYTORCH_CUDA_ALLOC_CONF=backend:cudaMallocAsync,max_split_size_mb:128 \
-  -e COMMANDLINE_ARGS="--theme dark --opt-sdp-attention --opt-sdp-no-mem-attention --enable-insecure-extension-access --listen --api --gradio-queue --enable-console-prompts" \
+  -e COMMANDLINE_ARGS="--theme dark --opt-sdp-attention --opt-sdp-no-mem-attention --enable-insecure-extesion-access --listen --api --gradio-queue --enable-console-prompts" \
   -w /var/sd/stable-diffusion-webui \
   -v /data/sd:/var/sd slpcat/stable-diffusion-webui:v1.2.1-bullseye
+slpcat/stable-diffusion-webui:v1.6.0-ubuntu2204
 
 docker run --restart=always -d --runtime=nvidia --gpus all \
   -p 7860:7860 \
@@ -22,7 +23,7 @@ cpu环境
 docker run -it -d \
   -p 7860:7860 \
   -e CUDA_VISIBLE_DEVICES=-1 \
-  -e COMMANDLINE_ARGS="--use-cpu all --no-half --precision full --skip-torch-cuda-test --enable-insecure-extension-access --listen --api --share --gradio-queue" \
+  -e COMMANDLINE_ARGS="--use-cpu all --no-half --precision full --skip-torch-cuda-test --enable-insecure-extesion-access --listen --api --share --gradio-queue" \
   -v /data/sd/models:/app/stable-diffusion-webui/models slpcat/stable-diffusion-webui:bullseye
 
 sudo apt-get install python-tk
@@ -132,3 +133,12 @@ text2video
 https://huggingface.co/cerspense/zeroscope_v2_576w
 
 AMD版 用户量最大的“lshqqytiger”版本： https://github.com/lshqqytiger/stable-diffusion-webui-directml.git
+
+
+# Install required packages
+RUN \
+    apt-get dist-upgrade -y && \
+    apt-get install -y vim-tiny net-tools iproute2 procps curl wget telnet less kmod
+
+COPY NVIDIA-Linux-x86_64-535.113.01.run /tmp/
+RUN bash /tmp/NVIDIA-Linux-x86_64-535.113.01.run --no-kernel-module -s

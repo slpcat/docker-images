@@ -52,3 +52,8 @@ https://modelscope.cn/models
 
 https://openi.pcl.ac.cn/
 
+
+AISuperDomain
+https://github.com/win4r/AISuperDomain
+
+https://github.com/TRI-ML/DDAD

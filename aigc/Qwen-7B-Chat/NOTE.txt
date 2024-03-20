@@ -1,2 +1,3 @@
 阿里云宣布开源通义千问70亿参数模型，包括通用模型Qwen-7B和对话模型Qwen-7B-Chat
 https://modelscope.cn/models/qwen/Qwen-7B-Chat/summary
+https://github.com/QwenLM/Qwen.git
