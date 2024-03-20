@@ -1,4 +1,4 @@
-FROM base/archlinux
+FROM archlinux
 
 MAINTAINER 若虚 <slpcat@qq.com>
 
@@ -13,7 +13,10 @@ ENV \
 # set timezone
 RUN ln -sf /usr/share/zoneinfo/${TZ} /etc/localtime
 
+COPY etc /etc/
+
 RUN  \
-    pacman -Syu --noconfirm
+    pacman -Syu --noconfirm \
+    && pacman -S --noconfirm vim net-tools curl wget less
 
 CMD ["/bin/bash"]

@@ -18,6 +18,7 @@ RUN ln -sf /usr/share/zoneinfo/${TZ} /etc/localtime
 
 RUN  \
     yum update -y && \
+    yum install -y net-tools iproute curl wget traceroute tcpdump nc telnet git && \
     yum clean all
 
 CMD ["/bin/bash"]

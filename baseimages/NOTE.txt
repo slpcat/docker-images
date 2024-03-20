@@ -149,3 +149,38 @@ EOF
 
 sudo apt update
 sudo apt -y install systemd-genie
+
+docker直接使用独立网卡 多网卡/sr-iov vf网卡 推荐
+https://github.com/yunify/docker-plugin-hostnic
+docker run -d --restart=always -v /run/docker/plugins:/run/docker/plugins -v /etc/docker/hostnic:/etc/docker/hostnic --network host --privileged qingcloud/docker-plugin-hostnic docker-plugin-hostnic
+docker network create -d hostnic --subnet=192.168.1.0/24 --gateway 192.168.1.1 hostnic
+
+docker run -it --ip 192.168.1.5 --mac-address 52:54:0e:e5:00:f7 --network hostnic ubuntu:14.04 bash
+
+docker使用ipvlan虚拟网卡  虚拟网卡桥接到弹性网卡 可用ip数量=弹性网卡数*每个弹性网卡的ip数量
+当前规格一台bcc.d1s.c24m96 最多8*10=80个IP
+
+创建网络 子网/网关 同宿主机网络
+docker network create -d ipvlan --subnet=192.168.1.0/24 --gateway 192.168.1.1 -o  parent=eth1 -o ipvlan_mode=l3 ipvlan
+
+关联docker容器 ip为弹性网卡地址/辅助地址
+docker run -d -it --net=ipvlan --ip=192.168.1.11 --name test   debian:bullseye bash
+
+compose.yml
+networks:
+  maclan70:
+    driver: macvlan
+    driver_opts:
+      parent: eno1.70
+    ipam:
+      config:
+      - subnet: 192.168.70.0/24
+        gateway: 192.168.70.1
+        ip_range: 192.168.70.128/25
+sriov 网卡或者直通
+https://github.com/Mellanox/docker-sriov-plugin
+
+$ docker run -d --restart=always -v /run/docker/plugins:/run/docker/plugins -v /etc/docker:/etc/docker -v /var/run:/var/run --net=host --privileged rdma/sriov-plugin
+$ docker network create -d sriov --subnet=194.168.1.0/24 -o netdevice=ens2f0 -o vlan=200 customer2
+$ docker network create -d sriov --subnet=194.168.1.0/24 -o netdevice=ens2f0 -o vlan=100 -o privileged=1 customer1
+$ docker network create -d sriov --subnet=194.168.1.0/24 -o netdevice=ens2f0 -o mode=passthrough mynet
