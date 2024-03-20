@@ -8,13 +8,13 @@ docker run -d --restart=always --name mysql-server \
     -e MYSQL_PASSWORD=my_password \
     -e MYSQL_DATABSE=mydb \
     -v /data/mysql:/var/lib/mysql \
-    slpcat/percona-5.6
+    slpcat/percona-5.6 --bind_address=127.0.0.1 --character-set-server=utf8 --collation-server=utf8_bin
 
 推荐版本 percona8.0
 
 Oracle MySQL Operator 
 
-Percona MySQL Operator 
+Percona MySQL Operator (荐)
 
 Bitpoke MySQL Operator 
 https://github.com/bitpoke/mysql-operator/
