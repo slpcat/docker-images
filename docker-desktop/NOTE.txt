@@ -79,3 +79,7 @@ docker run -d --restart=always \
   --shm-size="1gb" `#optional` \
   blackarchlinux/blackarch:novnc
   slpcat/blackarchlinux:novnc-full
+
+xrdp安装脚本
+
+https://c-nergy.be/downloads/xRDP/xrdp-installer-1.4.8.zip

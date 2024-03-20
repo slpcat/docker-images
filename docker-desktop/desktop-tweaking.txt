@@ -1,0 +1,16 @@
+ubuntu2204
+apt install gnome-tweaks
+#禁止自动更新
+systemctl disable --now unattended-upgrades.service
+#disable the systemd OOM process killer 
+systemctl disable --now systemd-oomd
+# 让 gnome 支持插件扩展
+sudo apt install gnome-shell-extensions 
+
+ubuntu2004
+
+apt install gnome-tweaks
+#禁止自动更新
+systemctl disable --now unattended-upgrades.service
+# 让 gnome 支持插件扩展
+sudo apt install gnome-shell-extensions 

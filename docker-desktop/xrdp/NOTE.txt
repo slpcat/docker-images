@@ -10,3 +10,32 @@ user debian, password ChangeMe
 docker run -d --privileged -p 3389:3389 -v /var/run/docker.sock:/var/run/docker.sock slpcat/desktop-rdesktop:focal
 user abc password abc
 user ubuntu password sPcza48aOoapd!bk
+
+ubuntu2204 xrdp setup
+apt install xrdp linuxvnc
+apt install xfce4 xfce4-goodies
+sudo usermod -a -G ssl-cert xrdp 
+
+ /etc/xrdp/startwm.sh
+
+if test -r /etc/profile; then
+	. /etc/profile
+fi
+
+unset DBUS_SESSION_BUS_ADDRESS
+unset XDG_RUNTIME_DIR
+. $HOME/.profile
+
+test -x /etc/X11/Xsession && exec /etc/X11/Xsession
+exec /bin/sh /etc/X11/Xsession
+
+
+user $HOME
+cat .xsessionrc
+export GNOME_SHELL_SESSION_MODE=ubuntu
+export XDG_CURRENT_DESKTOP=ubuntu:GNOME
+export XDG_CONFIG_DIRS=/etc/xdg/xdg-ubuntu:/etc/xdg
+
+cat .xsession
+#xfce4-session
+gnome-session
