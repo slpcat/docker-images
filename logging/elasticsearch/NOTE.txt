@@ -528,6 +528,17 @@ https://github.com/mallocator/Elasticsearch-Exporter (废弃)
 
 logstash定向索引迁移
 
+es性能调优
+curl -H "Content-Type: application/json"  -XPUT 'http://localhost:9200/_all/_settings?preserve_existing=true' -d '{
+  "index.translog.durability" : "async",
+"index.translog.flush_threshold_size" : "512mb",
+  "index.translog.sync_interval" : "60s"
+}'
+
+curl -H "Content-Type: application/json"  -XPUT 'http://localhost:9200/_all/_settings?preserve_existing=true' -d '{
+  "index.refresh_interval" : "120s"
+}'
+
 
 单节点 
 docker run -d --restart=always --name elasticsearch -p 9200:9200 -p 9300:9300 \

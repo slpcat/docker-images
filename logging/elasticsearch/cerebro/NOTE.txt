@@ -1,1 +1,5 @@
-docker run -d --restart=always --name cerebro -p 9000:9000 slpcat/cerebro:0.9.4 -Dhosts.0.host=http://172.17.0.1:9200
+docker run -d --restart=always --name cerebro  
+      -e AUTH_TYPE=basic \
+      -e BASIC_AUTH_USER=admin \
+      -e BASIC_AUTH_PWD=admin \
+      -p 9000:9000 slpcat/cerebro:0.9.4 -Dhosts.0.host=http://172.17.0.1:9200

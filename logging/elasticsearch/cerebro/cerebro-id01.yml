@@ -4,6 +4,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: cerebro-id01
+  namespace: dbaas
   labels:
     app: cerebro
     chart: cerebro-0.5.2
@@ -12,29 +13,33 @@ metadata:
 data:
   application.conf: |-
     secret = "9uQYd86BGgbRo5GQlyApLrM107N6ekVGO4hnqLt0817JIuyofEwohhYMJltetovY"
-
     basePath = "/"
-
     pidfile.path = /dev/null
-
     rest.history.size = 50
-
     data.path = "/var/db/cerebro/cerebro.db"
-
     es = {
       gzip = true
     }
-
-    auth = {
-  #    username = "username"
-  #    password = "secret-password"
-    }
-
+    #  auth = {
+    #    username = "username"
+    #    password = "secret-password"
+    #  }
     hosts = [
-      
       {
-        host = "http://elasticsearch-elasticsearch-ingest:9200"
-        name = "elasticsearch"
+        host = "http://elasticsearch01-ingest:9200"
+        name = "elasticsearch-01"
+     #  auth = {
+     #    username = "username"
+     #    password = "secret-password"
+     #  }
+      }
+      {
+        host = "http://elasticsearch02-ingest:9200"
+        name = "elasticsearch-02"
+     #  auth = {
+     #    username = "username"
+     #    password = "secret-password"
+     #  }
       }
     ]
 ---
@@ -43,6 +48,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: cerebro-id01
+  namespace: dbaas
   labels:
     app: cerebro
     chart: cerebro-0.5.2
@@ -65,6 +71,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: cerebro-id01
+  namespace: dbaas
   labels:
     app: cerebro
     chart: cerebro-0.5.2
@@ -98,6 +105,13 @@ spec:
           image: "slpcat/cerebro:0.9.4"
           imagePullPolicy: IfNotPresent
           args: ["-Dconfig.file=/etc/cerebro/application.conf"]
+          env:
+            - name: AUTH_TYPE
+              value: "basic"
+            - name: BASIC_AUTH_USER
+              value: "admin"
+            - name: BASIC_AUTH_PWD
+              value: "admin"
           ports:
             - name: http
               containerPort: 9000
@@ -116,7 +130,12 @@ spec:
               path: /
               port: http
           resources:
-            {}
+            requests:
+              cpu: 500m
+              memory: 512Mi
+            limits:
+              cpu: 4
+              memory: 8Gi
       volumes:
         - name: db
           emptyDir: {}
