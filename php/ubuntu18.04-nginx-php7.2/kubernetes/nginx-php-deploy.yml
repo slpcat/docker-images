@@ -1,0 +1,125 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-php
+  namespace: default
+  labels:
+    app: nginx-php
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx-php
+#  minReadySeconds: 60     #滚动升级时60s后认为该pod就绪
+  strategy:
+    rollingUpdate:  #由于replicas为3,则整个升级,pod个数在2-4个之间
+      maxSurge: 1      #滚动升级时会先启动1个pod
+      maxUnavailable: 1 #滚动升级时允许的最大Unavailable的pod个数
+  template:
+    metadata:
+      labels:
+        app: nginx-php
+    spec:
+      #nodeName: k8s.node1 #指定调度节点为k8s.node1
+      #nodeSelector:  #调度特定的节点
+      #  env: test-team
+      terminationGracePeriodSeconds: 60 ##k8s将会给应用发送SIGTERM信号，可以用来正确、优雅地关闭应用,默认为30秒
+      #imagePullSecrets:
+      #- name: registrykey-ali-ext
+      containers:
+      - name: nginx-php
+        image: slpcat/php-nginx:pinpoint-ubuntu-18.04
+        imagePullPolicy: Always
+        #livenessProbe: #kubernetes认为该pod是存活的,不存活则需要重启
+        #  httpGet:
+        #    path: /
+        #    port: 80
+        #    scheme: HTTP
+        #  initialDelaySeconds: 60 ## equals to the maximum startup time of the application + couple of seconds
+        #  timeoutSeconds: 5
+        #  successThreshold: 1
+        #  failureThreshold: 5
+        #readinessProbe: #kubernetes认为该pod是启动成功的
+        #  httpGet:
+        #    path: /
+        #    port: 80
+        #    scheme: HTTP
+        #  initialDelaySeconds: 30 ## equals to minimum startup time of the application
+        #  timeoutSeconds: 5
+        #  successThreshold: 1
+        #  failureThreshold: 5
+        resources:
+          requests:
+            cpu: 50m
+            memory: 64Mi
+          limits:
+            cpu: 2
+            #nvidia.com/gpu: 1
+            memory: 2Gi
+        securityContext:
+          capabilities: {}
+          privileged: false
+        env:
+          - name: PP_COLLECTOR_AGENT_SPAN_IP
+            value: "pinpoint-collector.tracing"
+          - name: PP_COLLECTOR_AGENT_SPAN_PORT
+            value: "9993"
+          - name: PP_COLLECTOR_AGENT_AGENT_IP
+            value: "pinpoint-collector.tracing"
+          - name: PP_COLLECTOR_AGENT_AGENT_PORT
+            value: "9991"
+          - name: PP_COLLECTOR_AGENT_STAT_IP
+            value: "pinpoint-collector.tracing"
+          - name: PP_COLLECTOR_AGENT_STAT_PORT
+            value: "9992"
+          - name: PP_LOG_DIR
+            value: "/tmp/"
+          - name: PP_Log_Level
+            value: "ERROR"
+          - name: PP_ADDRESS
+            value: "0.0.0.0@9999"
+        ports:
+          - name: http
+            containerPort: 80
+        volumeMounts:
+          - name: nginx-etc
+            mountPath: "/etc/nginx/nginx.conf"
+            subPath: nginx.conf
+          - name: nginx-vhost
+            mountPath: "/opt/docker/etc/nginx/vhost.conf"
+            subPath: vhost.conf
+          #- name: php-etc
+          #  mountPath: "/opt/docker/etc/php/php.webdevops.ini"
+          #  subPath: php.webdevops.ini
+          #- name: php-fpm-pool-etc
+          #  mountPath: "/opt/docker/etc/php/fpm/pool.d/docker.conf"
+          #  subPath: docker.conf
+      volumes:
+        - name: nginx-etc
+          configMap:
+            name: nginx-php-configmap
+            #Add ConfigMap data to a specific path in the Volume
+            items:
+            - key: nginx.conf
+              path: nginx.conf
+        - name: nginx-vhost
+          configMap:
+            name: nginx-php-configmap
+            #Add ConfigMap data to a specific path in the Volume
+            items:
+            - key: vhost.conf
+              path: vhost.conf
+        #- name: php-etc
+        #  configMap:
+        #    name: nginx-php-configmap
+        #    #Add ConfigMap data to a specific path in the Volume
+        #    items:
+        #    - key: php.webdevops.ini
+        #      path: php.webdevops.ini
+        #- name: php-fpm-pool-etc
+        #  configMap:
+        #    name: nginx-php-configmap
+        #    #Add ConfigMap data to a specific path in the Volume
+        #    items:
+        #    - key: docker.conf
+        #      path: docker.conf
