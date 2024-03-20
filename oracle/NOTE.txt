@@ -6,6 +6,19 @@ docker run -d -p 8080:8080 -p 1521:1521 -v /var/oracle/data:u01/app/oracle truev
 docker run -d -p 8080:8080 -p 1521:1521 -v /my/oracle/data:/u01/app/oracle -e DBCA_TOTAL_MEMORY=1024 slpcat/oracle:11g-ee
 docker run -d --name oracle   --privileged -v $(pwd)/oradata:/u01/app/oracle   -p 8080:8080 -p 1521:1521 slpcat/oracle:12c-ee
 docker run -d -it --name oracle19c -p 1521:1521 -p 5500:5500 -v /opt/oradata:/opt/oracle/oradata slpcat/oracle:19c-ee
+docker run -d --restart=always \
+ --cap-add CAP_SYS_NICE \
+ --name oracle-19c \
+ --shm-size="1g" \
+ -p 1521:1521 -p 5500:5500 \
+ -e ORACLE_SID=sid001 \
+ -e ORACLE_PDB=pdb_name \
+ -e ORACLE_PWD=oracle-user-password123 \
+ -e INIT_SGA_SIZE=1024 \
+ -e INIT_PGA_SIZE=1024 \
+ -e ORACLE_CHARACTERSET=AL32UTF8 \
+ -v /data/oracle-data:/opt/oracle/oradata \
+ slpcat/oracle:19c-ee
 
 
 docker run -d  \
@@ -68,3 +81,11 @@ Parameters:
   -e ORACLE_ALLOW_REMOTE=true \
   absolutapps/oracle-12c-ee        
 
+
+
+
+
+https://docs.oracle.com/cd/E36784_01/html/E36845/chapterzfs-db2.html
+
+
+https://support.oracle.com/knowledge/Oracle%20Database%20Products/1391707_1.html
