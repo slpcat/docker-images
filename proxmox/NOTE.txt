@@ -1,9 +1,9 @@
+https://images.linuxcontainers.org/
+
 PROXMOX 6.0国内源设置
 vi /etc/apt/sources.list.d/pve-enterprise.list
 
 deb http://download.proxmox.wiki/debian/pve buster pve-no-subscription
-
- 
 
 vi /etc/apt/sources.list
 
@@ -18,3 +18,66 @@ deb http://mirrors.163.com/debian-security/ buster/updates main contrib
 
 apt update
 apt dist-upgrade #如需升级pve，则执行该命令
+
+lxc 网卡直通
+
+arch: amd64
+cores: 1
+features: nesting=1
+hostname: alpine001
+memory: 512
+ostype: alpine
+rootfs: local-lvm:vm-100-disk-0,mountoptions=noatime,size=8G
+swap: 512
+unprivileged: 1
+lxc.net.1.type: phys
+lxc.net.1.link: enp14s2
+lxc.net.1.flags: up
+
+宿主机相关配置
+LXC容器挂载NFS文件系统
+/etc/apparmor.d/lxc/lxc-default-nfs
+LXC搭建openwrt软路由
+
+mac os
+https://github.com/luchina-gabriel/OSX-PROXMOX
+
+k8s
+https://thelastguardian.me/posts/2020-01-10-kubernetes-in-lxc-on-proxmox/
+lxc.apparmor.profile: unconfined
+lxc.cap.drop: 
+lxc.cgroup.devices.allow: a
+lxc.mount.auto: proc:rw sys:rw
+
+gpu
+Reboot the host and check the output of ls -al /dev/nvidia* and /dev/dri/* is similar to below:
+
+lxc.cgroup.devices.allow: c 195:* rwm
+lxc.cgroup.devices.allow: c 236:* rwm
+lxc.cgroup.devices.allow: c 226:* rwm
+lxc.mount.entry: /dev/nvidia0 dev/nvidia0 none bind,optional,create=file
+lxc.mount.entry: /dev/nvidiactl dev/nvidiactl none bind,optional,create=file
+lxc.mount.entry: /dev/nvidia-uvm dev/nvidia-uvm none bind,optional,create=file
+lxc.mount.entry: /dev/nvidia-modeset dev/nvidia-modeset none bind,optional,create=file
+lxc.mount.entry: /dev/nvidia-uvm-tools dev/nvidia-uvm-tools none bind,optional,create=file
+lxc.mount.entry: /dev/dri dev/dri none bind,optional,create=dir
+
+LXC Container
+Next we need to install the Nvidia drivers inside the container. It is important that the exact Nvidia driver versions match between the Proxmox host and the container.
+
+sudo ./NVIDIA-Linux-x86_64-430.64.run --no-kernel-module
+
+
+/etc/nvidia-container-runtime/config.toml
+
+no-cgroups = true
+
+数据包速率性能：SR-IOV 66 Mpps vs. VirtIO 10-15 Mpps。NVIDIA接口针对最高性能进行了调整——VirtIO主要针对软件性能进行了调整（即使如此，VirtIO1.1中的改进也在进行中）。
+吞吐量：SR-IOV的线速 (100Gbps) vs. VirtIO的最大30Gbps
+延迟：SR-IOV为0.6微秒
+减少服务器资源占用率：SR-IOV的 CPU使用率为零，VirtIO降低CPU使用率，但不是零CPU使用率。
+没有特殊硬件：今天的竞争对手在昂贵且难以编程的FPGA NIC或基于SoC的NIC上支持VirtIO。SR-IOV加速适用于所有NVIDIA适配器系列，包括经济型ConnectX (ASIC NIC)或高度可编程的BlueField DPU (SoC NIC)。
+驱动程序支持：SR-IOV和VirtIO驱动程序在所有主要的Linux发行版中都可用。从VirtIO 更改为SR-IOV数据路径，反之亦然，这是一个配置旋钮设置，不需要专门的VNF开发工作。
+硬件加速：NVIDIA SR-IOV接口提供了许多卸载，例如OVS、RDMA、NVMeoF，这些在VirtIO接口中根本不可用。SR-IOV允许VM直接利用这些卸载。
+
+sr-iov 推荐mellanox connect5 以上网卡

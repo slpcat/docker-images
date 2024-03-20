@@ -1,0 +1,12 @@
+
+ip link add mvlan0 link eth0 address 8a:38:2a:cc:d7:aa type macvlan mode bridge
+ifconfig mvlan0 up
+
+Create a Permanent macvlan on the Host
+Add to the bottom of the /etc/network/interfaces file of the host,
+
+# Creates a macvlan interface called macvlan0 without an IP address
+iface mvlan0 inet manual
+   pre-up ip link add mvlan0 link eth0 address 8a:38:2a:cc:d7:aa type macvlan mode bridge
+   post-down ip link del macvlan0
+auto mvlan0

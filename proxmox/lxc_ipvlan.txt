@@ -1,0 +1,18 @@
+#vmJellyfin 主要用途跟宿主机打通3层网络,主要适用于eni弹性网卡
+#ipvlan l3 mode can't work
+lxc.hook.pre-start = /usr/bin/bash -c "ip link add link enp3s0 name ipvl-jelly type ipvlan mode l2"
+lxc.hook.post-stop = /usr/bin/bash -c "ip link delete ipvl-jelly"
+lxc.net.0.type = ipvlan
+lxc.net.0.ipvlan.mode=l2
+#lxc.net.0.ipvlan.flags=bridge
+lxc.net.0.link = ipvl-jelly
+#lxc.net.0.l2proxy = 1
+#lxc.net.0.ipv4.address = 192.168.9.82/32
+#lxc.net.0.ipv4.gateway = 192.168.9.2
+lxc.net.0.flags = up
+lxc.apparmor.profile = unconfined
+lxc.apparmor.allow_nesting = 1
+lxc.rootfs.path = dir:/var/lib/lxc/vmJellyfin/rootfs
+lxc.uts.name = vmJellyfin
+lxc.arch = amd64
+lxc.pty.max = 1024
