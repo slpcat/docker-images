@@ -2,8 +2,7 @@ FROM golang:1.17-bullseye as builder
 
 WORKDIR /go/src
 
-RUN echo 'deb http://mirrors.aliyun.com/debian bullseye-backports main' > /etc/apt/sources.list.d/backports.list \
-    && sed -i 's/deb.debian.org/mirrors.aliyun.com/' /etc/apt/sources.list
+RUN  sed -i 's/deb.debian.org/mirrors.aliyun.com/' /etc/apt/sources.list
 
 RUN \
     apt-get update -y && \
