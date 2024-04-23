@@ -20,7 +20,7 @@
       {{ $key }}: {{ $value }}
       {{end}}
   tail_files: false
-  close_inactive: 2h
+  close_inactive: 4h
   close_eof: false
   close_removed: true
   clean_removed: true
@@ -28,7 +28,6 @@
   harvester_buffer_size: 524288
   backoff: 4s
   max_backoff: 32s
-  max_bytes: 4194304
   message_max_bytes: 10485760
   clean_inactive: 73h
   ignore_older: 72h
