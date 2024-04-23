@@ -41,7 +41,7 @@ logging.files.permissions: ${FILEBEAT_LOG_PERMISSION:-0600}
 queue.mem.events: ${QUEUE_MEM_EVENTS:-4096}
 queue.mem.flush.min_events: ${QUEUE_MEM_FLUSH_MIN_EVENTS:-128}
 queue.mem.flush.timeout: ${QUEUE_MEM_FLUSH_TIMEOUT:-10s}
-publish_async: ${PUBLISH_ASYNC: -true}
+publish_async: ${PUBLISH_ASYNC:-true}
 ${FILEBEAT_MAX_PROCS:+max_procs: ${FILEBEAT_MAX_PROCS}}
 setup.template.name: "${FILEBEAT_INDEX:-filebeat}"
 setup.template.pattern: "${FILEBEAT_INDEX:-filebeat}-*"
