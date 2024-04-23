@@ -25,10 +25,11 @@
   close_removed: true
   clean_removed: true
   close_renamed: true
-  harvester_buffer_size: 32768
+  harvester_buffer_size: 524288
   backoff: 4s
   max_backoff: 32s
   max_bytes: 4194304
+  message_max_bytes: 10485760
   clean_inactive: 73h
   ignore_older: 72h
   harvester_limit: 1024
