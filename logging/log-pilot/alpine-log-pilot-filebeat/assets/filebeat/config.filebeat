@@ -38,10 +38,10 @@ logging.metrics.enabled: ${FILEBEAT_METRICS_ENABLED:-false}
 logging.files.rotateeverybytes: ${FILEBEAT_LOG_MAX_SIZE:-104857600}
 logging.files.keepfiles: ${FILEBEAT_LOG_MAX_FILE:-10}
 logging.files.permissions: ${FILEBEAT_LOG_PERMISSION:-0600}
-queue.mem.events: 512
-queue.mem.flush.min_events: 128
-queue.mem.flush.timeout: 10s
-publish_async: true
+queue.mem.events: ${QUEUE_MEM_EVENTS:-4096}
+queue.mem.flush.min_events: ${QUEUE_MEM_FLUSH_MIN_EVENTS:-128}
+queue.mem.flush.timeout: ${QUEUE_MEM_FLUSH_TIMEOUT:-10s}
+publish_async: ${PUBLISH_ASYNC:-true}
 ${FILEBEAT_MAX_PROCS:+max_procs: ${FILEBEAT_MAX_PROCS}}
 setup.template.name: "${FILEBEAT_INDEX:-filebeat}"
 setup.template.pattern: "${FILEBEAT_INDEX:-filebeat}-*"
@@ -148,6 +148,7 @@ output.kafka:
     hosts: [$KAFKA_BROKERS]
     topic: '%{[topic]}'
     ${KAFKA_VERSION:+version: ${KAFKA_VERSION}}
+    ${KAFKA_SASL_MECHANISM:+sasl.mechanism: ${KAFKA_SASL_MECHANISM}}
     ${KAFKA_USERNAME:+username: ${KAFKA_USERNAME}}
     ${KAFKA_PASSWORD:+password: ${KAFKA_PASSWORD}}
     ${KAFKA_WORKER:+worker: ${KAFKA_WORKER}}
