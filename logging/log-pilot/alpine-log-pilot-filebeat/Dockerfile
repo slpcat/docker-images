@@ -51,7 +51,7 @@ RUN set -ex \
 COPY install_filebeat.sh /tmp/
 RUN /tmp/install_filebeat.sh
 
-FROM slpcat/alpine:3.15
+FROM slpcat/alpine:3.15-glibc
 MAINTAINER 若虚 <slpcat@qq.com>
 
 RUN apk update && \ 
