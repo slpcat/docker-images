@@ -14,7 +14,7 @@ RUN  \
     go get && \
     go mod tidy && \
     go mod vendor && \
-    go build
+    CGO_ENABLED=0 go build
 
 ARG TARGETARCH
 
