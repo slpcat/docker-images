@@ -1,4 +1,5 @@
-FROM golang:1.17-alpine3.14 as installer
+FROM golang:1.20-alpine as builder
+#go1.22 build error
 
 WORKDIR /go/src
 
@@ -15,9 +16,6 @@ RUN  \
     go mod vendor && \
     go build
 
-FROM registry.cn-hangzhou.aliyuncs.com/acs/log-pilot:0.9.7-filebeat as builder
-MAINTAINER 若虚 <slpcat@qq.com>
-
 ARG TARGETARCH
 
 # Container variables
@@ -27,7 +25,7 @@ ENV \
     LANGUAGE="en_US.UTF-8" \
     LC_ALL="en_US.UTF-8" \
     TIMEZONE="Asia/Shanghai" \
-    FILEBEAT_VERSION="7.14.1"
+    FILEBEAT_VERSION="8.13.2"
 
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/' /etc/apk/repositories
 
@@ -53,17 +51,17 @@ RUN set -ex \
 COPY install_filebeat.sh /tmp/
 RUN /tmp/install_filebeat.sh
 
-COPY config.filebeat filebeat.tpl /pilot/
-COPY --from=installer /go/src/log-pilot/log-pilot /pilot/
-
-FROM slpcat/alpine:3.14
+FROM slpcat/alpine:3.19
 MAINTAINER 若虚 <slpcat@qq.com>
 
 RUN apk update && \ 
-    apk add ca-certificates python2 && \
+    apk add ca-certificates python3 && \
     update-ca-certificates 
 
-COPY --from=builder /pilot/ /pilot/
+RUN mkdir -p /etc/filebeat/prospectors.d/
+
+COPY assets/entrypoint assets/filebeat/ assets/healthz /pilot/
+COPY --from=builder /go/src/log-pilot/log-pilot /pilot/pilot
 COPY --from=builder /usr/bin/filebeat /usr/bin/filebeat
 COPY --from=builder /etc/filebeat/ /etc/filebeat/
 
