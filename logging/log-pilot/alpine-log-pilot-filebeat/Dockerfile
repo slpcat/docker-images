@@ -51,11 +51,11 @@ RUN set -ex \
 COPY install_filebeat.sh /tmp/
 RUN /tmp/install_filebeat.sh
 
-FROM slpcat/alpine:3.19
+FROM slpcat/alpine:3.15
 MAINTAINER 若虚 <slpcat@qq.com>
 
 RUN apk update && \ 
-    apk add ca-certificates python3 && \
+    apk add ca-certificates python2 && \
     update-ca-certificates 
 
 RUN mkdir -p /etc/filebeat/prospectors.d/

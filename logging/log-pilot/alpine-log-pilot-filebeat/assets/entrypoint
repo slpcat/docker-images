@@ -47,10 +47,10 @@ def run():
 def config():
     pilot_type = os.environ.get(ENV_PILOT_TYPE)
     if pilot_filebeat == pilot_type:
-        print("start log-pilot:", pilot_filebeat)
+        print "start log-pilot:", pilot_filebeat
         subprocess.check_call(['/pilot/config.filebeat'])
     else:
-        print("start log-pilot:", pilot_fluentd)
+        print "start log-pilot:", pilot_fluentd
         subprocess.check_call(['/pilot/config.fluentd'])
 
 
