@@ -1,0 +1,2 @@
+https://docs.gitea.io/zh-cn/install-from-source/
+
