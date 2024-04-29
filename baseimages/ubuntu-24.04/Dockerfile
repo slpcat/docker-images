@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM ubuntu:24.04
 MAINTAINER 若虚 <slpcat@qq.com>
 
 # Container variables

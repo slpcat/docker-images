@@ -10,8 +10,7 @@ ENV \
     LC_ALL="en_US.UTF-8" \
     TZ="Asia/Shanghai"
 
-RUN echo 'deb http://mirrors.aliyun.com/debian bullseye-backports main' > /etc/apt/sources.list.d/backports.list \
-    && sed -i 's/deb.debian.org/mirrors.aliyun.com/' /etc/apt/sources.list
+RUN sed -i 's/deb.debian.org/mirrors.aliyun.com/' /etc/apt/sources.list
 
 # Set timezone and locales
 RUN \
@@ -28,7 +27,7 @@ RUN \
 RUN \
     apt-get update -y && \
     apt-get dist-upgrade -y && \
-    apt-get install -y vim-tiny net-tools iproute2 procps curl wget telnet less && \
+    apt-get install -y binutils ethtool vim-tiny net-tools iproute2 procps curl wget telnet less && \
     rm -rf /var/lib/apt/lists/
 
 CMD ["/bin/bash"]

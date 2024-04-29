@@ -28,7 +28,9 @@ RUN \
 
 # Install required packages
 RUN \
+    apt-get update -y && \
     apt-get dist-upgrade -y && \
-    apt-get install -y vim-tiny net-tools iproute2 procps curl wget telnet less
+    apt-get install -y binutils ethtool vim-tiny net-tools iproute2 procps curl wget telnet less && \
+    rm -rf /var/lib/apt/lists/
 
 CMD ["/bin/bash"]
