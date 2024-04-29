@@ -1,0 +1,22 @@
+https://github.com/ansyun/dpdk-iperf
+https://github.com/ansyun/dpdk-nginx
+https://github.com/ansyun/dpdk-redis
+https://github.com/ansyun/dpdk-httpperf
+https://github.com/ansyun/dpdk-openresty
+https://github.com/baidu/dperf
+https://github.com/ceph/dpdk
+
+docker run --privileged --rm --cap-add=ALL \
+  -v /sys/bus/pci/devices:/sys/bus/pci/devices \
+  -v /sys/kernel/mm/hugepages:/sys/kernel/mm/hugepages \
+  -v /sys/devices/system/node:/sys/devices/system/node \
+  -v /dev/hugepages:/dev/hugepages \
+  -v /lib/modules:/lib/modules \
+  --name dpdk-2105 -it patrickkutch/dpdk:v21.05 command and parameters
+
+I usually create a helper bash script that has most of this in it:
+
+docker run --privileged --rm --cap-add=ALL
+-v /sys/bus/pci/devices:/sys/bus/pci/devices -v /sys/kernel/mm/hugepages:/sys/kernel/mm/hugepages -v /sys/devices/system/node:/sys/devices/system/node -v /mnt/huge:/mnt/huge -v /lib/modules:/lib/modules $@
+
+

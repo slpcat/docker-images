@@ -1,0 +1,86 @@
+FROM slpcat/ubuntu:20.04 as builder
+MAINTAINER 若虚 <slpcat@qq.com>
+
+ENV PATH /usr/local/bin:$PATH
+
+RUN \
+    apt-get update && apt-get dist-upgrade -y && \
+    apt-get install -y vim-tiny net-tools iproute2 procps curl wget telnet less
+
+RUN \
+    apt-get update -y && \
+    apt-get install -y libexpat1 libglib2.0-dev tcl tk google-perftools git git-lfs pkg-config gcc g++ \
+        build-essential software-properties-common \
+        netperf htop libtool iproute2 iputils-ping ncat nmap tcpdump socat \
+        cmake pciutils ethtool libnuma-dev numactl numatop lsof libpcap-dev libfdt-dev libarchive-dev \
+        libbsd-dev libjansson-dev libelf-dev libcrypto++-dev libbpf-dev doxygen python3-pyelftools python3-sphinx \
+        openssl libssl-dev libisal-dev meson libnl-genl-3-dev libpopt-dev
+
+# mlx5 ofed
+RUN apt-get update && \
+    apt-get dist-upgrade -y && \
+    apt-get install -y --no-install-recommends \
+        perl \
+        tcsh tcl tk pciutils make lsof \
+        lsb-release \
+        libnuma1 \
+        ethtool iproute2 net-tools \
+        openssh-server \
+        wget git \
+        pkg-config bison dpatch \
+        kmod linux-headers-generic libnl-route-3-200 \
+        swig libelf1 automake libglib2.0-0 \
+        autoconf graphviz chrpath flex libnl-3-200 m4 \
+        debhelper autotools-dev gfortran libltdl-dev iperf
+RUN apt install -y ca-certificates
+
+WORKDIR /usr/src/
+
+ENV MOFED_VER 5.8-4.1.5.0
+ENV OS_VER ubuntu20.04
+ENV PLATFORM x86_64
+
+RUN wget --quiet http://content.mellanox.com/ofed/MLNX_OFED-${MOFED_VER}/MLNX_OFED_LINUX-${MOFED_VER}-${OS_VER}-${PLATFORM}.tgz && \
+        tar -xvf MLNX_OFED_LINUX-${MOFED_VER}-${OS_VER}-${PLATFORM}.tgz && \
+        MLNX_OFED_LINUX-${MOFED_VER}-${OS_VER}-${PLATFORM}/mlnxofedinstall --upstream-libs --dpdk --user-space-only --without-fw-update --all --force
+
+#https://github.com/intel/intel-ipsec-mb
+
+#DPDK/DPVS编译
+RUN \
+    cd /usr/src && \
+    git clone https://github.com/iqiyi/dpvs && \
+    cd dpvs && \
+    git checkout v1.9.4 && \
+    sed -i 's/Denable_kmods=true/Denable_kmods=false/' scripts/dpdk-build.sh && \
+    ./scripts/dpdk-build.sh && \
+    #sed -i 's/CONFIG_DPVS_AGENT=n/CONFIG_DPVS_AGENT=y/' config.mk && \
+    export PKG_CONFIG_PATH=/usr/src/dpvs/dpdk/dpdklib/lib/x86_64-linux-gnu/pkgconfig && \
+    make && make install \
+
+        && mkdir libraries \
+        && ldd bin/dpvs | grep "=> /" | awk '{print $3}' | xargs -I '{}' cp '{}' libraries \
+        && ldd bin/ipvsadm | grep "=> /" | awk '{print $3}' | xargs -I '{}' cp '{}' libraries \
+        && ldd bin/dpip | grep "=> /" | awk '{print $3}' | xargs -I '{}' cp '{}' libraries \
+        && ldd bin/keepalived | grep "=> /" | awk '{print $3}' | xargs -I '{}' cp '{}' libraries
+
+FROM slpcat/ubuntu:20.04
+
+RUN \
+    apt-get update && apt-get dist-upgrade -y && \
+    apt-get install -y vim-tiny net-tools iproute2 procps curl wget telnet less netperf htop iputils-ping ncat nmap tcpdump socat \
+        pciutils ethtool numactl numatop lsof
+
+COPY --from=builder /usr/src/dpvs/bin/ /usr/bin
+COPY --from=builder /usr/src/dpvs/libraries /usr/lib64
+
+# Other available entrypoint are:
+#  * /usr/bin/keepalived
+#  * /usr/bin/dpvs-agent
+#  * /usr/bin/healthcheck
+#  * /usr/bin/ipvsadm
+#  * /usr/bin/dpip
+#  * /bin/bash
+# use `docker run --entrypoint ...` to override the default entrypoint.
+
+ENTRYPOINT ["/usr/local/bin/dpvs"]

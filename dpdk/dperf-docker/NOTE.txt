@@ -1,0 +1,10 @@
+https://dperf.org/doc/html/dperf-docker
+docker run -it --privileged --net=host \
+    -v /usr/lib/modules/:/usr/lib/modules/ \
+    -v /usr/src/kernels/:/usr/src/kernels/ \
+    -v /sys/bus/pci/devices:/sys/bus/pci/devices \
+    -v /sys/kernel/mm/hugepages:/sys/kernel/mm/hugepages \
+    -v /sys/devices/system/node:/sys/devices/system/node \
+    -v /dev:/dev \
+    --name dperf -d your-image
+
