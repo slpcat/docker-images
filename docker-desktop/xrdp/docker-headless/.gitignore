@@ -1,0 +1,12 @@
+.settings
+*.classpath
+*.project
+*.iml
+.idea
+.vscode
+
+*.vswp
+#*.docx
+
+_out
+sogoupinyin_*.deb

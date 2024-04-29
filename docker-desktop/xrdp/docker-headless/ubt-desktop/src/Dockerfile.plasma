@@ -1,0 +1,25 @@
+FROM infrastlabs/docker-headless:core as core
+FROM infrastlabs/docker-headless:base-v51
+
+# kubuntu-desktop 273 MB # 7054 kB #plasma-desktop 已装
+# https://github.com/ms-jpq/kde-in-docker/blob/daddy/base/bionic/Dockerfile #nautilus > dolphin
+RUN \
+  apt.sh kubuntu-desktop dolphin konsole
+
+# CORE
+COPY --from=core /rootfs/bin /
+COPY --from=core /rootfs/conf /
+RUN bash /xconf.sh
+
+RUN \
+  # KDE环境: pavucontrol图标丑出天际
+  rm -f /home/headless/Desktop/pavucontrol.desktop;
+
+# HEADLESS
+ADD --chown=headless:headless src/.config /home/headless/.config
+
+ENV \
+  # startplasma-x11: error with arm64
+  # START_SESSION=startplasma-x11 \
+  START_SESSION=plasma_session \
+  START_SYSTEMD=true

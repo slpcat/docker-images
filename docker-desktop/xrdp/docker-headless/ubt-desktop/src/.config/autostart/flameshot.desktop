@@ -1,0 +1,22 @@
+[Desktop Entry]
+Name=Flameshot
+Name[zh_CN]=火焰截图
+GenericName=Screenshot tool
+Comment[zh_CN]=强大又易用的屏幕截图软件
+Exec=flameshot
+Icon=flameshot
+Terminal=false
+# Type=Application
+# Categories=Graphics;
+# StartupNotify=false
+# Actions=Configure;Capture;
+
+# [Desktop Action Configure]
+# Name=Configure
+# Name[zh_CN]=配置
+# Exec=flameshot config
+
+# [Desktop Action Capture]
+# Name=Take screenshot
+# Name[zh_CN]=进行截图
+# Exec=flameshot gui --delay 500

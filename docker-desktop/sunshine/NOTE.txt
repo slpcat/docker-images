@@ -1,0 +1,15 @@
+https://docs.lizardbyte.dev/projects/sunshine/en/latest/about/docker.html
+docker run -d \
+  --device /dev/dri/ \
+  --name=<image_name> \
+  --restart=unless-stopped \
+  -e PUID=<uid> \
+  -e PGID=<gid> \
+  -e TZ=<timezone> \
+  -v <path to data>:/config \
+  -p 47984-47990:47984-47990/tcp \
+  -p 48010:48010 \
+  -p 47998-48000:47998-48000/udp \
+  <image>
+
+

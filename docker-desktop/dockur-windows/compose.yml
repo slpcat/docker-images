@@ -1,0 +1,29 @@
+version: "3"
+services:
+  windows:
+    image: dockurr/windows
+    container_name: windows
+    environment:
+      MANUAL: "Y"
+      VERSION: "win11"
+      RAM_SIZE: "8G"
+      CPU_CORES: "4"
+      DISK_SIZE: "256G"
+    devices:
+      - /dev/kvm
+    cap_add:
+      - NET_ADMIN
+    #networks:
+    #  vlan:
+    #    ipv4_address: 192.168.0.100
+    ports:
+      - 8006:8006
+      - 3389:3389/tcp
+      - 3389:3389/udp
+    stop_grace_period: 2m
+    restart: on-failure
+volumes:
+  - /var/win:/storage
+#networks:
+#  vlan:
+#    external: true

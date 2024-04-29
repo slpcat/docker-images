@@ -1,0 +1,31 @@
+FROM infrastlabs/docker-headless:core as core
+FROM infrastlabs/docker-headless:base-v51
+
+# ubuntu-desktop 128 MB
+RUN \
+  apt.sh ubuntu-desktop; \
+  apt -y remove gdm3  gvfs*
+
+# TODO: 当前为默认iconTheme
+# +nautilus: 950 kB 
+RUN apt.sh \
+  # gnome-tweak-tool papirus-icon-theme \
+  nautilus; \
+  apt -y remove update-manager software-properties-common xterm;
+
+# CORE
+COPY --from=core /rootfs/bin /
+COPY --from=core /rootfs/conf /
+RUN bash /xconf.sh
+
+RUN \
+  wget -qO /usr/share/backgrounds/warty-final-ubuntu.png https://gitee.com/infrastlabs/docker-headless/raw/dev/_doc/assets/bg/bg-debian-liteblue.png; 
+
+# HEADLESS
+ADD --chown=headless:headless src/.config /home/headless/.config
+
+ENV \
+  XDG_SESSION_TYPE=x11 \
+  START_SESSION=gnome-session \
+  START_SYSTEMD=true
+WORKDIR /home/headless

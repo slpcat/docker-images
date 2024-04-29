@@ -44,6 +44,12 @@ Docker-eyeOS:在Docker容器中运行iPhone（xnu-arm64）！ 支持KVM + iOS内
 ChomeOS
 https://github.com/pwdonald/chromeos-qemu-docker
 
+Windows
+https://github.com/dockur/windows
+https://github.com/dockur/windows-arm/
+
+docker run -it --rm --name windows -p 8006:8006 --device=/dev/kvm --cap-add NET_ADMIN --stop-timeout 120 dockurr/windows
+
 桌面环境
 
 推荐rdp 远程

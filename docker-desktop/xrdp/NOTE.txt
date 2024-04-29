@@ -39,3 +39,8 @@ export XDG_CONFIG_DIRS=/etc/xdg/xdg-ubuntu:/etc/xdg
 cat .xsession
 #xfce4-session
 gnome-session
+
+
+https://github.com/infrastlabs/docker-headless/tree/dev
+
+
