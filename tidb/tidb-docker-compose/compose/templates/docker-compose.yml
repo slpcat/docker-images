@@ -1,0 +1,431 @@
+{{- $pdSize := .Values.pd.size | int }}
+{{- $tikvSize := .Values.tikv.size | int }}
+{{- $pdPort := .Values.pd.port | int }}
+{{- $pdPeerPort := add $pdPort 10000 }}
+{{- $tikvPort := .Values.tikv.port | int -}}
+{{- $pumpSize := .Values.pump.size | int }}
+{{- $pumpPort := .Values.pump.port | int }}
+{{- $zooSize := .Values.zookeeper.size | int }}
+{{- $zooPort := .Values.zookeeper.port | int }}
+{{- $kafkaSize := .Values.kafka.size | int }}
+{{- $kafkaPort := .Values.kafka.port | int }}
+version: '2.1'
+
+services:
+  {{- range until $pdSize }}
+  pd{{ . }}:
+    {{- if $.Values.pd.image }}
+    image: {{ $.Values.pd.image }}
+    {{- else }}
+    image: pd:latest
+    build:
+      context: {{ $.Values.pd.buildPath | default "./pd" }}
+      dockerfile: {{ $.Values.pd.dockerfile | default "Dockerfile" }}
+    {{- end }}
+    {{- if eq $.Values.networkMode "host" }}
+    network_mode: host
+    {{- else }}
+    ports:
+      - "2379"
+    {{- end }}
+    volumes:
+      - ./config/pd.toml:/pd.toml:ro
+      - {{ $.Values.dataDir }}:/data
+      - {{ $.Values.logsDir }}:/logs
+    command:
+      - --name=pd{{ . }}
+      {{- if eq $.Values.networkMode "host" }}
+      - --client-urls=http://0.0.0.0:{{ add $pdPort . }}
+      - --peer-urls=http://0.0.0.0:{{ add $pdPeerPort . }}
+      - --advertise-client-urls=http://127.0.0.1:{{ add $pdPort . }}
+      - --advertise-peer-urls=http://127.0.0.1:{{ add $pdPeerPort . }}
+      {{- else }}
+      - --client-urls=http://0.0.0.0:2379
+      - --peer-urls=http://0.0.0.0:2380
+      - --advertise-client-urls=http://pd{{ . }}:2379
+      - --advertise-peer-urls=http://pd{{ . }}:2380
+      {{- end }}
+      - --initial-cluster={{- template "initial_cluster" $ }}
+      - --data-dir=/data/pd{{ . }}
+      - --config=/pd.toml
+      - --log-file=/logs/pd{{ . }}.log
+    # sysctls:
+    #   net.core.somaxconn: 32768
+    # ulimits:
+    #   nofile:
+    #     soft: 1000000
+    #     hard: 1000000
+    restart: on-failure
+  {{ end }}
+
+  {{- range until $tikvSize }}
+  tikv{{ . }}:
+    {{- if $.Values.tikv.image }}
+    image: {{ $.Values.tikv.image }}
+    {{- else }}
+    image: tikv:latest
+    build:
+      context: {{ $.Values.tikv.buildPath | default "./tikv" }}
+      dockerfile: {{ $.Values.tikv.dockerfile | default "Dockerfile" }}
+    {{- end }}
+    {{- if eq $.Values.networkMode "host" }}
+    network_mode: host
+    {{- end }}
+    volumes:
+      - ./config/tikv.toml:/tikv.toml:ro
+      - {{ $.Values.dataDir }}:/data
+      - {{ $.Values.logsDir }}:/logs
+    command:
+      {{- if eq $.Values.networkMode "host" }}
+      - --addr=0.0.0.0:{{ add $tikvPort . }}
+      - --advertise-addr=127.0.0.1:{{ add $tikvPort . }}
+      {{- else }}
+      - --addr=0.0.0.0:20160
+      - --advertise-addr=tikv{{ . }}:20160
+      {{- end }}
+      - --data-dir=/data/tikv{{ . }}
+      - --pd={{- template "pd_list" $ }}
+      - --config=/tikv.toml
+      - --log-file=/logs/tikv{{ . }}.log
+    depends_on:
+      {{- range until $pdSize }}
+      - "pd{{.}}"
+      {{- end }}
+    # sysctls:
+    #   net.core.somaxconn: 32768
+    # ulimits:
+    #   nofile:
+    #     soft: 1000000
+    #     hard: 1000000
+    restart: on-failure
+  {{ end }}
+
+  {{- if .Values.tidb }}
+  {{- if .Values.tidb.enableBinlog }}
+  {{- range until $pumpSize }}
+  pump{{ . }}:
+    {{- if $.Values.pump.image }}
+    image: {{ $.Values.pump.image }}
+    {{- else }}
+    image: tidb-binlog:latest
+    build:
+      context: {{ $.Values.pump.buildPath | default "./tidb-binlog" }}
+      dockerfile: {{ $.Values.pump.dockerfile | default "Dockerfile" }}
+    {{- end }}
+    {{- if eq $.Values.networkMode "host" }}
+    network_mode: host
+    {{- end }}
+    volumes:
+      - ./config/pump.toml:/pump.toml:ro
+      - {{ $.Values.dataDir }}:/data
+      - {{ $.Values.logsDir }}:/logs
+    command:
+      - /pump
+      {{- if eq $.Values.networkMode "host" }}
+      - --addr=0.0.0.0:{{ add $pumpPort . }}
+      - --advertise-addr=127.0.0.1:{{ add $pumpPort . }}
+      {{- else }}
+      - --addr=0.0.0.0:8250
+      - --advertise-addr=pump{{ . }}:8250
+      {{- end }}
+      - --data-dir=/data/pump{{ . }}
+      - --log-file=/logs/pump{{ . }}.log
+      - --node-id=pump{{ . }}
+      - --pd-urls={{- template "pd_urls" $ }}
+      - --config=/pump.toml
+    depends_on:
+      {{- range until $pdSize }}
+      - "pd{{.}}"
+      {{- end }}
+    restart: on-failure
+  {{ end }}
+  drainer:
+    {{- if $.Values.drainer.image }}
+    image: {{ $.Values.drainer.image }}
+    {{- else }}
+    image: tidb-binlog:latest
+    build:
+      context: {{ $.Values.drainer.buildPath | default "./tidb-binlog" }}
+      dockerfile: {{ $.Values.drainer.dockerfile | default "Dockerfile" }}
+    {{- end }}
+    {{- if eq $.Values.networkMode "host" }}
+    network_mode: host
+    {{- end }}
+    volumes:
+      - ./config/drainer.toml:/drainer.toml:ro
+      - {{ $.Values.dataDir }}:/data
+      - {{ $.Values.logsDir }}:/logs
+    command:
+      - /drainer
+      - --addr=0.0.0.0:8249
+      - --data-dir=/data/data.drainer
+      - --log-file=/logs/drainer.log
+      - --pd-urls={{- template "pd_urls" $ }}
+      - --config=/drainer.toml
+      - --initial-commit-ts=0
+      {{- if eq $.Values.drainer.destDBType "kafka" }}
+      - --dest-db-type=kafka
+      {{- end }}
+    depends_on:
+      {{- range until $pdSize }}
+      - "pd{{ . }}"
+      {{- end }}
+      {{- if eq $.Values.drainer.destDBType "kafka" }}
+      {{- range until $kafkaSize }}
+      - "kafka{{ . }}"
+      {{- end }}
+      {{- end }}
+    restart: on-failure
+
+  {{- if eq $.Values.drainer.destDBType "kafka" }}
+  {{ range until $zooSize }}
+  zoo{{ . }}:
+    image: zookeeper:latest
+    {{- if eq $.Values.networkMode "host" }}
+    network_mode: host
+    {{- else }}
+    ports:
+      - "{{ add $zooPort . }}:{{ add $zooPort . }}"
+    {{- end }}
+    environment:
+      ZOO_MY_ID: {{ add . 1 }}
+      ZOO_PORT: {{ add $zooPort . }}
+      ZOO_SERVERS: {{ template "zoo_servers" $ }}
+    volumes:
+      - {{ $.Values.dataDir }}/zoo{{ . }}/data:/data
+      - {{ $.Values.dataDir }}/zoo{{ . }}/datalog:/datalog
+    restart: on-failure
+  {{ end }}
+
+  {{- range until $kafkaSize }}
+  kafka{{ . }}:
+    image: {{ $.Values.kafka.image }}
+    {{- if eq $.Values.networkMode "host" }}
+    network_mode: host
+    {{- else }}
+    ports:
+      - "{{ add . $kafkaPort }}:{{ add . $kafkaPort }}"
+    {{- end }}
+    environment:
+      KAFKA_BROKER_ID: {{ add . 1 }}
+      KAFKA_LOG_DIRS: /data/kafka-logs
+      {{- if $.Values.kafka.advertisedHostName }}
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://{{ $.Values.kafka.advertisedHostName }}:{{ add . $kafkaPort }}
+      {{- else }}
+      {{- if eq $.Values.networkMode "host" }}
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://127.0.0.1:{{ add . $kafkaPort }}
+      {{- else }}
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka{{ . }}:{{ add . $kafkaPort }}
+      {{- end }}
+      {{- end }}
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:{{ add . $kafkaPort }}
+      KAFKA_ZOOKEEPER_CONNECT: {{ template "zoo_connect" $ }}
+    volumes:
+      - {{ $.Values.dataDir }}/kafka-logs/kafka{{ . }}:/data/kafka-logs
+      - {{ $.Values.logsDir }}/kafka{{ . }}:/opt/kafka/logs
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      {{- range until $zooSize }}
+      - "zoo{{ . }}"
+      {{- end }}
+    restart: on-failure
+  {{- end }}
+  {{- end }}
+  {{- end }}
+  {{ end }}
+
+  {{- if .Values.tidb }}
+  tidb:
+    {{- if .Values.tidb.image }}
+    image: {{ .Values.tidb.image }}
+    {{- else }}
+    image: tidb:latest
+    build:
+      context: {{ .Values.tidb.buildPath | default "./tidb" }}
+      dockerfile: {{ .Values.tidb.dockerfile | default "Dockerfile" }}
+    {{- end }}
+    {{- if eq .Values.networkMode "host" }}
+    network_mode: host
+    {{- else }}
+    ports:
+      - "{{ .Values.tidb.mysqlPort }}:4000"
+      - "{{ .Values.tidb.statusPort }}:10080"
+    {{- end }}
+    volumes:
+      - ./config/tidb.toml:/tidb.toml:ro
+      - {{ .Values.logsDir }}:/logs
+    command:
+      - --store=tikv
+      - --path={{- template "pd_list" $ }}
+      - --config=/tidb.toml
+      - --log-file=/logs/tidb.log
+      - --advertise-address=tidb
+      {{- if .Values.tidb.enableBinlog }}
+      - --enable-binlog=true
+      {{- end }}
+    depends_on:
+      {{- range until $tikvSize }}
+      - "tikv{{.}}"
+      {{- end }}
+      {{- if .Values.tidb.enableBinlog }}
+      {{- range until $pumpSize }}
+      - "pump{{.}}"
+      {{- end }}
+      {{- end }}
+    # sysctls:
+    #   net.core.somaxconn: 32768
+    # ulimits:
+    #   nofile:
+    #     soft: 1000000
+    #     hard: 1000000
+    restart: on-failure
+  {{ end }}
+
+  {{- if .Values.tispark }}
+  tispark-master:
+    {{- if .Values.tispark.image }}
+    image: {{ .Values.tispark.image }}
+    {{- else }}
+    image: tispark:latest
+    build:
+      context: {{ .Values.tispark.buildPath | default "./tispark" }}
+      dockerfile: {{ .Values.tispark.dockerfile | default "Dockerfile" }}
+    {{- end }}
+    command:
+      - /opt/spark/sbin/start-master.sh
+    volumes:
+      - ./config/spark-defaults.conf:/opt/spark/conf/spark-defaults.conf:ro
+    environment:
+      SPARK_MASTER_PORT: {{ .Values.tispark.masterPort }}
+      SPARK_MASTER_WEBUI_PORT: {{ .Values.tispark.webuiPort }}
+    ports:
+      - "{{ .Values.tispark.masterPort }}:7077"
+      - "{{ .Values.tispark.webuiPort }}:8080"
+    depends_on:
+      {{- range until $tikvSize }}
+      - "tikv{{.}}"
+      {{- end }}
+    restart: on-failure
+  {{- range until ( .Values.tispark.workerCount | int ) }}
+  tispark-slave{{ . }}:
+    {{- if $.Values.tispark.image }}
+    image: {{ $.Values.tispark.image }}
+    {{- else }}
+    image: tispark:latest
+    build:
+      context: {{ $.Values.tispark.buildPath | default "./tispark" }}
+      dockerfile: {{ $.Values.tispark.dockerfile | default "Dockerfile" }}
+    {{- end }}
+    command:
+      - /opt/spark/sbin/start-slave.sh
+      - spark://tispark-master:7077
+    volumes:
+      - ./config/spark-defaults.conf:/opt/spark/conf/spark-defaults.conf:ro
+    environment:
+      SPARK_WORKER_WEBUI_PORT: {{ add $.Values.tispark.workerWebUIPort . }}
+    ports:
+      - "{{ add $.Values.tispark.workerWebUIPort . }}:{{ add $.Values.tispark.workerWebUIPort . }}"
+    depends_on:
+      - tispark-master
+    restart: on-failure
+  {{- end }}
+  {{ end }}
+
+  {{- if .Values.tidbVision }}
+  tidb-vision:
+    {{- if .Values.tidbVision.image }}
+    image: {{ .Values.tidbVision.image }}
+    {{- else }}
+    image: tidb-vision:latest
+    build:
+      context: {{ .Values.tidbVision.buildPath | default "./tidb-vision" }}
+      dockerfile: {{ .Values.tidbVision.dockerfile | default "Dockerfile" }}
+    {{- end }}
+    environment:
+      PD_ENDPOINT: {{if eq .Values.networkMode "host"}}127.0.0.1:{{.Values.pd.port}}{{else}}pd0:2379{{end}}
+    {{- if eq .Values.networkMode "host" }}
+      PORT: {{ .Values.tidbVision.port }}
+    network_mode: host
+    {{- else }}
+    ports:
+      - "{{ .Values.tidbVision.port }}:8010"
+    {{- end }}
+    restart: on-failure
+  {{- end }}
+
+  {{- if .Values.prometheus }}
+  pushgateway:
+    image: {{ .Values.pushgateway.image }}
+    {{- if eq .Values.networkMode "host" }}
+    command:
+      - --web.listen-address=0.0.0.0:{{.Values.pushgateway.port}}
+      - --log.level={{ .Values.pushgateway.logLevel }}
+    network_mode: host
+    {{- else }}
+    command:
+      - --log.level={{ .Values.pushgateway.logLevel }}
+    {{- end }}
+    restart: on-failure
+
+  prometheus:
+    user: root
+    image: {{ .Values.prometheus.image }}
+    command:
+      - --log.level={{ .Values.prometheus.logLevel }}
+      - --storage.tsdb.path=/data/prometheus
+      - --config.file=/etc/prometheus/prometheus.yml
+    {{- if eq .Values.networkMode "host" }}
+      - --web.listen-address=0.0.0.0:{{.Values.prometheus.port}}
+    network_mode: host
+    {{- else }}
+    ports:
+      - "{{ .Values.prometheus.port }}:9090"
+    {{- end }}
+    volumes:
+      - ./config/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./config/pd.rules.yml:/etc/prometheus/pd.rules.yml:ro
+      - ./config/tikv.rules.yml:/etc/prometheus/tikv.rules.yml:ro
+      - ./config/tidb.rules.yml:/etc/prometheus/tidb.rules.yml:ro
+      - {{ .Values.dataDir }}:/data
+    restart: on-failure
+  {{- end }}
+
+  {{- if .Values.grafana }}
+  grafana:
+    image: {{ .Values.grafana.image }}
+    user: "0"
+    {{- if eq .Values.networkMode "host" }}
+    network_mode: host
+    environment:
+      GF_SERVER_HTTP_PORT: {{ .Values.grafana.port }}
+      GF_LOG_LEVEL: {{ .Values.grafana.logLevel }}
+    {{- else }}
+    environment:
+      GF_LOG_LEVEL: {{ .Values.grafana.logLevel }}
+      GF_PATHS_PROVISIONING: /etc/grafana/provisioning
+      GF_PATHS_CONFIG: /etc/grafana/grafana.ini
+    ports:
+      - "{{ .Values.grafana.port }}:3000"
+    {{- end }}
+    volumes:
+      - ./config/grafana:/etc/grafana
+      - ./config/dashboards:/tmp/dashboards
+      - ./data/grafana:/var/lib/grafana
+    restart: on-failure
+  dashboard-installer:
+    {{- if .Values.dashboardInstaller.image }}
+    image: {{ .Values.dashboardInstaller.image }}
+    {{- else }}
+    image: tidb-dashboard-installer:latest
+    build:
+      context: {{ .Values.dashboardInstaller.buildPath | default "./dashboard-installer" }}
+      dockerfile: {{ .Values.dashboardInstaller.dockerfile | default "Dockerfile" }}
+    {{- end }}
+    {{- if eq .Values.networkMode "host" }}
+    network_mode: host
+    command: ["127.0.0.1:{{.Values.grafana.port}}"]
+    {{- else }}
+    command: ["grafana:3000"]
+    {{- end }}
+    restart: on-failure
+  {{- end -}}

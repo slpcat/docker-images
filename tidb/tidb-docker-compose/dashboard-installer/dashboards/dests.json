@@ -1,0 +1,12 @@
+[
+    {
+        "datasource": "tidb-cluster",
+        "name": "TiDB-Cluster",
+        "titles": {
+            "overview": "TiDB-Cluster-Overview",
+            "pd": "TiDB-Cluster-PD",
+            "tidb": "TiDB-Cluster-TiDB",
+            "tikv": "TiDB-Cluster-TiKV"
+        }
+    }
+]
