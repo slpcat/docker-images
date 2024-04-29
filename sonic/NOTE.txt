@@ -1,0 +1,13 @@
+https://github.com/sonic-net/sonic-buildimage
+https://github.com/sonic-net/SONiC/wiki/Architecture
+https://www.nvidia.cn/networking/ethernet-switching/spectrum-sn4000/
+https://sonic.software/
+
+
+# How-to: sonic-vs in QEMU
+qemu-system-x86_64 -machine q35 -m 2048 -smp 4 -hda sonic-vs.img \
+  -nographic -netdev user,id=sonic0,hostfwd=tcp::5555-:22 \
+  -device e1000,netdev=sonic0 -cpu host -accel kvm
+# Access using "ssh localhost -p 5555"
+
+ default login: admin / YourPaSsWoRd
