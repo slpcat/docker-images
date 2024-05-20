@@ -1,0 +1,17 @@
+FROM slpcat/debian:trixie
+
+MAINTAINER 若虚 <slpcat@qq.com>
+
+#install JDK 1.8
+ENV JAVA_VERSION=1.8.0 \
+    JAVA_HOME="/usr/lib/jvm/default-jvm"
+
+# Install required packages
+RUN \
+    apt-get update -y && \
+    apt-get dist-upgrade -y && \
+    apt-get install -y openjdk-8-jdk git && \
+    rm -rf /var/lib/apt/lists/
+
+RUN  \
+    ln -s "/usr/lib/jvm/java-8-openjdk-loong64" "$JAVA_HOME"

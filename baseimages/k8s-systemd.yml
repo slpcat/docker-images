@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: systemd
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: systemd
+  template:
+    metadata:
+      labels:
+        app: systemd
+    spec:
+      containers:
+      - name: systemd
+        image: cr.imroc.cc/library/systemd:ubuntu
+        command:
+        - /usr/bin/systemd
+        securityContext:
+          capabilities:
+            add:
+            - SYS_ADMIN
+          privileged: false
+        volumeMounts:
+        - mountPath: /sys/fs/cgroup
+          name: cgroup
+      volumes:
+      - hostPath:
+          path: /sys/fs/cgroup
+          type: ""
+        name: cgroup

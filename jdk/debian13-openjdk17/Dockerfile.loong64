@@ -1,0 +1,17 @@
+FROM slpcat/debian:trixie
+
+MAINTAINER 若虚 <slpcat@qq.com>
+
+#install JDK 17
+ENV JAVA_VERSION=17 \
+    JAVA_HOME="/usr/lib/jvm/default-jvm"
+
+# Install required packages
+RUN \
+    apt-get update -y && \
+    apt-get dist-upgrade -y && \
+    apt-get install -y openjdk-17-jdk git && \
+    rm -rf /var/lib/apt/lists/
+
+RUN  \
+    ln -s "/usr/lib/jvm/java-${JAVA_VERSION}-openjdk-loong64" "$JAVA_HOME"

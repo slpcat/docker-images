@@ -8,7 +8,7 @@ ENV \
     LANGUAGE="en_US.UTF-8" \
     LC_ALL="en_US.UTF-8" \
     TZ="Asia/Shanghai" \
-    DEBIAN_FRONTEND="noninteractive" \ 
+    DEBIAN_FRONTEND="noninteractive" \
     container="docker"
 
 # Set timezone and locales
@@ -37,37 +37,19 @@ RUN P="$(dd if=/dev/random bs=1 count=8 2>/dev/null | base64)" ; echo $P && echo
 # set to foobar
 #RUN P="foobar" ; echo $P && echo "root:$P" | chpasswd
 
-RUN cd /lib/systemd/system/sysinit.target.wants/ && \
-		ls | grep -v systemd-tmpfiles-setup.service | xargs rm -f && \
-		rm -f /lib/systemd/system/sockets.target.wants/*udev* && \
-		systemctl mask -- \
-			tmp.mount \
-			etc-hostname.mount \
-			etc-hosts.mount \
-			etc-resolv.conf.mount \
-			swap.target \
-			getty.target \
-			getty-static.service \
-			dev-mqueue.mount \
-			cgproxy.service \
-			systemd-tmpfiles-setup-dev.service \
-			systemd-remount-fs.service \
-                        systemd-timedated \
-			systemd-ask-password-wall.path \
-			systemd-logind.service && \
-		systemctl set-default multi-user.target || true
 
-RUN sed -ri /etc/systemd/journald.conf \
-			-e 's!^#?Storage=.*!Storage=volatile!'
-ADD container-boot.service /etc/systemd/system/container-boot.service
-RUN mkdir -p /etc/container-boot.d && \
-		systemctl enable container-boot.service
+# Enable systemd.
+RUN apt-get update ; \
+    apt-get install -y systemd systemd-sysv; \
+    apt-get clean ; \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* ; \
+    rm -rf /lib/systemd/system/multi-user.target.wants/* ; \
+    rm -rf /etc/systemd/system/*.wants/* ; \
+    rm -rf /lib/systemd/system/local-fs.target.wants/* ; \
+    rm -rf /lib/systemd/system/sockets.target.wants/*udev* ; \
+    rm -rf /lib/systemd/system/sockets.target.wants/*initctl* ; \
+    rm -rf /lib/systemd/system/sysinit.target.wants/systemd-tmpfiles-setup* ; \
+    rm -rf /lib/systemd/system/systemd-update-utmp*
 
-# run stuff
-ADD configurator.sh configurator_dumpenv.sh /root/
-ADD configurator.service configurator_dumpenv.service /etc/systemd/system/
-RUN chmod 700 /root/configurator.sh /root/configurator_dumpenv.sh && \
-		systemctl enable configurator.service configurator_dumpenv.service
-
-VOLUME [ "/sys/fs/cgroup", "/run", "/run/lock", "/tmp" ]
+VOLUME [ "/sys/fs/cgroup" ]
 CMD ["/lib/systemd/systemd"]

@@ -1,0 +1,46 @@
+# This Dockerfile creates a gentoo stage3 container image. By default it
+# creates a stage3-amd64 image. It utilizes a multi-stage build and requires
+# docker-17.05.0 or later. It fetches a daily snapshot from the official
+# sources and verifies its checksum as well as its gpg signature.
+
+ARG BOOTSTRAP
+#FROM --platform=$BUILDPLATFORM ${BOOTSTRAP:-alpine:3.19} as builder
+FROM slpcat/debian:trixie-sid as builder
+
+WORKDIR /gentoo
+
+ARG ARCH=loong64
+ARG MICROARCH=loong64
+ARG SUFFIX
+ARG DIST="https://ftp-osl.osuosl.org/pub/gentoo/releases/${ARCH}/autobuilds"
+ARG SIGNING_KEY="0xBB572E0E2D182910"
+
+RUN <<-EOF
+    set -e
+
+    echo "Building Gentoo Container image for ${ARCH} ${SUFFIX} fetching from ${DIST}"
+
+    apt-get update && apt-get install -y ca-certificates gnupg tar wget xz-utils
+
+    # setup GPG
+
+
+    # cleanup
+EOF
+
+COPY stage3-loong-openrc-20240514T170404Z.tar.xz /tmp/
+RUN  tar xpf "/tmp/stage3-loong-openrc-20240514T170404Z.tar.xz" --xattrs-include='*.*' --numeric-owner -C /gentoo \
+     # modify stage3
+     && ( sed -i -e 's/#rc_sys=""/rc_sys="docker"/g' etc/rc.conf 2>/dev/null || true ) \
+     && echo 'UTC' > etc/timezone
+
+COPY portage-latest.tar.xz /tmp/
+RUN mkdir -p var/db/repos var/cache/binpkgs var/cache/distfiles \
+    && tar xJpf /tmp/portage-latest.tar.xz -C var/db/repos \
+    && mv var/db/repos/portage var/db/repos/gentoo
+
+FROM scratch
+
+WORKDIR /
+COPY --from=builder /gentoo/ /
+CMD ["/bin/bash"]
