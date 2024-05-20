@@ -1,7 +1,7 @@
 FROM slpcat/alpine:3.19
 
 RUN \
-    apk update && apk upgrade -y && apk add  go git
+    apk update && apk upgrade && apk add  go git
 
 # install cgo-related dependencies
 RUN set -eux; \
