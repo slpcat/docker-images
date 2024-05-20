@@ -1,0 +1,27 @@
+FROM slpcat/alpine:3.19
+
+RUN \
+    apk update && apk upgrade -y && apk add  go git
+
+# install cgo-related dependencies
+RUN set -eux; \
+	apk update; \
+	apk add \
+		g++ \
+		gcc \
+                libc-dev \
+		make \
+	; \
+	rm -rf /var/lib/apt/lists/*
+
+ENV GOLANG_VERSION 1.22.2
+
+# don't auto-upgrade the gotoolchain
+# https://github.com/docker-library/golang/issues/472
+ENV GOTOOLCHAIN=local \
+    GOPATH=/go \
+    PATH=$GOPATH/bin:/usr/lib/go/bin/:$PATH
+
+RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 1777 "$GOPATH"
+
+WORKDIR $GOPATH
