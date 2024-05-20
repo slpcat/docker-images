@@ -1,0 +1,28 @@
+FROM slpcat/debian:trixie
+
+RUN \
+    apt-get update && apt-get dist-upgrade -y && apt-get install -y golang-1.21-go git
+
+# install cgo-related dependencies
+RUN set -eux; \
+	apt-get update; \
+	apt-get install -y --no-install-recommends \
+		g++ \
+		gcc \
+		libc6-dev \
+		make \
+		pkg-config \
+	; \
+	rm -rf /var/lib/apt/lists/*
+
+ENV GOLANG_VERSION 1.21.1
+
+# don't auto-upgrade the gotoolchain
+# https://github.com/docker-library/golang/issues/472
+ENV GOTOOLCHAIN=local \
+    GOPATH=/go \
+    PATH=$GOPATH/bin://usr/lib/go-1.21/bin/:$PATH
+
+RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 1777 "$GOPATH"
+
+WORKDIR $GOPATH
