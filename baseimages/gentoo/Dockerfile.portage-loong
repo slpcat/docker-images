@@ -28,8 +28,8 @@ RUN <<-EOF
     # cleanup
 EOF
 
-COPY stage3-loong-openrc-20240514T170404Z.tar.xz /tmp/
-RUN  tar xpf "/tmp/stage3-loong-openrc-20240514T170404Z.tar.xz" --xattrs-include='*.*' --numeric-owner -C /gentoo \
+COPY stage3-loong-openrc-20240716T170400Z.tar.xz /tmp/
+RUN  tar xpf "/tmp/stage3-loong-openrc-20240716T170400Z.tar.xz" --xattrs-include='*.*' --numeric-owner -C /gentoo \
      # modify stage3
      && ( sed -i -e 's/#rc_sys=""/rc_sys="docker"/g' etc/rc.conf 2>/dev/null || true ) \
      && echo 'UTC' > etc/timezone
