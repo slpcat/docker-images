@@ -8,3 +8,33 @@ kubernetes
 https://github.com/alibaba/nacos/edit/master/config/src/main/resources/META-INF/nacos-db.sql
 3.nacos集群
 默认的账号密码都是 nacos
+
+
+docker run -d \
+--restart=always --net=ipvlan --ip=10.0.0.97 \
+--name nacos2-2 \
+-e NACOS_AUTH_ENABLE=true \
+-e MODE=cluster \
+-e TOMCAT_ACCESSLOG_ENABLED="true" \
+-e NACOS_DEBUG="n" \
+-e NACOS_AUTH_IDENTITY_KEY=tdTR2t190HJ \
+-e NACOS_AUTH_IDENTITY_VALUE=f85tapqgg2nIUzvf023 \
+-e NACOS_AUTH_TOKEN=ZmNIdHB2YWxwdnVMb21sZXJtbzIzb2JwcWxmc2FybXVxanMK \
+-e NACOS_REPLICAS=3 \
+-e NACOS_SERVER_PORT=8848 \
+#-e PREFER_HOST_MODE=hostname \
+-e PREFER_HOST_MODE=ip \
+-e NACOS_SERVERS="10.0.0.58:8848 10.0.0.115:8848 10.0.0.97:8848" \
+-e JVM_XMN=256m \
+-e JVM_XMS=512m \
+-e JVM_XMX=512m \
+-p 8848:8848 \
+-e SPRING_DATASOURCE_PLATFORM=mysql \
+-e MYSQL_SERVICE_HOST=10.0.1.107 \
+-e MYSQL_SERVICE_PORT=3306 \
+-e MYSQL_SERVICE_USER=nacos \
+-e MYSQL_SERVICE_PASSWORD="123abc" \
+-e MYSQL_SERVICE_DB_NAME=nacos \
+-e MYSQL_SERVICE_DB_PARAM='characterEncoding=utf8&connectTimeout=10000&socketTimeout=30000&autoReconnect=true&useSSL=false&allowPublicKeyRetrieval=true' \
+-v /zdata/data/nacos2-2:/home/nacos/data \
+  nacos/nacos-server:v2.2.3

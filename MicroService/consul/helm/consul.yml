@@ -1,0 +1,946 @@
+---
+# Source: consul/templates/server-disruptionbudget.yaml
+# PodDisruptionBudget to prevent degrading the server cluster through
+# voluntary cluster changes.
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  name: id01-consul-server
+  namespace: dbaas
+  labels:
+    app: consul
+    chart: consul-helm
+    heritage: Helm
+    release: id01
+    component: server
+spec:
+  maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: consul
+      release: "id01"
+      component: server
+---
+# Source: consul/templates/auth-method-serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: id01-consul-auth-method
+  namespace: dbaas
+  labels:
+    app: consul
+    chart: consul-helm
+    heritage: Helm
+    release: id01
+    component: auth-method
+---
+# Source: consul/templates/server-acl-init-cleanup-serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: id01-consul-server-acl-init-cleanup
+  namespace: dbaas
+  labels:
+    app: consul
+    chart: consul-helm
+    heritage: Helm
+    release: id01
+    component: server-acl-init-cleanup
+---
+# Source: consul/templates/server-acl-init-serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: id01-consul-server-acl-init
+  namespace: dbaas
+  labels:
+    app: consul
+    chart: consul-helm
+    heritage: Helm
+    release: id01
+    component: server-acl-init
+---
+# Source: consul/templates/server-serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: id01-consul-server
+  namespace: dbaas
+  labels:
+    app: consul
+    chart: consul-helm
+    heritage: Helm
+    release: id01
+    component: server
+---
+# Source: consul/templates/auth-method-secret.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: id01-consul-auth-method
+  namespace: dbaas
+  labels:
+    app: consul
+    chart: consul-helm
+    heritage: Helm
+    release: id01
+    component: auth-method
+  annotations:
+    kubernetes.io/service-account.name: id01-consul-auth-method
+type: kubernetes.io/service-account-token
+---
+# Source: consul/templates/server-config-configmap.yaml
+# StatefulSet to run the actual Consul server cluster.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: id01-consul-server-config
+  namespace: dbaas
+  labels:
+    app: consul
+    chart: consul-helm
+    heritage: Helm
+    release: id01
+    component: server
+data:
+  server.json: |
+    {
+      "bind_addr": "0.0.0.0",
+      "bootstrap_expect": 3,
+      "client_addr": "0.0.0.0",
+      "connect": {
+        "enabled": true
+      },
+      "datacenter": "dc1",
+      "data_dir": "/consul/data",
+      "log_level": "DEBUG",
+      "enable_debug": false,
+      "domain": "consul",
+      "limits": {
+        "request_limits": {
+          "mode": "disabled",
+          "read_rate": -1,
+          "write_rate": -1
+        }
+      },
+      "ports": {
+        "grpc": 8502,
+        "grpc_tls": -1,
+        "serf_lan": 8301
+      },
+      "recursors": [],
+      "retry_join": ["id01-consul-server.dbaas.svc:8301"],
+      "server": true,
+      "leave_on_terminate": true,
+      "autopilot": {
+        "min_quorum": 2,
+        "disable_upgrade_migration": true
+      }
+    }
+  acl-config.json: |-
+    {
+      "acl": {
+        "enabled": true,
+        "default_policy": "deny",
+        "down_policy": "extend-cache",
+        "enable_token_persistence": true
+      }
+    }
+  ui-config.json: |-
+    {
+      "ui_config": {
+        "metrics_provider": "prometheus",
+        "metrics_proxy": {
+          "base_url": "http://prometheus-server"
+        },
+        "enabled": true
+      }
+    }
+  central-config.json: |-
+    {
+      "enable_central_service_config": true
+    }
+---
+# Source: consul/templates/server-tmp-extra-config-configmap.yaml
+# ConfigMap that is used as a temporary landing spot so that the container command
+# in the server-stateful set where it needs to be transformed.  ConfigMaps create
+# read only volumes so it needs to be copied and transformed to the extra-config
+# emptyDir volume where all final extra cofngi lives for use in consul.  (locality-init
+# also writes to extra-config volume.)
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: id01-consul-server-tmp-extra-config
+  namespace: dbaas
+  labels:
+    app: consul
+    chart: consul-helm
+    heritage: Helm
+    release: id01
+    component: server
+data:
+  extra-from-values.json: |-
+    {}
+---
+# Source: consul/templates/auth-method-clusterrole.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: id01-consul-auth-method
+  labels:
+    app: consul
+    chart: consul-helm
+    heritage: Helm
+    release: id01
+    component: auth-method
+rules:
+- apiGroups: [ "" ]
+  resources:
+  - serviceaccounts
+  verbs:
+  - get
+---
+# Source: consul/templates/server-clusterrole.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: id01-consul-server
+  namespace: dbaas
+  labels:
+    app: consul
+    chart: consul-helm
+    heritage: Helm
+    release: id01
+    component: server
+rules:
+- apiGroups: [""]
+  resources: ["nodes"]
+  verbs:
+  - get
+---
+# Source: consul/templates/auth-method-clusterrolebinding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: id01-consul-authdelegator
+  labels:
+    app: consul
+    chart: consul-helm
+    heritage: Helm
+    release: id01
+    component: auth-method
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: "system:auth-delegator"
+subjects:
+- kind: ServiceAccount
+  name: id01-consul-auth-method
+  namespace: dbaas
+---
+# Source: consul/templates/auth-method-clusterrolebinding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: id01-consul-auth-method
+  labels:
+    app: consul
+    chart: consul-helm
+    heritage: Helm
+    release: id01
+    component: auth-method
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: id01-consul-auth-method
+subjects:
+- kind: ServiceAccount
+  name: id01-consul-auth-method
+  namespace: dbaas
+---
+# Source: consul/templates/server-clusterrolebinding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: id01-consul-server
+  labels:
+    app: consul
+    chart: consul-helm
+    heritage: Helm
+    release: id01
+    component: server
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: id01-consul-server
+subjects:
+- kind: ServiceAccount
+  name: id01-consul-server
+  namespace: dbaas
+---
+# Source: consul/templates/server-acl-init-cleanup-role.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: id01-consul-server-acl-init-cleanup
+  namespace: dbaas
+  labels:
+    app: consul
+    chart: consul-helm
+    heritage: Helm
+    release: id01
+    component: server-acl-init-cleanup
+rules:
+  - apiGroups: ["batch"]
+    resources: ["jobs"]
+    verbs: ["get", "delete"]
+---
+# Source: consul/templates/server-acl-init-role.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: id01-consul-server-acl-init
+  namespace: dbaas
+  labels:
+    app: consul
+    chart: consul-helm
+    heritage: Helm
+    release: id01
+    component: server-acl-init
+rules:
+- apiGroups: [ "" ]
+  resources:
+  - secrets
+  verbs:
+  - create
+  - get
+- apiGroups: [ "" ]
+  resources:
+  - serviceaccounts
+  resourceNames:
+  - id01-consul-auth-method
+  verbs:
+  - get
+---
+# Source: consul/templates/server-role.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: id01-consul-server
+  namespace: dbaas
+  labels:
+    app: consul
+    chart: consul-helm
+    heritage: Helm
+    release: id01
+    component: server
+rules: []
+---
+# Source: consul/templates/server-acl-init-cleanup-rolebinding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: id01-consul-server-acl-init-cleanup
+  namespace: dbaas
+  labels:
+    app: consul
+    chart: consul-helm
+    heritage: Helm
+    release: id01
+    component: server-acl-init-cleanup
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: id01-consul-server-acl-init-cleanup
+subjects:
+  - kind: ServiceAccount
+    name: id01-consul-server-acl-init-cleanup
+---
+# Source: consul/templates/server-acl-init-rolebinding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: id01-consul-server-acl-init
+  namespace: dbaas
+  labels:
+    app: consul
+    chart: consul-helm
+    heritage: Helm
+    release: id01
+    component: server-acl-init
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: id01-consul-server-acl-init
+subjects:
+  - kind: ServiceAccount
+    name: id01-consul-server-acl-init
+---
+# Source: consul/templates/server-rolebinding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: id01-consul-server
+  namespace: dbaas
+  labels:
+    app: consul
+    chart: consul-helm
+    heritage: Helm
+    release: id01
+    component: server
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: id01-consul-server
+subjects:
+  - kind: ServiceAccount
+    name: id01-consul-server
+---
+# Source: consul/templates/dns-service.yaml
+# Service for Consul DNS.
+apiVersion: v1
+kind: Service
+metadata:
+  name: id01-consul-dns
+  namespace: dbaas
+  labels:
+    app: consul
+    chart: consul-helm
+    heritage: Helm
+    release: id01
+    component: dns
+spec:
+  type: ClusterIP
+  ports:
+    - name: dns-tcp
+      port: 53
+      protocol: "TCP"
+      targetPort: dns-tcp
+    - name: dns-udp
+      port: 53
+      protocol: "UDP"
+      targetPort: dns-udp
+  selector:
+    app: consul
+    release: "id01"
+    hasDNS: "true"
+---
+# Source: consul/templates/expose-servers-service.yaml
+# Service with an external IP to reach Consul servers.
+# Used for exposing gRPC port for peering and ports for client partitions to discover servers.
+apiVersion: v1
+kind: Service
+metadata:
+  name: id01-consul-expose-servers
+  namespace: dbaas
+  labels:
+    app: consul
+    chart: consul-helm
+    heritage: Helm
+    release: id01
+    component: server
+  annotations:
+spec:
+  type: "LoadBalancer"
+  ports:
+    - name: http
+      port: 8500
+      targetPort: 8500
+      
+    - name: serflan
+      port: 8301
+      targetPort: 8301
+      
+    - name: rpc
+      port: 8300
+      targetPort: 8300
+      
+    - name: grpc
+      port: 8502
+      targetPort: 8502
+      
+  selector:
+    app: consul
+    release: "id01"
+    component: server
+---
+# Source: consul/templates/server-service.yaml
+# Headless service for Consul server DNS entries. This service should only
+# point to Consul servers. For access to an agent, one should assume that
+# the agent is installed locally on the node and the NODE_IP should be used.
+# If the node can't run a Consul agent, then this service can be used to
+# communicate directly to a server agent.
+apiVersion: v1
+kind: Service
+metadata:
+  name: id01-consul-server
+  namespace: dbaas
+  labels:
+    app: consul
+    chart: consul-helm
+    heritage: Helm
+    release: id01
+    component: server
+  annotations:
+spec:
+  clusterIP: None
+  # We want the servers to become available even if they're not ready
+  # since this DNS is also used for join operations.
+  publishNotReadyAddresses: true
+  ports:
+    - name: http
+      port: 8500
+      targetPort: 8500
+    - name: grpc
+      port: 8502
+      targetPort: 8502
+    - name: serflan-tcp
+      protocol: "TCP"
+      port: 8301
+      targetPort: 8301
+    - name: serflan-udp
+      protocol: "UDP"
+      port: 8301
+      targetPort: 8301
+    - name: serfwan-tcp
+      protocol: "TCP"
+      port: 8302
+      targetPort: 8302
+    - name: serfwan-udp
+      protocol: "UDP"
+      port: 8302
+      targetPort: 8302
+    - name: server
+      port: 8300
+      targetPort: 8300
+    - name: dns-tcp
+      protocol: "TCP"
+      port: 8600
+      targetPort: dns-tcp
+    - name: dns-udp
+      protocol: "UDP"
+      port: 8600
+      targetPort: dns-udp
+  selector:
+    app: consul
+    release: "id01"
+    component: server
+---
+# Source: consul/templates/ui-service.yaml
+# UI Service for Consul Server
+apiVersion: v1
+kind: Service
+metadata:
+  name: id01-consul-ui
+  namespace: dbaas
+  labels:
+    app: consul
+    chart: consul-helm
+    heritage: Helm
+    release: id01
+    component: ui
+spec:
+  selector:
+    app: consul
+    release: "id01"
+    component: server
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8500
+---
+# Source: consul/templates/server-statefulset.yaml
+# StatefulSet to run the actual Consul server cluster.
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: id01-consul-server
+  namespace: dbaas
+  labels:
+    app: consul
+    chart: consul-helm
+    heritage: Helm
+    release: id01
+    component: server
+spec:
+  serviceName: id01-consul-server
+  podManagementPolicy: Parallel
+  replicas: 3
+  selector:
+    matchLabels:
+      app: consul
+      chart: consul-helm
+      release: id01
+      component: server
+      hasDNS: "true"
+  template:
+    metadata:
+      labels:
+        app: consul
+        chart: consul-helm
+        release: id01
+        component: server
+        hasDNS: "true"
+      annotations:
+        "consul.hashicorp.com/connect-inject": "false"
+        "consul.hashicorp.com/mesh-inject": "false"
+        "consul.hashicorp.com/config-checksum": a462ff71fba2371182eac2c331070d9f216e1c57d8c6f7f14e8123e12e9655a9
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchLabels:
+                  app: consul
+                  release: "id01"
+                  component: server
+              topologyKey: kubernetes.io/hostname
+      terminationGracePeriodSeconds: 30
+      serviceAccountName: id01-consul-server
+      securityContext:
+        fsGroup: 1000
+        runAsGroup: 1000
+        runAsNonRoot: true
+        runAsUser: 100
+      volumes:
+        - name: config
+          configMap:
+            name: id01-consul-server-config
+        - name: extra-config
+          emptyDir: {}
+        - name: tmp-extra-config
+          configMap:
+            name: id01-consul-server-tmp-extra-config
+      initContainers:
+      - name: locality-init
+        image: hashicorp/consul-k8s-control-plane:1.4.1
+        env:
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        command:
+          - "/bin/sh"
+          - "-ec"
+          - |
+            exec consul-k8s-control-plane fetch-server-region -node-name "$NODE_NAME" -output-file /consul/extra-config/locality.json
+        volumeMounts:
+          - name: extra-config
+            mountPath: /consul/extra-config
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+            add:
+            - NET_BIND_SERVICE
+          runAsNonRoot: true
+          seccompProfile:
+            type: RuntimeDefault
+          runAsUser: 100
+      containers:
+        - name: consul
+          image: "hashicorp/consul:1.18.1"
+          imagePullPolicy: 
+          env:
+            - name: ADVERTISE_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: HOST_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: CONSUL_DISABLE_PERM_MGMT
+              value: "true"
+            
+          command:
+            - "/bin/sh"
+            - "-ec"
+            - |
+
+              cp /consul/tmp/extra-config/extra-from-values.json /consul/extra-config/extra-from-values.json
+              [ -n "${HOST_IP}" ] && sed -Ei "s|HOST_IP|${HOST_IP?}|g" /consul/extra-config/extra-from-values.json
+              [ -n "${POD_IP}" ] && sed -Ei "s|POD_IP|${POD_IP?}|g" /consul/extra-config/extra-from-values.json
+              [ -n "${HOSTNAME}" ] && sed -Ei "s|HOSTNAME|${HOSTNAME?}|g" /consul/extra-config/extra-from-values.json
+
+              exec /usr/local/bin/docker-entrypoint.sh consul agent \
+                -advertise="${ADVERTISE_IP}" \
+                -config-dir=/consul/config \
+                -config-dir=/consul/extra-config \
+          volumeMounts:
+            - name: data-dbaas
+              mountPath: /consul/data
+            - name: config
+              mountPath: /consul/config
+            - name: extra-config
+              mountPath: /consul/extra-config
+            - name: tmp-extra-config
+              mountPath: /consul/tmp/extra-config
+          ports:
+            - name: http
+              containerPort: 8500
+            - name: grpc
+              containerPort: 8502
+              protocol: "TCP"
+            - name: serflan-tcp
+              containerPort: 8301
+              protocol: "TCP"
+            - name: serflan-udp
+              containerPort: 8301
+              protocol: "UDP"
+            - name: serfwan-tcp
+              containerPort: 8302
+              protocol: "TCP"
+            - name: serfwan-udp
+              containerPort: 8302
+              protocol: "UDP"
+            - name: server
+              containerPort: 8300
+            - name: dns-tcp
+              containerPort: 8600
+              protocol: "TCP"
+            - name: dns-udp
+              containerPort: 8600
+              protocol: "UDP"
+          readinessProbe:
+            # NOTE(mitchellh): when our HTTP status endpoints support the
+            # proper status codes, we should switch to that. This is temporary.
+            exec:
+              command:
+                - "/bin/sh"
+                - "-ec"
+                - |
+                  curl http://127.0.0.1:8500/v1/status/leader \
+                  2>/dev/null | grep -E '".+"'
+            failureThreshold: 2
+            initialDelaySeconds: 5
+            periodSeconds: 3
+            successThreshold: 1
+            timeoutSeconds: 5
+          resources:
+            limits:
+              cpu: 500m
+              memory: 500Mi
+            requests:
+              cpu: 100m
+              memory: 200Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+              add:
+              - NET_BIND_SERVICE
+            runAsNonRoot: true
+            seccompProfile:
+              type: RuntimeDefault
+            runAsUser: 100
+  volumeClaimTemplates:
+    - metadata:
+        name: data-dbaas
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 50Gi
+---
+# Source: consul/templates/server-acl-init-job.yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: id01-consul-server-acl-init
+  namespace: dbaas
+  labels:
+    app: consul
+    chart: consul-helm
+    heritage: Helm
+    release: id01
+    component: server-acl-init
+spec:
+  template:
+    metadata:
+      name: id01-consul-server-acl-init
+      labels:
+        app: consul
+        chart: consul-helm
+        release: id01
+        component: server-acl-init
+      annotations:
+        "consul.hashicorp.com/connect-inject": "false"
+        "consul.hashicorp.com/mesh-inject": "false"
+    spec:
+      restartPolicy: Never
+      serviceAccountName: id01-consul-server-acl-init
+      containers:
+      - name: server-acl-init-job
+        image: hashicorp/consul-k8s-control-plane:1.4.1
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+            add:
+            - NET_BIND_SERVICE
+          runAsNonRoot: true
+          seccompProfile:
+            type: RuntimeDefault
+          runAsUser: 100
+        env:
+        - name: NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        # Extract the Vault namespace from the Vault agent annotations.
+        - name: CONSUL_ADDRESSES
+          value: id01-consul-server.dbaas.svc
+        - name: CONSUL_GRPC_PORT
+          value: "8502"
+        - name: CONSUL_HTTP_PORT
+          value: "8500"
+        - name: CONSUL_DATACENTER
+          value: dc1
+        - name: CONSUL_API_TIMEOUT
+          value: 5s
+        command:
+        - "/bin/sh"
+        - "-ec"
+        - |
+          CONSUL_FULLNAME="id01-consul"
+
+          exec consul-k8s-control-plane server-acl-init \
+            -log-level=debug \
+            -log-json=false \
+            -resource-prefix=${CONSUL_FULLNAME} \
+            -k8s-namespace=dbaas \
+            -set-server-tokens=true \
+            -secrets-backend=kubernetes \
+            -allow-dns=true \
+            -acl-binding-rule-selector=serviceaccount.name!=default \
+            -client=false \
+        resources:
+          limits:
+            cpu: 500m
+            memory: 500Mi
+          requests:
+            cpu: 50m
+            memory: 50Mi
+---
+# Source: consul/templates/tests/test-runner.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "id01-consul-test"
+  namespace: dbaas
+  labels:
+    app: consul
+    chart: consul-helm
+    heritage: Helm
+    release: id01
+  annotations:
+    "helm.sh/hook": test-success
+spec:
+  containers:
+    - name: consul-test
+      image: "hashicorp/consul:1.18.1"
+      env:
+        - name: HOST_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
+        - name: CONSUL_HTTP_ADDR
+          value: http://$(HOST_IP):8500
+      command:
+        - "/bin/sh"
+        - "-ec"
+        - |
+            consul members | tee members.txt
+            if [ $(grep -c consul-server members.txt) != $(grep consul-server members.txt | grep -c alive) ]
+            then
+              echo "Failed because not all consul servers are available"
+              exit 1
+            fi
+
+  restartPolicy: Never
+---
+# Source: consul/templates/server-acl-init-cleanup-job.yaml
+# This job deletes the server-acl-init job once it completes successfully.
+# It runs as a helm hook because it only needs to run when the server-acl-init
+# Job gets recreated which only happens during an install or upgrade.
+# We also utilize the helm hook-delete-policy to delete this job itself.
+# We want to delete the server-acl-init job because once it runs successfully
+# it's not needed and also because if it stays around then when users run
+# helm upgrade with values that change the spec of the job, Kubernetes errors
+# because the job spec is immutable. If the job is deleted, then a new job
+# is created and there's no error.
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: id01-consul-server-acl-init-cleanup
+  namespace: dbaas
+  labels:
+    app: consul
+    chart: consul-helm
+    heritage: Helm
+    release: id01
+    component: server-acl-init-cleanup
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "0"
+    # If the hook fails then all that happens is we didn't delete the job.
+    # There's no reason for *this* job to stay around in that case so delete
+    # regardless of success.
+    "helm.sh/hook-delete-policy": hook-succeeded,hook-failed
+spec:
+  template:
+    metadata:
+      name: id01-consul-server-acl-init-cleanup
+      labels:
+        app: consul
+        chart: consul-helm
+        release: id01
+        component: server-acl-init-cleanup
+      annotations:
+        "consul.hashicorp.com/connect-inject": "false"
+        "consul.hashicorp.com/mesh-inject": "false"
+    spec:
+      restartPolicy: Never
+      serviceAccountName: id01-consul-server-acl-init-cleanup
+      containers:
+        - name: server-acl-init-cleanup
+          image: hashicorp/consul-k8s-control-plane:1.4.1
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+              add:
+              - NET_BIND_SERVICE
+            runAsNonRoot: true
+            seccompProfile:
+              type: RuntimeDefault
+            runAsUser: 100
+          command:
+            - consul-k8s-control-plane
+          args:
+            - delete-completed-job
+            - -log-level=debug
+            - -log-json=false
+            - -k8s-namespace=dbaas
+            - id01-consul-server-acl-init
+          resources:
+            limits:
+              cpu: 500m
+              memory: 500Mi
+            requests:
+              cpu: 50m
+              memory: 50Mi

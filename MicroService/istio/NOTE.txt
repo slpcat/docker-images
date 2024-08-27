@@ -238,3 +238,7 @@ istio 会使用这个 Label 作为 pod 的区域信息。
 
 解决这个问题，需要为所有 namespace 都配置默认 Sidecar。
 
+
+merbridge
+https://github.com/merbridge/merbridge
+Use eBPF to speed up your Service Mesh like crossing an Einstein-Rosen Bridge.
