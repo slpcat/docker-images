@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:latest
+          volumeMounts:
+            - name: log # share log directory
+              mountPath: /var/log/nginx
+        - name: logrotate
+          image: imroc/logrotate:latest
+          env:
+            - name: LOGROTATE_FILE_PATTERN
+              value: "/var/log/nginx/*.log"
+            - name: LOGROTATE_FILESIZE
+              value: "20M"
+            - name: LOGROTATE_FILENUM
+              value: "10"
+            - name: CRON_EXPR
+              value: "*/1 * * * *"
+            - name: CROND_LOGLEVEL
+              value: "7"
+          volumeMounts:
+            - name: log # share log directory
+              mountPath: /var/log/nginx
+      volumes:
+        - name: log
+          emptyDir: {}

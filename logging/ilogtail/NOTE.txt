@@ -1,0 +1,13 @@
+启动iLogtail容器，并挂载iLogtail配置目录
+注意: 商业版和社区版的区别
+docker run -d --name docker_ilogtail \
+  -v /:/logtail_host:ro \
+  -v /var/run:/var/run \
+  -v /var/lib/docker_ilogtail/checkpoint:/usr/local/ilogtail/checkpoint \
+  -v `pwd`/config:/usr/local/ilogtail/config/local \
+  sls-opensource-registry.cn-shanghai.cr.aliyuncs.com/ilogtail-community-edition/ilogtail:latest
+第1行-d参数表示后台启动iLogtail容器，--name指定容器名称以便引用。
+第2行将主机/目录挂载到iLogtail容器中，iLogtail依赖logtail_host路径采集容器日志。
+第3行将主机/var/run目录挂载到iLogtail容器中，iLogtail依赖/var/run目录与容器引擎通信。
+第4行将主机目录挂载到容器中iLogtail的checkpoint目录，使采集状态在容器重启时可恢复。
+第5行将配置目录挂载到iLogtail容器中。

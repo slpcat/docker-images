@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: fluent-bit-sidecar-config
+  name: fluent-bit-sidecar-id01-config
   namespace: default
   labels:
-    k8s-app: fluent-bit-sidecar
+    k8s-app: fluent-bit-sidecar-id01
 data:
   # Configuration files: server, input, filters and output
   # ======================================================

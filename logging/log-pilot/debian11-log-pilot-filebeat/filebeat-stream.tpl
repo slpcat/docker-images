@@ -1,5 +1,6 @@
 {{range .configList}}
-- type: log
+- type: filestream
+  id: path-{{ .HostDir }}/{{ .File }}
   enabled: true
   paths:
       - {{ .HostDir }}/{{ .File }}
@@ -20,15 +21,15 @@
       {{ $key }}: {{ $value }}
       {{end}}
   tail_files: false
-  close_inactive: 2h
+  close_inactive: 4h
   close_eof: false
   close_removed: true
   clean_removed: true
   close_renamed: true
-  harvester_buffer_size: 524288
-  backoff: 4s
-  max_backoff: 32s
-  max_bytes: 4194304
+  buffer_size: 16777216
+  message_max_bytes: 10485760
+  backoff.init: 4s
+  backoff.max: 32s
   clean_inactive: 73h
   ignore_older: 72h
   harvester_limit: 1024

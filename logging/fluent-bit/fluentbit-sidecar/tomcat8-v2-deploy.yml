@@ -153,4 +153,4 @@ spec:
         emptyDir: {}
       - name: fluent-bit-sidecar-config
         configMap:
-          name: fluent-bit-sidecar-config
+          name: fluent-bit-sidecar-id01-config

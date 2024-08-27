@@ -25,6 +25,18 @@ docker run -d --restart=always --net=host \
     --cap-add SYS_ADMIN \
     registry.cn-hangzhou.aliyuncs.com/acs/log-pilot:0.9.5-filebeat
 
+
+docker run -d \
+   --name log-pilot-filebeat \
+   -v /run/k3s/containerd/containerd.sock:/var/run/containerd/containerd.sock \
+   -v /etc/localtime:/etc/localtime \
+   -v /:/host:ro \
+   --cap-add SYS_ADMIN \
+   -e LOGGING_OUTPUT=elasticsearch \
+   -e ELASTICSEARCH_HOSTS=es_host:9200 \
+   --restart=always \
+   log-pilot-filebeat:containerd
+
 版本列表
 registry.cn-hangzhou.aliyuncs.com/acs/log-pilot:0.9.5-filebeat
 registry.cn-hangzhou.aliyuncs.com/acs/log-pilot:0.9.7-filebeat
