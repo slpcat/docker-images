@@ -1,0 +1,77 @@
+#
+# Copyright (c) 2021-2023 NVIDIA CORPORATION & AFFILIATES, ALL RIGHTS RESERVED.
+#
+# This software product is a proprietary product of NVIDIA CORPORATION &
+# AFFILIATES (the "Company") and all right, title, and interest in and to the
+# software product, including all associated intellectual property rights, are
+# and shall remain exclusively with the Company.
+#
+# This software product is governed by the End User License Agreement
+# provided with the software product.
+#
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: snap
+spec:
+  hostNetwork: true
+  containers:
+  - name: snap
+    image: nvcr.io/nvidia/doca/doca_snap:4.3.1-doca2.6.0
+    imagePullPolicy: IfNotPresent
+    securityContext:
+      privileged: true
+      capabilities:
+        add: ["IPC_LOCK", "SYS_RAWIO", "SYS_NICE"]
+    volumeMounts:
+    - mountPath: /dev/hugepages
+      name: hugepages
+    - mountPath: /dev/shm
+      name: shm
+    - mountPath: /dev/infiniband
+      name: infiniband
+    - mountPath: /dev/vfio
+      name: vfio
+    - mountPath: /etc/nvda_snap
+      name: conf
+    - mountPath: /var/log/snap-log
+      name: snap-log
+    resources:
+      requests:
+        memory: "2Gi"
+        cpu: "8"
+      limits:
+        hugepages-2Mi: "2Gi"
+        memory: "4Gi"
+        cpu: "16"
+    env:
+      ## To enable XLIO un-comment SPDK_XLIO_PATH
+      #- name: SPDK_XLIO_PATH
+      #  value: "/usr/lib/libxlio.so"
+      ## App-Specific command line arguments
+      #- name: APP_ARGS
+      #  value: "--wait-for-rpc"
+      #- name: SPDK_RPC_INIT_CONF
+      #  value: "/etc/nvda_snap/spdk_rpc_init.conf"
+      #- name: SNAP_RPC_INIT_CONF
+      #  value: "/etc/nvda_snap/snap_rpc_init.conf"
+  volumes:
+  - name: hugepages
+    emptyDir:
+      medium: HugePages
+  - name: shm
+    hostPath:
+      path: /dev/shm
+  - name: infiniband
+    hostPath:
+      path: /dev/infiniband
+  - name: vfio
+    hostPath:
+      path: /dev/vfio
+  - name: conf
+    hostPath:
+      path: /etc/nvda_snap
+  - name: snap-log
+    hostPath:
+      path: /var/log/snap-log

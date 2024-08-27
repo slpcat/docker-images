@@ -1,0 +1,32 @@
+ GRUB_CMDLINE_LINUX="iommu=pt intel_iommu=on pci=assign-busses".
+
+https://docs.nvidia.com/doca/sdk/nvidia+bluefield+dpu+container+deployment+guide/index.html
+1.
+# Pull the entire resource as a *.zip file
+
+wget --content-disposition https://api.ngc.nvidia.com/v2/resources/nvidia/doca/doca_container_configs/versions/2.5.0v1/zip -O doca_container_configs_2.5.0v1.zip
+# Unzip the resource
+unzip -o doca_container_configs_2.5.0v1.zip -d doca_container_configs_2.5.0v1
+
+2.
+Deploy the DOCA service using Docker:
+
+The deployment is performed using the following command:
+
+sudo docker run --privileged --net=host -v <host directory>:<container directory> -e <env variables> -it <container tag> /entrypoint.sh
+
+sudo docker pull nvcr.io/nvidia/doca/doca_firefly:1.1.0-doca2.0.2-host
+
+Warning
+For DOCA services with deployments on both DPU and host, make sure to select the tag ending with -host.
+
+sudo docker run -v <source-code-folder>:/doca_devel -v /dev/hugepages:/dev/hugepages --privileged --net=host -it <image-name/ID>
+docker run --rm -d \
+  --privileged --net=host  \
+  -v /dev/hugepages:/dev/hugepages \
+  -v /dev/shm:/dev/shm \
+  -v /dev/infiniband:/dev/infiniband \
+  -v /dev/vfio:/dev/vfio \
+  -v /etc/nvda_snap:/etc/nvda_snap \
+  -v /var/log/snap-log:/var/log/snap-log \
+  slpcat/doca_snap:4.4.0-doca2.7.0

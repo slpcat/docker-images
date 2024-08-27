@@ -1,0 +1,32 @@
+Engineering Sample 跟零售版不同固件不能互换，官网支持有限，需要自行解决
+零售版直接用官网工具即可。
+
+本文适用型号 MBF2M345A-VENOT ES
+
+刷固件
+先刷1.5版本BFB
+bfb-install --bfb DOCA_1.5.1_BSP_3.9.3_Ubuntu_20.04-4.2211-LTS.signed.bfb --rshim rshim0
+然后登陆进卡，改密码
+然后
+sudo su root
+cd /opt/mellanox/mlnx-fw-updater/firmware
+./mlxfwmanager_sriov_dis_aarch64_41686
+y
+这样的话就可以得到24.35的固件
+
+
+然后关机拔电，冷启动
+接着刷新的系统
+bfb-install --bfb DOCA_2.6.0_BSP_4.6.0_Ubuntu_22.04-5.24-01.prod.bfb --rshim rshim0
+然后进卡，自己改密码
+去卡上装驱动然后刷，固件在驱动里面，刷的方式参考B站视频
+sudo su root
+dpkg -i --force-overwrite mlnx-fw-updater_24.01-0.3.3.1_arm64.deb 
+cd /opt/mellanox/mlnx-fw-updater/firmware
+./mlxfwmanager_sriov_dis_aarch64_41686
+实际测试下来，只有24.01-0.3.3.1有卡的固件，更新的版本没有。
+最终得到24.40的固件
+下载地址：
+https://linux.mellanox.com/public/repo/mlnx_ofed/24.01-0.3.3.1/ubuntu22.04/aarch64/mlnx-fw-updater_24.01-0.3.3.1_arm64.deb
+
+简化方式把以上两步的/opt/mellanox/mlnx-fw-updater/firmware/mlxfwmanager_sriov_dis_aarch64_41686 两个文件都拷走，直接刷入最新doca逐步升级固件
