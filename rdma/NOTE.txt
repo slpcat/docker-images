@@ -1,0 +1,58 @@
+https://github.com/Microsoft/Freeflow
+
+ docker pull rdma/container_tools_installer
+# docker run --net=host -v /usr/bin:/tmp rdma/container_tools_installer
+ 
+
+6. Start SR-IOV networking plugin
+
+# docker run -v /run/docker/plugins:/run/docker/plugins -v /etc/docker:/etc/docker -v /var/run:/var/run --net=host --privileged rdma/sriov-plugin
+
+ 
+
+7. Create one or more tenant networks
+
+# docker network create -d sriov --subnet=194.168.1.0/24 -o netdevice=ens2f0 mynet
+
+Run a container
+
+User must pick the free IP address for a subnet as sriov plugin is local plugin which can assign IP address only on per host level. Due to that two hosts can same IP addresses.
+
+Therefore user must chose a unique IP address for a VF in given subnet.
+
+# docker_rdma_sriov run --net=mynet --ip=194.168.1.2 -it mellanox/mlnx_ofed_linux-4.4-1.0.0.0-centos7.4 bash
+
+
+https://github.com/Mellanox/mofed_dockerfiles
+
+docker pull mellanox/mofed:23.10-1.1.9.0-ubuntu22.04-amd64
+
+https://github.com/NVIDIA/nvbandwidth
+
+https://github.com/coreweave/nccl-tests
+软件类型	版本详情
+预置操作系统	Ubuntu 20.04 server 64bit 宿主机
+nvidia-driver	525.105.17 宿主机
+nvidia-cuda	12.0 容器
+nvidia-fabricmanager	515.10.17（必须和nvidia-driver版本保持一致）
+mlnx-ofed-linux	5.8-2.0.3.0/5.4-3.6.8.1(可选)
+nvidia-peer-memory-dkms	1.2-0 宿主机
+nccl	libnccl2=2.16.2-1+cuda12.0 libnccl-dev=2.16.2-1+cuda12.0
+nccl-test	v.2.13.6
+
+参考：https://docs.nvidia.com/deeplearning/nccl/install-guide/index.html
+
+nccl和环境中cuda版本的配套的。配套关系和安装方法参考: https://developer.nvidia.com/nccl/nccl-legacy-downloads
+NCCL环境变量：
+
+NCCL_IB_GID_INDEX=3   ：数据包走交换机的队列4通道，这是RoCE协议标准。
+
+NCCL_IB_TC=128  ：使用RoCE v2协议，默认使用RoCE v1，但是v1在交换机上没有拥塞控制，可能丢包，而且后面的交换机不会支持v1，就跑不起来了。
+
+NCCL_ALGO=RING  ：
+
+nccl_test的总线bandwidth 是在假定是Ring算法的情况下 计算出来的。
+
+计算公式是有假设的： 总线带宽 = 算法带宽 * 2 ( N-1 ) / N  ，算法带宽 = 数据量 / 时间
+
+但是这个计算公式的前提是用Ring算法，Tree算法的总线带宽不能这么算。

@@ -1,0 +1,14 @@
+FROM centos:centos7.2.1511
+RUN yum install -y perl numactl-libs gtk2 atk cairo gcc-gfortran tcsh libnl3 tcl tk python-devel pciutils make lsof redhat-rpm-config rpm-build libxml2-python ethtool iproute net-tools openssh-clients git openssh-server wget
+
+WORKDIR /tmp/
+
+RUN git clone https://github.com/esnet/iperf.git && cd iperf && ./configure --bindir=/usr/bin/ && make -j 8 && make install
+
+ENV MOFED_VER 4.4-1.0.0.0
+ENV OS_VER rhel7.2
+ENV PLATFORM x86_64
+
+RUN wget http://content.mellanox.com/ofed/MLNX_OFED-${MOFED_VER}/MLNX_OFED_LINUX-${MOFED_VER}-${OS_VER}-${PLATFORM}.tgz && \
+        tar -xvf MLNX_OFED_LINUX-${MOFED_VER}-${OS_VER}-${PLATFORM}.tgz && \
+        MLNX_OFED_LINUX-${MOFED_VER}-${OS_VER}-${PLATFORM}/mlnxofedinstall --user-space-only --without-fw-update --all --force
