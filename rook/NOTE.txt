@@ -1,0 +1,3 @@
+root 项目地址：https://github.com/rook/rook
+
+ rook 官方参考文档：https://rook.io/docs/rook/v0.9/ceph-quickstart.html
