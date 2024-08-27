@@ -1,0 +1,7 @@
+https://pingcode.com/
+PingCode 是简单易用的新一代研发管理平台，让研发管理
+自动化、数据化、智能化，帮助企业提升研发效能
+
+Jira Software 迁移至 PingCode
+Confluence 迁移至 PingCode
+
