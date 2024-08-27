@@ -1,0 +1,3545 @@
+---
+# Source: mayastor/templates/mayastor/priority-class/priority-class.yaml
+apiVersion: scheduling.k8s.io/v1
+description: Used for critical pods that must run in the cluster, which can be moved to another node if necessary.
+kind: PriorityClass
+metadata:
+  name: mayastor-cluster-critical
+preemptionPolicy: PreemptLowerPriority
+value: 1000000000
+---
+# Source: mayastor/charts/etcd/templates/pdb.yaml
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: mayastor-etcd
+  namespace: "mayastor"
+  labels:
+    app.kubernetes.io/name: etcd
+    helm.sh/chart: etcd-8.6.0
+    app.kubernetes.io/instance: mayastor
+    app.kubernetes.io/managed-by: Helm
+spec:
+  minAvailable: 51%
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: etcd
+      app.kubernetes.io/instance: mayastor
+---
+# Source: mayastor/charts/nats/templates/pdb.yaml
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: mayastor-nats
+  namespace: mayastor
+  labels:
+    helm.sh/chart: nats-0.19.14
+    app.kubernetes.io/name: nats
+    app.kubernetes.io/instance: mayastor
+    app.kubernetes.io/version: "2.9.17"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  maxUnavailable: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: nats
+      app.kubernetes.io/instance: mayastor
+---
+# Source: mayastor/charts/localpv-provisioner/templates/rbac.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: mayastor-localpv-provisioner
+  labels:
+    chart: localpv-provisioner-4.0.0
+    heritage: Helm
+    openebs.io/version: "4.0.0"
+    app: localpv-provisioner
+    release: mayastor
+    component: "localpv-provisioner"
+    openebs.io/component-name: openebs-localpv-provisioner
+---
+# Source: mayastor/charts/loki-stack/charts/loki/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    app: loki
+    chart: loki-2.16.0
+    release: mayastor
+    heritage: Helm
+  annotations:
+    {}
+  name: mayastor-loki
+  namespace: mayastor
+automountServiceAccountToken: true
+---
+# Source: mayastor/charts/loki-stack/charts/promtail/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: mayastor-promtail
+  namespace: mayastor
+  labels:
+    helm.sh/chart: promtail-6.13.1
+    app.kubernetes.io/name: promtail
+    app.kubernetes.io/instance: mayastor
+    app.kubernetes.io/version: "2.8.3"
+    app.kubernetes.io/managed-by: Helm
+---
+# Source: mayastor/charts/nats/templates/rbac.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: mayastor-nats
+  namespace: mayastor
+  labels:
+    helm.sh/chart: nats-0.19.14
+    app.kubernetes.io/name: nats
+    app.kubernetes.io/instance: mayastor
+    app.kubernetes.io/version: "2.9.17"
+    app.kubernetes.io/managed-by: Helm
+---
+# Source: mayastor/templates/mayastor/rbac/rbac.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: mayastor-service-account
+  namespace: mayastor
+  labels:
+    openebs.io/release: mayastor
+    openebs.io/version: 2.6.1
+---
+# Source: mayastor/charts/etcd/templates/token-secrets.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mayastor-etcd-jwt-token
+  namespace: "mayastor"
+  labels:
+    app.kubernetes.io/name: etcd
+    helm.sh/chart: etcd-8.6.0
+    app.kubernetes.io/instance: mayastor
+    app.kubernetes.io/managed-by: Helm
+type: Opaque
+data:
+  jwt-token.pem: "LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVktLS0tLQpNSUlKS2dJQkFBS0NBZ0VBdzZFVSsrQy9kdTJ3bFY0WDdiazExTkVobndkWUk2VjRtUjRaK1EzT1ByLzVPSGx3CjRqcnhkQnJ3OXZmN0FxbWlLMVZzT0lrM2tsUHo5UUtGdU01Qk0xVW5XQXRoTGR1QjVieWlNMjI1QkxnckRrUUUKUFUrMjIxQWEzTS81L3RlaGdQRU9BZ1JabHY2aXZEU0NQYzRrM3cwN2J6SDhEcjREZVZRSjg3cGJ1Rk16Y1NyNwpPZmlmVmZxNnRPZ0JzcGk4MVV4ZE14dmhyaWk5cFFZanM3eGlxTWs3VkFCRngvRUdyK1pIWkpHNU50QzM1TzZLCm53U2N6RHNuNmRad2VaeThUZjhjOUN3VkFEd2lKa25ObGUzV2lWZU5RWWlyWGhFMnVMTDF0cVNKMGFOMDVxSkEKZ1pudWdoNitvbmRTTzUwMTNzSm5LRjhXTStXZWwxaXg1aG5SSFhiNzc2OXN2T293UU9LY1RpSnZpNXhORllmOApmcVRtKzlhMDBOZzYyWEtiemY1RWtFaVpTajBHWXVTdzNLSFhpcThLRlhONThhUHNXY2JyT3NNaFdYUVMrM2ZSCjhtS25lT0xncUtCRyt2UU1BRUFrb0lsZWNydktvTFBrVmUyVmVOMEs0RFJ0bTAydjdrSTNoYVZZOGo4M2lEWTkKTjRJU0tDa2RpSVc2dHZrSEFyaXZoYVZ1Tm5RdTlKemhTU1pXWEtGdEsvelkyNUpxNUpGLzZDazdTYWtmbnE2bwpoOEN1Z1I1d01RNXNsbHVrMHNPTGxXWE5EOFI5Z2dYV1FzaTVNcUE0Q1RRVUxEWHVrWXhDTWd5VWJYSmZZaXppClI4K0p6VXpJTFljbjBpWS9SR2VqMXJhL2F3WFdpZzJ0YklJYmQ0TDZ5Sk9vQ3pmU3ZXKzJFSlA4NTlrQ0F3RUEKQVFLQ0FnQmZHQUVzUXQ2dlAvRXpXazdGWnQ5cytNK2dEeURnQ3dKcFk4RjZXQ1NtU2drcVU1WDAwblFtWFNZKwoxdUkwTkNNNWIwZXczN3FjcmFTTHQ5TXF0MC9vVlA5UUJCQVVDM3pFSVFLemZ5V056cnhYTGVibHFzY1hLb1EwClRBQ1l5VmFmYUEzSUd6YzFkOGZCTnNFTXJCVXVPNjlsYU9XK2dNME5nRFZxUFc5eVZUZFBUblphZ3FscFVQekwKRFhBdDBhTVJDQkxSMGo3TXVzOGMxYlFySFdyVDR5V3N1b2t4SE0rRVY2cmlqeGQ2TnREOVBwc3htenRnNTJ5SwpkWXV0QWV4aStaeW9jSGt3NlFvc2xIbVQ1TTRCYXdhbUVYcER1cGhnQmRYOUYxUkxER3E1NWFyM2xNemtnVzluCmFCc1lFVjVyVHhKNEJHaTFoMnVrNUI5dDI2VFRGUytjSlB2K2VkS0luTTlIdEF2SzlmWFlMbTZPTXdkYVQ4cTAKeFhPajQ4Y2loQ3VuMmFUcGtoMGZFeTVzZXF1aW5MY29XOERrUkh3N0RlZnovS1BqUTVxaDRFZFExWWkyeW1mUAo1RTd4TThVU2lHSHhZcllkYXQzMXJGM2U2N1ZIUGR3cWZTUTI3bERRU0lBUkdxS1laWm1ndDhYcS82K2tIMHhMCjQxY2g0d3hiZ3ZsdzhxQVhvaGtaakVsOC9LWTZXbjdPOHlGWmJjT2Q1WWpMMDVpdThzeWE1dmZaenVWeEladlgKaW1SU21WaUN3SWFOQzBYWitQRXZzUmFVQVBsYzFuZnBNWCsyMkMwdWlmNDlyTmJmREMzYnorU2ZFSlJWV2I1VwpDOVhyZGExd0N1NjNjaSsvYnpRbVlpamdTelMxelUrNjdSc1JHaExKWXIxQU5wTDBnUUtDQVFFQTVUR1BsOUh1CkxTeVZYbzRjTG9DdjJxakEzUEhSa2FYODdnUDZ6RlNzUVUzOE9pd0F3OFlKVHdSVFpiMFAzM2Q1ZUhQZmRzbVMKQWNOUmVnRHlmbXJNbmlJS0cwMG8vNXJ2bEhRZTIwOGxyWW1uclp0V1pqUmZQUjNJbnVBRFFQbStNVnNjbFMwZwpOZ0I5b2lyMmNlVDNySGU0Q0hOSEhGQU05Q3pBT2VnRkdUcmwvdVROVXlBUGwrQ0prQ3RvMHpmVEZyYmhqbUxsCklYOHBPc3RuSW9EdEVhbTdLaVByOVhSWk9RY0I5ZVlBNlhNaU5kUXNBL1hjc0hTbEw0cGVwVHBkY29QYmgrN0wKQUtyTVFXaFZ4YkViZ3ZFLzhOWGtMV2o0NDNQWlIwTXlSSk1tcGF1cWFmM3dpeWRjTkN0L3ErTWZHOXY2b28rTwpKM1Rpb0tMTmpteGZFUUtDQVFFQTJvS01PSHlPaEU0SjhXelFXSmhMcUpBN1ZqTmZkYTVyQWNFdlJxVjMrSzdKClQwejJicTRlTXNRSnNRbENLY1c4UFJzUmFJZGo1OC9CMVJ1VFQ1NXJTQ1g3NTcxREc2bGMwWTZoMC9UVzh2OXUKTjYydnBFZ0dZMjR2Q1R0YnpHT0V0Vm02bUdRL2dwQ2lMQTVRZTZ5WGJzR1lPTHFISzZFY3hDbEYreEhyWnQ3Mwp6bDA3T2RmNVAwbHFKWUpNc2lSblNYZWJhT3Z3Ly9lN2JRWDJETks0NFZTR3FvZWowTk9CUVVzdlNXclQ2MzdMCkhyaldaQWI0bGlhYlF3bEYwWms1WXovRjNvbzZSbU9ZWExtQ3N6RUxWdUtoWVhmWWdZZ0pGaEpsYWJSRkpLMDAKRGVzek5pUWpheWQ2NFIrY05DMEo2bmlXZUtFZkYwTW4zbm1YYXBFTVNRS0NBUUVBcmxIUnUxRktiRVY2bmw1TQpCUHFQeGltUDl2eGR2ditXcnBtTVNaa2xJczVqeHdMczJmcG4zaGVXTHMxcm96WEZ4OTJwMnpsWXVjcUt6OWFrCm1ZNDFieGpJd3hjZTFicEwrb2VQYUpKOFA4OXhIMVFFbE52RWpFRjQ4NDNDSzh0SDQxWS9HUjhuWHF0azR0RDIKZkkzLzZzZHJ5OUdTQm5ERVNYczRBVkw5ZmNFVWFaZ3dxc2E1MVhSTWJNRDNpNTdzQ0Z5MGxZMldaTEhJOUJUOApybnVNMUdCYUlLVU50TFQzbjY0NnlZSlVzenFFakppQm1jbUlQeFdaQmQyaU90MTNjYi9rV3pFK2FaVitvVWp2CjQ5cmU1K3NDRFBWQ0JWL1AzWCtoaE5nUkJhTStROGViWjk1aTlCUE54MGhHWkwvc1MwNDNCU2xXbjZBQk50aGMKcTdTMVlRS0NBUUVBZ2hvS3ZUTkVjL2czS1YwOXJCSjVzZEsyMGJ0aTBpSFlxc0hJa1VyQ1pQcEUrSWQ5anlieQo2ZzBaTENTMEZVVWJzRkptaWhOYTQ5SXF1ZVZpVDV5bWlkMjc0QjRyVDlRR1pPdUU1VHU1cEJOOEg0QzF2SjM1CjE4ZnFENWdkTDFQdDEwQ212a2VxSE9aYStOcEpCMm9hL0NJZXJXQTZUVHJ2Y3NpVVYwb3pIQndUOWZaQzVrejIKcGJ6amk1UEtjS01HTUpNYm9Gd2pNWFRpVHFhbStybVl4T2xjQ1RzYnlhRzFLeGhGL25PeDNGeXhPZ2laOWhMRQpmanBjWll5bTJvWmR5ZjlWcEF3dmFHdXljenN0Vzk0T3Yxdk85TWF6eldRZTdOcGxNWXZaUTE0eFNUeEtVS2t4CndZSlBRcTFjaHlCdDhBSityVEpaM2JMcGtTaGFoR1A2cVFLQ0FRRUFrYm5ZdDc1M3VQdkJaUWNnUUZFODNzMEsKQkg4NHZLOG1NRk1tcUZXSm1jb01LaEF0ZHB4eEIrQ2swOGJXUEZHTXVyME5DK0c5OG5ERjBTQlFyS0hyTllPbgpDVkl0dmJLdFBzTjM4aTNMK1c0enZvaHdDQlZMTFhLUkJveGxIQ2d4YmM3ZzhyTnhkU0M1WWZRQXhVRlRXc2FJCmRtaC9UTDB2eHE4eiticVdWWTMweGtNYXZVVHpkY3lBRlgvZDArQ2dHTDdrNytuUDFnTVlVL2JRc0VZN3BsdUgKUzFtWkZxU24ydWtvOHBXMnZKU1hwUGUrZ1FXMTBRY25HT0RvNUlhbzNlQXNZVHQ3SE91eURmdXk1MFVrZjYzSAprNkVDYldoTWx1bjR2UjZXVlFPSlZkMWpKUVl4WGcyMEdkSzZuTVU1cmZYNVl1LzRoNGFDNk0zcXVIWG5Vdz09Ci0tLS0tRU5EIFJTQSBQUklWQVRFIEtFWS0tLS0tCg=="
+---
+# Source: mayastor/charts/loki-stack/charts/loki/templates/secret.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mayastor-loki
+  namespace: mayastor
+  labels:
+    app: loki
+    chart: loki-2.16.0
+    release: mayastor
+    heritage: Helm
+data:
+  loki.yaml: YXV0aF9lbmFibGVkOiBmYWxzZQpjaHVua19zdG9yZV9jb25maWc6CiAgbWF4X2xvb2tfYmFja19wZXJpb2Q6IDBzCmNvbXBhY3RvcjoKICBjb21wYWN0aW9uX2ludGVydmFsOiAyMG0KICByZXRlbnRpb25fZGVsZXRlX2RlbGF5OiAxaAogIHJldGVudGlvbl9kZWxldGVfd29ya2VyX2NvdW50OiA1MAogIHJldGVudGlvbl9lbmFibGVkOiB0cnVlCiAgc2hhcmVkX3N0b3JlOiBmaWxlc3lzdGVtCiAgd29ya2luZ19kaXJlY3Rvcnk6IC9kYXRhL2xva2kvYm9sdGRiLXNoaXBwZXItY29tcGFjdG9yCmluZ2VzdGVyOgogIGNodW5rX2Jsb2NrX3NpemU6IDI2MjE0NAogIGNodW5rX2lkbGVfcGVyaW9kOiAzbQogIGNodW5rX3JldGFpbl9wZXJpb2Q6IDFtCiAgbGlmZWN5Y2xlcjoKICAgIHJpbmc6CiAgICAgIHJlcGxpY2F0aW9uX2ZhY3RvcjogMQogIG1heF90cmFuc2Zlcl9yZXRyaWVzOiAwCiAgd2FsOgogICAgZGlyOiAvZGF0YS9sb2tpL3dhbApsaW1pdHNfY29uZmlnOgogIGVuZm9yY2VfbWV0cmljX25hbWU6IGZhbHNlCiAgbWF4X2VudHJpZXNfbGltaXRfcGVyX3F1ZXJ5OiA1MDAwCiAgcmVqZWN0X29sZF9zYW1wbGVzOiB0cnVlCiAgcmVqZWN0X29sZF9zYW1wbGVzX21heF9hZ2U6IDE2OGgKICByZXRlbnRpb25fcGVyaW9kOiAxNjhoCm1lbWJlcmxpc3Q6CiAgam9pbl9tZW1iZXJzOgogIC0gJ21heWFzdG9yLWxva2ktbWVtYmVybGlzdCcKc2NoZW1hX2NvbmZpZzoKICBjb25maWdzOgogIC0gZnJvbTogIjIwMjAtMTAtMjQiCiAgICBpbmRleDoKICAgICAgcGVyaW9kOiAyNGgKICAgICAgcHJlZml4OiBpbmRleF8KICAgIG9iamVjdF9zdG9yZTogZmlsZXN5c3RlbQogICAgc2NoZW1hOiB2MTEKICAgIHN0b3JlOiBib2x0ZGItc2hpcHBlcgpzZXJ2ZXI6CiAgZ3JwY19saXN0ZW5fcG9ydDogOTA5NQogIGh0dHBfbGlzdGVuX3BvcnQ6IDMxMDAKc3RvcmFnZV9jb25maWc6CiAgYm9sdGRiX3NoaXBwZXI6CiAgICBhY3RpdmVfaW5kZXhfZGlyZWN0b3J5OiAvZGF0YS9sb2tpL2JvbHRkYi1zaGlwcGVyLWFjdGl2ZQogICAgY2FjaGVfbG9jYXRpb246IC9kYXRhL2xva2kvYm9sdGRiLXNoaXBwZXItY2FjaGUKICAgIGNhY2hlX3R0bDogMjRoCiAgICBzaGFyZWRfc3RvcmU6IGZpbGVzeXN0ZW0KICBmaWxlc3lzdGVtOgogICAgZGlyZWN0b3J5OiAvZGF0YS9sb2tpL2NodW5rcwp0YWJsZV9tYW5hZ2VyOgogIHJldGVudGlvbl9kZWxldGVzX2VuYWJsZWQ6IGZhbHNlCiAgcmV0ZW50aW9uX3BlcmlvZDogMHM=
+---
+# Source: mayastor/charts/loki-stack/charts/promtail/templates/secret.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mayastor-promtail
+  namespace: mayastor
+  labels:
+    helm.sh/chart: promtail-6.13.1
+    app.kubernetes.io/name: promtail
+    app.kubernetes.io/instance: mayastor
+    app.kubernetes.io/version: "2.8.3"
+    app.kubernetes.io/managed-by: Helm
+stringData:
+  promtail.yaml: |
+    server:
+      log_level: info
+      log_format: logfmt
+      http_listen_port: 3101
+      health_check_target: false
+    
+    clients:
+      - url: http://mayastor-loki:3100/loki/api/v1/push
+    
+    positions:
+      filename: /run/promtail/positions.yaml
+    
+    scrape_configs:
+      - job_name: mayastor-pods-name
+        pipeline_stages:
+          - docker: {}
+          - replace:
+              expression: '(\n)'
+              replace: ''
+          - multiline:
+              firstline: '^  \x1b\[2m(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}).(\d{6})Z'
+              max_wait_time: 3s
+          - multiline:
+              firstline: '^  (\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}).(\d{6})Z'
+              max_wait_time: 3s
+        kubernetes_sd_configs:
+        - role: pod
+        relabel_configs:
+        - source_labels:
+          - __meta_kubernetes_pod_node_name
+          target_label: hostname
+          action: replace
+        - action: labelmap
+          regex: __meta_kubernetes_pod_label_(.+)
+        - action: keep
+          source_labels:
+          - __meta_kubernetes_pod_label_openebs_io_logging
+          regex: true
+          target_label: mayastor_component
+        - action: replace
+          replacement: $1
+          separator: /
+          source_labels:
+          - __meta_kubernetes_namespace
+          target_label: job
+        - action: replace
+          source_labels:
+          - __meta_kubernetes_pod_name
+          target_label: pod
+        - action: replace
+          source_labels:
+          - __meta_kubernetes_pod_container_name
+          target_label: container
+        - replacement: /var/log/pods/*$1/*.log
+          separator: /
+          source_labels:
+          - __meta_kubernetes_pod_uid
+          - __meta_kubernetes_pod_container_name
+          target_label: __path__
+      
+      
+    
+    limits_config:
+      
+    
+    tracing:
+      enabled: false
+---
+# Source: mayastor/charts/loki-stack/templates/datasources.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mayastor-loki-stack
+  namespace: mayastor
+  labels:
+    app: loki-stack
+    chart: loki-stack-2.9.11
+    release: mayastor
+    heritage: Helm
+    grafana_datasource: "1"
+data:
+  loki-stack-datasource.yaml: |-
+    apiVersion: 1
+    datasources:
+    - name: Loki
+      type: loki
+      access: proxy
+      url: "http://mayastor-loki:3100"
+      version: 1
+      isDefault: true
+      jsonData:
+        {}
+---
+# Source: mayastor/charts/loki-stack/templates/tests/loki-test-configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mayastor-loki-stack-test
+  labels:
+    app: loki-stack
+    chart: loki-stack-2.9.11
+    release: mayastor
+    heritage: Helm
+data:
+  test.sh: |
+    #!/usr/bin/env bash
+
+    LOKI_URI="http://${LOKI_SERVICE}:${LOKI_PORT}"
+
+    function setup() {
+      apk add -u curl jq
+      until (curl -s ${LOKI_URI}/loki/api/v1/label/app/values | jq -e '.data[] | select(. == "loki")'); do
+        sleep 1
+      done
+    }
+
+    @test "Has labels" {
+      curl -s ${LOKI_URI}/loki/api/v1/labels | \
+      jq -e '.data[] | select(. == "app")'
+    }
+
+    @test "Query log entry" {
+      curl -sG ${LOKI_URI}/api/prom/query?limit=10 --data-urlencode 'query={app="loki"}' | \
+      jq -e '.streams[].entries | length >=1'
+    }
+
+    @test "Push log entry" {
+      local timestamp=$(date +%s000000000)
+      local data=$(jq -n --arg timestamp "${timestamp}" '{"streams": [{"stream": {"app": "loki-test"}, "values": [[$timestamp, "foobar"]]}]}')
+
+      curl -s -X POST -H "Content-Type: application/json" ${LOKI_URI}/loki/api/v1/push --data-raw "${data}"
+
+      curl -sG ${LOKI_URI}/loki/api/v1/query_range?limit=1 --data-urlencode 'query={app="loki-test"}' | \
+      jq -e '.data.result[].values[][1] == "foobar"'
+    }
+---
+# Source: mayastor/charts/nats/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mayastor-nats-config
+  namespace: mayastor
+  labels:
+    helm.sh/chart: nats-0.19.14
+    app.kubernetes.io/name: nats
+    app.kubernetes.io/instance: mayastor
+    app.kubernetes.io/version: "2.9.17"
+    app.kubernetes.io/managed-by: Helm
+data:
+  nats.conf: |
+    # NATS Clients Port
+    port: 4222
+
+    # PID file shared with configuration reloader.
+    pid_file: "/var/run/nats/nats.pid"
+
+    ###############
+    #             #
+    # Monitoring  #
+    #             #
+    ###############
+    http: 8222
+    server_name:$POD_NAME
+    ###################################
+    #                                 #
+    # NATS JetStream                  #
+    #                                 #
+    ###################################
+    jetstream {
+      max_mem: 5Mi
+    }
+    ###################################
+    #                                 #
+    # NATS Full Mesh Clustering Setup #
+    #                                 #
+    ###################################
+    cluster {
+      port: 6222
+      name: nats
+
+      routes = [
+        nats://mayastor-nats-0.mayastor-nats.mayastor:6222,nats://mayastor-nats-1.mayastor-nats.mayastor:6222,nats://mayastor-nats-2.mayastor-nats.mayastor:6222,
+        
+      ]
+      cluster_advertise: $CLUSTER_ADVERTISE
+
+      connect_retries: 120
+    }
+    lame_duck_grace_period: 10s
+    lame_duck_duration: 30s
+---
+# Source: mayastor/templates/etcd/storage/localpv-storageclass.yaml
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  annotations:
+    cas.openebs.io/config: |
+      - name: StorageType
+        value: "hostpath"
+      - name: BasePath
+        value: "/var/local/mayastor/localpv-hostpath/etcd"
+    openebs.io/cas-type: local
+  name: mayastor-etcd-localpv
+provisioner: openebs.io/local
+reclaimPolicy: Delete
+volumeBindingMode: WaitForFirstConsumer
+---
+# Source: mayastor/templates/loki-stack/storage/localpv-storageclass.yaml
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  annotations:
+    cas.openebs.io/config: |
+      - name: StorageType
+        value: "hostpath"
+      - name: BasePath
+        value: "/var/local/mayastor/localpv-hostpath/loki"
+    openebs.io/cas-type: local
+  name: mayastor-loki-localpv
+provisioner: openebs.io/local
+reclaimPolicy: Delete
+volumeBindingMode: WaitForFirstConsumer
+---
+# Source: mayastor/templates/storageclass.yaml
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: mayastor-single-replica
+allowVolumeExpansion: true
+parameters:
+
+
+  
+          
+  "protocol": "nvmf"
+  "repl": "1"
+provisioner: io.openebs.csi-mayastor
+---
+# Source: mayastor/charts/crds/templates/csi-volume-snapshot-class.yaml
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    api-approved.kubernetes.io: https://github.com/kubernetes-csi/external-snapshotter/pull/814
+    controller-gen.kubebuilder.io/version: v0.11.3
+    helm.sh/resource-policy: keep
+    
+  creationTimestamp: null
+  name: volumesnapshotclasses.snapshot.storage.k8s.io
+spec:
+  group: snapshot.storage.k8s.io
+  names:
+    kind: VolumeSnapshotClass
+    listKind: VolumeSnapshotClassList
+    plural: volumesnapshotclasses
+    shortNames:
+      - vsclass
+      - vsclasses
+    singular: volumesnapshotclass
+  scope: Cluster
+  versions:
+    - additionalPrinterColumns:
+        - jsonPath: .driver
+          name: Driver
+          type: string
+        - description: Determines whether a VolumeSnapshotContent created through the
+            VolumeSnapshotClass should be deleted when its bound VolumeSnapshot is deleted.
+          jsonPath: .deletionPolicy
+          name: DeletionPolicy
+          type: string
+        - jsonPath: .metadata.creationTimestamp
+          name: Age
+          type: date
+      name: v1
+      schema:
+        openAPIV3Schema:
+          description: VolumeSnapshotClass specifies parameters that a underlying storage
+            system uses when creating a volume snapshot. A specific VolumeSnapshotClass
+            is used by specifying its name in a VolumeSnapshot object. VolumeSnapshotClasses
+            are non-namespaced
+          properties:
+            apiVersion:
+              description: 'APIVersion defines the versioned schema of this representation
+              of an object. Servers should convert recognized schemas to the latest
+              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+              type: string
+            deletionPolicy:
+              description: deletionPolicy determines whether a VolumeSnapshotContent
+                created through the VolumeSnapshotClass should be deleted when its bound
+                VolumeSnapshot is deleted. Supported values are "Retain" and "Delete".
+                "Retain" means that the VolumeSnapshotContent and its physical snapshot
+                on underlying storage system are kept. "Delete" means that the VolumeSnapshotContent
+                and its physical snapshot on underlying storage system are deleted.
+                Required.
+              enum:
+                - Delete
+                - Retain
+              type: string
+            driver:
+              description: driver is the name of the storage driver that handles this
+                VolumeSnapshotClass. Required.
+              type: string
+            kind:
+              description: 'Kind is a string value representing the REST resource this
+              object represents. Servers may infer this from the endpoint the client
+              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+              type: string
+            parameters:
+              additionalProperties:
+                type: string
+              description: parameters is a key-value map with storage driver specific
+                parameters for creating snapshots. These values are opaque to Kubernetes.
+              type: object
+          required:
+            - deletionPolicy
+            - driver
+          type: object
+      served: true
+      storage: true
+      subresources: {}
+    - additionalPrinterColumns:
+        - jsonPath: .driver
+          name: Driver
+          type: string
+        - description: Determines whether a VolumeSnapshotContent created through the
+            VolumeSnapshotClass should be deleted when its bound VolumeSnapshot is deleted.
+          jsonPath: .deletionPolicy
+          name: DeletionPolicy
+          type: string
+        - jsonPath: .metadata.creationTimestamp
+          name: Age
+          type: date
+      deprecated: true
+      deprecationWarning: snapshot.storage.k8s.io/v1beta1 VolumeSnapshotClass is deprecated;
+        use snapshot.storage.k8s.io/v1 VolumeSnapshotClass
+      name: v1beta1
+      schema:
+        openAPIV3Schema:
+          description: VolumeSnapshotClass specifies parameters that a underlying storage
+            system uses when creating a volume snapshot. A specific VolumeSnapshotClass
+            is used by specifying its name in a VolumeSnapshot object. VolumeSnapshotClasses
+            are non-namespaced
+          properties:
+            apiVersion:
+              description: 'APIVersion defines the versioned schema of this representation
+              of an object. Servers should convert recognized schemas to the latest
+              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+              type: string
+            deletionPolicy:
+              description: deletionPolicy determines whether a VolumeSnapshotContent
+                created through the VolumeSnapshotClass should be deleted when its bound
+                VolumeSnapshot is deleted. Supported values are "Retain" and "Delete".
+                "Retain" means that the VolumeSnapshotContent and its physical snapshot
+                on underlying storage system are kept. "Delete" means that the VolumeSnapshotContent
+                and its physical snapshot on underlying storage system are deleted.
+                Required.
+              enum:
+                - Delete
+                - Retain
+              type: string
+            driver:
+              description: driver is the name of the storage driver that handles this
+                VolumeSnapshotClass. Required.
+              type: string
+            kind:
+              description: 'Kind is a string value representing the REST resource this
+              object represents. Servers may infer this from the endpoint the client
+              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+              type: string
+            parameters:
+              additionalProperties:
+                type: string
+              description: parameters is a key-value map with storage driver specific
+                parameters for creating snapshots. These values are opaque to Kubernetes.
+              type: object
+          required:
+            - deletionPolicy
+            - driver
+          type: object
+      served: false
+      storage: false
+      subresources: {}
+status:
+  acceptedNames:
+    kind: ""
+    plural: ""
+  conditions: []
+  storedVersions: []
+---
+# Source: mayastor/charts/crds/templates/csi-volume-snapshot-content.yaml
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    api-approved.kubernetes.io: https://github.com/kubernetes-csi/external-snapshotter/pull/814
+    controller-gen.kubebuilder.io/version: v0.11.3
+    helm.sh/resource-policy: keep
+    
+  creationTimestamp: null
+  name: volumesnapshotcontents.snapshot.storage.k8s.io
+spec:
+  group: snapshot.storage.k8s.io
+  names:
+    kind: VolumeSnapshotContent
+    listKind: VolumeSnapshotContentList
+    plural: volumesnapshotcontents
+    shortNames:
+      - vsc
+      - vscs
+    singular: volumesnapshotcontent
+  scope: Cluster
+  versions:
+    - additionalPrinterColumns:
+        - description: Indicates if the snapshot is ready to be used to restore a volume.
+          jsonPath: .status.readyToUse
+          name: ReadyToUse
+          type: boolean
+        - description: Represents the complete size of the snapshot in bytes
+          jsonPath: .status.restoreSize
+          name: RestoreSize
+          type: integer
+        - description: Determines whether this VolumeSnapshotContent and its physical
+            snapshot on the underlying storage system should be deleted when its bound
+            VolumeSnapshot is deleted.
+          jsonPath: .spec.deletionPolicy
+          name: DeletionPolicy
+          type: string
+        - description: Name of the CSI driver used to create the physical snapshot on
+            the underlying storage system.
+          jsonPath: .spec.driver
+          name: Driver
+          type: string
+        - description: Name of the VolumeSnapshotClass to which this snapshot belongs.
+          jsonPath: .spec.volumeSnapshotClassName
+          name: VolumeSnapshotClass
+          type: string
+        - description: Name of the VolumeSnapshot object to which this VolumeSnapshotContent
+            object is bound.
+          jsonPath: .spec.volumeSnapshotRef.name
+          name: VolumeSnapshot
+          type: string
+        - description: Namespace of the VolumeSnapshot object to which this VolumeSnapshotContent
+            object is bound.
+          jsonPath: .spec.volumeSnapshotRef.namespace
+          name: VolumeSnapshotNamespace
+          type: string
+        - jsonPath: .metadata.creationTimestamp
+          name: Age
+          type: date
+      name: v1
+      schema:
+        openAPIV3Schema:
+          description: VolumeSnapshotContent represents the actual "on-disk" snapshot
+            object in the underlying storage system
+          properties:
+            apiVersion:
+              description: 'APIVersion defines the versioned schema of this representation
+              of an object. Servers should convert recognized schemas to the latest
+              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+              type: string
+            kind:
+              description: 'Kind is a string value representing the REST resource this
+              object represents. Servers may infer this from the endpoint the client
+              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+              type: string
+            spec:
+              description: spec defines properties of a VolumeSnapshotContent created
+                by the underlying storage system. Required.
+              properties:
+                deletionPolicy:
+                  description: deletionPolicy determines whether this VolumeSnapshotContent
+                    and its physical snapshot on the underlying storage system should
+                    be deleted when its bound VolumeSnapshot is deleted. Supported values
+                    are "Retain" and "Delete". "Retain" means that the VolumeSnapshotContent
+                    and its physical snapshot on underlying storage system are kept.
+                    "Delete" means that the VolumeSnapshotContent and its physical snapshot
+                    on underlying storage system are deleted. For dynamically provisioned
+                    snapshots, this field will automatically be filled in by the CSI
+                    snapshotter sidecar with the "DeletionPolicy" field defined in the
+                    corresponding VolumeSnapshotClass. For pre-existing snapshots, users
+                    MUST specify this field when creating the VolumeSnapshotContent
+                    object. Required.
+                  enum:
+                    - Delete
+                    - Retain
+                  type: string
+                driver:
+                  description: driver is the name of the CSI driver used to create the
+                    physical snapshot on the underlying storage system. This MUST be
+                    the same as the name returned by the CSI GetPluginName() call for
+                    that driver. Required.
+                  type: string
+                source:
+                  description: source specifies whether the snapshot is (or should be)
+                    dynamically provisioned or already exists, and just requires a Kubernetes
+                    object representation. This field is immutable after creation. Required.
+                  oneOf:
+                    - required:
+                        - snapshotHandle
+                    - required:
+                        - volumeHandle
+                  properties:
+                    snapshotHandle:
+                      description: snapshotHandle specifies the CSI "snapshot_id" of
+                        a pre-existing snapshot on the underlying storage system for
+                        which a Kubernetes object representation was (or should be)
+                        created. This field is immutable.
+                      type: string
+                    volumeHandle:
+                      description: volumeHandle specifies the CSI "volume_id" of the
+                        volume from which a snapshot should be dynamically taken from.
+                        This field is immutable.
+                      type: string
+                  type: object
+                sourceVolumeMode:
+                  description: SourceVolumeMode is the mode of the volume whose snapshot
+                    is taken. Can be either “Filesystem” or “Block”. If not specified,
+                    it indicates the source volume's mode is unknown. This field is
+                    immutable. This field is an alpha field.
+                  type: string
+                volumeSnapshotClassName:
+                  description: name of the VolumeSnapshotClass from which this snapshot
+                    was (or will be) created. Note that after provisioning, the VolumeSnapshotClass
+                    may be deleted or recreated with different set of values, and as
+                    such, should not be referenced post-snapshot creation.
+                  type: string
+                volumeSnapshotRef:
+                  description: volumeSnapshotRef specifies the VolumeSnapshot object
+                    to which this VolumeSnapshotContent object is bound. VolumeSnapshot.Spec.VolumeSnapshotContentName
+                    field must reference to this VolumeSnapshotContent's name for the
+                    bidirectional binding to be valid. For a pre-existing VolumeSnapshotContent
+                    object, name and namespace of the VolumeSnapshot object MUST be
+                    provided for binding to happen. This field is immutable after creation.
+                    Required.
+                  properties:
+                    apiVersion:
+                      description: API version of the referent.
+                      type: string
+                    fieldPath:
+                      description: 'If referring to a piece of an object instead of
+                      an entire object, this string should contain a valid JSON/Go
+                      field access statement, such as desiredState.manifest.containers[2].
+                      For example, if the object reference is to a container within
+                      a pod, this would take on a value like: "spec.containers{name}"
+                      (where "name" refers to the name of the container that triggered
+                      the event) or if no container name is specified "spec.containers[2]"
+                      (container with index 2 in this pod). This syntax is chosen
+                      only to have some well-defined way of referencing a part of
+                      an object. TODO: this design is not final and this field is
+                      subject to change in the future.'
+                      type: string
+                    kind:
+                      description: 'Kind of the referent. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+                      type: string
+                    name:
+                      description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names'
+                      type: string
+                    namespace:
+                      description: 'Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/'
+                      type: string
+                    resourceVersion:
+                      description: 'Specific resourceVersion to which this reference
+                      is made, if any. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#concurrency-control-and-consistency'
+                      type: string
+                    uid:
+                      description: 'UID of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#uids'
+                      type: string
+                  type: object
+                  x-kubernetes-map-type: atomic
+              required:
+                - deletionPolicy
+                - driver
+                - source
+                - volumeSnapshotRef
+              type: object
+            status:
+              description: status represents the current information of a snapshot.
+              properties:
+                creationTime:
+                  description: creationTime is the timestamp when the point-in-time
+                    snapshot is taken by the underlying storage system. In dynamic snapshot
+                    creation case, this field will be filled in by the CSI snapshotter
+                    sidecar with the "creation_time" value returned from CSI "CreateSnapshot"
+                    gRPC call. For a pre-existing snapshot, this field will be filled
+                    with the "creation_time" value returned from the CSI "ListSnapshots"
+                    gRPC call if the driver supports it. If not specified, it indicates
+                    the creation time is unknown. The format of this field is a Unix
+                    nanoseconds time encoded as an int64. On Unix, the command `date
+                    +%s%N` returns the current time in nanoseconds since 1970-01-01
+                    00:00:00 UTC.
+                  format: int64
+                  type: integer
+                error:
+                  description: error is the last observed error during snapshot creation,
+                    if any. Upon success after retry, this error field will be cleared.
+                  properties:
+                    message:
+                      description: 'message is a string detailing the encountered error
+                      during snapshot creation if specified. NOTE: message may be
+                      logged, and it should not contain sensitive information.'
+                      type: string
+                    time:
+                      description: time is the timestamp when the error was encountered.
+                      format: date-time
+                      type: string
+                  type: object
+                readyToUse:
+                  description: readyToUse indicates if a snapshot is ready to be used
+                    to restore a volume. In dynamic snapshot creation case, this field
+                    will be filled in by the CSI snapshotter sidecar with the "ready_to_use"
+                    value returned from CSI "CreateSnapshot" gRPC call. For a pre-existing
+                    snapshot, this field will be filled with the "ready_to_use" value
+                    returned from the CSI "ListSnapshots" gRPC call if the driver supports
+                    it, otherwise, this field will be set to "True". If not specified,
+                    it means the readiness of a snapshot is unknown.
+                  type: boolean
+                restoreSize:
+                  description: restoreSize represents the complete size of the snapshot
+                    in bytes. In dynamic snapshot creation case, this field will be
+                    filled in by the CSI snapshotter sidecar with the "size_bytes" value
+                    returned from CSI "CreateSnapshot" gRPC call. For a pre-existing
+                    snapshot, this field will be filled with the "size_bytes" value
+                    returned from the CSI "ListSnapshots" gRPC call if the driver supports
+                    it. When restoring a volume from this snapshot, the size of the
+                    volume MUST NOT be smaller than the restoreSize if it is specified,
+                    otherwise the restoration will fail. If not specified, it indicates
+                    that the size is unknown.
+                  format: int64
+                  minimum: 0
+                  type: integer
+                snapshotHandle:
+                  description: snapshotHandle is the CSI "snapshot_id" of a snapshot
+                    on the underlying storage system. If not specified, it indicates
+                    that dynamic snapshot creation has either failed or it is still
+                    in progress.
+                  type: string
+                volumeGroupSnapshotContentName:
+                  description: VolumeGroupSnapshotContentName is the name of the VolumeGroupSnapshotContent
+                    of which this VolumeSnapshotContent is a part of.
+                  type: string
+              type: object
+          required:
+            - spec
+          type: object
+      served: true
+      storage: true
+      subresources:
+        status: {}
+    - additionalPrinterColumns:
+        - description: Indicates if the snapshot is ready to be used to restore a volume.
+          jsonPath: .status.readyToUse
+          name: ReadyToUse
+          type: boolean
+        - description: Represents the complete size of the snapshot in bytes
+          jsonPath: .status.restoreSize
+          name: RestoreSize
+          type: integer
+        - description: Determines whether this VolumeSnapshotContent and its physical
+            snapshot on the underlying storage system should be deleted when its bound
+            VolumeSnapshot is deleted.
+          jsonPath: .spec.deletionPolicy
+          name: DeletionPolicy
+          type: string
+        - description: Name of the CSI driver used to create the physical snapshot on
+            the underlying storage system.
+          jsonPath: .spec.driver
+          name: Driver
+          type: string
+        - description: Name of the VolumeSnapshotClass to which this snapshot belongs.
+          jsonPath: .spec.volumeSnapshotClassName
+          name: VolumeSnapshotClass
+          type: string
+        - description: Name of the VolumeSnapshot object to which this VolumeSnapshotContent
+            object is bound.
+          jsonPath: .spec.volumeSnapshotRef.name
+          name: VolumeSnapshot
+          type: string
+        - description: Namespace of the VolumeSnapshot object to which this VolumeSnapshotContent
+            object is bound.
+          jsonPath: .spec.volumeSnapshotRef.namespace
+          name: VolumeSnapshotNamespace
+          type: string
+        - jsonPath: .metadata.creationTimestamp
+          name: Age
+          type: date
+      deprecated: true
+      deprecationWarning: snapshot.storage.k8s.io/v1beta1 VolumeSnapshotContent is deprecated;
+        use snapshot.storage.k8s.io/v1 VolumeSnapshotContent
+      name: v1beta1
+      schema:
+        openAPIV3Schema:
+          description: VolumeSnapshotContent represents the actual "on-disk" snapshot
+            object in the underlying storage system
+          properties:
+            apiVersion:
+              description: 'APIVersion defines the versioned schema of this representation
+              of an object. Servers should convert recognized schemas to the latest
+              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+              type: string
+            kind:
+              description: 'Kind is a string value representing the REST resource this
+              object represents. Servers may infer this from the endpoint the client
+              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+              type: string
+            spec:
+              description: spec defines properties of a VolumeSnapshotContent created
+                by the underlying storage system. Required.
+              properties:
+                deletionPolicy:
+                  description: deletionPolicy determines whether this VolumeSnapshotContent
+                    and its physical snapshot on the underlying storage system should
+                    be deleted when its bound VolumeSnapshot is deleted. Supported values
+                    are "Retain" and "Delete". "Retain" means that the VolumeSnapshotContent
+                    and its physical snapshot on underlying storage system are kept.
+                    "Delete" means that the VolumeSnapshotContent and its physical snapshot
+                    on underlying storage system are deleted. For dynamically provisioned
+                    snapshots, this field will automatically be filled in by the CSI
+                    snapshotter sidecar with the "DeletionPolicy" field defined in the
+                    corresponding VolumeSnapshotClass. For pre-existing snapshots, users
+                    MUST specify this field when creating the  VolumeSnapshotContent
+                    object. Required.
+                  enum:
+                    - Delete
+                    - Retain
+                  type: string
+                driver:
+                  description: driver is the name of the CSI driver used to create the
+                    physical snapshot on the underlying storage system. This MUST be
+                    the same as the name returned by the CSI GetPluginName() call for
+                    that driver. Required.
+                  type: string
+                source:
+                  description: source specifies whether the snapshot is (or should be)
+                    dynamically provisioned or already exists, and just requires a Kubernetes
+                    object representation. This field is immutable after creation. Required.
+                  properties:
+                    snapshotHandle:
+                      description: snapshotHandle specifies the CSI "snapshot_id" of
+                        a pre-existing snapshot on the underlying storage system for
+                        which a Kubernetes object representation was (or should be)
+                        created. This field is immutable.
+                      type: string
+                    volumeHandle:
+                      description: volumeHandle specifies the CSI "volume_id" of the
+                        volume from which a snapshot should be dynamically taken from.
+                        This field is immutable.
+                      type: string
+                  type: object
+                volumeSnapshotClassName:
+                  description: name of the VolumeSnapshotClass from which this snapshot
+                    was (or will be) created. Note that after provisioning, the VolumeSnapshotClass
+                    may be deleted or recreated with different set of values, and as
+                    such, should not be referenced post-snapshot creation.
+                  type: string
+                volumeSnapshotRef:
+                  description: volumeSnapshotRef specifies the VolumeSnapshot object
+                    to which this VolumeSnapshotContent object is bound. VolumeSnapshot.Spec.VolumeSnapshotContentName
+                    field must reference to this VolumeSnapshotContent's name for the
+                    bidirectional binding to be valid. For a pre-existing VolumeSnapshotContent
+                    object, name and namespace of the VolumeSnapshot object MUST be
+                    provided for binding to happen. This field is immutable after creation.
+                    Required.
+                  properties:
+                    apiVersion:
+                      description: API version of the referent.
+                      type: string
+                    fieldPath:
+                      description: 'If referring to a piece of an object instead of
+                      an entire object, this string should contain a valid JSON/Go
+                      field access statement, such as desiredState.manifest.containers[2].
+                      For example, if the object reference is to a container within
+                      a pod, this would take on a value like: "spec.containers{name}"
+                      (where "name" refers to the name of the container that triggered
+                      the event) or if no container name is specified "spec.containers[2]"
+                      (container with index 2 in this pod). This syntax is chosen
+                      only to have some well-defined way of referencing a part of
+                      an object. TODO: this design is not final and this field is
+                      subject to change in the future.'
+                      type: string
+                    kind:
+                      description: 'Kind of the referent. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+                      type: string
+                    name:
+                      description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names'
+                      type: string
+                    namespace:
+                      description: 'Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/'
+                      type: string
+                    resourceVersion:
+                      description: 'Specific resourceVersion to which this reference
+                      is made, if any. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#concurrency-control-and-consistency'
+                      type: string
+                    uid:
+                      description: 'UID of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#uids'
+                      type: string
+                  type: object
+              required:
+                - deletionPolicy
+                - driver
+                - source
+                - volumeSnapshotRef
+              type: object
+            status:
+              description: status represents the current information of a snapshot.
+              properties:
+                creationTime:
+                  description: creationTime is the timestamp when the point-in-time
+                    snapshot is taken by the underlying storage system. In dynamic snapshot
+                    creation case, this field will be filled in by the CSI snapshotter
+                    sidecar with the "creation_time" value returned from CSI "CreateSnapshot"
+                    gRPC call. For a pre-existing snapshot, this field will be filled
+                    with the "creation_time" value returned from the CSI "ListSnapshots"
+                    gRPC call if the driver supports it. If not specified, it indicates
+                    the creation time is unknown. The format of this field is a Unix
+                    nanoseconds time encoded as an int64. On Unix, the command `date
+                    +%s%N` returns the current time in nanoseconds since 1970-01-01
+                    00:00:00 UTC.
+                  format: int64
+                  type: integer
+                error:
+                  description: error is the last observed error during snapshot creation,
+                    if any. Upon success after retry, this error field will be cleared.
+                  properties:
+                    message:
+                      description: 'message is a string detailing the encountered error
+                      during snapshot creation if specified. NOTE: message may be
+                      logged, and it should not contain sensitive information.'
+                      type: string
+                    time:
+                      description: time is the timestamp when the error was encountered.
+                      format: date-time
+                      type: string
+                  type: object
+                readyToUse:
+                  description: readyToUse indicates if a snapshot is ready to be used
+                    to restore a volume. In dynamic snapshot creation case, this field
+                    will be filled in by the CSI snapshotter sidecar with the "ready_to_use"
+                    value returned from CSI "CreateSnapshot" gRPC call. For a pre-existing
+                    snapshot, this field will be filled with the "ready_to_use" value
+                    returned from the CSI "ListSnapshots" gRPC call if the driver supports
+                    it, otherwise, this field will be set to "True". If not specified,
+                    it means the readiness of a snapshot is unknown.
+                  type: boolean
+                restoreSize:
+                  description: restoreSize represents the complete size of the snapshot
+                    in bytes. In dynamic snapshot creation case, this field will be
+                    filled in by the CSI snapshotter sidecar with the "size_bytes" value
+                    returned from CSI "CreateSnapshot" gRPC call. For a pre-existing
+                    snapshot, this field will be filled with the "size_bytes" value
+                    returned from the CSI "ListSnapshots" gRPC call if the driver supports
+                    it. When restoring a volume from this snapshot, the size of the
+                    volume MUST NOT be smaller than the restoreSize if it is specified,
+                    otherwise the restoration will fail. If not specified, it indicates
+                    that the size is unknown.
+                  format: int64
+                  minimum: 0
+                  type: integer
+                snapshotHandle:
+                  description: snapshotHandle is the CSI "snapshot_id" of a snapshot
+                    on the underlying storage system. If not specified, it indicates
+                    that dynamic snapshot creation has either failed or it is still
+                    in progress.
+                  type: string
+              type: object
+          required:
+            - spec
+          type: object
+      served: false
+      storage: false
+      subresources:
+        status: {}
+status:
+  acceptedNames:
+    kind: ""
+    plural: ""
+  conditions: []
+  storedVersions: []
+---
+# Source: mayastor/charts/crds/templates/csi-volume-snapshot.yaml
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    api-approved.kubernetes.io: https://github.com/kubernetes-csi/external-snapshotter/pull/814
+    controller-gen.kubebuilder.io/version: v0.11.3
+    helm.sh/resource-policy: keep
+    
+  creationTimestamp: null
+  name: volumesnapshots.snapshot.storage.k8s.io
+spec:
+  group: snapshot.storage.k8s.io
+  names:
+    kind: VolumeSnapshot
+    listKind: VolumeSnapshotList
+    plural: volumesnapshots
+    shortNames:
+    - vs
+    singular: volumesnapshot
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - description: Indicates if the snapshot is ready to be used to restore a volume.
+      jsonPath: .status.readyToUse
+      name: ReadyToUse
+      type: boolean
+    - description: If a new snapshot needs to be created, this contains the name of
+        the source PVC from which this snapshot was (or will be) created.
+      jsonPath: .spec.source.persistentVolumeClaimName
+      name: SourcePVC
+      type: string
+    - description: If a snapshot already exists, this contains the name of the existing
+        VolumeSnapshotContent object representing the existing snapshot.
+      jsonPath: .spec.source.volumeSnapshotContentName
+      name: SourceSnapshotContent
+      type: string
+    - description: Represents the minimum size of volume required to rehydrate from
+        this snapshot.
+      jsonPath: .status.restoreSize
+      name: RestoreSize
+      type: string
+    - description: The name of the VolumeSnapshotClass requested by the VolumeSnapshot.
+      jsonPath: .spec.volumeSnapshotClassName
+      name: SnapshotClass
+      type: string
+    - description: Name of the VolumeSnapshotContent object to which the VolumeSnapshot
+        object intends to bind to. Please note that verification of binding actually
+        requires checking both VolumeSnapshot and VolumeSnapshotContent to ensure
+        both are pointing at each other. Binding MUST be verified prior to usage of
+        this object.
+      jsonPath: .status.boundVolumeSnapshotContentName
+      name: SnapshotContent
+      type: string
+    - description: Timestamp when the point-in-time snapshot was taken by the underlying
+        storage system.
+      jsonPath: .status.creationTime
+      name: CreationTime
+      type: date
+    - jsonPath: .metadata.creationTimestamp
+      name: Age
+      type: date
+    name: v1
+    schema:
+      openAPIV3Schema:
+        description: VolumeSnapshot is a user's request for either creating a point-in-time
+          snapshot of a persistent volume, or binding to a pre-existing snapshot.
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation
+              of an object. Servers should convert recognized schemas to the latest
+              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this
+              object represents. Servers may infer this from the endpoint the client
+              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            type: string
+          spec:
+            description: 'spec defines the desired characteristics of a snapshot requested
+              by a user. More info: https://kubernetes.io/docs/concepts/storage/volume-snapshots#volumesnapshots
+              Required.'
+            properties:
+              source:
+                description: source specifies where a snapshot will be created from.
+                  This field is immutable after creation. Required.
+                oneOf:
+                - required:
+                  - persistentVolumeClaimName
+                - required:
+                  - volumeSnapshotContentName
+                properties:
+                  persistentVolumeClaimName:
+                    description: persistentVolumeClaimName specifies the name of the
+                      PersistentVolumeClaim object representing the volume from which
+                      a snapshot should be created. This PVC is assumed to be in the
+                      same namespace as the VolumeSnapshot object. This field should
+                      be set if the snapshot does not exists, and needs to be created.
+                      This field is immutable.
+                    type: string
+                  volumeSnapshotContentName:
+                    description: volumeSnapshotContentName specifies the name of a
+                      pre-existing VolumeSnapshotContent object representing an existing
+                      volume snapshot. This field should be set if the snapshot already
+                      exists and only needs a representation in Kubernetes. This field
+                      is immutable.
+                    type: string
+                type: object
+              volumeSnapshotClassName:
+                description: 'VolumeSnapshotClassName is the name of the VolumeSnapshotClass
+                  requested by the VolumeSnapshot. VolumeSnapshotClassName may be
+                  left nil to indicate that the default SnapshotClass should be used.
+                  A given cluster may have multiple default Volume SnapshotClasses:
+                  one default per CSI Driver. If a VolumeSnapshot does not specify
+                  a SnapshotClass, VolumeSnapshotSource will be checked to figure
+                  out what the associated CSI Driver is, and the default VolumeSnapshotClass
+                  associated with that CSI Driver will be used. If more than one VolumeSnapshotClass
+                  exist for a given CSI Driver and more than one have been marked
+                  as default, CreateSnapshot will fail and generate an event. Empty
+                  string is not allowed for this field.'
+                type: string
+            required:
+            - source
+            type: object
+          status:
+            description: status represents the current information of a snapshot.
+              Consumers must verify binding between VolumeSnapshot and VolumeSnapshotContent
+              objects is successful (by validating that both VolumeSnapshot and VolumeSnapshotContent
+              point at each other) before using this object.
+            properties:
+              boundVolumeSnapshotContentName:
+                description: 'boundVolumeSnapshotContentName is the name of the VolumeSnapshotContent
+                  object to which this VolumeSnapshot object intends to bind to. If
+                  not specified, it indicates that the VolumeSnapshot object has not
+                  been successfully bound to a VolumeSnapshotContent object yet. NOTE:
+                  To avoid possible security issues, consumers must verify binding
+                  between VolumeSnapshot and VolumeSnapshotContent objects is successful
+                  (by validating that both VolumeSnapshot and VolumeSnapshotContent
+                  point at each other) before using this object.'
+                type: string
+              creationTime:
+                description: creationTime is the timestamp when the point-in-time
+                  snapshot is taken by the underlying storage system. In dynamic snapshot
+                  creation case, this field will be filled in by the snapshot controller
+                  with the "creation_time" value returned from CSI "CreateSnapshot"
+                  gRPC call. For a pre-existing snapshot, this field will be filled
+                  with the "creation_time" value returned from the CSI "ListSnapshots"
+                  gRPC call if the driver supports it. If not specified, it may indicate
+                  that the creation time of the snapshot is unknown.
+                format: date-time
+                type: string
+              error:
+                description: error is the last observed error during snapshot creation,
+                  if any. This field could be helpful to upper level controllers(i.e.,
+                  application controller) to decide whether they should continue on
+                  waiting for the snapshot to be created based on the type of error
+                  reported. The snapshot controller will keep retrying when an error
+                  occurs during the snapshot creation. Upon success, this error field
+                  will be cleared.
+                properties:
+                  message:
+                    description: 'message is a string detailing the encountered error
+                      during snapshot creation if specified. NOTE: message may be
+                      logged, and it should not contain sensitive information.'
+                    type: string
+                  time:
+                    description: time is the timestamp when the error was encountered.
+                    format: date-time
+                    type: string
+                type: object
+              readyToUse:
+                description: readyToUse indicates if the snapshot is ready to be used
+                  to restore a volume. In dynamic snapshot creation case, this field
+                  will be filled in by the snapshot controller with the "ready_to_use"
+                  value returned from CSI "CreateSnapshot" gRPC call. For a pre-existing
+                  snapshot, this field will be filled with the "ready_to_use" value
+                  returned from the CSI "ListSnapshots" gRPC call if the driver supports
+                  it, otherwise, this field will be set to "True". If not specified,
+                  it means the readiness of a snapshot is unknown.
+                type: boolean
+              restoreSize:
+                description: restoreSize represents the minimum size of volume required
+                  to create a volume from this snapshot. In dynamic snapshot creation
+                  case, this field will be filled in by the snapshot controller with
+                  the "size_bytes" value returned from CSI "CreateSnapshot" gRPC call.
+                  For a pre-existing snapshot, this field will be filled with the
+                  "size_bytes" value returned from the CSI "ListSnapshots" gRPC call
+                  if the driver supports it. When restoring a volume from this snapshot,
+                  the size of the volume MUST NOT be smaller than the restoreSize
+                  if it is specified, otherwise the restoration will fail. If not
+                  specified, it indicates that the size is unknown.
+                pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                type: string
+                x-kubernetes-int-or-string: true
+              volumeGroupSnapshotName:
+                description: VolumeGroupSnapshotName is the name of the VolumeGroupSnapshot
+                  of which this VolumeSnapshot is a part of.
+                type: string
+            type: object
+        required:
+        - spec
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+  - additionalPrinterColumns:
+    - description: Indicates if the snapshot is ready to be used to restore a volume.
+      jsonPath: .status.readyToUse
+      name: ReadyToUse
+      type: boolean
+    - description: If a new snapshot needs to be created, this contains the name of
+        the source PVC from which this snapshot was (or will be) created.
+      jsonPath: .spec.source.persistentVolumeClaimName
+      name: SourcePVC
+      type: string
+    - description: If a snapshot already exists, this contains the name of the existing
+        VolumeSnapshotContent object representing the existing snapshot.
+      jsonPath: .spec.source.volumeSnapshotContentName
+      name: SourceSnapshotContent
+      type: string
+    - description: Represents the minimum size of volume required to rehydrate from
+        this snapshot.
+      jsonPath: .status.restoreSize
+      name: RestoreSize
+      type: string
+    - description: The name of the VolumeSnapshotClass requested by the VolumeSnapshot.
+      jsonPath: .spec.volumeSnapshotClassName
+      name: SnapshotClass
+      type: string
+    - description: Name of the VolumeSnapshotContent object to which the VolumeSnapshot
+        object intends to bind to. Please note that verification of binding actually
+        requires checking both VolumeSnapshot and VolumeSnapshotContent to ensure
+        both are pointing at each other. Binding MUST be verified prior to usage of
+        this object.
+      jsonPath: .status.boundVolumeSnapshotContentName
+      name: SnapshotContent
+      type: string
+    - description: Timestamp when the point-in-time snapshot was taken by the underlying
+        storage system.
+      jsonPath: .status.creationTime
+      name: CreationTime
+      type: date
+    - jsonPath: .metadata.creationTimestamp
+      name: Age
+      type: date
+    deprecated: true
+    deprecationWarning: snapshot.storage.k8s.io/v1beta1 VolumeSnapshot is deprecated;
+      use snapshot.storage.k8s.io/v1 VolumeSnapshot
+    name: v1beta1
+    schema:
+      openAPIV3Schema:
+        description: VolumeSnapshot is a user's request for either creating a point-in-time
+          snapshot of a persistent volume, or binding to a pre-existing snapshot.
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation
+              of an object. Servers should convert recognized schemas to the latest
+              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this
+              object represents. Servers may infer this from the endpoint the client
+              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            type: string
+          spec:
+            description: 'spec defines the desired characteristics of a snapshot requested
+              by a user. More info: https://kubernetes.io/docs/concepts/storage/volume-snapshots#volumesnapshots
+              Required.'
+            properties:
+              source:
+                description: source specifies where a snapshot will be created from.
+                  This field is immutable after creation. Required.
+                properties:
+                  persistentVolumeClaimName:
+                    description: persistentVolumeClaimName specifies the name of the
+                      PersistentVolumeClaim object representing the volume from which
+                      a snapshot should be created. This PVC is assumed to be in the
+                      same namespace as the VolumeSnapshot object. This field should
+                      be set if the snapshot does not exists, and needs to be created.
+                      This field is immutable.
+                    type: string
+                  volumeSnapshotContentName:
+                    description: volumeSnapshotContentName specifies the name of a
+                      pre-existing VolumeSnapshotContent object representing an existing
+                      volume snapshot. This field should be set if the snapshot already
+                      exists and only needs a representation in Kubernetes. This field
+                      is immutable.
+                    type: string
+                type: object
+              volumeSnapshotClassName:
+                description: 'VolumeSnapshotClassName is the name of the VolumeSnapshotClass
+                  requested by the VolumeSnapshot. VolumeSnapshotClassName may be
+                  left nil to indicate that the default SnapshotClass should be used.
+                  A given cluster may have multiple default Volume SnapshotClasses:
+                  one default per CSI Driver. If a VolumeSnapshot does not specify
+                  a SnapshotClass, VolumeSnapshotSource will be checked to figure
+                  out what the associated CSI Driver is, and the default VolumeSnapshotClass
+                  associated with that CSI Driver will be used. If more than one VolumeSnapshotClass
+                  exist for a given CSI Driver and more than one have been marked
+                  as default, CreateSnapshot will fail and generate an event. Empty
+                  string is not allowed for this field.'
+                type: string
+            required:
+            - source
+            type: object
+          status:
+            description: status represents the current information of a snapshot.
+              Consumers must verify binding between VolumeSnapshot and VolumeSnapshotContent
+              objects is successful (by validating that both VolumeSnapshot and VolumeSnapshotContent
+              point at each other) before using this object.
+            properties:
+              boundVolumeSnapshotContentName:
+                description: 'boundVolumeSnapshotContentName is the name of the VolumeSnapshotContent
+                  object to which this VolumeSnapshot object intends to bind to. If
+                  not specified, it indicates that the VolumeSnapshot object has not
+                  been successfully bound to a VolumeSnapshotContent object yet. NOTE:
+                  To avoid possible security issues, consumers must verify binding
+                  between VolumeSnapshot and VolumeSnapshotContent objects is successful
+                  (by validating that both VolumeSnapshot and VolumeSnapshotContent
+                  point at each other) before using this object.'
+                type: string
+              creationTime:
+                description: creationTime is the timestamp when the point-in-time
+                  snapshot is taken by the underlying storage system. In dynamic snapshot
+                  creation case, this field will be filled in by the snapshot controller
+                  with the "creation_time" value returned from CSI "CreateSnapshot"
+                  gRPC call. For a pre-existing snapshot, this field will be filled
+                  with the "creation_time" value returned from the CSI "ListSnapshots"
+                  gRPC call if the driver supports it. If not specified, it may indicate
+                  that the creation time of the snapshot is unknown.
+                format: date-time
+                type: string
+              error:
+                description: error is the last observed error during snapshot creation,
+                  if any. This field could be helpful to upper level controllers(i.e.,
+                  application controller) to decide whether they should continue on
+                  waiting for the snapshot to be created based on the type of error
+                  reported. The snapshot controller will keep retrying when an error
+                  occurs during the snapshot creation. Upon success, this error field
+                  will be cleared.
+                properties:
+                  message:
+                    description: 'message is a string detailing the encountered error
+                      during snapshot creation if specified. NOTE: message may be
+                      logged, and it should not contain sensitive information.'
+                    type: string
+                  time:
+                    description: time is the timestamp when the error was encountered.
+                    format: date-time
+                    type: string
+                type: object
+              readyToUse:
+                description: readyToUse indicates if the snapshot is ready to be used
+                  to restore a volume. In dynamic snapshot creation case, this field
+                  will be filled in by the snapshot controller with the "ready_to_use"
+                  value returned from CSI "CreateSnapshot" gRPC call. For a pre-existing
+                  snapshot, this field will be filled with the "ready_to_use" value
+                  returned from the CSI "ListSnapshots" gRPC call if the driver supports
+                  it, otherwise, this field will be set to "True". If not specified,
+                  it means the readiness of a snapshot is unknown.
+                type: boolean
+              restoreSize:
+                description: restoreSize represents the minimum size of volume required
+                  to create a volume from this snapshot. In dynamic snapshot creation
+                  case, this field will be filled in by the snapshot controller with
+                  the "size_bytes" value returned from CSI "CreateSnapshot" gRPC call.
+                  For a pre-existing snapshot, this field will be filled with the
+                  "size_bytes" value returned from the CSI "ListSnapshots" gRPC call
+                  if the driver supports it. When restoring a volume from this snapshot,
+                  the size of the volume MUST NOT be smaller than the restoreSize
+                  if it is specified, otherwise the restoration will fail. If not
+                  specified, it indicates that the size is unknown.
+                pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                type: string
+                x-kubernetes-int-or-string: true
+            type: object
+        required:
+        - spec
+        type: object
+    served: false
+    storage: false
+    subresources:
+      status: {}
+status:
+  acceptedNames:
+    kind: ""
+    plural: ""
+  conditions: []
+  storedVersions: []
+---
+# Source: mayastor/charts/localpv-provisioner/templates/rbac.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: mayastor-localpv-provisioner
+  labels:
+    chart: localpv-provisioner-4.0.0
+    heritage: Helm
+    openebs.io/version: "4.0.0"
+    app: localpv-provisioner
+    release: mayastor
+    component: "localpv-provisioner"
+    openebs.io/component-name: openebs-localpv-provisioner
+rules:
+- apiGroups: ["*"]
+  resources: ["nodes"]
+  verbs: ["get", "list", "watch"]
+- apiGroups: ["*"]
+  resources: ["namespaces", "pods", "events", "endpoints"]
+  verbs: ["*"]
+- apiGroups: ["*"]
+  resources: ["resourcequotas", "limitranges"]
+  verbs: ["list", "watch"]
+- apiGroups: ["*"]
+  resources: ["storageclasses", "persistentvolumeclaims", "persistentvolumes"]
+  verbs: ["*"]
+- apiGroups: ["apiextensions.k8s.io"]
+  resources: ["customresourcedefinitions"]
+  verbs: [ "get", "list", "create", "update", "delete", "patch"]
+- apiGroups: ["openebs.io"]
+  resources: [ "*"]
+  verbs: ["*" ]
+- apiGroups: ["coordination.k8s.io"]
+  resources: ["leases"]
+  verbs: ["get", "create", "update"]
+- nonResourceURLs: ["/metrics"]
+  verbs: ["get"]
+---
+# Source: mayastor/charts/loki-stack/charts/promtail/templates/clusterrole.yaml
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: mayastor-promtail
+  labels:
+    helm.sh/chart: promtail-6.13.1
+    app.kubernetes.io/name: promtail
+    app.kubernetes.io/instance: mayastor
+    app.kubernetes.io/version: "2.8.3"
+    app.kubernetes.io/managed-by: Helm
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - nodes
+      - nodes/proxy
+      - services
+      - endpoints
+      - pods
+    verbs:
+      - get
+      - watch
+      - list
+---
+# Source: mayastor/templates/mayastor/rbac/rbac.yaml
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: mayastor-cluster-role
+  labels:
+    openebs.io/release: mayastor
+    openebs.io/version: 2.6.1
+rules:
+  # must create mayastor crd if it doesn't exist, replace if exist,
+  # merge schema to existing CRD.
+- apiGroups: ["apiextensions.k8s.io"]
+  resources: ["customresourcedefinitions"]
+  verbs: ["create", "get", "update", "list", "patch", "replace"]
+  # must update stored_version in status to include new schema only.
+- apiGroups: ["apiextensions.k8s.io"]
+  resources: ["customresourcedefinitions/status"]
+  verbs: ["get", "update", "patch"]
+  # must read mayastorpools info. This is needed to handle upgrades from v1.
+- apiGroups: [ "openebs.io" ]
+  resources: [ "mayastorpools" ]
+  verbs: ["get", "list", "patch", "delete", "deletecollection"]
+  # must read diskpool info
+- apiGroups: ["openebs.io"]
+  resources: ["diskpools"]
+  verbs: ["get", "list", "watch", "update", "replace", "patch", "create"]
+  # must update diskpool status
+- apiGroups: ["openebs.io"]
+  resources: ["diskpools/status"]
+  verbs: ["update", "patch"]
+  # must read cm info
+- apiGroups: [""]
+  resources: ["configmaps"]
+  verbs: ["create", "get", "update", "patch"]
+  # must get deployments info
+- apiGroups: ["apps"]
+  resources: ["deployments"]
+  verbs: ["get", "list"]
+  # external provisioner & attacher
+- apiGroups: [""]
+  resources: ["persistentvolumes"]
+  verbs: ["get", "list", "watch", "update", "create", "delete", "patch"]
+- apiGroups: [""]
+  resources: ["nodes"]
+  verbs: ["get", "list", "watch", "patch"]
+
+  # external provisioner
+- apiGroups: [""]
+  resources: ["persistentvolumeclaims"]
+  verbs: ["get", "list", "watch", "update"]
+- apiGroups: ["storage.k8s.io"]
+  resources: ["storageclasses"]
+  verbs: ["get", "list", "watch"]
+- apiGroups: [""]
+  resources: ["events"]
+  verbs: ["list", "watch", "create", "update", "patch"]
+
+  # external-resizer
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get", "list", "watch"]
+- apiGroups: [""]
+  resources: ["persistentvolumeclaims/status"]
+  verbs: ["patch"]
+
+  # external snapshotter and snapshot-controller
+- apiGroups: ["snapshot.storage.k8s.io"]
+  resources: ["volumesnapshotclasses"]
+  verbs: ["get", "list", "watch"]
+- apiGroups: ["snapshot.storage.k8s.io"]
+  resources: ["volumesnapshotcontents"]
+  verbs: ["create","get", "list", "watch", "update", "patch", "delete"]
+- apiGroups: ["snapshot.storage.k8s.io"]
+  resources: ["volumesnapshotcontents/status"]
+  verbs: ["update", "patch"]
+- apiGroups: ["snapshot.storage.k8s.io"]
+  resources: ["volumesnapshots"]
+  verbs: ["get", "list", "watch", "update", "patch", "delete"]
+- apiGroups: ["snapshot.storage.k8s.io"]
+  resources: ["volumesnapshots/status"]
+  verbs: ["update", "patch"]
+
+- apiGroups: [""]
+  resources: ["nodes"]
+  verbs: ["get", "list", "watch"]
+
+  # external attacher
+- apiGroups: ["storage.k8s.io"]
+  resources: ["volumeattachments"]
+  verbs: ["get", "list", "watch", "update", "patch"]
+- apiGroups: ["storage.k8s.io"]
+  resources: ["volumeattachments/status"]
+  verbs: ["patch"]
+  # CSI nodes must be listed
+- apiGroups: ["storage.k8s.io"]
+  resources: ["csinodes"]
+  verbs: ["get", "list", "watch"]
+  # get kube-system namespace to retrieve Uid
+- apiGroups: [""]
+  resources: ["namespaces"]
+  verbs: ["get"]
+---
+# Source: mayastor/charts/localpv-provisioner/templates/rbac.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: mayastor-localpv-provisioner
+  labels:
+    chart: localpv-provisioner-4.0.0
+    heritage: Helm
+    openebs.io/version: "4.0.0"
+    app: localpv-provisioner
+    release: mayastor
+    component: "localpv-provisioner"
+    openebs.io/component-name: openebs-localpv-provisioner
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: mayastor-localpv-provisioner
+subjects:
+- kind: ServiceAccount
+  name: mayastor-localpv-provisioner
+  namespace: mayastor
+---
+# Source: mayastor/charts/loki-stack/charts/promtail/templates/clusterrolebinding.yaml
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: mayastor-promtail
+  labels:
+    helm.sh/chart: promtail-6.13.1
+    app.kubernetes.io/name: promtail
+    app.kubernetes.io/instance: mayastor
+    app.kubernetes.io/version: "2.8.3"
+    app.kubernetes.io/managed-by: Helm
+subjects:
+  - kind: ServiceAccount
+    name: mayastor-promtail
+    namespace: mayastor
+roleRef:
+  kind: ClusterRole
+  name: mayastor-promtail
+  apiGroup: rbac.authorization.k8s.io
+---
+# Source: mayastor/templates/mayastor/rbac/rbac.yaml
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: mayastor-cluster-role-binding
+  labels:
+    openebs.io/release: mayastor
+    openebs.io/version: 2.6.1
+subjects:
+- kind: ServiceAccount
+  name: mayastor-service-account
+  namespace: mayastor
+roleRef:
+  kind: ClusterRole
+  name: mayastor-cluster-role
+  apiGroup: rbac.authorization.k8s.io
+---
+# Source: mayastor/charts/loki-stack/charts/loki/templates/role.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: mayastor-loki
+  namespace: mayastor
+  labels:
+    app: loki
+    chart: loki-2.16.0
+    release: mayastor
+    heritage: Helm
+---
+# Source: mayastor/charts/loki-stack/charts/loki/templates/rolebinding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: mayastor-loki
+  namespace: mayastor
+  labels:
+    app: loki
+    chart: loki-2.16.0
+    release: mayastor
+    heritage: Helm
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: mayastor-loki
+subjects:
+- kind: ServiceAccount
+  name: mayastor-loki
+---
+# Source: mayastor/charts/etcd/templates/svc-headless.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: mayastor-etcd-headless
+  namespace: "mayastor"
+  labels:
+    app.kubernetes.io/name: etcd
+    helm.sh/chart: etcd-8.6.0
+    app.kubernetes.io/instance: mayastor
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    service.alpha.kubernetes.io/tolerate-unready-endpoints: "true"
+spec:
+  type: ClusterIP
+  clusterIP: None
+  publishNotReadyAddresses: true
+  ports:
+    - name: client
+      port: 2379
+      targetPort: client
+    - name: peer
+      port: 2380
+      targetPort: peer
+  selector:
+    app.kubernetes.io/name: etcd
+    app.kubernetes.io/instance: mayastor
+---
+# Source: mayastor/charts/etcd/templates/svc.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: mayastor-etcd
+  namespace: "mayastor"
+  labels:
+    app.kubernetes.io/name: etcd
+    helm.sh/chart: etcd-8.6.0
+    app.kubernetes.io/instance: mayastor
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+spec:
+  type: ClusterIP
+  sessionAffinity: None
+  ports:
+    - name: "client"
+      port: 2379
+      targetPort: client
+      nodePort: null
+    - name: "peer"
+      port: 2380
+      targetPort: peer
+      nodePort: null
+  selector:
+    app.kubernetes.io/name: etcd
+    app.kubernetes.io/instance: mayastor
+---
+# Source: mayastor/charts/loki-stack/charts/loki/templates/service-headless.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: mayastor-loki-headless
+  namespace: mayastor
+  labels:
+    app: loki
+    chart: loki-2.16.0
+    release: mayastor
+    heritage: Helm
+    variant: headless
+spec:
+  clusterIP: None
+  ports:
+    - port: 3100
+      protocol: TCP
+      name: http-metrics
+      targetPort: http-metrics
+  selector:
+    app: loki
+    release: mayastor
+---
+# Source: mayastor/charts/loki-stack/charts/loki/templates/service-memberlist.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: mayastor-loki-memberlist
+  namespace: mayastor
+  labels:
+    app: loki
+    chart: loki-2.16.0
+    release: mayastor
+    heritage: Helm
+spec:
+  type: ClusterIP
+  clusterIP: None
+  publishNotReadyAddresses: true
+  ports:
+    - name: http
+      port: 7946
+      targetPort: memberlist-port
+      protocol: TCP
+  selector:
+    app: loki
+    release: mayastor
+---
+# Source: mayastor/charts/loki-stack/charts/loki/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: mayastor-loki
+  namespace: mayastor
+  labels:
+    app: loki
+    chart: loki-2.16.0
+    release: mayastor
+    heritage: Helm
+  annotations:
+    {}
+spec:
+  type: ClusterIP
+  ports:
+    - port: 3100
+      protocol: TCP
+      name: http-metrics
+      targetPort: http-metrics
+  selector:
+    app: loki
+    release: mayastor
+---
+# Source: mayastor/charts/nats/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: mayastor-nats
+  namespace: mayastor
+  labels:
+    helm.sh/chart: nats-0.19.14
+    app.kubernetes.io/name: nats
+    app.kubernetes.io/instance: mayastor
+    app.kubernetes.io/version: "2.9.17"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  selector:
+    app.kubernetes.io/name: nats
+    app.kubernetes.io/instance: mayastor
+  clusterIP: None
+  publishNotReadyAddresses: true
+  ports:
+  - name: client
+    port: 4222
+    appProtocol: tcp
+  - name: cluster
+    port: 6222
+    appProtocol: tcp
+  - name: monitor
+    port: 8222
+    appProtocol: http
+  - name: metrics
+    port: 7777
+    appProtocol: http
+  - name: leafnodes
+    port: 7422
+    appProtocol: tcp
+  - name: gateways
+    port: 7522
+    appProtocol: tcp
+---
+# Source: mayastor/templates/mayastor/agents/core/agent-core-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: mayastor-agent-core
+  labels:
+    app: agent-core
+    openebs.io/release: mayastor
+    openebs.io/version: 2.6.1
+spec:
+  selector:
+    app: agent-core
+    openebs.io/release: mayastor
+  ports:
+    - name: grpc
+      port: 50051
+    - name: ha-cluster
+      port: 50052
+---
+# Source: mayastor/templates/mayastor/apis/api-rest-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: mayastor-api-rest
+  labels:
+    app: api-rest
+    openebs.io/release: mayastor
+    openebs.io/version: 2.6.1
+spec:
+  type: ClusterIP
+  selector:
+    app: api-rest
+    openebs.io/release: mayastor
+  ports:
+    - port: 8080
+      name: https
+      targetPort: 8080
+      protocol: TCP
+    - port: 8081
+      name: http
+      targetPort: 8081
+      protocol: TCP
+---
+# Source: mayastor/templates/mayastor/metrics/metrics-exporter-io-engine-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: mayastor-metrics-exporter-io-engine
+  labels:
+    app: metrics-exporter-io-engine
+    openebs.io/release: mayastor
+    openebs.io/version: 2.6.1
+spec:
+  ports:
+    - name: metrics
+      port: 9502
+      targetPort: 9502
+      protocol: TCP
+  selector:
+    app: io-engine
+    openebs.io/release: mayastor
+---
+# Source: mayastor/templates/mayastor/obs/stats-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: mayastor-obs-callhome-stats
+  labels:
+    app: obs-callhome
+    openebs.io/release: mayastor
+    openebs.io/version: 2.6.1
+spec:
+  ports:
+    - port: 9090
+      name: https
+      targetPort: 9090
+      protocol: TCP
+    - port: 9091
+      name: http
+      targetPort: 9091
+      protocol: TCP
+  selector:
+    app: obs-callhome
+    openebs.io/release: mayastor
+---
+# Source: mayastor/charts/loki-stack/charts/promtail/templates/daemonset.yaml
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: mayastor-promtail
+  namespace: mayastor
+  labels:
+    helm.sh/chart: promtail-6.13.1
+    app.kubernetes.io/name: promtail
+    app.kubernetes.io/instance: mayastor
+    app.kubernetes.io/version: "2.8.3"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: promtail
+      app.kubernetes.io/instance: mayastor
+  updateStrategy:
+    {}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: promtail
+        app.kubernetes.io/instance: mayastor
+      annotations:
+        checksum/config: 4092c9ee0be8aa470357b31747225f93d14a58c9512b4017f4821864c07f10bb
+    spec:
+      serviceAccountName: mayastor-promtail
+      enableServiceLinks: true
+      securityContext:
+        runAsGroup: 0
+        runAsUser: 0
+      containers:
+        - name: promtail
+          image: "docker.io/grafana/promtail:2.8.3"
+          imagePullPolicy: IfNotPresent
+          args:
+            - "-config.file=/etc/promtail/promtail.yaml"
+          volumeMounts:
+            - name: config
+              mountPath: /etc/promtail
+            - mountPath: /run/promtail
+              name: run
+            - mountPath: /var/lib/docker/containers
+              name: containers
+              readOnly: true
+            - mountPath: /var/log/pods
+              name: pods
+              readOnly: true
+          env:
+            - name: HOSTNAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+          ports:
+            - name: http-metrics
+              containerPort: 3101
+              protocol: TCP
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            readOnlyRootFilesystem: true
+          readinessProbe:
+            failureThreshold: 5
+            httpGet:
+              path: '/ready'
+              port: http-metrics
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+      volumes:
+        - name: config
+          secret:
+            secretName: mayastor-promtail
+        - hostPath:
+            path: /run/promtail
+          name: run
+        - hostPath:
+            path: /var/lib/docker/containers
+          name: containers
+        - hostPath:
+            path: /var/log/pods
+          name: pods
+---
+# Source: mayastor/templates/mayastor/agents/ha/ha-node-daemonset.yaml
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: mayastor-agent-ha-node
+  labels:
+    app: agent-ha-node
+    openebs.io/release: mayastor
+    openebs.io/version: 2.6.1
+spec:
+  selector:
+    matchLabels:
+      app: agent-ha-node
+      openebs.io/release: mayastor
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+  minReadySeconds: 10
+  template:
+    metadata:
+      labels:
+        app: agent-ha-node
+        openebs.io/release: mayastor
+        openebs.io/version: 2.6.1
+        openebs.io/logging: "true"
+    spec:
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+      initContainers:
+        - command:
+          - sh
+          - -c
+          - trap "exit 1" TERM; until nc -vzw 5 mayastor-agent-core 50052; do date;
+            echo "Waiting for agent-cluster-grpc services..."; sleep 1; done;
+          image: busybox:latest
+          name: agent-cluster-grpc-probe
+      imagePullSecrets:
+      nodeSelector:
+        kubernetes.io/arch: amd64
+      containers:
+      - name: agent-ha-node
+        image: "docker.io/openebs/mayastor-agent-ha-node:v2.6.1"
+        imagePullPolicy: IfNotPresent
+        securityContext:
+          privileged: true
+        env:
+        - name: RUST_LOG
+          value: info
+        - name: MY_NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        - name: MY_POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        - name: RUST_BACKTRACE
+          value: "1"
+        args:
+        - "--node-name=$(MY_NODE_NAME)"
+        - "--csi-socket=/csi/csi.sock"
+        - "--grpc-endpoint=$(MY_POD_IP):50053"
+        - "--cluster-agent=https://mayastor-agent-core:50052"
+        - "--events-url=nats://mayastor-nats:4222"
+        - "--ansi-colors=true"
+        - "--fmt-style=pretty"
+        volumeMounts:
+        - name: device
+          mountPath: /dev
+        - name: sys
+          mountPath: /sys
+        - name: run-udev
+          mountPath: /run/udev
+        - name: plugin-dir
+          mountPath: /csi
+        resources:
+          limits:
+            cpu: "100m"
+            memory: "64Mi"
+          requests:
+            cpu: "100m"
+            memory: "64Mi"
+        ports:
+          - containerPort: 50053
+            protocol: TCP
+            name: ha-node
+      volumes:
+      - name: device
+        hostPath:
+          path: /dev
+          type: Directory
+      - name: sys
+        hostPath:
+          path: /sys
+          type: Directory
+      - name: run-udev
+        hostPath:
+          path: /run/udev
+          type: Directory
+      - name: plugin-dir
+        hostPath:
+          path: /var/lib/kubelet/plugins/io.openebs.mayastor/
+          type: DirectoryOrCreate
+---
+# Source: mayastor/templates/mayastor/csi/csi-node-daemonset.yaml
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: mayastor-csi-node
+  labels:
+    app: csi-node
+    openebs.io/release: mayastor
+    openebs.io/version: 2.6.1
+    openebs.io/csi-node: mayastor
+spec:
+  selector:
+    matchLabels:
+      app: csi-node
+      openebs.io/release: mayastor
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+  minReadySeconds: 10
+  template:
+    metadata:
+      labels:
+        app: csi-node
+        openebs.io/release: mayastor
+        openebs.io/version: 2.6.1
+        openebs.io/logging: "true"
+    spec:
+      serviceAccount: mayastor-service-account
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+      imagePullSecrets:
+      nodeSelector:
+        kubernetes.io/arch: amd64
+      initContainers:
+      # NOTE: Each container must have mem/cpu limits defined in order to
+      # belong to Guaranteed QoS class, hence can never get evicted in case of
+      # pressure unless they exceed those limits. limits and requests must be
+      # the same.
+      containers:
+      - name: csi-node
+        image: "docker.io/openebs/mayastor-csi-node:v2.6.1"
+        imagePullPolicy: IfNotPresent
+        # we need privileged because we mount filesystems and use mknod
+        securityContext:
+          privileged: true
+        env:
+        - name: RUST_LOG
+          value: info
+        - name: MY_NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        - name: MY_POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        - name: RUST_BACKTRACE
+          value: "1"
+        args:
+        - "--csi-socket=/csi/csi.sock"
+        - "--node-name=$(MY_NODE_NAME)"
+        - "--rest-endpoint=http://mayastor-api-rest:8081"
+        - "--enable-registration"
+        - "--grpc-endpoint=$(MY_POD_IP):10199"
+        - "--nvme-io-timeout=110s10s"
+        - "--nvme-core-io-timeout=110s10s"
+        - "--nvme-ctrl-loss-tmo=1980"
+        - "--nvme-nr-io-queues=2"
+        - "--node-selector=openebs.io/csi-node=mayastor"
+        - "--fmt-style=pretty"
+        - "--ansi-colors=true"
+        command:
+        - csi-node
+        volumeMounts:
+        - name: device
+          mountPath: /dev
+        - name: sys
+          mountPath: /sys
+        - name: run-udev
+          mountPath: /run/udev
+        - name: plugin-dir
+          mountPath: /csi
+        - name: kubelet-dir
+          mountPath: /var/lib/kubelet
+          mountPropagation: "Bidirectional"
+        resources:
+          limits:
+            cpu: "100m"
+            memory: "128Mi"
+          requests:
+            cpu: "100m"
+            memory: "64Mi"
+      - name: csi-driver-registrar
+        image: "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.10.0"
+        imagePullPolicy: IfNotPresent
+        args:
+        - "--csi-address=/csi/csi.sock"
+        - "--kubelet-registration-path=/var/lib/kubelet/plugins/io.openebs.mayastor/csi.sock"
+        volumeMounts:
+        - name: plugin-dir
+          mountPath: /csi
+        - name: registration-dir
+          mountPath: /registration
+        resources:
+          limits:
+            cpu: "100m"
+            memory: "50Mi"
+          requests:
+            cpu: "100m"
+            memory: "50Mi"
+        # Mayastor node plugin gRPC server
+        ports:
+        - containerPort: 10199
+          protocol: TCP
+          name: mayastor-node
+      volumes:
+      - name: device
+        hostPath:
+          path: /dev
+          type: Directory
+      - name: sys
+        hostPath:
+          path: /sys
+          type: Directory
+      - name: run-udev
+        hostPath:
+          path: /run/udev
+          type: Directory
+      - name: registration-dir
+        hostPath:
+          path: /var/lib/kubelet/plugins_registry/
+          type: Directory
+      - name: plugin-dir
+        hostPath:
+          path: /var/lib/kubelet/plugins/io.openebs.mayastor/
+          type: DirectoryOrCreate
+      - name: kubelet-dir
+        hostPath:
+          path: /var/lib/kubelet
+          type: Directory
+---
+# Source: mayastor/templates/mayastor/io/io-engine-daemonset.yaml
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: mayastor-io-engine
+  labels:
+    app: io-engine
+    openebs.io/release: mayastor
+    openebs.io/version: 2.6.1
+spec:
+  selector:
+    matchLabels:
+      app: io-engine
+      openebs.io/release: mayastor
+  updateStrategy:
+    type: OnDelete
+  minReadySeconds: 10
+  template:
+    metadata:
+      labels:
+        app: io-engine
+        openebs.io/release: mayastor
+        openebs.io/version: 2.6.1
+        openebs.io/logging: "true"
+    spec:
+      imagePullSecrets:
+      hostNetwork: true
+      # To resolve services in the namespace
+      dnsPolicy: ClusterFirstWithHostNet
+      nodeSelector:
+        kubernetes.io/arch: amd64
+        openebs.io/engine: mayastor
+      initContainers:
+        - command:
+          - sh
+          - -c
+          - trap "exit 1" TERM; until nc -vzw 5 mayastor-agent-core 50051; do date;
+            echo "Waiting for agent-core-grpc services..."; sleep 1; done;
+          image: busybox:latest
+          name: agent-core-grpc-probe
+        - command:
+          - sh
+          - -c
+          - trap "exit 1" TERM; until nc -vzw 5 mayastor-etcd 2379;
+            do date; echo "Waiting for etcd..."; sleep 1; done;
+          image: busybox:latest
+          name: etcd-probe
+      containers:
+      - name: metrics-exporter-io-engine
+        image: "docker.io/openebs/mayastor-metrics-exporter-io-engine:v2.6.1"
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: MY_NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        - name: MY_POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        ports:
+          - containerPort: 9502
+            protocol: TCP
+            name: metrics
+        args:
+          - "--fmt-style=pretty"
+          - "--ansi-colors=true"
+      - name: io-engine
+        image: "docker.io/openebs/mayastor-io-engine:v2.6.1"
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: RUST_LOG
+          value: info
+        - name: NVMF_TCP_MAX_QPAIRS_PER_CTRL
+          value: "32"
+        - name: NVMF_TCP_MAX_QUEUE_DEPTH
+          value: "32"
+        - name: NVME_TIMEOUT
+          value: "110s"
+        - name: NVME_TIMEOUT_ADMIN
+          value: "30s"
+        - name: NVME_KATO
+          value: "10s"
+        - name: MY_NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        - name: MY_POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        - name: NEXUS_NVMF_ANA_ENABLE
+          value: "1"
+        - name: NEXUS_NVMF_RESV_ENABLE
+          value: "1"
+        args:
+        # The -l argument accepts cpu-list. Indexing starts at zero.
+        # For example -l 1,2,10-20 means use core 1, 2, 10 to 20.
+        # Note: Ensure that the CPU resources are updated accordingly.
+        #       If you use 2 CPUs, the CPU: field should also read 2.
+        - "-g$(MY_POD_IP)"
+        - "-N$(MY_NODE_NAME)"
+        - "-Rhttps://mayastor-agent-core:50051"
+        - "-y/var/local/mayastor/io-engine/config.yaml"
+        - "-l1,2"
+        - "-p=mayastor-etcd:2379"
+        - "--ptpl-dir=/var/local/mayastor/io-engine/ptpl/"
+        - "--api-versions=v1"
+        - "--tgt-crdt=30"
+        - "--events-url=nats://mayastor-nats:4222"
+        command:
+        - io-engine
+        securityContext:
+          privileged: true
+        volumeMounts:
+        - name: device
+          mountPath: /dev
+        - name: udev
+          mountPath: /run/udev
+        - name: dshm
+          mountPath: /dev/shm
+        - name: configlocation
+          mountPath: /var/local/mayastor/io-engine/
+        - name: hugepage
+          mountPath: /dev/hugepages
+        resources:
+          limits:
+            cpu: "2"
+            memory: "1Gi"
+            hugepages-2Mi: "2Gi"
+          requests:
+            cpu: "2"
+            memory: "1Gi"
+            hugepages-2Mi: "2Gi"
+        ports:
+        - containerPort: 10124
+          protocol: TCP
+          name: io-engine
+      volumes:
+      - name: device
+        hostPath:
+          path: /dev
+          type: Directory
+      - name: udev
+        hostPath:
+          path: /run/udev
+          type: Directory
+      - name: dshm
+        emptyDir:
+          medium: Memory
+          sizeLimit: "1Gi"
+      - name: hugepage
+        emptyDir:
+          medium: HugePages
+      - name: configlocation
+        hostPath:
+          path: /var/local/mayastor/io-engine/
+          type: DirectoryOrCreate
+---
+# Source: mayastor/charts/localpv-provisioner/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mayastor-localpv-provisioner
+  labels:
+    chart: localpv-provisioner-4.0.0
+    heritage: Helm
+    openebs.io/version: "4.0.0"
+    app: localpv-provisioner
+    release: mayastor
+    component: "localpv-provisioner"
+    openebs.io/component-name: openebs-localpv-provisioner
+spec:
+  replicas: 1
+  strategy:
+    type: "Recreate"
+    rollingUpdate: null
+  selector:
+    matchLabels:
+      app: localpv-provisioner
+      release: mayastor
+      component: "localpv-provisioner"
+  template:
+    metadata:
+      labels:
+        chart: localpv-provisioner-4.0.0
+        heritage: Helm
+        openebs.io/version: "4.0.0"
+        app: localpv-provisioner
+        release: mayastor
+        component: "localpv-provisioner"
+        openebs.io/component-name: openebs-localpv-provisioner
+        
+        name: openebs-localpv-provisioner
+    spec:
+      serviceAccountName: mayastor-localpv-provisioner
+      securityContext:
+        {}
+      containers:
+      - name: mayastor-localpv-provisioner
+        image: "openebs/provisioner-localpv:4.0.0"
+        imagePullPolicy: IfNotPresent
+        resources:
+          null
+        env:
+        # OPENEBS_IO_K8S_MASTER enables openebs provisioner to connect to K8s
+        # based on this address. This is ignored if empty.
+        # This is supported for openebs provisioner version 0.5.2 onwards
+        #- name: OPENEBS_IO_K8S_MASTER
+        #  value: "http://10.128.0.12:8080"
+        # OPENEBS_IO_KUBE_CONFIG enables openebs provisioner to connect to K8s
+        # based on this config. This is ignored if empty.
+        # This is supported for openebs provisioner version 0.5.2 onwards
+        #- name: OPENEBS_IO_KUBE_CONFIG
+        #  value: "/home/ubuntu/.kube/config"
+        - name: OPENEBS_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        # OPENEBS_SERVICE_ACCOUNT provides the service account of this pod as
+        # environment variable
+        - name: OPENEBS_SERVICE_ACCOUNT
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.serviceAccountName
+        # OPENEBS_IO_BASE_PATH is the environment variable that provides the
+        # default base path on the node where host-path PVs will be provisioned.
+        - name: OPENEBS_IO_ENABLE_ANALYTICS
+          value: "true"
+        - name: OPENEBS_IO_BASE_PATH
+          value: "/var/openebs/local"
+        - name: OPENEBS_IO_HELPER_IMAGE
+          value: "openebs/linux-utils:4.0.0"
+        - name: OPENEBS_IO_INSTALLER_TYPE
+          value: "localpv-charts-helm"
+        # LEADER_ELECTION_ENABLED is used to enable/disable leader election. By default
+        # leader election is enabled.
+        - name: LEADER_ELECTION_ENABLED
+          value: "true"
+        # Process name used for matching is limited to the 15 characters
+        # present in the pgrep output.
+        # So fullname can't be used here with pgrep (>15 chars).A regular expression
+        # that matches the entire command name has to specified.
+        # Anchor `^` : matches any string that starts with `provisioner-loc`
+        # `.*`: matches any string that has `provisioner-loc` followed by zero or more char
+        livenessProbe:
+          exec:
+            command:
+            - sh
+            - -c
+            - test `pgrep -c "^provisioner-loc.*"` = 1
+          initialDelaySeconds: 30
+          periodSeconds: 60
+---
+# Source: mayastor/templates/mayastor/agents/core/agent-core-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mayastor-agent-core
+  labels:
+    app: agent-core
+    openebs.io/release: mayastor
+    openebs.io/version: 2.6.1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: agent-core
+      openebs.io/release: mayastor
+  template:
+    metadata:
+      labels:
+        app: agent-core
+        openebs.io/release: mayastor
+        openebs.io/version: 2.6.1
+        openebs.io/logging: "true"
+    spec:
+      serviceAccount: mayastor-service-account
+      imagePullSecrets:
+      initContainers:
+        - command:
+          - sh
+          - -c
+          - trap "exit 1" TERM; until nc -vzw 5 mayastor-etcd 2379;
+            do date; echo "Waiting for etcd..."; sleep 1; done;
+          image: busybox:latest
+          name: etcd-probe
+      priorityClassName: mayastor-cluster-critical
+      nodeSelector:
+        kubernetes.io/arch: amd64
+      tolerations: 
+        - effect: NoExecute
+          key: node.kubernetes.io/unreachable
+          operator: Exists
+          tolerationSeconds: 5
+        - effect: NoExecute
+          key: node.kubernetes.io/not-ready
+          operator: Exists
+          tolerationSeconds: 5
+      containers:
+        - name: agent-core
+          resources:
+            limits:
+              cpu: "1000m"
+              memory: "128Mi"
+            requests:
+              cpu: "500m"
+              memory: "32Mi"
+          image: "docker.io/openebs/mayastor-agent-core:v2.6.1"
+          imagePullPolicy: IfNotPresent
+          args:
+            - "-smayastor-etcd:2379"
+            - "--request-timeout=5s"
+            - "--cache-period=30s"
+            - "--grpc-server-addr=0.0.0.0:50051"
+            - "--pool-commitment=250%"
+            - "--snapshot-commitment=40%"
+            - "--volume-commitment-initial=40%"
+            - "--volume-commitment=40%"
+            - "--events-url=nats://mayastor-nats:4222"
+            - "--fmt-style=pretty"
+            - "--ansi-colors=true"
+            - "--create-volume-limit=10"
+          ports:
+            - containerPort: 50051
+          env:
+            - name: RUST_LOG
+              value: info
+            - name: MY_POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: MY_POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+        - name: agent-ha-cluster
+          resources:
+            limits:
+              cpu: "100m"
+              memory: "64Mi"
+            requests:
+              cpu: "100m"
+              memory: "16Mi"
+          image: "docker.io/openebs/mayastor-agent-ha-cluster:v2.6.1"
+          imagePullPolicy: IfNotPresent
+          args:
+            - "-g=0.0.0.0:50052"
+            - "--store=http://mayastor-etcd:2379"
+            - "--core-grpc=https://mayastor-agent-core:50051"
+            - "--events-url=nats://mayastor-nats:4222"
+            - "--ansi-colors=true"
+            - "--fmt-style=pretty"
+          ports:
+            - containerPort: 50052
+          env:
+            - name: RUST_LOG
+              value: info
+            - name: MY_POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: MY_POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+---
+# Source: mayastor/templates/mayastor/apis/api-rest-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mayastor-api-rest
+  labels:
+    app: api-rest
+    openebs.io/release: mayastor
+    openebs.io/version: 2.6.1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api-rest
+      openebs.io/release: mayastor
+  template:
+    metadata:
+      labels:
+        app: api-rest
+        openebs.io/release: mayastor
+        openebs.io/version: 2.6.1
+        openebs.io/logging: "true"
+    spec:
+      imagePullSecrets:
+      initContainers:
+        - command:
+          - sh
+          - -c
+          - trap "exit 1" TERM; until nc -vzw 5 mayastor-agent-core 50051; do date;
+            echo "Waiting for agent-core-grpc services..."; sleep 1; done;
+          image: busybox:latest
+          name: agent-core-grpc-probe
+        - command:
+          - sh
+          - -c
+          - trap "exit 1" TERM; until nc -vzw 5 mayastor-etcd 2379;
+            do date; echo "Waiting for etcd..."; sleep 1; done;
+          image: busybox:latest
+          name: etcd-probe
+      priorityClassName: mayastor-cluster-critical
+      nodeSelector:
+        kubernetes.io/arch: amd64
+      tolerations: 
+        - effect: NoExecute
+          key: node.kubernetes.io/unreachable
+          operator: Exists
+          tolerationSeconds: 5
+        - effect: NoExecute
+          key: node.kubernetes.io/not-ready
+          operator: Exists
+          tolerationSeconds: 5
+      containers:
+        - name: api-rest
+          resources:
+            limits:
+              cpu: "100m"
+              memory: "64Mi"
+            requests:
+              cpu: "50m"
+              memory: "32Mi"
+          image: "docker.io/openebs/mayastor-api-rest:v2.6.1"
+          imagePullPolicy: IfNotPresent
+          args:
+            - "--dummy-certificates"
+            - "--no-auth"
+            - "--http=0.0.0.0:8081"
+            - "--request-timeout=5s"
+            - "--core-grpc=https://mayastor-agent-core:50051"
+            - "--ansi-colors=true"
+            - "--fmt-style=pretty"
+          ports:
+            - containerPort: 8080
+            - containerPort: 8081
+          env:
+            - name: RUST_LOG
+              value: info
+---
+# Source: mayastor/templates/mayastor/csi/csi-controller-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mayastor-csi-controller
+  labels:
+    app: csi-controller
+    openebs.io/release: mayastor
+    openebs.io/version: 2.6.1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: csi-controller
+      openebs.io/release: mayastor
+  template:
+    metadata:
+      labels:
+        app: csi-controller
+        openebs.io/release: mayastor
+        openebs.io/version: 2.6.1
+        openebs.io/logging: "true"
+    spec:
+      hostNetwork: true
+      serviceAccount: mayastor-service-account
+      dnsPolicy: ClusterFirstWithHostNet
+      imagePullSecrets:
+      initContainers:
+        - command:
+          - sh
+          - -c
+          - trap "exit 1" TERM; until nc -vzw 5 mayastor-api-rest 8081; do date;
+            echo "Waiting for REST API endpoint to become available"; sleep 1; done;
+          image: busybox:latest
+          name: api-rest-probe
+      nodeSelector:
+        kubernetes.io/arch: amd64
+      containers:
+        - name: csi-provisioner
+          image: "registry.k8s.io/sig-storage/csi-provisioner:v3.5.0"
+          args:
+            - "--v=2"
+            - "--csi-address=$(ADDRESS)"
+            - "--feature-gates=Topology=true"
+            - "--strict-topology=false"
+            - "--default-fstype=ext4"
+            - "--extra-create-metadata" # This is needed for volume group feature to work
+            - "--timeout=36s"
+            - "--worker-threads=10" # 10 for create and 10 for delete
+            - "--prevent-volume-mode-conversion"
+          env:
+            - name: ADDRESS
+              value: /var/lib/csi/sockets/pluginproxy/csi.sock
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - name: socket-dir
+              mountPath: /var/lib/csi/sockets/pluginproxy/
+        - name: csi-attacher
+          image: "registry.k8s.io/sig-storage/csi-attacher:v4.3.0"
+          args:
+            - "--v=2"
+            - "--csi-address=$(ADDRESS)"
+          env:
+            - name: ADDRESS
+              value: /var/lib/csi/sockets/pluginproxy/csi.sock
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - name: socket-dir
+              mountPath: /var/lib/csi/sockets/pluginproxy/
+        - name: csi-snapshotter
+          image: "registry.k8s.io/sig-storage/csi-snapshotter:v6.3.3"
+          args:
+            - "--v=2"
+            - "--csi-address=$(ADDRESS)"
+          env:
+            - name: ADDRESS
+              value: /var/lib/csi/sockets/pluginproxy/csi.sock
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - name: socket-dir
+              mountPath: /var/lib/csi/sockets/pluginproxy/
+        - name: csi-snapshot-controller
+          args:
+            - "--v=2"
+            - "--leader-election=false" # since we are running single container
+            - "--prevent-volume-mode-conversion"
+          image: "registry.k8s.io/sig-storage/snapshot-controller:v6.3.3"
+          imagePullPolicy: IfNotPresent
+        - name: csi-resizer
+          args:
+            - "--v=2"
+            - "--csi-address=$(ADDRESS)"
+          env:
+            - name: ADDRESS
+              value: /var/lib/csi/sockets/pluginproxy/csi.sock
+          image: "registry.k8s.io/sig-storage/csi-resizer:v1.9.3"
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - name: socket-dir
+              mountPath: /var/lib/csi/sockets/pluginproxy/
+        - name: csi-controller
+          resources:
+            limits:
+              cpu: "32m"
+              memory: "128Mi"
+            requests:
+              cpu: "16m"
+              memory: "64Mi"
+          image: "docker.io/openebs/mayastor-csi-controller:v2.6.1"
+          imagePullPolicy: IfNotPresent
+          args:
+            - "--csi-socket=/var/lib/csi/sockets/pluginproxy/csi.sock"
+            - "--rest-endpoint=http://mayastor-api-rest:8081"
+            - "--node-selector=openebs.io/csi-node=mayastor"
+            - "--ansi-colors=true"
+            - "--fmt-style=pretty"
+            - "--create-volume-limit=10"
+          env:
+            - name: RUST_LOG
+              value: info
+          volumeMounts:
+            - name: socket-dir
+              mountPath: /var/lib/csi/sockets/pluginproxy/
+      volumes:
+        - name: socket-dir
+          emptyDir:
+---
+# Source: mayastor/templates/mayastor/obs/obs-callhome-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mayastor-obs-callhome
+  labels:
+    app: obs-callhome
+    openebs.io/release: mayastor
+    openebs.io/version: 2.6.1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: obs-callhome
+      openebs.io/release: mayastor
+  template:
+    metadata:
+      labels:
+        app: obs-callhome
+        openebs.io/release: mayastor
+        openebs.io/version: 2.6.1
+        openebs.io/logging: "true"
+    spec:
+      serviceAccountName: mayastor-service-account
+      imagePullSecrets:
+      nodeSelector:
+        kubernetes.io/arch: amd64
+      containers:
+        - name: obs-callhome
+          image: "docker.io/openebs/mayastor-obs-callhome:v2.6.1"
+          args:
+            - "-e http://mayastor-api-rest:8081"
+            - "-n mayastor"
+            - "--aggregator-url=http://mayastor-obs-callhome-stats:9090/stats"
+            
+            - "--send-report"
+            
+          env:
+            - name: RUST_LOG
+              value: info
+          imagePullPolicy: IfNotPresent
+          resources:
+            limits:
+              cpu: "100m"
+              memory: "32Mi"
+            requests:
+              cpu: "50m"
+              memory: "16Mi"
+        - name: obs-callhome-stats
+          image: "docker.io/openebs/mayastor-obs-callhome-stats:v2.6.1"
+          args:
+            - "--namespace=mayastor"
+            - "--release-name=mayastor"
+            - "--mbus-url=nats://mayastor-nats:4222"
+            - "--ansi-colors=true"
+            - "--fmt-style=pretty"
+          ports:
+            - containerPort: 9090
+              protocol: TCP
+              name: stats
+          env:
+            - name: RUST_LOG
+              value: info
+          imagePullPolicy: IfNotPresent
+          resources:
+            limits:
+              cpu: "100m"
+              memory: "32Mi"
+            requests:
+              cpu: "50m"
+              memory: "16Mi"
+---
+# Source: mayastor/templates/mayastor/operators/operator-diskpool-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mayastor-operator-diskpool
+  labels:
+    app: operator-diskpool
+    openebs.io/release: mayastor
+    openebs.io/version: 2.6.1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: operator-diskpool
+      openebs.io/release: mayastor
+  template:
+    metadata:
+      labels:
+        app: operator-diskpool
+        openebs.io/release: mayastor
+        openebs.io/version: 2.6.1
+        openebs.io/logging: "true"
+    spec:
+      serviceAccount: mayastor-service-account
+      imagePullSecrets:
+      initContainers:
+        - command:
+          - sh
+          - -c
+          - trap "exit 1" TERM; until nc -vzw 5 mayastor-agent-core 50051; do date;
+            echo "Waiting for agent-core-grpc services..."; sleep 1; done;
+          image: busybox:latest
+          name: agent-core-grpc-probe
+        - command:
+          - sh
+          - -c
+          - trap "exit 1" TERM; until nc -vzw 5 mayastor-etcd 2379;
+            do date; echo "Waiting for etcd..."; sleep 1; done;
+          image: busybox:latest
+          name: etcd-probe
+      nodeSelector:
+        kubernetes.io/arch: amd64
+      containers:
+        - name: operator-diskpool
+          resources:
+            limits:
+              cpu: "100m"
+              memory: "32Mi"
+            requests:
+              cpu: "50m"
+              memory: "16Mi"
+          image: "docker.io/openebs/mayastor-operator-diskpool:v2.6.1"
+          imagePullPolicy: IfNotPresent
+          args:
+            - "-e http://mayastor-api-rest:8081"
+            - "-nmayastor"
+            - "--request-timeout=5s"
+            - "--interval=30s"
+            - "--ansi-colors=true"
+            - "--fmt-style=pretty"
+          env:
+            - name: RUST_LOG
+              value: info
+            - name: MY_POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+---
+# Source: mayastor/charts/etcd/templates/statefulset.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mayastor-etcd
+  namespace: "mayastor"
+  labels:
+    app.kubernetes.io/name: etcd
+    helm.sh/chart: etcd-8.6.0
+    app.kubernetes.io/instance: mayastor
+    app.kubernetes.io/managed-by: Helm
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: etcd
+      app.kubernetes.io/instance: mayastor
+  serviceName: mayastor-etcd-headless
+  podManagementPolicy: Parallel
+  updateStrategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: etcd
+        helm.sh/chart: etcd-8.6.0
+        app.kubernetes.io/instance: mayastor
+        app.kubernetes.io/managed-by: Helm
+        app: etcd
+        openebs.io/logging: "true"
+      annotations:
+        checksum/token-secret: fcbf7d16989c50b7192e636d323a76532ec53249c0ad18171017cc02ea6c7652
+    spec:
+      
+      affinity:
+        podAffinity:
+          
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchLabels:
+                  app.kubernetes.io/name: etcd
+                  app.kubernetes.io/instance: mayastor
+              topologyKey: kubernetes.io/hostname
+        nodeAffinity:
+          
+      securityContext:
+        fsGroup: 1001
+      serviceAccountName: "default"
+      initContainers:
+        - name: volume-permissions
+          image: docker.io/bitnami/bitnami-shell:11-debian-11-r63
+          imagePullPolicy: "IfNotPresent"
+          command:
+            - /bin/bash
+            - -ec
+            - |
+              chown -R 1001:1001 /bitnami/etcd
+          securityContext:
+            runAsUser: 0
+          resources:
+            limits: {}
+            requests: {}
+          volumeMounts:
+            - name: data
+              mountPath: /bitnami/etcd
+      containers:
+        - name: etcd
+          image: docker.io/bitnami/etcd:3.5.6-debian-11-r10
+          imagePullPolicy: "IfNotPresent"
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            runAsUser: 1001
+          env:
+            - name: BITNAMI_DEBUG
+              value: "false"
+            - name: MY_POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: MY_POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: MY_STS_NAME
+              value: "mayastor-etcd"
+            - name: ETCDCTL_API
+              value: "3"
+            - name: ETCD_ON_K8S
+              value: "yes"
+            - name: ETCD_START_FROM_SNAPSHOT
+              value: "no"
+            - name: ETCD_DISASTER_RECOVERY
+              value: "no"
+            - name: ETCD_NAME
+              value: "$(MY_POD_NAME)"
+            - name: ETCD_DATA_DIR
+              value: "/bitnami/etcd/data"
+            - name: ETCD_LOG_LEVEL
+              value: "info"
+            - name: ALLOW_NONE_AUTHENTICATION
+              value: "yes"
+            - name: ETCD_AUTH_TOKEN
+              value: "jwt,priv-key=/opt/bitnami/etcd/certs/token/jwt-token.pem,sign-method=RS256,ttl=10m"
+            - name: ETCD_ADVERTISE_CLIENT_URLS
+              value: "http://$(MY_POD_NAME).mayastor-etcd-headless.mayastor.svc.cluster.local:2379,http://mayastor-etcd.mayastor.svc.cluster.local:2379"
+            - name: ETCD_LISTEN_CLIENT_URLS
+              value: "http://0.0.0.0:2379"
+            - name: ETCD_INITIAL_ADVERTISE_PEER_URLS
+              value: "http://$(MY_POD_NAME).mayastor-etcd-headless.mayastor.svc.cluster.local:2380"
+            - name: ETCD_LISTEN_PEER_URLS
+              value: "http://0.0.0.0:2380"
+            - name: ETCD_AUTO_COMPACTION_MODE
+              value: "revision"
+            - name: ETCD_AUTO_COMPACTION_RETENTION
+              value: "100"
+            - name: ETCD_INITIAL_CLUSTER_TOKEN
+              value: "etcd-cluster-k8s"
+            - name: ETCD_INITIAL_CLUSTER_STATE
+              value: "new"
+            - name: ETCD_INITIAL_CLUSTER
+              value: "mayastor-etcd-0=http://mayastor-etcd-0.mayastor-etcd-headless.mayastor.svc.cluster.local:2380,mayastor-etcd-1=http://mayastor-etcd-1.mayastor-etcd-headless.mayastor.svc.cluster.local:2380,mayastor-etcd-2=http://mayastor-etcd-2.mayastor-etcd-headless.mayastor.svc.cluster.local:2380"
+            - name: ETCD_CLUSTER_DOMAIN
+              value: "mayastor-etcd-headless.mayastor.svc.cluster.local"
+            - name: ETCD_QUOTA_BACKEND_BYTES
+              value: "8589934592"
+          envFrom:
+          ports:
+            - name: client
+              containerPort: 2379
+              protocol: TCP
+            - name: peer
+              containerPort: 2380
+              protocol: TCP
+          livenessProbe:
+            exec:
+              command:
+                - /opt/bitnami/scripts/etcd/healthcheck.sh
+            initialDelaySeconds: 60
+            periodSeconds: 30
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 5
+          readinessProbe:
+            exec:
+              command:
+                - /opt/bitnami/scripts/etcd/healthcheck.sh
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 5
+          resources:
+            limits: {}
+            requests: {}
+          volumeMounts:
+            - name: data
+              mountPath: /bitnami/etcd
+            - name: etcd-jwt-token
+              mountPath: /opt/bitnami/etcd/certs/token/
+              readOnly: true
+      volumes:
+        - name: etcd-jwt-token
+          secret:
+            secretName: mayastor-etcd-jwt-token
+            defaultMode: 256
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes:
+          - "ReadWriteOnce"
+        resources:
+          requests:
+            storage: "2Gi"
+        storageClassName: mayastor-etcd-localpv
+---
+# Source: mayastor/charts/loki-stack/charts/loki/templates/statefulset.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mayastor-loki
+  namespace: mayastor
+  labels:
+    app: loki
+    chart: loki-2.16.0
+    release: mayastor
+    heritage: Helm
+  annotations:
+    {}
+spec:
+  podManagementPolicy: OrderedReady
+  replicas: 1
+  selector:
+    matchLabels:
+      app: loki
+      release: mayastor
+  serviceName: mayastor-loki-headless
+  updateStrategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: loki
+        name: mayastor-loki
+        release: mayastor
+      annotations:
+        checksum/config: c9bb92d718a9dbf6a0fbae40e06bcb374e5841e6880e7e96f830cd9d6e542606
+        prometheus.io/port: http-metrics
+        prometheus.io/scrape: "true"
+    spec:
+      serviceAccountName: mayastor-loki
+      securityContext:
+        fsGroup: 1001
+        runAsGroup: 1001
+        runAsNonRoot: false
+        runAsUser: 1001
+      initContainers:
+        - command:
+          - /bin/bash
+          - -ec
+          - chown -R 1001:1001 /data
+          image: docker.io/bitnami/bitnami-shell:10
+          imagePullPolicy: IfNotPresent
+          name: volume-permissions
+          securityContext:
+            runAsUser: 0
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /data
+            name: storage
+      containers:
+        - name: loki
+          image: "grafana/loki:2.6.1"
+          imagePullPolicy: IfNotPresent
+          args:
+            - "-config.file=/etc/loki/loki.yaml"
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+            - name: config
+              mountPath: /etc/loki
+            - name: storage
+              mountPath: "/data"
+              subPath: 
+          ports:
+            - name: http-metrics
+              containerPort: 3100
+              protocol: TCP
+            - name: grpc
+              containerPort: 9095
+              protocol: TCP
+            - name: memberlist-port
+              containerPort: 7946
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /ready
+              port: http-metrics
+            initialDelaySeconds: 45
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: http-metrics
+            initialDelaySeconds: 45
+          resources:
+            {}
+          securityContext:
+            readOnlyRootFilesystem: true
+          env:
+      nodeSelector:
+        {}
+      affinity:
+        {}
+      tolerations:
+        []
+      terminationGracePeriodSeconds: 4800
+      volumes:
+        - name: tmp
+          emptyDir: {}
+        - name: config
+          secret:
+            secretName: mayastor-loki
+  volumeClaimTemplates:
+  - metadata:
+      name: storage
+      labels:
+        {}
+      annotations:
+        {}
+    spec:
+      accessModes:
+        - ReadWriteOnce
+      resources:
+        requests:
+          storage: "10Gi"
+      storageClassName: mayastor-loki-localpv
+---
+# Source: mayastor/charts/nats/templates/statefulset.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mayastor-nats
+  namespace: mayastor
+  labels:
+    helm.sh/chart: nats-0.19.14
+    app.kubernetes.io/name: nats
+    app.kubernetes.io/instance: mayastor
+    app.kubernetes.io/version: "2.9.17"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: nats
+      app.kubernetes.io/instance: mayastor
+  replicas: 3
+  serviceName: mayastor-nats
+
+  podManagementPolicy: Parallel
+
+  template:
+    metadata:
+      annotations:
+        prometheus.io/path: /metrics
+        prometheus.io/port: "7777"
+        prometheus.io/scrape: "true"
+        checksum/config: 64c3aec18beab8492e170605c94a072024b9bb379b3df77715a69e2aed0eba71
+      labels:
+        app.kubernetes.io/name: nats
+        app.kubernetes.io/instance: mayastor
+        app: nats
+        openebs.io/logging: "true"
+    spec:
+      dnsPolicy: ClusterFirst
+      # Common volumes for the containers.
+      volumes:
+      - name: config-volume
+        configMap:
+          name: mayastor-nats-config
+
+      # Local volume shared with the reloader.
+      - name: pid
+        emptyDir: {}
+
+      #################
+      #               #
+      #  TLS Volumes  #
+      #               #
+      #################
+
+      serviceAccountName: mayastor-nats
+
+      # Required to be able to HUP signal and apply config
+      # reload to the server without restarting the pod.
+      shareProcessNamespace: true
+
+      #################
+      #               #
+      #  NATS Server  #
+      #               #
+      #################
+      terminationGracePeriodSeconds: 60
+      containers:
+      - name: nats
+        image: nats:2.9.17-alpine
+        imagePullPolicy: IfNotPresent
+        resources:
+          {}
+        ports:
+        - containerPort: 4222
+          name: client
+        - containerPort: 6222
+          name: cluster
+        - containerPort: 8222
+          name: monitor
+
+        command:
+        - "nats-server"
+        - "--config"
+        - "/etc/nats-config/nats.conf"
+
+        # Required to be able to define an environment variable
+        # that refers to other environment variables.  This env var
+        # is later used as part of the configuration file.
+        env:
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: SERVER_NAME
+          value: $(POD_NAME)
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: CLUSTER_ADVERTISE
+          value: $(POD_NAME).mayastor-nats.$(POD_NAMESPACE)
+        volumeMounts:
+        - name: config-volume
+          mountPath: /etc/nats-config
+        - name: pid
+          mountPath: /var/run/nats
+        
+
+        #######################
+        #                     #
+        # Healthcheck Probes  #
+        #                     #
+        #######################
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /
+            port: 8222
+          initialDelaySeconds: 10
+          periodSeconds: 30
+          successThreshold: 1
+          timeoutSeconds: 5
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /
+            port: 8222
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 5
+        startupProbe:
+          # for NATS server versions >=2.7.1, /healthz will be enabled
+          # startup probe checks that the JS server is enabled, is current with the meta leader,
+          # and that all streams and consumers assigned to this JS server are current
+          failureThreshold: 90
+          httpGet:
+            path: /healthz
+            port: 8222
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 5
+
+        # Gracefully stop NATS Server on pod deletion or image upgrade.
+        #
+        lifecycle:
+          preStop:
+            exec:
+              # send the lame duck shutdown signal to trigger a graceful shutdown
+              # nats-server will ignore the TERM signal it receives after this
+              #
+              command:
+              - "nats-server"
+              - "-sl=ldm=/var/run/nats/nats.pid"
+
+      #################################
+      #                               #
+      #  NATS Configuration Reloader  #
+      #                               #
+      #################################
+      - name: reloader
+        image: natsio/nats-server-config-reloader:0.10.1
+        imagePullPolicy: IfNotPresent
+        resources:
+          {}
+        command:
+        - "nats-server-config-reloader"
+        - "-pid"
+        - "/var/run/nats/nats.pid"
+        - "-config"
+        - "/etc/nats-config/nats.conf"
+        volumeMounts:
+        - name: config-volume
+          mountPath: /etc/nats-config
+        - name: pid
+          mountPath: /var/run/nats
+        
+
+      ##############################
+      #                            #
+      #  NATS Prometheus Exporter  #
+      #                            #
+      ##############################
+      - name: metrics
+        image: natsio/prometheus-nats-exporter:0.11.0
+        imagePullPolicy: IfNotPresent
+        resources:
+          {}
+        args:
+        - -connz
+        - -routez
+        - -subz
+        - -varz
+        - -prefix=nats
+        - -use_internal_server_id
+        - -jsz=all
+        - http://localhost:8222/
+        ports:
+        - containerPort: 7777
+          name: metrics
+
+  volumeClaimTemplates:
+---
+# Source: mayastor/charts/loki-stack/templates/tests/loki-test-pod.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  annotations:
+    "helm.sh/hook": test-success
+  labels:
+    app: loki-stack
+    chart: loki-stack-2.9.11
+    release: mayastor
+    heritage: Helm
+  name: mayastor-loki-stack-test
+spec:
+  containers:
+  - name: test
+    image: "bats/bats:1.8.2"
+    imagePullPolicy: ""
+    args:
+    - /var/lib/loki/test.sh
+    env:
+    - name: LOKI_SERVICE
+      value: mayastor-loki
+    - name: LOKI_PORT
+      value: "3100"
+    volumeMounts:
+    - name: tests
+      mountPath: /var/lib/loki
+  restartPolicy: Never
+  volumes:
+  - name: tests
+    configMap:
+      name: mayastor-loki-stack-test
+---
+# Source: mayastor/charts/nats/templates/tests/test-request-reply.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "mayastor-nats-test-request-reply"
+  labels:
+    chart: nats-0.19.14
+    app: mayastor-nats-test-request-reply
+  annotations:
+    "helm.sh/hook": test
+spec:
+  containers:
+  - name: nats-box
+    image: natsio/nats-box:0.13.8
+    env:
+    - name: NATS_HOST
+      value: mayastor-nats
+    command:
+    - /bin/sh
+    - -ec
+    - |
+      nats reply -s nats://$NATS_HOST:4222 'name.>' --command "echo 1" &
+    - |
+      "&&"
+    - |
+      name=$(nats request -s nats://$NATS_HOST:4222 name.test '' 2>/dev/null)
+    - |
+      "&&"
+    - |
+      [ $name = test ]
+
+  restartPolicy: Never
