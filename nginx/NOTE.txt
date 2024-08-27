@@ -112,3 +112,7 @@ http {
 
 grpc web gateway
 https://github.com/ysugimoto/lua-resty-grpc-gateway
+
+nginx + ktls
+https://docs.nvidia.com/doca/sdk/nvidia+tls+offload+guide/index.html
+https://www.quickhost.uk/blog/2021/11/14/nginx-tuning-with-kernel-tls-and-ssl_sendfile/
