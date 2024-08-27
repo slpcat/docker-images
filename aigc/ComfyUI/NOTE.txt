@@ -6,3 +6,6 @@ docker run --restart=always -d --runtime=nvidia --gpus all \
 
 https://github.com/SeargeDP/SeargeSDXL
 https://github.com/ltdrdata/ComfyUI-Manager/tree/main
+
+Run ComfyUI workflows on multiple local GPUs/networked machines.
+https://github.com/city96/ComfyUI_NetDist

@@ -1,0 +1,4 @@
+Stablediffusion-webui-forge官方网址：
+https://github.com/lllyasviel/stable-diffusion-webui-forge
+SVD 1.1官方网址：
+https://huggingface.co/stabilityai/stable-video-diffusion-img2vid-xt-1-1

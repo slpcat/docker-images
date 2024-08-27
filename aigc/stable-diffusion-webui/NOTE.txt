@@ -104,6 +104,8 @@ https://github.com/AUTOMATIC1111/stable-diffusion-webui-nsfw-censor
 
 Replaces NSFW images with black.
 
+SD矢量图插件
+https://github.com/GeorgLegato/stable-diffusion-webui-vectorstudio
 
 prompt travel
 https://github.com/Kahsolt/stable-diffusion-webui-prompt-travel

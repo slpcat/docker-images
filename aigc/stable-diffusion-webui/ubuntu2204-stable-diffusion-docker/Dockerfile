@@ -1,4 +1,4 @@
-FROM nvidia/cuda:11.8.0-cudnn8-devel-ubuntu22.04 as base
+FROM nvidia/cuda:12.1.0-cudnn8-devel-ubuntu22.04 as base
 MAINTAINER 若虚 <slpcat@qq.com>
 
 # Container variables
@@ -33,7 +33,7 @@ RUN \
 
 RUN \
     apt-get update -y && \
-    apt-get install -y libgl1-mesa-glx libglib2.0-dev tk google-perftools git git-lfs pkg-config libcairo2-dev libreadline8 gcc g++ \
+    apt-get install -y libgl1-mesa-glx libglib2.0-dev tk bc google-perftools git git-lfs pkg-config libcairo2-dev libreadline8 gcc g++ \
         build-essential \
         software-properties-common \
         python3.10-venv \

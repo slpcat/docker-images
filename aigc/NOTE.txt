@@ -57,3 +57,46 @@ AISuperDomain
 https://github.com/win4r/AISuperDomain
 
 https://github.com/TRI-ML/DDAD
+
+https://github.com/luban-agi/Awesome-Domain-LLM
+https://github.com/HqWu-HITCS/Awesome-Chinese-LLM
+
+ai换脸
+https://github.com/s0md3v/roop
+
+https://openbayes.com/blog
+
+开源数据集
+https://hf-mirror.com/datasets
+https://huggingface.co/datasets
+https://opendatalab.com/
+https://registry.opendata.aws/
+https://www.microsoft.com/en-us/research/tools/‍
+https://datasetsearch.research.google.com/
+https://github.com/awesomedata/awesome-public-datasets
+https://modelscope.cn/datasets
+https://www.luge.ai/
+https://tianchi.aliyun.com/dataset/
+https://www.kaggle.com/datasets
+https://archive.ics.uci.edu/datasets
+https://visualdata.io/discovery
+http://dataju.cn/Dataju/web/home
+https://hyper.ai/datasets
+https://data.baai.ac.cn/data
+https://aistudio.baidu.com/datasetoverview
+https://www.payititi.com/opendatasets/
+https://openi.pcl.ac.cn/explore/datasets
+https://www.heywhale.com/home/dataset
+
+https://www.arnica.io/
+
+https://github.com/Artrajz/vits-simple-api/blob/main/README_zh.md
+
+RAGFlow：基于OCR和文档解析的下一代 RAG 引擎
+https://github.com/infiniflow/ragflow.git
+RAG 案框架（Qanything、RAGFlow、FastGPT、智谱RAG）
+
+https://github.com/deepseek-ai/DeepSeek-LLM
+
+一家名为Black Forest Labs的公司推出了新的图像生成模型FLUX.1。据其官方网站公布的数据显示，FLUX.1的ELO评分已经超越了Midjourney-V6.0和Stable Diffusion3-Ultra等知名模型。值得注意的是，即便是开源版本的FLUX.1 [schnell]也在性能上超越了Midjourney-V6.0和Dall-E 3 HD。”
+
