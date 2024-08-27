@@ -109,5 +109,26 @@ spec:
           #type: kine
           #  kine:
           #    dataSource: "sqlite:///var/lib/k0s/db/state.db?more=rwc&_journal=WAL&cache=shared"
+        workerProfiles:
+          - name: custom-feature-gate      # name of the worker profile
+            values:
+              featureGates:        # feature gates mapping
+                DevicePlugins: true
+                Accelerators: true
+                AllowExtTrafficLocalEndpoints: false
+          - name: custom-eviction
+            values:
+              evictionHard:
+                memory.available: "500Mi"
+                nodefs.available: "1Gi"
+                imagefs.available: "10Gi"
+              evictionMinimumReclaim:
+                memory.available: "0Mi"
+                nodefs.available: "500Mi"
+                imagefs.available: "2Gi"
+          - name: custom-sysctl
+            values:
+              allowedUnsafeSysctls:
+                - net.*
         telemetry:
           enabled: true

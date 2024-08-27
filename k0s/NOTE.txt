@@ -2,6 +2,20 @@ https://docs.k0sproject.io/
 https://github.com/Mirantis/cri-dockerd
 https://docs.k0sproject.io/v1.27.1+k0s.0/dockershim/
 
+安装cri-docker
+到下面的链接下载最新版cri-docker
+https://github.com/Mirantis/cri-dockerd/tags
+
+/usr/bin/cri-dockerd
+创建cri-docker启动文件
+启动文件从下面链接找到。
+https://github.com/Mirantis/cri-dockerd/tree/master/packaging/systemd
+
+/usr/lib/systemd/system
+这里/usr/bin/cri-dockerd一定要加上参数
+
+–pod-infra-container-image=registry.aliyuncs.com/google_containers/pause:3.8
+
 https://github.com/k0sproject/k0s/blob/main/docs/k0s-multi-node.md
 
 内置containerd 配置文件
