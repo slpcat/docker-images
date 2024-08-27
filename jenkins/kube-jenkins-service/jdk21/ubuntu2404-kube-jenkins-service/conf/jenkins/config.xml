@@ -1,0 +1,250 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<hudson>
+  <disabledAdministrativeMonitors/>
+  <numExecutors>0</numExecutors>
+  <mode>NORMAL</mode>
+  <useSecurity>true</useSecurity>
+  <authorizationStrategy class="hudson.security.AuthorizationStrategy$Unsecured"/>
+  <securityRealm class="hudson.security.SecurityRealm$None"/>
+  <disableRememberMe>false</disableRememberMe>
+  <projectNamingStrategy class="jenkins.model.ProjectNamingStrategy$DefaultProjectNamingStrategy"/>
+  <workspaceDir>${JENKINS_HOME}/workspace/${ITEM_FULLNAME}</workspaceDir>
+  <buildsDir>${ITEM_ROOTDIR}/builds</buildsDir>
+  <markupFormatter class="hudson.markup.EscapedMarkupFormatter"/>
+  <jdks/>
+  <viewsTabBar class="hudson.views.DefaultViewsTabBar"/>
+  <myViewsTabBar class="hudson.views.DefaultMyViewsTabBar"/>
+  <clouds>
+    <org.csanchez.jenkins.plugins.kubernetes.KubernetesCloud plugin="kubernetes@1.27.1.1">
+      <name>kubernetes</name>
+      <defaultsProviderTemplate>jenkins-slave</defaultsProviderTemplate>
+      <templates>
+        <org.csanchez.jenkins.plugins.kubernetes.PodTemplate>
+          <inheritFrom></inheritFrom>
+          <name>jnlp-slave</name>
+          <namespace>ci</namespace>
+          <privileged>false</privileged>
+          <alwaysPullImage>true</alwaysPullImage>
+          <instanceCap>80</instanceCap>
+          <slaveConnectTimeout>90</slaveConnectTimeout>
+          <idleMinutes>60</idleMinutes>
+          <activeDeadlineSeconds>0</activeDeadlineSeconds>
+          <label>jnlp-slave</label>
+          <nodeSelector></nodeSelector>
+          <nodeUsageMode>NORMAL</nodeUsageMode>
+          <customWorkspaceVolumeEnabled>false</customWorkspaceVolumeEnabled>
+          <workspaceVolume class="org.csanchez.jenkins.plugins.kubernetes.volumes.workspace.EmptyDirWorkspaceVolume">
+            <memory>false</memory>
+          </workspaceVolume>
+          <volumes/>
+          <containers>
+            <org.csanchez.jenkins.plugins.kubernetes.ContainerTemplate>
+              <name>jnlp</name>
+              <image>slpcat/kube-jenkins-dind-agent</image>
+              <privileged>true</privileged>
+              <alwaysPullImage>true</alwaysPullImage>
+              <workingDir>/home/jenkins</workingDir>
+              <command></command>
+              <args>${computer.jnlpmac} ${computer.name}</args>
+              <ttyEnabled>false</ttyEnabled>
+              <resourceRequestCpu></resourceRequestCpu>
+              <resourceRequestMemory></resourceRequestMemory>
+              <resourceLimitCpu></resourceLimitCpu>
+              <resourceLimitMemory></resourceLimitMemory>
+              <envVars>
+                <org.csanchez.jenkins.plugins.kubernetes.model.KeyValueEnvVar>
+                  <key>JAVA_OPTS</key>
+                  <value>-server -Djava.awt.headless=true -Djava.nio.channels.spi.SelectorProvider=sun.nio.ch.EPollSelectorProvider -
+Dfile.encoding=UTF8 -Xverify:none -XX:MetaspaceSize=128m -XX:+UseNUMA -XX:+UseNUMAInterleaving -XX:NUMAInterleaveGranularity=65536 -X
+X:+UseLargePages -XX:+UseCompressedOops -XX:MaxMetaspaceSize=512m -XX:ReservedCodeCacheSize=240M -XX:MaxRAMFraction=2 -XshowSettings:
+vm -XX:+AggressiveOpts -Djute.maxbuffer=41943040 -XX:-UseBiasedLocking -XX:+UseFastAccessorMethods -XX:+UnlockExperimentalVMOptions -
+XX:+UseCGroupMemoryLimitForHeap -XX:+UseCompressedOops -XX:+CMSClassUnloadingEnabled  -XX:+CMSScavengeBeforeRemark -XX:+DisableExplic
+itGC -XX:+UseG1GC -XX:+ExplicitGCInvokesConcurrent -XX:SoftRefLRUPolicyMSPerMB=0 -XX:G1ReservePercent=25 -XX:G1NewSizePercent=10 -XX:
+G1MaxNewSizePercent=25 -XX:MaxGCPauseMillis=20 -XX:-OmitStackTraceInFastThrow -XX:+ParallelRefProcEnabled -XX:ParallelGCThreads=8 -XX
+:MaxTenuringThreshold=1 -XX:G1HeapWastePercent=10 -XX:SurvivorRatio=8 -XX:G1MixedGCCountTarget=16 -XX:G1MixedGCLiveThresholdPercent=9
+0 -XX:InitiatingHeapOccupancyPercent=35 -XX:G1HeapRegionSize=32m -XX:+PerfDisableSharedMem -XX:-ResizePLAB</value>
+                </org.csanchez.jenkins.plugins.kubernetes.model.KeyValueEnvVar>
+              </envVars>
+              <ports/>
+              <livenessProbe>
+                <execArgs></execArgs>
+                <timeoutSeconds>0</timeoutSeconds>
+                <initialDelaySeconds>0</initialDelaySeconds>
+                <failureThreshold>0</failureThreshold>
+                <periodSeconds>0</periodSeconds>
+                <successThreshold>0</successThreshold>
+              </livenessProbe>
+            </org.csanchez.jenkins.plugins.kubernetes.ContainerTemplate>
+          </containers>
+          <envVars/>
+          <annotations/>
+          <imagePullSecrets/>
+        </org.csanchez.jenkins.plugins.kubernetes.PodTemplate>
+        <org.csanchez.jenkins.plugins.kubernetes.PodTemplate>
+          <inheritFrom></inheritFrom>
+          <name>golang</name>
+          <namespace>ci</namespace>
+          <privileged>false</privileged>
+          <capOnlyOnAlivePods>false</capOnlyOnAlivePods>
+          <alwaysPullImage>false</alwaysPullImage>
+          <slaveConnectTimeout>100</slaveConnectTimeout>
+          <idleMinutes>60</idleMinutes>
+          <activeDeadlineSeconds>0</activeDeadlineSeconds>
+          <label>golang</label>
+          <nodeSelector></nodeSelector>
+          <nodeUsageMode>EXCLUSIVE</nodeUsageMode>
+          <hostNetwork>false</hostNetwork>
+          <workspaceVolume class="org.csanchez.jenkins.plugins.kubernetes.volumes.workspace.EmptyDirWorkspaceVolume">
+            <memory>false</memory>
+          </workspaceVolume>
+          <volumes/>
+          <containers>
+            <org.csanchez.jenkins.plugins.kubernetes.ContainerTemplate>
+              <name>jnlp</name>
+              <image>slpcat/kube-jenkins-dind-agent:golang</image>
+              <privileged>true</privileged>
+              <alwaysPullImage>true</alwaysPullImage>
+              <workingDir>/home/jenkins/agent</workingDir>
+              <command></command>
+              <args>${computer.jnlpmac} ${computer.name}</args>
+              <ttyEnabled>false</ttyEnabled>
+              <resourceRequestCpu></resourceRequestCpu>
+              <resourceRequestMemory></resourceRequestMemory>
+              <resourceLimitCpu></resourceLimitCpu>
+              <resourceLimitMemory></resourceLimitMemory>
+              <envVars>
+                <org.csanchez.jenkins.plugins.kubernetes.model.KeyValueEnvVar>
+                  <key>JAVA_OPTS</key>
+                  <value>-server -Djava.awt.headless=true -Djava.nio.channels.spi.SelectorProvider=sun.nio.ch.EPollSelectorProvider -
+Dfile.encoding=UTF8 -Xverify:none -XX:MetaspaceSize=128m -XX:+UseNUMA -XX:+UseNUMAInterleaving -XX:NUMAInterleaveGranularity=65536 -X
+X:+UseLargePages -XX:+UseCompressedOops -XX:MaxMetaspaceSize=512m -XX:ReservedCodeCacheSize=240M -XX:MaxRAMFraction=2 -XshowSettings:
+vm -XX:+AggressiveOpts -Djute.maxbuffer=41943040 -XX:-UseBiasedLocking -XX:+UseFastAccessorMethods -XX:+UnlockExperimentalVMOptions -
+XX:+UseCGroupMemoryLimitForHeap -XX:+UseCompressedOops -XX:+CMSClassUnloadingEnabled  -XX:+CMSScavengeBeforeRemark -XX:+DisableExplic
+itGC -XX:+UseG1GC -XX:+ExplicitGCInvokesConcurrent -XX:SoftRefLRUPolicyMSPerMB=0 -XX:G1ReservePercent=25 -XX:G1NewSizePercent=10 -XX:
+G1MaxNewSizePercent=25 -XX:MaxGCPauseMillis=20 -XX:-OmitStackTraceInFastThrow -XX:+ParallelRefProcEnabled -XX:ParallelGCThreads=8 -XX
+:MaxTenuringThreshold=1 -XX:G1HeapWastePercent=10 -XX:SurvivorRatio=8 -XX:G1MixedGCCountTarget=16 -XX:G1MixedGCLiveThresholdPercent=9
+0 -XX:InitiatingHeapOccupancyPercent=35 -XX:G1HeapRegionSize=32m -XX:+PerfDisableSharedMem -XX:-ResizePLAB</value>
+                </org.csanchez.jenkins.plugins.kubernetes.model.KeyValueEnvVar>
+              </envVars>
+              <ports/>
+              <livenessProbe>
+                <execArgs></execArgs>
+                <timeoutSeconds>0</timeoutSeconds>
+                <initialDelaySeconds>0</initialDelaySeconds>
+                <failureThreshold>0</failureThreshold>
+                <periodSeconds>0</periodSeconds>
+                <successThreshold>0</successThreshold>
+              </livenessProbe>
+            </org.csanchez.jenkins.plugins.kubernetes.ContainerTemplate>
+          </containers>
+          <envVars/>
+          <annotations/>
+          <imagePullSecrets/>
+          <nodeProperties/>
+          <yamlMergeStrategy class="org.csanchez.jenkins.plugins.kubernetes.pod.yaml.Overrides"/>
+          <showRawYaml>true</showRawYaml>
+          <podRetention class="org.csanchez.jenkins.plugins.kubernetes.pod.retention.Never"/>
+        </org.csanchez.jenkins.plugins.kubernetes.PodTemplate>
+        <org.csanchez.jenkins.plugins.kubernetes.PodTemplate>
+          <id>33008629-bc0a-4cd5-8ccf-f58e8636591f</id>
+          <inheritFrom></inheritFrom>
+          <name>java</name>
+          <namespace>ci</namespace>
+          <privileged>false</privileged>
+          <capOnlyOnAlivePods>false</capOnlyOnAlivePods>
+          <alwaysPullImage>false</alwaysPullImage>
+          <instanceCap>10</instanceCap>
+          <slaveConnectTimeout>100</slaveConnectTimeout>
+          <idleMinutes>60</idleMinutes>
+          <activeDeadlineSeconds>0</activeDeadlineSeconds>
+          <label>java</label>
+          <nodeSelector></nodeSelector>
+          <nodeUsageMode>EXCLUSIVE</nodeUsageMode>
+          <hostNetwork>false</hostNetwork>
+          <workspaceVolume class="org.csanchez.jenkins.plugins.kubernetes.volumes.workspace.EmptyDirWorkspaceVolume">
+            <memory>false</memory>
+          </workspaceVolume>
+          <volumes/>
+          <containers>
+            <org.csanchez.jenkins.plugins.kubernetes.ContainerTemplate>
+              <name>jnlp</name>
+              <image>slpcat/kube-jenkins-dind-agent:java</image>
+              <privileged>true</privileged>
+              <alwaysPullImage>true</alwaysPullImage>
+              <workingDir>/home/jenkins/agent</workingDir>
+              <command></command>
+              <args>${computer.jnlpmac} ${computer.name}</args>
+              <ttyEnabled>true</ttyEnabled>
+              <resourceRequestCpu></resourceRequestCpu>
+              <resourceRequestMemory></resourceRequestMemory>
+              <resourceLimitCpu></resourceLimitCpu>
+              <resourceLimitMemory></resourceLimitMemory>
+              <envVars>
+                <org.csanchez.jenkins.plugins.kubernetes.model.KeyValueEnvVar>
+                  <key>JAVA_OPTS</key>
+                  <value>-server -Djava.awt.headless=true -Djava.nio.channels.spi.SelectorProvider=sun.nio.ch.EPollSelectorProvider -
+Dfile.encoding=UTF8 -Xverify:none -XX:MetaspaceSize=128m -XX:+UseNUMA -XX:+UseNUMAInterleaving -XX:NUMAInterleaveGranularity=65536 -X
+X:+UseLargePages -XX:+UseCompressedOops -XX:MaxMetaspaceSize=512m -XX:ReservedCodeCacheSize=240M -XX:MaxRAMFraction=2 -XshowSettings:
+vm -XX:+AggressiveOpts -Djute.maxbuffer=41943040 -XX:-UseBiasedLocking -XX:+UseFastAccessorMethods -XX:+UnlockExperimentalVMOptions -
+XX:+UseCGroupMemoryLimitForHeap -XX:+UseCompressedOops -XX:+CMSClassUnloadingEnabled  -XX:+CMSScavengeBeforeRemark -XX:+DisableExplic
+itGC -XX:+UseG1GC -XX:+ExplicitGCInvokesConcurrent -XX:SoftRefLRUPolicyMSPerMB=0 -XX:G1ReservePercent=25 -XX:G1NewSizePercent=10 -XX:
+G1MaxNewSizePercent=25 -XX:MaxGCPauseMillis=20 -XX:-OmitStackTraceInFastThrow -XX:+ParallelRefProcEnabled -XX:ParallelGCThreads=8 -XX
+:MaxTenuringThreshold=1 -XX:G1HeapWastePercent=10 -XX:SurvivorRatio=8 -XX:G1MixedGCCountTarget=16 -XX:G1MixedGCLiveThresholdPercent=9
+0 -XX:InitiatingHeapOccupancyPercent=35 -XX:G1HeapRegionSize=32m -XX:+PerfDisableSharedMem -XX:-ResizePLAB</value>
+                </org.csanchez.jenkins.plugins.kubernetes.model.KeyValueEnvVar>
+              </envVars>
+              <ports/>
+              <livenessProbe>
+                <execArgs></execArgs>
+                <timeoutSeconds>0</timeoutSeconds>
+                <initialDelaySeconds>0</initialDelaySeconds>
+                <failureThreshold>0</failureThreshold>
+                <periodSeconds>0</periodSeconds>
+                <successThreshold>0</successThreshold>
+              </livenessProbe>
+            </org.csanchez.jenkins.plugins.kubernetes.ContainerTemplate>
+          </containers>
+          <envVars/>
+          <annotations/>
+          <imagePullSecrets/>
+          <nodeProperties/>
+          <yamlMergeStrategy class="org.csanchez.jenkins.plugins.kubernetes.pod.yaml.Overrides"/>
+          <showRawYaml>true</showRawYaml>
+          <podRetention class="org.csanchez.jenkins.plugins.kubernetes.pod.retention.Default"/>
+        </org.csanchez.jenkins.plugins.kubernetes.PodTemplate>
+      </templates>
+      <serverUrl>https://kubernetes.default</serverUrl>
+      <skipTlsVerify>false</skipTlsVerify>
+      <namespace>ci</namespace>
+      <jenkinsUrl>http://jenkins.ci:8080</jenkinsUrl>
+      <containerCap>10</containerCap>
+      <retentionTimeout>5</retentionTimeout>
+      <connectTimeout>0</connectTimeout>
+      <readTimeout>0</readTimeout>
+      <maxRequestsPerHost>32</maxRequestsPerHost>
+    </org.csanchez.jenkins.plugins.kubernetes.KubernetesCloud>
+  </clouds>
+  <quietPeriod>5</quietPeriod>
+  <scmCheckoutRetryCount>0</scmCheckoutRetryCount>
+  <views>
+    <hudson.model.AllView>
+      <owner class="hudson" reference="../../.."/>
+      <name>all</name>
+      <filterExecutors>false</filterExecutors>
+      <filterQueue>false</filterQueue>
+      <properties class="hudson.model.View$PropertyList"/>
+    </hudson.model.AllView>
+  </views>
+  <primaryView>all</primaryView>
+  <slaveAgentPort>50000</slaveAgentPort>
+  <disabledAgentProtocols>
+    <string>JNLP2-connect</string>
+    <string>JNLP3-connect</string>
+  </disabledAgentProtocols>
+  <label></label>
+  <crumbIssuer class="hudson.security.csrf.DefaultCrumbIssuer">
+    <excludeClientIPFromCrumb>true</excludeClientIPFromCrumb>
+  </crumbIssuer>
+  <nodeProperties/>
+  <globalNodeProperties/>
+</hudson>

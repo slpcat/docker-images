@@ -170,6 +170,18 @@ RUN \
     && ln -sf /usr/local/dependency-check/bin/dependency-check.sh  /usr/local/bin/dependency-check \
     && rm -rf dependency-check*
 
+#Cosign
+RUN \
+    curl -O -L "https://github.com/sigstore/cosign/releases/latest/download/cosign-linux-amd64" && \
+    mv cosign-linux-amd64 /usr/local/bin/cosign && \
+    chmod +x /usr/local/bin/cosign
+
+#https://github.com/notaryproject/notary
+
+#SBOM syft
+RUN \
+    curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
+
 #grype scanner
 RUN \
     curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b /usr/local/bin

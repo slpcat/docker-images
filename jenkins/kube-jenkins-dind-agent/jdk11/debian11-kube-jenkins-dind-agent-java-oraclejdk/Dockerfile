@@ -35,6 +35,21 @@ COPY jdk-${JAVA_VERSION}_linux-*_bin.tar.gz install_jdk17.sh /tmp/
 RUN \
     /tmp/install_jdk17.sh /tmp/
 
+FROM slpcat/debian:bullseye as builder-jdk21
+
+MAINTAINER 若虚 <slpcat@qq.com>
+
+#install JDK 21
+ENV JAVA_VERSION=21.0.1 \
+    JAVA_HOME="/usr/lib/jvm/default-jvm"
+
+ARG TARGETARCH
+
+COPY jdk-${JAVA_VERSION}_linux-*_bin.tar.gz install_jdk21.sh /tmp/
+
+RUN \
+    /tmp/install_jdk21.sh /tmp/
+
 #upstream https://github.com/jenkinsci/docker-inbound-agent
 FROM slpcat/kube-jenkins-dind-agent:oraclejdk11-bullseye
 MAINTAINER 若虚 <slpcat@qq.com>
@@ -43,6 +58,7 @@ USER root
 
 COPY --from=builder-jdk8 /usr/lib/jvm/java-8-oracle  /usr/lib/jvm/java-8-oracle
 COPY --from=builder-jdk17 /usr/lib/jvm/java-17.0.2-oracle /usr/lib/jvm/java-17.0.2-oracle
+COPY --from=builder-jdk21 /usr/lib/jvm/java-21.0.2-oracle /usr/lib/jvm/java-21.0.2-oracle
 
 #Apache Ant is a Java library and command-line tool that help building software.
 

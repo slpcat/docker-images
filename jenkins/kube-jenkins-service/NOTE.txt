@@ -67,3 +67,4 @@ docker run -d -it --restart=always \
 版本说明
 1. alpine + jdk 8
 2. 主要 debian10 + jdk 11
+3. ubuntu2204 + jdk17
