@@ -28,6 +28,7 @@ RUN <<-EOF
     # cleanup
 EOF
 
+#https://distfiles.gentoo.org/releases/loong/autobuilds/20240716T170400Z/stage3-loong-openrc-20240716T170400Z.tar.xz
 COPY stage3-loong-openrc-20240716T170400Z.tar.xz /tmp/
 RUN  tar xpf "/tmp/stage3-loong-openrc-20240716T170400Z.tar.xz" --xattrs-include='*.*' --numeric-owner -C /gentoo \
      # modify stage3

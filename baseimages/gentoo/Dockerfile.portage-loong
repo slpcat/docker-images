@@ -28,12 +28,14 @@ RUN <<-EOF
     # cleanup
 EOF
 
+#https://distfiles.gentoo.org/releases/loong/autobuilds/20240716T170400Z/stage3-loong-openrc-20240716T170400Z.tar.xz
 COPY stage3-loong-openrc-20240716T170400Z.tar.xz /tmp/
 RUN  tar xpf "/tmp/stage3-loong-openrc-20240716T170400Z.tar.xz" --xattrs-include='*.*' --numeric-owner -C /gentoo \
      # modify stage3
      && ( sed -i -e 's/#rc_sys=""/rc_sys="docker"/g' etc/rc.conf 2>/dev/null || true ) \
      && echo 'UTC' > etc/timezone
 
+#https://distfiles.gentoo.org/snapshots/portage-latest.tar.xz
 COPY portage-latest.tar.xz /tmp/
 RUN mkdir -p var/db/repos var/cache/binpkgs var/cache/distfiles \
     && tar xJpf /tmp/portage-latest.tar.xz -C var/db/repos \

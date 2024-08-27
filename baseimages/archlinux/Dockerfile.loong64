@@ -1,4 +1,5 @@
-FROM slpcat/archlinux:scratch-loong64
+#FROM slpcat/archlinux:scratch-loong64
+FROM ghcr.io/loongarchlinux/archlinux:latest
 
 MAINTAINER 若虚 <slpcat@qq.com>
 

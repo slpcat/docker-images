@@ -191,3 +191,8 @@ $ docker run -d --restart=always -v /run/docker/plugins:/run/docker/plugins -v /
 $ docker network create -d sriov --subnet=194.168.1.0/24 -o netdevice=ens2f0 -o vlan=200 customer2
 $ docker network create -d sriov --subnet=194.168.1.0/24 -o netdevice=ens2f0 -o vlan=100 -o privileged=1 customer1
 $ docker network create -d sriov --subnet=194.168.1.0/24 -o netdevice=ens2f0 -o mode=passthrough mynet
+
+
+
+https://github.com/wojiushixiaobai/kubernetes-loongarch64/releases
+

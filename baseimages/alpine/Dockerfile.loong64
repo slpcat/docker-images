@@ -1,5 +1,5 @@
 #FROM harbor.loongnix.cn/mirrorloongsoncontainers/alpine:v3.11.11
-FROM lcr.loongnix.cn/library/alpine:3.18
+FROM lcr.loongnix.cn/library/alpine:3.19
 # Container variables
 ENV \
     TERM="xterm" \
