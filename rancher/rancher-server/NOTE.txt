@@ -29,6 +29,8 @@ https://rancher.com/docs/rancher/v2.x/en/quick-start-guide/deployment/quickstart
 
 docker run -d --restart=always --privileged -v /data/rancher:/var/lib/rancher/ -p 80:80 -p 443:443 rancher/rancher:v2.7.9
 
+v2.8.4
+
 docker run -itd --name rancher2.5.8 -p 80:80 -p 443:443 \
 -v /data/rancher:/var/lib/rancher/ \
 --privileged=true \

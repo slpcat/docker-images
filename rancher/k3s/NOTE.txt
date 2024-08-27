@@ -13,8 +13,28 @@ curl -sfL http://rancher-mirror.cnrancher.com/k3s/k3s-install.sh | INSTALL_K3S_M
 runtime 推荐containerd
 
 第一个server
-curl -sfL http://rancher-mirror.cnrancher.com/k3s/k3s-install.sh | INSTALL_K3S_MIRROR=cn sh -s - server \
+curl -sfL http://rancher-mirror.cnrancher.com/k3s/k3s-install.sh | INSTALL_K3S_MIRROR=cn sh INSTALL_K3S_VERSION="v1.29.5+k3s1" -s - server \
+  --docker \ 
+  --service-cidr="10.43.0.0/16" \
+  --cluster-cidr="10.42.0.0/16" \
+  --cluster-dns="10.43.0.10" \
+  --cluster-domain="cluster.local" \
+  --etcd-snapshot-retention=10 \
+  --disable=traefik,local-storage,metrics-server,servicelb \
+  --disable-kube-proxy \
+  --flannel-backend=none \
+  --disable-network-policy \
+  --disable-cloud-controller \
+  --disable-helm-controller \
+  --data-dir=/var/lib/rancher/k3s \
   --token=SECRET \
+  --agent-token=SECRET2 \ 
+  --cluster-init \
+  --kubelet-arg="- proxy-mode=ipvs" \
+  --kube-proxy-arg ="- proxy-mode=ipvs" \
+  -v 3 \
+  --pause-image="docker.io/rancher/pause:3.6" \
+  --private-registry="/etc/rancher/k3s/registries.yaml" \
   --datastore-endpoint="mysql://username:password@tcp(hostname:3306)/database-name"
 
 
@@ -27,6 +47,16 @@ curl -sfL https://get.k3s.io | sh -s - server \
 
 K3S_TOKEN=SECRET k3s agent --server https://fixed-registration-address:6443
 
+
+curl -sfL https://get.k3s.io | sh -s - --docker
+
+
+curl -sfL https://rancher-mirror.rancher.cn/k3s/k3s-install.sh | INSTALL_K3S_MIRROR=cn sh -s - server \
+ --disable-network-policy \
+ --disable-cloud-controller \
+ --disable-helm-controller \
+ --data-dir=/data/k3s \
+ --disable=traefik,local-storage,metrics-server
 
 mac os 安装
 
