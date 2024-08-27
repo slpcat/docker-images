@@ -1,0 +1,2 @@
+https://github.com/apache/couchdb-docker
+$ docker run -d --name my-couchdb -p 5984:5984 -v /data/coucdb-data:/opt/couchdb/data -e COUCHDB_USER=admin -e COUCHDB_PASSWORD=password apache/couchdb:3.3.3

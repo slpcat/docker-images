@@ -1,0 +1,4 @@
+https://github.com/AliyunContainerService/image-syncer
+image-syncer is a docker registry tools. With image-syncer you can synchronize docker images from some source registries to target registries, which include most popular public docker registry services.
+
+

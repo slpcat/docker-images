@@ -16,3 +16,7 @@ https://developer.nvidia.com/cudnn
 https://github.com/NVIDIA/k8s-device-plugin
 https://devblogs.nvidia.com/nvidia-docker-gpu-server-application-deployment-made-easy/
 https://github.com/Microsoft/CNTK/blob/master/Tools/docker/CNTK-GPU-Image/Dockerfile
+https://github.com/Mellanox/network-operator
+
+目标检测经典模型YOLO
+

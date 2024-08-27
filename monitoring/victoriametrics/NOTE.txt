@@ -19,6 +19,23 @@ vmselect 通过从vmstorage节点获取并合并所需数据，通过Prometheus�
 vmbackup&&vmrestore 备份恢复
 victoriametrics
 
+# 允许 VictoriaMetrics 缓存占用系统内存的百分比 默认值为60
+-memory.allowedPercent=60
+# 单个查询可以消耗的最大内存量 默认值 0 不限制单个查询内存
+# 内存大小单位支持：KB, MB, GB, TB, KiB, MiB, GiB, TiB
+-search.maxMemoryPerQuery=0
+# 设置查询的最大长度 这个参数控制着用户可以发送到 VictoriaMetrics 的查询的最大长度限制 默认 16KiB
+# 内存大小单位支持：KB、MB、GB、TB、KiB、MiB、GiB、TiB
+-search.maxQueryLen=50KiB
+# 用于限制单个查询可以返回的时间序列的最大数量 需根据服务器性能和架构合理选择对应的大小 默认 30000
+-search.maxSeries=90000000
+# 在 /api/v1/query 和 /api/v1/query_range 查询期间可选择的最大唯一时间序列数量 默认 300000
+-search.maxUniqueTimeseries=9000000
+# 限制单个查询的持续时间 如果查询的执行时间超过了设定的持续时间 则查询会被取消 这有助于在执行意外的重负载查询时节省 CPU 和 RAM 默认 30s 当达到并发数上限是 默认 10s
+-search.maxQueryDuration=30s
+# 限制 VictoriaMetrics 可以处理的并发请求数 默认 16
+-search.maxConcurrentRequests=16
+
 docker run -d --restart=always -p 8428:8428 -p 8089:8089 \
    -p 8089:8089/udp -p 2003:2003 -p 2003:2003/udp -p 4242:4242 \
    -v /data/vmdata:/storage \
@@ -29,8 +46,12 @@ docker run -d --restart=always -p 8428:8428 -p 8089:8089 \
       '-inmemoryDataFlushInterval=60s' \
       '-insert.maxQueueDuration=5m' \
       '-maxConcurrentInserts=128' \
+      '-memory.allowedPercent=60' \
+      '-search.maxMemoryPerQuery=0' \
+      '-search.maxQueryLen=50KiB' \
       '-search.maxConcurrentRequests=128' \
       '-search.maxQueueDuration=2m' \
+      '-search.maxUniqueTimeseries=9000000' \
       '--storageDataPath=/storage'  \
       '--graphiteListenAddr=:2003'  \
       '--opentsdbListenAddr=:4242'  \

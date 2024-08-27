@@ -28,6 +28,7 @@ helm ls
 #helm repo add incubator https://kubernetes-charts-incubator.storage.googleapis.com
 helm repo add paralus https://paralus.github.io/helm-charts
 helm repo add timescale 'https://charts.timescale.com'
+helm repo add couchdb https://apache.github.io/couchdb-helm
 helm repo add apache https://pulsar.apache.org/charts
 helm repo add vmware-tanzu https://vmware-tanzu.github.io/helm-charts
 helm repo add loki https://grafana.github.io/loki/charts

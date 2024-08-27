@@ -1,0 +1,17 @@
+[Unit]
+Description=Juicefs S3 Gateway
+Requires=network.target
+After=multi-user.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+User=root
+Environment="MINIO_ROOT_USER=admin"
+Environment="MINIO_ROOT_PASSWORD=12345678"
+ExecStart=/usr/local/bin/juicefs gateway redis://localhost:6379 localhost:9000
+Restart=on-failure
+RestartSec=60
+
+[Install]
+WantedBy=multi-user.target

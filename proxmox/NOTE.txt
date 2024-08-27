@@ -19,6 +19,9 @@ deb http://mirrors.163.com/debian-security/ buster/updates main contrib
 apt update
 apt dist-upgrade #如需升级pve，则执行该命令
 
+lxc镜像下载地址
+https://jenkins.linuxcontainers.org/view/LXC/job/image-{distribution}/
+
 lxc 网卡直通
 
 arch: amd64
@@ -49,28 +52,74 @@ lxc.cap.drop:
 lxc.cgroup.devices.allow: a
 lxc.mount.auto: proc:rw sys:rw
 
-gpu
+宿主机安装
+INTEL
+$ apt install intel-media-va-driver-non-free
+验证方法：
+
+$ apt install intel-gpu-tools vainfo
+$ intel_gpu_top
+注:ubuntu2004 内置va-driver 版本过老 无法与宿主机的兼容
+
+AMD
+验证方法：
+
+$ apt install radeontop
+$ radeontop
+NVIDIA
+$ apt install dkms proxmox-headers-6.5.13-1-pve #这里换成你的内核版本
+$ apt install nvidia-driver
+
+lxc 容器推荐特权模式+nest嵌套
+intel gpu
+lxc.cgroup2.devices.allow: c 226:0 rwm #注意这里的数字要一一对应
+lxc.cgroup2.devices.allow: c 226:128 rwm #注意这里的数字要一一对应
+lxc.mount.entry: /dev/dri/card0 dev/dri/card0 none bind,optional,create=file
+lxc.mount.entry: /dev/dri/renderD128 dev/dri/renderD128 none bind,optional,create=file
+
+
+nvidia gpu
 Reboot the host and check the output of ls -al /dev/nvidia* and /dev/dri/* is similar to below:
 
-lxc.cgroup.devices.allow: c 195:* rwm
-lxc.cgroup.devices.allow: c 236:* rwm
-lxc.cgroup.devices.allow: c 226:* rwm
+lxc.cgroup2.devices.allow: c 10:223 rwm
+lxc.cgroup2.devices.allow: c 194:* rwm
+lxc.cgroup2.devices.allow: c 195:* rwm
+lxc.cgroup2.devices.allow: c 226:* rwm
+lxc.cgroup2.devices.allow: c 235:* rwm
+lxc.cgroup2.devices.allow: c 236:* rwm
+lxc.cgroup2.devices.allow: c 509:* rwm
+lxc.cgroup2.devices.allow: c 510:* rwm
 lxc.mount.entry: /dev/nvidia0 dev/nvidia0 none bind,optional,create=file
 lxc.mount.entry: /dev/nvidiactl dev/nvidiactl none bind,optional,create=file
-lxc.mount.entry: /dev/nvidia-uvm dev/nvidia-uvm none bind,optional,create=file
+lxc.mount.entry: /dev/nvidia-caps dev/nvidia-caps none bind,optional,create=file
 lxc.mount.entry: /dev/nvidia-modeset dev/nvidia-modeset none bind,optional,create=file
+lxc.mount.entry: /dev/nvidia-uvm dev/nvidia-uvm none bind,optional,create=file
 lxc.mount.entry: /dev/nvidia-uvm-tools dev/nvidia-uvm-tools none bind,optional,create=file
-lxc.mount.entry: /dev/dri dev/dri none bind,optional,create=dir
+#gpu0
+lxc.mount.entry: /dev/dri/card0 dev/dri/card0 none bind,optional,create=file,mode=0666
+lxc.mount.entry: /dev/dri/renderD128 dev/dri/renderD128 none bind,optional,create=file
+#gpu1
+lxc.mount.entry: /dev/dri/card1 dev/dri/card1 none bind,optional,create=file,mode=0666
+lxc.mount.entry: /dev/dri/renderD129 dev/dri/renderD129 none bind,optional,create=file
+lxc.mount.entry: /dev/uinput dev/uinput none bind,optional,create=file
 
 LXC Container
 Next we need to install the Nvidia drivers inside the container. It is important that the exact Nvidia driver versions match between the Proxmox host and the container.
 
 sudo ./NVIDIA-Linux-x86_64-430.64.run --no-kernel-module
 
-
 /etc/nvidia-container-runtime/config.toml
 
 no-cgroups = true
+
+lxc 远程桌面 xrdp作为基础
+
+./NVIDIA-Linux-x86_64-460.91.03.run --no-kernel-module
+./cuda.run --silent --toolkit --toolkitpath=/build/cuda --no-opengl-libs --no-man-page --no-drm
+在此基础上启用其他高效远程桌面协议
+moonlight
+todesk
+rustdesk
 
 数据包速率性能：SR-IOV 66 Mpps vs. VirtIO 10-15 Mpps。NVIDIA接口针对最高性能进行了调整——VirtIO主要针对软件性能进行了调整（即使如此，VirtIO1.1中的改进也在进行中）。
 吞吐量：SR-IOV的线速 (100Gbps) vs. VirtIO的最大30Gbps

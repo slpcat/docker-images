@@ -38,3 +38,5 @@ tailscale up --login-server http://server.example.com:8080 --advertise-routes 19
 
 tailscale up --exit-node=<exit-node-ip>
 
+局域网路由优先
+ip rule add to 192.168.2.0/24 priority 2500 lookup main

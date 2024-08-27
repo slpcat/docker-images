@@ -1,0 +1,65 @@
+仅以负载均衡器模式启动 Cilium：
+
+# cat /etc/systemd/system/sys-fs-bpf.mount
+[Unit]
+Description=BPF mounts
+DefaultDependencies=no
+Before=local-fs.target umount.target
+After=swap.target
+
+[Mount]
+What=bpffs
+Where=/sys/fs/bpf
+Type=bpf
+
+[Install]
+WantedBy=multi-user.target
+
+
+systemctl start sys-fs-bpf.mount; docker run \
+--cap-add NET_ADMIN \
+--cap-add SYS_MODULE \
+--cap-add CAP_SYS_ADMIN \
+--network host \
+--privileged \
+-v /sys/fs/bpf:/sys/fs/bpf \
+-v /lib/modules \
+--name l4lb \
+<our_private_docker_repo>/cilium cilium-agent \
+--bpf-lb-algorithm=maglev \
+--bpf-lb-mode=dsr \
+--bpf-lb-acceleration=native \
+--bpf-lb-dsr-dispatch=ipip \
+--devices=eth0 \
+--datapath-mode=lb-only \
+--enable-l7-proxy=false \
+--tunnel=disabled \
+--install-iptables-rules=false \
+--enable-bandwidth-manager=false \
+--enable-local-redirect-policy=false \
+--enable-hubble=false \
+--enable-l7-proxy=false \
+--preallocate-bpf-maps=false \
+--disable-envoy-version-check=true \
+-auto-direct-node-routes=false \
+--enable-ipv4=true \
+--enable-ipv6=true \
+--bpf-lb-map-max 512000
+
+
+Cilium 提供了 API 来设置 lbmaps，这里我们使用以下命令来配置服务：
+
+cilium service update --id $idx --frontend "$svc" \
+              --backends "$backends" --k8s-node-port
+其中：
+
+frontend 代表每个 VIP 服务
+backends 代表 L7 节点
+完整设置样例如下所示：
+
+$ cilium service update --id 1 \
+			--frontend "10.248.11.13:7047" \
+			--backends "10.246.3.34:7047, \
+								  10.246.39.33 :7047, \
+								  10.246.39.34:7047"  \
+			--k8s-node-port

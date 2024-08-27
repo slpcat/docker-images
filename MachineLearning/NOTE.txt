@@ -1,0 +1,20 @@
+MLPerf
+https://mlperf.org/
+
+MLPerf 是目前国际公认的权威 AI 性能评测基准，由图灵奖得主大卫 · 帕特森（David Patterson）联合学术机构和企业在 2018 年 5 月创立。它通过一套规则和最佳实践，解决了一直以来机器学习系统化评估困难的问题。
+
+docker pull rrad/mlperf:image-classification-orig
+docker pull rrad/mlperf:image-classification
+docker pull rrad/mlperf:image_classification2
+docker pull rrad/mlperf:speech_recognition
+docker pull rrad/mlperf:recommendation
+docker pull rrad/mlperf:sentiment_analysis
+docker pull rrad/mlperf:rnn_translator
+docker pull rrad/mlperf:single_stage_detector
+docker pull rrad/mlperf:reinforcement
+docker pull rrad/mlperf:translation
+
+https://github.com/bytedance/ByteMLPerf
+https://github.com/Caiyishuai/training_results_v0.6
+https://github.com/mlcommons/training
+https://github.com/mlcommons/inference_results_v3.1

@@ -14,3 +14,22 @@ pip install sqlalchemy-clickhouse
 增加 SQLAlchemy 资源
 clickhouse://default:password@localhost:8123/default
 clickhouse+native://default:password@localhost:9000/default
+
+
+docker pull apache/superset
+
+docker run -d -p 8080:8088 --name superset apache/superset
+
+docker exec -it superset superset fab create-admin \
+              --username admin \
+              --firstname Superset \
+              --lastname Admin \
+              --email admin@superset.com \
+              --password admin
+
+docker exec -it superset superset db upgrade
+
+docker exec -it superset superset load_examples
+
+docker exec -it superset superset init
+

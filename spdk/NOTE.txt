@@ -1,0 +1,20 @@
+https://spdk.io/doc/containers.html
+
+https://spdk.io/doc/performance_reports.html
+SPDK Target
+
+SPDK Initiator
+
+NVMe-oF Initiator
+
+
+You docker command line will need to include at least the following:
+the --privileged flag to enable sharing of hugepages
+use of the -v switch to map hugepages
+sudo docker run --privileged -v /dev/hugepages:/dev/hugepages hello:1.0
+
+or depending on the needs of your app you may need one or more of the following parameters:
+
+If you are using the SPDK app framework: -v /dev/shm:/dev/shm
+If you need to use RPCs from outside of the container: -v /var/tmp:/var/tmp
+If you need to use the host network (i.e. NVMF target application): --network host

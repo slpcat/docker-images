@@ -1,0 +1,2 @@
+https://github.com/digitalocean/k8s-staticroute-operator
+

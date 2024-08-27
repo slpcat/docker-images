@@ -1,0 +1,15 @@
+pip install jupyter
+Using the nbconvert command to convert the python notebook to a python file.
+jupyter notebook <notebook>.ipynb
+
+/data/jupyter-conf:/app/.jupyter
+
+
+https://github.com/jupyterhub/jupyterhub
+https://z2jh.jupyter.org/en/stable/
+
+
+https://github.com/google/evcxr/tree/main/evcxr_jupyter
+
+cargo install evcxr_jupyter
+evcxr_jupyter --install

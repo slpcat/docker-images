@@ -1,0 +1,3 @@
+yum install -y freeradius freeradius-mysql freeradius-utils
+添加用户
+vim /etc/raddb/users

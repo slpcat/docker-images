@@ -103,6 +103,8 @@ Zabbkit - iPhone 专用 Zabbix Client 端。
 MobileOp - iPhone 专用 Zabbix Client 端。
 zCate
 
+https://github.com/kvaps/zabbix-linux-container-template
+
 Windows Phone
 
 Zabbkit - Windows Phone 专用 Zabbix Client 端。

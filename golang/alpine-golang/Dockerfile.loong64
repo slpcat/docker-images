@@ -1,4 +1,4 @@
-FROM slpcat/alpine:3.19
+FROM slpcat/alpine:3.18
 
 RUN \
     apk update && apk upgrade && apk add  go git
@@ -14,7 +14,7 @@ RUN set -eux; \
 	; \
 	rm -rf /var/lib/apt/lists/*
 
-ENV GOLANG_VERSION 1.22.2
+ENV GOLANG_VERSION 1.21.4
 
 # don't auto-upgrade the gotoolchain
 # https://github.com/docker-library/golang/issues/472

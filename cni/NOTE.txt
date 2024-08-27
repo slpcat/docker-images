@@ -1,0 +1,9 @@
+https://github.com/openshift/sriov-network-operator
+https://github.com/openshift/cluster-network-operator
+https://github.com/k8snetworkplumbingwg/sriov-network-operator
+https://github.com/openshift/dpu-network-operator
+https://github.com/kubeovn/sriov-network-operator
+https://github.com/aristanetworks/arista-ceoslab-operator
+https://github.com/spidernet-io/spiderpool
+https://github.com/projectcalico/calico
+

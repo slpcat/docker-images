@@ -21,7 +21,7 @@ ENV GOLANG_VERSION 1.21.1
 # https://github.com/docker-library/golang/issues/472
 ENV GOTOOLCHAIN=local \
     GOPATH=/go \
-    PATH=$GOPATH/bin://usr/lib/go-1.21/bin/:$PATH
+    PATH=$GOPATH/bin:/usr/lib/go-1.21/bin/:$PATH
 
 RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 1777 "$GOPATH"
 

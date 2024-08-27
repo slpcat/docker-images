@@ -1,0 +1,17 @@
+motioneye的作用是管理摄像头，motion只有一个界面，motioneye可以管理多个摄像头和配置摄像头。而且motioneye的界面更好看。
+
+1.下载镜像文件
+
+sudo docker pull ccrisan/motioneye:master-armhf
+1
+2.配置容器
+
+sudo docker run --name="motioneye" \
+    -p 8765:8765 -p 80：8081\
+    --hostname="motioneye" \
+    -v /etc/localtime:/etc/localtime:ro \
+    -v /etc/motioneye:/etc/motioneye \
+    -v /var/lib/motioneye:/var/lib/motioneye \
+    --restart="always" \
+    --detach=true \
+    ccrisan/motioneye:master-armhf64
