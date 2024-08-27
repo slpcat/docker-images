@@ -4,17 +4,40 @@ PUT _index_template/ingress_access_log
           "ingress_access_log_*"
         ],
         "template" : {
-          "settings" : {
-            "index" : {
-              "number_of_shards" : "7",
-              "number_of_replicas": "0",
+          "settings": {
+            "index": {
+              "lifecycle": {
+                "name": "logback_json-policy"
+              },
+              "routing": {
+                "rebalance": {
+                  "enable": "none"
+                },
+                "allocation": {
+                  "include": {
+                    "_tier_preference": "data_content"
+                  },
+                  "total_shards_per_node": "2"
+                }
+              },
               "refresh_interval": "60s",
-              "translog.sync_interval": "120s",
-              "translog.durability": "async",
-              "translog.flush_threshold_size": "5g",
-              "merge.policy.max_merged_segment": "2gb",
-              "merge.scheduler.max_thread_count": 20,
-              "merge.policy.segments_per_tier": "24"
+              "number_of_shards": "5",
+              "number_of_replicas": "1"
+              "translog": {
+               "flush_threshold_size": "1g",
+               "sync_interval": "120s",
+               "durability": "async"
+              },
+              "merge": {
+                "scheduler": {
+                  "max_thread_count": "20"
+                },
+                "policy": {
+                  "segments_per_tier": "24",
+                  "floor_segment": "100mb",
+                  "max_merged_segment": "2gb"
+                }
+              }
             }
           },
           "mappings" : {

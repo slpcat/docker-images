@@ -1,0 +1,11 @@
+https://github.com/openshift/dpu-network-operator
+
+To facilitate the management of Nvidia BlueField-2 DPU, a two-cluster design is being proposed. Under such design, a BlueField-2 card will be provisioned as a worker node of the ARM-based infra cluster, whereas the tenant cluster where the normal user applications run on, is composed of the X86 servers.
+
+The OVN-Kubernetes components are spread over the two clusters. On the tenant cluster side, the Cluster Network Operator is in charge of the management of the ovn-kube components. On the infra cluster side, we propose to create a new operator to be responsible for the life-cycle management of the ovn-kube components and the necessary host network initialization on DPU cards.
+
+
+Pre-requisites
+An tenant openshift cluster is composed of X86 hosts. The BlueField-2 cards are installed on the worker nodes where hardware offloading need to be enabled
+An infra Openshift cluster is composed of ARM hosts. The BlueField-2 cards are provisioned as worker nodes of the cluster.
+Pods in infra cluster can reach the API server of tenant cluster

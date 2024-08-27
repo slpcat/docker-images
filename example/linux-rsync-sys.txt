@@ -1,0 +1,213 @@
+rsync介绍
+rsync软件适用于Unix/Linux/Windows等多种操作系统平台，是一款开源的、快速的、多功能的、可实现全量及增量的本地或远程数据同步备份的优秀工具。并且可以不进行改变原有数据的属性信息，实现数据的备份迁移。
+
+rsync支持本地复制和远程复制。支持采用SSH协议远程同步复制，也可以采用Daemon守护进程的方式进行同步复制。
+
+首次执行时rsync会全量同步，之后只做数据增量同步复制。rsync在传输数据的过程中可以实行压缩及解压缩操作，因此可以使用更少的带宽。rsync提供了大量的参数来控制其行为的各个方面，并且允许非常灵活的方式来实现文件的传输复制。它以其Delta-transfer算法闻名。
+
+本节介绍如何基于rsync daemon模式实现Linux主机迁移，用户可自主完成上云迁移服务。
+
+注意事项及说明
+迁移源和目的端系统类型及版本必须一致。
+rsync host是数据同步的源端，rsync client是数据同步的目标端。
+rsync daemon监听默认端口为873。
+rsync daemon以C/S模式运行。
+迁移前检查
+对于CentOS系统，确保iptables/firewalld为关闭状态；对于Ubuntu系统，确保ufw为关闭状态。
+对于CentOS系统，确保SELlinux为关闭状态。
+Virtio（KVM）驱动：迁移源必须安装KVM虚拟化相关驱动
+卸载迁移源qemu-guest-agent（如果源端存在）。
+关闭NetworkManager。
+必须开启sshd服务。
+在rsync client端，通过bandlimit设置传输带宽大小。
+迁移示例
+安装rsync host端
+查看相关软件包。
+
+# rpm -qa rsync
+rsync-3.0.6-12.el6.x86_64
+# rpm -qa | grep qemu-guest-agent
+安装rsync。
+
+系统默认已安装rsync软件包。如果查看发现没有安装rsync，CentOS系统使用yum安装，Ubuntu系统使用apt-get安装。
+
+# yum install rsync -y
+# sudo apt-get install rsync
+如果已存在需要卸载qemu-guest-agent
+
+# rpm -e qemu-guest-agent
+生成rsyncd.conf配置文件。（注：复制以下文件时删掉后端的注释内容。）
+
+# vim /etc/rsyncd.conf
+uid = root                         # 用户远端的命令使用rsync访问共享目录
+gid = root                         # 用户组                        
+use chroot = no                    # 安全相关
+max connections = 20               # 最大连接数
+timeout = 900                      # 超时时间
+port = 873                         # 监听端口
+pid file = /var/run/rsyncd.pid     # 进程对应的进程号文件
+lock file = /var/run/rsyncd.lock   # 锁文件
+log file = /var/log/rsyncd.log     # 日志文件
+ignore errors                      # 忽略错误
+read only = false                  # 可写
+hosts allow = 172.16.1.0/24        # 允许连接的服务器，允许所有直接填*
+hosts deny = 0.0.0.0/32            # 后勤组连接的服务器
+auth users = root                  # 虚拟用户
+secrets file = /etc/rsync.password # 虚拟用户对应的用户和密码文件
+[migrate]                          # 模块名称
+path = /                           # 服务端提供访问的目录
+根据配置文件rsyncd.conf中的auth users参数配置远程连接帐户，并根据secrets file参数生成密码文件。
+
+# echo " root:<Your Password>" > /etc/rsync.password
+为密码文件配置权限。
+
+# chmod 600 /etc/rsync.password
+# ls -l /etc/rsync.password
+-rw------- 1 root root 20 Nov 15 23:35 /etc/rsync.password
+启动rsync服务并检查。
+
+# rsync --daemon
+# ps -ef | grep rsync|grep -v grep
+# lsof -i:873
+安装rsync client端
+查看rsync安装包。
+
+# rpm -qa rsync
+rsync-3.0.6-12.el6.x86_64
+安装rsync。
+系统默认已安装rsync软件包。如果查看发现没有安装rsync，CentOS系统使用yum安装，Ubuntu系统使用apt-get安装。
+
+# yum install rsync -y
+# sudo apt-get install rsync
+生成连接服务器需要的密码文件。
+
+# echo "<Your Password>" > /etc/rsync.password
+为密码文件配置权限。
+
+# chmod 600 /etc/rsync.password
+# ls -1 /etc/rsync.password
+-rw------- 1 root root 7 Nov 15 23:48 /etc/rsync.password
+同步示例：在client端，先执行排除文件的命令，再执行包含文件的命令。
+
+# rsync -avuPH --progress --password-file=/etc/rsync.password \
+--bwlimit=1000000 --exclude-from=/etc/rsync_excludes_linux.txt \
+root@<rsync host server ip>::migrate /
+其中rsync_excludes_linux.txt的内容请参考不同场景下排除及同步的文件举例。
+
+# rsync -avPH --progress --password-file=/etc/rsync.password \
+--files-from= rsync_includes_linux.txt \
+root@<rsync host server ip>::migrate /
+其中rsync_includes_linux.txt的内容请参考不同场景下排除及同步的文件举例。
+
+注：对于不同迁移源端，需要根据实际系统的情况增加或修改exclude文件内容。
+
+rsync命令格式参考
+rsync 选项 源文件 目标目录（本地）
+rsync 选项 源文件 用户名@host: 目标目录（本地文件同步到远程目录，SSH模式）
+rsync 选项 用户名@host: 源文件 目标目录（远程目录同步到本地，SSH模式）
+rsync 选项 源文件 用户名@host:: 目标目录（本地文件同步到远程目录，Daemon模式）
+rsync 选项 用户名@host:: 源文件 目标目录（远程目录同步到本地，Daemon模式）
+
+不同场景下排除及同步的文件举例
+【Centos】物理机至云主机迁移场景
+
+物理机/虚拟机 ——> 云主机
+
+系统	环境	说明
+CentOS6	P2V/V2V	物理机至云主机、虚拟机至云主机
+CentOS7	P2V/V2V	物理机至云主机、虚拟机至云主机
+rsync同步剔除文件及目标内容如下：
+
+—————————————rsync_excludes_linux.txt————————————
+/sys/*
+/proc/*
+/boot/*
+/dev/*
+/lost+found/*
+/lib/modules
+/etc/default/grub
+/etc/mtab
+/etc/fstab
+/etc/udev/rules.d/*
+/etc/sysconfig/network-scripts/*
+/etc/rc.d/init.d/NetworkManager
+/etc/systemd/system/cloud-init.target.wants/*
+/etc/systemd/system/dbus-org.freedesktop.nm-dispatcher.service
+/etc/systemd/system/dbus-org.freedesktop.NetworkManager.service
+/etc/systemd/system/multi-user.target.wants/NetworkManager.service
+/etc/resolv.conf
+/etc/ssh/*
+/etc/passwd
+/etc/shadow
+/root/.ssh/*
+/etc/yum.repos.d/*
+/var/cache/yum/*
+/var/lib/nfs/rpc_pipefs/*
+/rsync-linux-bstokingsoft/*
+————————————————————————————————————
+CentOS环境末次同步包含的文件为：
+
+—————————————rsync_includes_linux.txt————————————
+/etc/rc.d/rc.local
+/etc/resolv.conf
+/etc/passwd
+/etc/shadow
+/root/.ssh/
+————————————————————————————————————
+【Ubuntu】物理机至云主机迁移场景
+
+物理机/虚拟机 ——> 云主机
+
+系统	环境	说明
+Ubuntu16	P2V/V2V	物理机至云主机、虚拟机至云主机
+Ubuntu18	P2V/V2V	物理机至云主机、虚拟机至云主机
+rsync同步剔除文件及目标内容如下：
+
+—————————————rsync_excludes_linux.txt————————————
+/sys/*
+/proc/*
+/boot/*
+/dev/*
+/lost+found/*
+/lib/modules
+/etc/default/grub
+/etc/mtab
+/etc/fstab
+/etc/network/interfaces
+/var/lib/lxcfs/*
+/etc/systemd/system/cloud-final.service.wants/snapd.seeded.service
+/etc/systemd/system/dbus-org.freedesktop.resolve1.service
+/etc/systemd/system/multi-user.target.wants/*
+/etc/resolv.conf
+/etc/ssh/*
+/root/.ssh/*
+/etc/apt/sources.list
+/rsync-linux-bstokingsoft/*
+————————————————————————————————————
+Ubuntu环境末次同步包含的文件为：
+
+—————————————rsync_includes_linux.txt————————————
+/etc/resolv.conf
+/etc/passwd
+/etc/shadow
+/root/.ssh/
+————————————————————————————————————
+批量迁移
+当用户需要迁移的服务器主机数量较多，逐台迁移耗时费力，此时可考虑批量迁移的方式来完成迁移工作。
+
+主要步骤包括：
+
+选型自动化批量运维工具。
+批量部署host端及相关配置文件。
+批量部署client端及相关配置文件。
+编写批量迁移任务脚本，测试环境验证，正式环境迁移。
+文档导读
+rsync介绍
+注意事项及说明
+迁移前检查
+迁移示例
+安装rsync host端
+安装rsync client端
+rsync命令格式参考
+不同场景下排除及同步的文件举例
+

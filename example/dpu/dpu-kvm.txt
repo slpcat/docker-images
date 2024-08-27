@@ -1,0 +1,76 @@
+在bluefield2里面运行kvm虚拟机
+
+1.更新dpu固件至新版 24.40
+2.dpu启用smmu（iommu），支持pci设备透传
+3.编译制作debian12 os镜像 
+
+https://github.com/Mellanox/bfb-build
+
+bf-bundle-2.7.0-32_24.04_debian-12_6.10.bfb
+
+先刷入debian bfb文件 启动dpu检查firmware和smmu正常
+
+ bfcfg -d
+icm: LARGE_ICM_SIZE=
+mfg: MFG_OOB_MAC=B8:CE:11:22:33:44
+mfg: MFG_OPN=MBF2M345A-VENOT_ES
+mfg: MFG_SKU=MBF2M345A-VENOT_ES
+mfg: MFG_MODL=BF2M345A
+sys: ENABLE_SMMU=1
+sys: DISABLE_SPMI=0
+sys: ENABLE_2ND_EMMC=0
+sys: BOOT_PROTECT=0
+sys: ENABLE_SPCR=0
+sys: DISABLE_PCIE=0
+sys: ENABLE_OPTEE=0
+sys: ENABLE_I2C0=0
+sys: DISABLE_FORCE_PXE_RETRY=0
+sys: ENABLE_BMC_FIELD_MODE=0
+sys: ENABLE_REDFISH=1
+sys: RTCSYNC=0
+misc: PXE_DHCP_CLASS_ID=NVIDIA/BF/PXE
+
+在debian12基础上安装proxmox arm版
+
+添加源
+
+如果是安装pve8,且版本为bookworm，则添加如下源
+
+echo "deb https://mirrors.apqa.cn/proxmox/debian/pve bookworm port">/etc/apt/sources.list.d/pveport.list
+如果是安装pve7,且版本为bullseye，则添加如下源
+
+echo "deb https://mirrors.apqa.cn/proxmox/debian/pve bullseye port">/etc/apt/sources.list.d/pveport.list
+添加apt-key
+
+curl https://mirrors.apqa.cn/proxmox/debian/pveport.gpg -o /etc/apt/trusted.gpg.d/pveport.gpg  
+
+详细见
+https://foxi.buduanwang.vip/virtualization/pve/1902.html/
+
+
+How to enable/disable SMMU
+SMMU could affect performance for certain applications. It is disabled by default and can be modified in different ways.
+
+Enable/disable SMMU in the UEFI System Configuration
+
+Set it in bf.cfg and push it together with the install.bfb (see section "Installing Popular Linux Distributions on BlueField")
+
+In BlueField Linux, create a file with one line with SYS_ENABLE_SMMU=TRUE, then run bfcfg.
+
+The configuration change will take effect after reboot. The configuration value is stored in a persistent UEFI variable. It is not modified by OS installation.
+
+UEFI System Configuration menu can be accessed under UEFI menu → Device Manager → System Configuration. The following actions are supported from it:
+
+Set Password: Set a password for UEFI. Default: No password.
+
+Select SPCR UART: Choose UART for Port Console Redirection. Default: Disabled.
+
+Enable SMMU: Enable SMMU in ACPI. Default: Disabled.
+
+Disable SPMI: Disable/enable ACPI SPMI Table. Default: Enabled.
+
+Disable PCIe: Disable PCIe in ACPI. Default: Enabled.
+
+Reset EFI Variables: Clears all EFI variables to factory default state.
+
+Reset MFG Info: Clears the manufacturing information.
