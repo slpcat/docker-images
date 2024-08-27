@@ -5,3 +5,11 @@ openjdk 17 长期支持
 openjdk 21 长期支持
 
 阿里jdk dragonwell
+
+推荐用Adoptium Eclipse Temurin这个OpenJDK发行版
+https://adoptium.net/zh-CN/temurin/archive/?version=8
+
+FROM eclipse-temurin:21.0.2_13-jdk
+
+Amazon Corretto
+OpenJDK 的免费、多平台、生产就绪型发行版
