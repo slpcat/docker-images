@@ -1,5 +1,5 @@
 FROM ubuntu:18.04
-MAINTAINER 若虚 <slpcat@qq.com>
+LABEL org.opencontainers.image.authors="slpcat@qq.com"
 
 # Container variables
 ENV \ 
