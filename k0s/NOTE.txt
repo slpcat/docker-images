@@ -45,6 +45,8 @@ k0s kubeconfig create --groups "system:masters" slpcat > ~/.kube/k0s.config
 
 推荐离线安装
 air-gap install
+runtime: containerd
+
 https://github.com/k0sproject/k0sctl/releases
 
 wget https://github.com/k0sproject/k0sctl/releases/download/v0.15.0/k0sctl-linux-x64
