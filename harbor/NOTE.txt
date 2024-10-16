@@ -63,3 +63,18 @@ bash /data/harbor/install.sh
 # 重启
 docker-compose restart
 
+
+#storage_service 这一段配置是阿里云oss的，默认不配置推送的镜像将存储在本地，需要配置相应的bucket和ram账号及权限
+storage_service:
+  ca_bundle:
+  oss:
+    accesskeyid: LTAI5xxxxxxxxxxxxxxzGo6WM
+    accesskeysecret: EVomxxxxxxxxxxxxxxxxxxx5zVs9F
+    region: oss-cn-shenzhen
+    endpoint: oss-accelerate.aliyuncs.com // 这里是国内加速地址
+    bucket: xxx-registry
+    rootdirectory: registry
+    secure: false
+  redirect:
+    disable: false
+
