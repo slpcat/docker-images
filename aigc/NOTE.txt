@@ -52,6 +52,9 @@ https://modelscope.cn/models
 
 https://openi.pcl.ac.cn/
 
+https://github.com/opendatalab/MinerU/
+
+推荐下这个项目，对rag有很大帮助
 
 AISuperDomain
 https://github.com/win4r/AISuperDomain
@@ -71,7 +74,7 @@ https://hf-mirror.com/datasets
 https://huggingface.co/datasets
 https://opendatalab.com/
 https://registry.opendata.aws/
-https://www.microsoft.com/en-us/research/tools/‍
+https://www.microsoft.com/en-us/research/tools/
 https://datasetsearch.research.google.com/
 https://github.com/awesomedata/awesome-public-datasets
 https://modelscope.cn/datasets
@@ -92,11 +95,30 @@ https://www.arnica.io/
 
 https://github.com/Artrajz/vits-simple-api/blob/main/README_zh.md
 
+
+https://github.com/ArtBIT/stable-gimpfusion
+https://github.com/opencoca/STARTR_gimp-stable-diffusion
+https://github.com/intel/openvino-ai-plugins-gimp
+
+ comfyui-photoshop： https://github.com/NimaNzrii/comfyui-photoshop
+MTB Nodes： https://github.com/melMass/comfy_mtb
+Rgthree's ComfyUI Nodes： https://github.com/rgthree/rgthree-comfy
+Use Everywhere： https://github.com/chrisgoringe/cg-use-everywhere
+https://openart.ai/workflows/lreWarJbqiYPcDXnD8hh
+
+
+https://github.com/AbdullahAlfaraj/Auto-Photoshop-StableDiffusion-Plugin
+
+
 RAGFlow：基于OCR和文档解析的下一代 RAG 引擎
 https://github.com/infiniflow/ragflow.git
 RAG 案框架（Qanything、RAGFlow、FastGPT、智谱RAG）
 
+深度求索发布了第二代开源MoE模型DeepSeek-V2
 https://github.com/deepseek-ai/DeepSeek-LLM
 
 一家名为Black Forest Labs的公司推出了新的图像生成模型FLUX.1。据其官方网站公布的数据显示，FLUX.1的ELO评分已经超越了Midjourney-V6.0和Stable Diffusion3-Ultra等知名模型。值得注意的是，即便是开源版本的FLUX.1 [schnell]也在性能上超越了Midjourney-V6.0和Dall-E 3 HD。”
 
+全部私有化部署，LLM用qwen2，embedding用gte-qwen2。这样就完全闭环了，可以用dify搭建内部知识库
+
+https://github.com/Haidra-Org/AI-Horde

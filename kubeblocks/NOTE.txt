@@ -1,0 +1,14 @@
+https://www.kubeblocks.io/
+Run Databases on Kubernetes? Run with KubeBlocks.
+KubeBlocks is crafted for managing databases on Kubernetes, designed by domain experts with decades of experience.
+
+It supports a wide range of stateful workloads, including relational databases, NoSQL, message queues.
+
+By streamlining operations, enhancing flexibility, and offering extensions, KubeBlocks makes database
+
+management easier in cloud-native environments.
+
+
+https://github.com/apecloud/kubeblocks
+
+curl -fsSL https://kubeblocks.io/installer/install_cli.sh | bash

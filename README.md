@@ -138,6 +138,8 @@ EveBox is a Suricata alert and event management tool for the Suricata IDS/NSM En
 
 [Wazuh](Wazuh · The Open Source Security Platform)是一整套基于ossec安全检测工具和EFK日志工具构成的终端安全管理工具。不管是将其分类至HIDS，还是EDR，它都是一套通过监控主机日志行为，提供安全检测、分析和完整报告的开源、免费利器
 
+上网行为管理: Panabit,Zenarmor
+
 Kyverno 是一个为 Kubernetes 设计的开源策略引擎，作为 Kubernetes 资源进行管理，不需要新的语言来编写策略。策略引擎是什么？它是一个软件，允许用户定义一组可以用来验证、改变（mutate）和生成 Kubernetes 资源的策略。作为 CNCF 的一个沙箱项目，Kyverno 开始得到社区的支持和关注。由于近年来软件供应链攻击的增加，Kyverno 越来越受欢迎。Kyverno 通过支持验证镜像签名[1]和in-toto 证明[2]来保护工作负载。这些工作负载保护是通过cosign[3]和SLSA[4]框架实现的。
 
 NeuVector：业内首个开源容器安全平台
@@ -164,6 +166,20 @@ Linux 系统救援发行版：SystemRescue
 专注多媒体影音工作的发行版：AV Linux
 通过隔离提供安全保障的桌面操作系统，Qubes OS 
 
+FuguIta is a live system based on OpenBSD operating system.
+OpenBSD CD Bootable Firewall System
+Anonym.OS LiveCD
+OliveBSD - OpenBSD LiveCD
+Quetzal - A Live OpenBSD System
+OpenBSD Live-CD Firewall
+The jggimi OpenBSD-based LiveCD / LiveDVD
+MarBSD - Meine OpenBSD-Live-CD
+BSDanywhere - The OpenBSD LiveCD at your fingertips
+OpenBSD 4.1 Live CD
+flashboot
+flashdist / flashrd
+LiveUSB OpenBSD - Carry a bootable UNIX on USB pendrive
+resflash - Resilient OpenBSD images for flash memory
 
 开发工具: Telepresence,Keel,Apollo,Deis Workflow,Kel,
 安全工具: anchore,clair,cert-manager,docker-bench-security,magic-namespace,notary,OpenSCAP,trireme,NeuVector,Deepfence,StackRox,Tenable,Cavirin,Kube-Bench,Sysdig Falco,Sysdig Secure,Kubesec.io;付费 Aquasec,flawcheck,portshift-operator,bane apparmor,
@@ -271,9 +287,12 @@ cassandra-operator
 
 kubedb(elasticsearch,memcached,mongodb,mysql,postgres,redis)
 
+https://www.kubeblocks.io/ 
+Run Any Database on Kubernetes
+
 Kubestack(elasticsearch,etcd,memcached,postgresql,prometheus)
 
-kafka-operator: Banzai Cloud/koperator(荐),Krallistic,Strimzi,Confluent
+kafka-operator: Banzai Cloud/koperator,Krallistic,Strimzi(荐),Confluent
 
 https://commons.openshift.org/sig/operators.html
 
@@ -329,6 +348,7 @@ https://dtapp-pub.dingtalk.com/dingtalk-desktop/xc_dingtalk_update/linux_deb/Rel
 百度网盘
 https://www.ubuntukylin.com/public/pdf/baidunetdisk_linux_2.0.1-2_amd64.deb
 
+https://github.com/Stirling-Tools/Stirling-PDF
 
 开源数据集
 HuggingFace开源数据集
