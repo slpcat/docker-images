@@ -27,9 +27,9 @@ cluster-id 唯一
 A 安装Rancher服务端
 https://rancher.com/docs/rancher/v2.x/en/quick-start-guide/deployment/quickstart-manual-setup/#1-provision-a-linux-host
 
-docker run -d --restart=always --privileged -v /data/rancher:/var/lib/rancher/ -p 80:80 -p 443:443 rancher/rancher:v2.7.9
+docker run -d --restart=always --privileged -v /data/rancher:/var/lib/rancher/ -p 80:80 -p 443:443 rancher/rancher:v2.9.2
 
-v2.8.4
+v2.9.2
 
 docker run -itd --name rancher2.5.8 -p 80:80 -p 443:443 \
 -v /data/rancher:/var/lib/rancher/ \
@@ -60,8 +60,8 @@ docker run -d --restart=always --privileged --name rancher-server \
     -p 443:443 -e AUDIT_LEVEL=3   \
     -v /data/cert/4366172_kuxxxx.rxxxox.cn.pem:/etc/rancher/ssl/cert.pem \
     -v /data/cert/4366172_kuxxxx.rxxxox.cn.key:/etc/rancher/ssl/key.pem  \
-    -e CATTLE_AGENT_IMAGE="rancher/rancher-agent:v2.7.9" \
-    rancher/rancher:v2.7.9 --no-cacerts
+    -e CATTLE_AGENT_IMAGE="rancher/rancher-agent:v2.9.2" \
+    rancher/rancher:v2.9.2 --no-cacerts
 
 自签证书ca
 docker run -d --restart=always --privileged --name rancher-server \
@@ -72,14 +72,24 @@ docker run -d --restart=always --privileged --name rancher-server \
     -v $PWD/certs/ca.pem:/etc/rancher/ssl/cacerts.pem \
     -e CATTLE_SYSTEM_DEFAULT_REGISTRY=harbor.example.top \   # 设置私有仓库域名
     -v /data/rancher/registries.yaml:/etc/rancher/k3s/registries.yaml \  # 将宿主机`registries.yaml`映射到容器内
-    -e CATTLE_AGENT_IMAGE="rancher/rancher-agent:v2.7.9" \
-    rancher/rancher:v2.7.9
+    -e CATTLE_AGENT_IMAGE="rancher/rancher-agent:v2.9.2" \
+    rancher/rancher:v2.9.2
+
+nerdctl run -d --restart=always --privileged --name rancher-server \
+    -p 443:443 -e AUDIT_LEVEL=3   \
+    -e CATTLE_SYSTEM_DEFAULT_REGISTRY=harbor.site.top \
+    -e CATTLE_AGENT_IMAGE="harbor.site.top/rancher/rancher-agent:v2.9.2" \
+    -v /data/rancher/cert/rancher-ui.site.top.cer:/etc/rancher/ssl/cert.pem \
+    -v /data/rancher/cert/rancher-ui.site.top.key:/etc/rancher/ssl/key.pem  \
+    -v /data/rancher:/var/lib/rancher \
+    -v /data/rancher/registries.yaml:/etc/rancher/k3s/registries.yaml \
+    harbor.site.top/rancher/rancher:v2.9.2  --no-cacerts
 
 高可用安装需要独立kubernetes集群和负载均衡器
 helm repo add rancher-stable https://releases.rancher.com/server-charts/stable
 
 helm fetch rancher-latest/rancher
-helm fetch rancher-stable/rancher --version=v2.5.8
+helm fetch rancher-stable/rancher --version=v2.9.2
 
 
 内核参数

@@ -1,0 +1,55 @@
+https://www.kuboard.cn/
+Kuboard-Spray 是一款可以在图形界面引导下完成 Kubernetes 高可用集群离线安装的工具
+https://github.com/eip-work/kuboard-spray
+
+kubectl apply -f https://addons.kuboard.cn/kuboard/kuboard-v3.yaml
+# 您也可以使用下面的指令，唯一的区别是，该指令使用华为云的镜像仓库替代 docker hub 分发 Kuboard 所需要的镜像
+# kubectl apply -f https://addons.kuboard.cn/kuboard/kuboard-v3-swr.yaml
+
+访问 Kuboard
+在浏览器中打开链接 http://your-node-ip-address:30080
+
+输入初始用户名和密码，并登录
+
+用户名： admin
+密码： Kuboard123
+
+使用 StorageClass 提供持久化
+
+获取部署 Kuboard 所需的 YAML 文件：
+curl -o kuboard-v3.yaml https://addons.kuboard.cn/kuboard/kuboard-v3-storage-class.yaml
+
+编辑 kuboard-v3.yaml 文件中的配置，该部署文件中，有两处配置必须修改：
+
+KUBOARD_ENDPOINT
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kuboard-v3-config
+  namespace: kuboard
+data:
+  # 关于如下参数的解释，请参考文档 https://kuboard.cn/install/v3/install-built-in.html
+  # [common]
+  KUBOARD_ENDPOINT: 'http://your-node-ip-address:30080'
+  KUBOARD_AGENT_SERVER_UDP_PORT: '30081'
+  KUBOARD_AGENT_SERVER_TCP_PORT: '30081'
+ 
+        已复制到剪贴板！
+    
+storageClassName
+
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      # 请填写一个有效的 StorageClass name
+      storageClassName: please-provide-a-valid-StorageClass-name-here
+      accessModes: [ "ReadWriteMany" ]
+      resources:
+        requests:
+          storage: 5Gi
+ 
+备注
+此 YAML 文件向 Kubernetes 中部署了一个三副本的 StatefulSet kuboard-etcd 和一个单副本的 Deployment kuboard-v3；其中 Deployment kuboard-v3 暂时不支持多副本，请保持其 replicas 字段为 1，将在后续的版本升级中解决 kuboard-v3 多副本部署的问题。

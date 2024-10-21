@@ -1,0 +1,4 @@
+https://www.kubesphere.io/zh/
+KubeSphere 是在 Kubernetes 之上构建的以应用为中心的多租户容器平台,完全开源,提供全栈的 IT 自动化运维的能力,简化企业的 DevOps 工作流。
+
+https://www.kubesphere.io/zh/docs/v4.1/02-quickstart/01-install-kubesphere/

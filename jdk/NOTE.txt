@@ -13,3 +13,5 @@ FROM eclipse-temurin:21.0.2_13-jdk
 
 Amazon Corretto
 OpenJDK 的免费、多平台、生产就绪型发行版
+
+用 SDKMan 快速管理和切换多版本JDK、Maven等开发工具包
