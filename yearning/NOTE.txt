@@ -1,0 +1,4 @@
+https://guide.yearning.io/container.html
+
+docker run -d -it -p8000:8000 -e MYSQL_USER=root -e MYSQL_ADDR=10.0.0.3:3306 -e MYSQL_PASSWORD=123123 -e MYSQL_DB=Yearning test/yearning
+
