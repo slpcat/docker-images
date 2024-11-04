@@ -1,3 +1,5 @@
+https://metallb.io/installation/
+
 kubectl apply -f metallb.yaml
 
 # On first install only

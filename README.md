@@ -47,6 +47,7 @@ docker基础镜像源：webdevops，bitnami,turnkey,distroless
 混沌工程: kube-monkey,powerfulseal,chaostoolkit-kubernetes,ChaosMesh,Litmus Chaos
 artifactory仓库: nexus2,nexus3,harbor,registry,quay,jfrog/Artifactory
 image-syncer 的定位是一个简单、易用的批量镜像迁移/同步工具，支持几乎所有目前主流的基于 docker registry V2 搭建的镜像存储服务
+docker-mirror：神奇指令，一键把镜像拉回“家”
 
 CMDB资产配置: OneCMDB、CMDBuild、ItopCMDB、Rapid OSS、ECDB、i-doit、iTop
 开源DevOps平台: walle,gaia,BlueKing-cmdb,cds,cloudunit,hygieia,adminset

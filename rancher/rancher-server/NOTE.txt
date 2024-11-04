@@ -63,6 +63,9 @@ docker run -d --restart=always --privileged --name rancher-server \
     -e CATTLE_AGENT_IMAGE="rancher/rancher-agent:v2.9.2" \
     rancher/rancher:v2.9.2 --no-cacerts
 
+注意全局设置
+agent-tls-mode: System Store
+
 自签证书ca
 docker run -d --restart=always --privileged --name rancher-server \
     -p 443:443 -e AUDIT_LEVEL=3   \
@@ -75,10 +78,11 @@ docker run -d --restart=always --privileged --name rancher-server \
     -e CATTLE_AGENT_IMAGE="rancher/rancher-agent:v2.9.2" \
     rancher/rancher:v2.9.2
 
-nerdctl run -d --restart=always --privileged --name rancher-server \
+docker run -d --restart=always --privileged --name rancher-server \
     -p 443:443 -e AUDIT_LEVEL=3   \
     -e CATTLE_SYSTEM_DEFAULT_REGISTRY=harbor.site.top \
     -e CATTLE_AGENT_IMAGE="harbor.site.top/rancher/rancher-agent:v2.9.2" \
+    -e CATTLE_SYSTEM_CATALOG=bundled \
     -v /data/rancher/cert/rancher-ui.site.top.cer:/etc/rancher/ssl/cert.pem \
     -v /data/rancher/cert/rancher-ui.site.top.key:/etc/rancher/ssl/key.pem  \
     -v /data/rancher:/var/lib/rancher \

@@ -1,0 +1,60 @@
+https://github.com/confluentinc/schema-registry
+
+docker run -it --rm --name apicurio \
+    -p 8080:8080 apicurio/apicurio-registry-mem:2.6.2.Final
+
+docker run -it --rm --name connect \
+    --link zookeeper:zookeeper \
+    --link kafka:kafka \
+    --link mysql:mysql \
+    --link apicurio:apicurio \
+    -e ENABLE_APICURIO_CONVERTERS=true \
+    -e GROUP_ID=1 \
+    -e CONFIG_STORAGE_TOPIC=my_connect_configs \
+    -e OFFSET_STORAGE_TOPIC=my_connect_offsets \
+    -e KEY_CONVERTER=io.apicurio.registry.utils.converter.AvroConverter \
+    -e VALUE_CONVERTER=io.apicurio.registry.utils.converter.AvroConverter \
+    -e CONNECT_KEY_CONVERTER=io.apicurio.registry.utils.converter.AvroConverter \
+    -e CONNECT_KEY_CONVERTER_APICURIO.REGISTRY_URL=http://apicurio:8080/apis/registry/v2 \
+    -e CONNECT_KEY_CONVERTER_APICURIO_REGISTRY_AUTO-REGISTER=true \
+    -e CONNECT_KEY_CONVERTER_APICURIO_REGISTRY_FIND-LATEST=true \
+    -e CONNECT_VALUE_CONVERTER=io.apicurio.registry.utils.converter.AvroConverter \
+    -e CONNECT_VALUE_CONVERTER_APICURIO_REGISTRY_URL=http://apicurio:8080/apis/registry/v2 \
+    -e CONNECT_VALUE_CONVERTER_APICURIO_REGISTRY_AUTO-REGISTER=true \
+    -e CONNECT_VALUE_CONVERTER_APICURIO_REGISTRY_FIND-LATEST=true \
+    -e CONNECT_SCHEMA_NAME_ADJUSTMENT_MODE=avro \
+    -p 8083:8083 quay.io/debezium/connect:3.0
+
+docker run -it --rm --name schema-registry \
+    --link zookeeper \
+    -e SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL=zookeeper:2181 \
+    -e SCHEMA_REGISTRY_HOST_NAME=schema-registry \
+    -e SCHEMA_REGISTRY_LISTENERS=http://schema-registry:8081 \
+    -p 8181:8181 confluentinc/cp-schema-registry
+
+docker run -it --rm --name connect \
+    --link zookeeper:zookeeper \
+    --link kafka:kafka \
+    --link mysql:mysql \
+    --link schema-registry:schema-registry \
+    -e GROUP_ID=1 \
+    -e CONFIG_STORAGE_TOPIC=my_connect_configs \
+    -e OFFSET_STORAGE_TOPIC=my_connect_offsets \
+    -e KEY_CONVERTER=io.confluent.connect.avro.AvroConverter \
+    -e VALUE_CONVERTER=io.confluent.connect.avro.AvroConverter \
+    -e CONNECT_KEY_CONVERTER_SCHEMA_REGISTRY_URL=http://schema-registry:8081 \
+    -e CONNECT_VALUE_CONVERTER_SCHEMA_REGISTRY_URL=http://schema-registry:8081 \
+    -p 8083:8083 quay.io/debezium/connect:3.0
+
+docker run -it --rm --name avro-consumer \
+    --link zookeeper:zookeeper \
+    --link kafka:kafka \
+    --link mysql:mysql \
+    --link schema-registry:schema-registry \
+    quay.io/debezium/connect:3.0 \
+    /kafka/bin/kafka-console-consumer.sh \
+      --bootstrap-server kafka:9092 \
+      --property print.key=true \
+      --formatter io.confluent.kafka.formatter.AvroMessageFormatter \
+      --property schema.registry.url=http://schema-registry:8081 \
+      --topic db.myschema.mytable

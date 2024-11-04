@@ -1,0 +1,41 @@
+version: '3'
+
+networks:
+  cluster_default:
+    external: true
+
+services:
+  kafka-eagle:
+    restart: always
+    image: repos.jtl3d.com/kafka-eagle:1.0.0
+    deploy:
+      placement:
+        constraints:                      # 添加条件约束
+          - node.labels.server==tb
+    networks:
+      - cluster_default
+    ports:
+      - "8148:8048"
+    environment:
+      KAFKA_EAGLE_CLUSTER1_ZK_LIST: zk1:2181,zk2:2181,zk3:2181
+      KAFKA_EAGLE_KAFKA_EAGLE_URL: jdbc:mysql://mysql:3306/ke?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull
+      KAFKA_EAGLE_KAFKA_EAGLE_USERNAME: root
+      KAFKA_EAGLE_KAFKA_EAGLE_PASSWORD: 123456
+      TZ: Asia/Shanghai
+
+  mysql:
+    image: "mysql:5.7"
+    deploy:
+        placement:
+          constraints:                      # 添加条件约束
+           - node.labels.server==tb
+    restart: always  
+    environment:
+         MYSQL_ROOT_PASSWORD: "123456"
+         MYSQL_USER: 'root'
+         MYSQL_PASS: '123456'
+
+    networks:
+        - cluster_default
+    ports:
+        - "3306:3306"

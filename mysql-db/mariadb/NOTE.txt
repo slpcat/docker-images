@@ -1,0 +1,8 @@
+https://mariadb.com/kb/en/installing-and-using-mariadb-via-docker/
+
+docker run -d --restart=always --net=host --name mariadb-server \
+-e TZ="Asia/Shanghai" \
+-e MYSQL_ROOT_PASSWORD=my_rootpassword -e MYSQL_DATABASE=mydb \
+-e MYSQL_USER=myuser -e MYSQL_PASSWORD=mydb_password \
+-v /data/mysql-data:/var/lib/mysql \
+docker.io/library/mariadb:11.5 --character-set-server=utf8 --collation-server=utf8_general_ci

@@ -8,3 +8,8 @@ EFAK (Eagle For Apache Kafka, previously known as Kafka Eagle). This topic provi
 EFAK is open source visualization and management software. It allows you to query, visualize, alert on, and explore your metrics no matter where they are stored. In plain English, it provides you with tools to turn your kafka cluster data into beautiful graphs and visualizations.
 
 After installed EFAK like you do in Getting started, there are many possible things you might do next. It all depends on your needs and your use case.
+
+
+docker run -d --name kafka-eagle -p 8048:8048 -e EFAK_CLUSTER_ZK_LIST="192.168.1.75:2181" nickzurich/efak:latest
+USER:admin/123456 
+PASSWORD:admin/123456 

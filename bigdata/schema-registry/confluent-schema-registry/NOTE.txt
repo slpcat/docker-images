@@ -1,0 +1,1 @@
+https://github.com/confluentinc/schema-registry

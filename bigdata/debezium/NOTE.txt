@@ -1,4 +1,5 @@
 https://github.com/debezium/debezium-examples/tree/master/tutorial
+https://debezium.io/documentation/reference/stable/index.html
 
 docker run -d --restart=always \
     -p 8083:8083 \
@@ -8,3 +9,27 @@ docker run -d --restart=always \
     -e OFFSET_STORAGE_TOPIC=my_connect_offsets \
     -e STATUS_STORAGE_TOPIC=my_connect_statuses \
     debezium/connect:1.0
+
+docker run -it --rm --name connect \
+    --link zookeeper:zookeeper \
+    --link kafka:kafka \
+    --link mysql:mysql \
+    --link apicurio:apicurio \
+    -e ENABLE_APICURIO_CONVERTERS=true \
+    -e GROUP_ID=1 \
+    -e CONFIG_STORAGE_TOPIC=my_connect_configs \
+    -e OFFSET_STORAGE_TOPIC=my_connect_offsets \
+    -e KEY_CONVERTER=io.apicurio.registry.utils.converter.AvroConverter \
+    -e VALUE_CONVERTER=io.apicurio.registry.utils.converter.AvroConverter \
+    -e CONNECT_KEY_CONVERTER=io.apicurio.registry.utils.converter.AvroConverter \
+    -e CONNECT_KEY_CONVERTER_APICURIO.REGISTRY_URL=http://apicurio:8080/apis/registry/v2 \
+    -e CONNECT_KEY_CONVERTER_APICURIO_REGISTRY_AUTO-REGISTER=true \
+    -e CONNECT_KEY_CONVERTER_APICURIO_REGISTRY_FIND-LATEST=true \
+    -e CONNECT_VALUE_CONVERTER=io.apicurio.registry.utils.converter.AvroConverter \
+    -e CONNECT_VALUE_CONVERTER_APICURIO_REGISTRY_URL=http://apicurio:8080/apis/registry/v2 \
+    -e CONNECT_VALUE_CONVERTER_APICURIO_REGISTRY_AUTO-REGISTER=true \
+    -e CONNECT_VALUE_CONVERTER_APICURIO_REGISTRY_FIND-LATEST=true \
+    -e CONNECT_SCHEMA_NAME_ADJUSTMENT_MODE=avro \
+    -p 8083:8083 quay.io/debezium/connect:3.0
+
+docker run -it --rm --name debezium-ui -p 8080:8080 -e KAFKA_CONNECT_URIS=http://connect:8083 quay.io/debezium/debezium-ui:{debezium-version}
