@@ -55,11 +55,11 @@ RUN \
 
 #install ansible
 RUN \
-    pip3 install netaddr pbr hvac jmespath ruamel.yaml ansible
+    apt-get install -y ansible ansible-mitogen
 
 #Robot Framework is a generic open source automation framework.
-RUN \
-    pip3 install robotframework
+#RUN \
+#    pip3 install robotframework
 
 #kubectl
 RUN \
