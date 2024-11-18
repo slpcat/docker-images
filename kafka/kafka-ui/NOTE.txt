@@ -1,1 +1,27 @@
 https://github.com/provectus/kafka-ui 
+
+在早期使用kafka的时候一般使用Kafka Tool或者kafka eagle，前者为桌面软件，后者为浏览器软件。总体来说体验一般，但是还比较够用。
+
+但是从kafka3.3.1开始，已经正式抛弃zookeeper使用自己的仲裁器了，但是上述两种kafka可视化工具的更新好像并没有跟上，依然需要输入zookeeper的地址才可以连接，所以就变得不能用了。
+
+
+docker run -p 8080 \
+    --name kafka-ui \
+    -e KAFKA_CLUSTERS_0_NAME=kafka9092 \
+    -e KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=localhost:9092 \
+    -e KAFKA_CLUSTERS_0_PROPERTIES_SECURITY_PROTOCOL=SASL_PLAINTEXT \
+    -e KAFKA_CLUSTERS_0_PROPERTIES_SASL_MECHANISM=PLAIN \
+    -e KAFKA_CLUSTERS_0_PROPERTIES_SASL_JAAS_CONFIG='org.apache.kafka.common.security.plain.PlainLoginModule required username="admin" password="admin";' \
+    -e KAFKA_CLUSTERS_1_NAME=kafka9093 \
+    -e KAFKA_CLUSTERS_1_BOOTSTRAPSERVERS=localhost:9093 \
+    -e KAFKA_CLUSTERS_1_PROPERTIES_SECURITY_PROTOCOL=SSL \
+    -e KAFKA_CLUSTERS_1_PROPERTIES_SSL_TRUSTSTORE_LOCATION=/cert/client.truststore.jks \
+    -e KAFKA_CLUSTERS_1_PROPERTIES_SSL_TRUSTSTORE_PASSWORD=admin \
+    -e KAFKA_CLUSTERS_1_PROPERTIES_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM='' \
+    -e SERVER_SERVLET_CONTEXT_PATH="/" \
+    -e AUTH_TYPE="LOGIN_FORM" \
+    -e SPRING_SECURITY_USER_NAME=admin \
+    -e SPRING_SECURITY_USER_PASSWORD="admin" \
+    -e TZ=Asia/Shanghai \
+    -e LANG=en_US.UTF-8 \
+    -d provectuslabs/kafka-ui:latest 

@@ -12,3 +12,20 @@ management easier in cloud-native environments.
 https://github.com/apecloud/kubeblocks
 
 curl -fsSL https://kubeblocks.io/installer/install_cli.sh | bash
+
+KubeBlocks 提供了插件（Addon）API，支持集成各种数据库。例如，我们目前提供了以下 KubeBlocks 引擎插件，支持各类主流开源数据库引擎：
+
+MySQL
+PostgreSQL
+Redis
+MongoDB
+Kafka
+RabbitMQ
+MinIO
+Elasticsearch
+StarRocks
+Qdrant
+Milvus
+ZooKeeper
+etcd
+...

@@ -62,5 +62,6 @@ Zalando Postgres Operator
 KubeDB Postgres Operator
 StackGres
 Percona Postgres Operator
+CloudNativePG
 
 https://github.com/zalando/patroni

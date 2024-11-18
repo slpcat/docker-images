@@ -7,3 +7,26 @@ https://github.com/NVIDIA/nvbandwidth
 https://mlcommons.org/
 https://github.com/mlcommons/training
 https://github.com/mlcommons/inference
+
+https://github.com/grgalex/nvshare
+nvshare currently supports only one GPU per node
+
+https://github.com/AliyunContainerService/gpushare-device-plugin
+
+阿里 cGPU
+
+腾讯 GaiaGPU
+
+腾讯 qGPU
+
+百度 MPS+CUDA Hook的GPU隔离方案
+
+爱奇艺 vGPU
+
+第四范式 OpenAIOS vGPU
+
+AWS aws-virtual-gpu
+
+趋动科技 OrionX
+
+

@@ -69,11 +69,12 @@ SQL数据库: mysql,percona,mariadb,postgresql,greenplum,MyRocks,Citus,mssql-lin
 SQL版本管理: Flyway
 SQL审计: Yearning MYSQL(荐),Inception，SQL审核-goinception,mysql-sniffer，pgAudit
 mysql管理工具: Induction,Pinba,DB Ninja,DB Tools Manager,Dbeaver,SqlWave,MyWebSQL,Navicat,SQLyog,Sequel Pro,HeidiSQL,MyDB Studio,SQL Lite Manger,Database Master,Chive,phpMyAdmin
-Mongodb管理工具: Robo 3T/Robomongo,Navicat for MongoDB,MongoDB Compass 社区版,MongoBooster,Cluster control,NOSQLCLIENT,Mongo Management Studio,phpMoAdmin,Mongotron,Mongolime,Mongo-express,
+Mongodb管理工具: Robo 3T/Robomongo(荐),Navicat for MongoDB,MongoDB Compass 社区版,MongoBooster,Cluster control,NOSQLCLIENT,Mongo Management Studio,phpMoAdmin,Mongotron,Mongolime,Mongo-express,
 MPP DataBase: Teradata,Greenplum,Vertica,Impala,GPDB
 数据库中间件: proxySQL,ShardingSphere,MyCat,Vitess
 数据可视化: Superset,SQLPad,MetaBase,Franchise,Redash,ECharts,mapd-charting,highchart,d3.js,google chart,gephi,Sigma.js,Keylines,VivaGraph,ngraph,Linkurious,immerse,Mapv,deck.gl,DbVisualizer
 NoSQL数据库/缓存/存储: memcache,rethinkdb,redis,ssdb,leveldb,mongodb,cassandra,ScyllaDB,LucidDB,boltdb,ArangoDB,Azure DocumentDB,DynamoDB,Hazelcast,Infinispan,MarkLogic,OrientDB,OnceDB,TerarkDB
+redis GUI: redisInsight,RedisPlus,AnotherRedisDesktopManager,medis,redis desktop manager,Tiny RDM（Tiny Redis Desktop Manager）
 分布式kv存储: 小米Pegasus,Zeppelin,京东JIMDB，淘宝Tair，tikv
 列式数据库: clickhouse(荐),Vertica,MonetDB,InfiniDB,ParAccel,EventQL,HadoopDB,Postgres-XL,RecDB,Stado,Yahoo Everest,DorisDB,Apache Doris
 图数据库: AgensGraph,Titan/JanusGraph,neo4j,OrientDB,FlockDB,Arangodb,GunDB,TigerGraph,LightGraphs,PandaGraph,Cayley,Orly,DGraph,SparkGraphX,InfiniteGraph,
@@ -81,7 +82,7 @@ NoSQL数据库/缓存/存储: memcache,rethinkdb,redis,ssdb,leveldb,mongodb,cass
 GPU-Powered Database: Kinetica,OmniSciDB (formerly MapD Core),BlazingDB,Brytlyt,PG-Strom,Blazegraph,SQream
 NewSQL数据库: TiDB,cockroachdb,VoltDB,Clustrix, NuoDB,TokuDB, MemSQL,Couchbase,CouchDB,Riak,postgres-xl, antdb, citusDB, Greenplum,yugabytedb,CrateDB
 API查询语言: GraphQL,prisma.io
-API管理和测试: API Fortress,MockApi,APIJSON,Postman,Tyk,Swagger,RAP2,YApi,Eolinker,DOClever,Apizza,EasyAPI,CrapApi,apidoc,swagger
+API管理和测试: API Fortress,MockApi,APIJSON,Postman,Tyk,Swagger,RAP2,RAP-API管理面板,YApi,Eolinker,DOClever,Apizza,EasyAPI,CrapApi,apidoc,swagger
 时间序列数据库: influxdb,opentsdb,m3db,Heroic,TimeScaleDB,KairosDB,DolphinDB,TDengine,Druid,Graphite,pipelinedb,VictoriaMetrics,MatrixDB,IoTDB
 Event Streaming Database: ksqlDB,
 消息队列/流存储: rabbitmq,zeromq,memcacheq,rocketmq,pulsar,rocketmq-console-ng,kafka,kafka-manager,nsq,nats

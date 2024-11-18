@@ -1,1 +1,2 @@
 https://documentation.wazuh.com/current/deploying-with-kubernetes/index.html
+https://github.com/wazuh/wazuh-kubernetes

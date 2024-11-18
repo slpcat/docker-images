@@ -1,0 +1,24 @@
+version: "3"
+services:
+  fe:
+    image: apache/doris:2.0.3-fe-x86_64
+    hostname: fe
+    environment:
+     - FE_SERVERS=fe1:${当前机器的内网IP}:9010
+     - FE_ID=1
+    volumes:
+     - /data/fe/doris-meta/:/opt/apache-doris/fe/doris-meta/
+     - /data/fe/log/:/opt/apache-doris/fe/log/
+    network_mode: host
+  be:
+    image: apache/doris:2.0.3-be-x86_64
+    hostname: be
+    environment:
+     - FE_SERVERS=fe1:${当前机器的内网IP}:9010
+     - BE_ADDR=${当前机器的内网IP}:9050
+    volumes:
+     - /data/be/storage/:/opt/apache-doris/be/storage/
+     - /data/be/script/:/docker-entrypoint-initdb.d/
+    depends_on:
+      - fe
+    network_mode: host

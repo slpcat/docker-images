@@ -42,6 +42,7 @@ ENV ELASTIC_CONTAINER true
 ENV PATH=/usr/share/logstash/bin:$PATH
 
 #install plugins
+#Logstash Doris output plugin
 RUN bin/logstash-plugin install logstash-input-sls
 
 RUN bin/logstash-plugin install logstash-filter-geoip

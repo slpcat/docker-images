@@ -166,9 +166,9 @@ RUN /usr/local/bin/install-plugins.sh       \
   #blueocean:${BLUEOCEAN_VERSION}            \
   #ace-editor:latest                         \
   active-directory:latest                   \
-  aliyun-oss-uploader:latest                \
-  alibabacloud-credentials:latest           \
-  alibabacloud-ecs:latest                   \
+  #aliyun-oss-uploader:latest                \
+  #alibabacloud-credentials:latest           \
+  #alibabacloud-ecs:latest                   \
   allure-jenkins-plugin:latest              \
   #amazon-ecr:latest                         \
   #android-emulator:latest        \
@@ -180,9 +180,9 @@ RUN /usr/local/bin/install-plugins.sh       \
   #artifact-qr-code-plugin:latest   \
   audit-trail:latest             \
   authentication-tokens:latest   \
-  azure-acs:latest               \
+  #azure-acs:latest               \
   #azure-credentials:latest       \
-  azure-container-registry-tasks \
+  #azure-container-registry-tasks \
   #azure-vm-agents:latest         \
   #bouncycastle-api:latest        \
   #branch-api:latest              \
@@ -235,7 +235,7 @@ RUN /usr/local/bin/install-plugins.sh       \
   extensible-choice-parameter:latest \
   favorite:latest                \
   font-awesome-api:latest        \
-  gerrit-trigger:latest          \
+  #gerrit-trigger:latest          \
   generic-webhook-trigger:latest \
   ghprb:latest                   \
   git:latest                     \
@@ -266,7 +266,7 @@ RUN /usr/local/bin/install-plugins.sh       \
   groovy:latest                  \
   groovy-postbuild:latest        \
   #handlebars:latest              \
-  huaweicloud-credentials:latest \
+  #huaweicloud-credentials:latest \
   #icon-shim:latest               \
   ivy:latest                     \
   jackson2-api:latest            \
@@ -343,11 +343,11 @@ RUN /usr/local/bin/install-plugins.sh       \
   postbuildscript:latest         \
   postbuild-task:latest          \
   prometheus:latest              \
-  publish-over-cifs:latest       \
-  publish-over-ftp:latest        \
-  publish-over-ssh:latest        \
-  pubsub-light:latest            \
-  puppet:latest                  \ 
+  #publish-over-cifs:latest       \
+  #publish-over-ftp:latest        \
+  #publish-over-ssh:latest        \
+  #pubsub-light:latest            \
+  #puppet:latest                  \ 
   #python:latest                  \
   #python-wrapper:latest          \
   rebuild:latest                 \
@@ -365,18 +365,18 @@ RUN /usr/local/bin/install-plugins.sh       \
   scm-api:latest                 \
   #scp:latest                     \
   script-security:latest         \
-  sse-gateway:latest             \
+  #sse-gateway:latest             \
   ssh:latest                     \
-  ssh-agent:latest               \
-  ssh-credentials:latest         \
-  ssh-slaves:latest              \
-  ssh-steps:latest               \
-  ssh2easy:latest                \
+  #ssh-agent:latest               \
+  #ssh-credentials:latest         \
+  #ssh-slaves:latest              \
+  #ssh-steps:latest               \
+  #ssh2easy:latest                \
   slave-setup:latest             \
   sonar:latest                   \
   strict-crumb-issuer:latest     \
   structs:latest                 \
-  subversion:latest              \
+  #subversion:latest              \
   terraform:latest               \
   timestamper:latest             \
   thinBackup:latest              \
@@ -384,7 +384,7 @@ RUN /usr/local/bin/install-plugins.sh       \
   token-macro:latest             \
   #translation:latest             \
   uno-choice:latest              \
-  upload-pgyer:latest            \
+  #upload-pgyer:latest            \
   url-auth-sso:latest            \
   variant:latest                 \
   view-cloner:latest             \

@@ -1,6 +1,6 @@
 #upstream https://github.com/debuerreotype/docker-debian-artifacts/blob/de09dd55b6328b37b89a33e76b698f9dbe611fab/jessie/backports/Dockerfile
 FROM debian:bookworm
-MAINTAINER 若虚 <slpcat@qq.com>
+LABEL org.opencontainers.image.authors="slpcat@qq.com"
 
 # Container variables
 ENV \ 
@@ -28,7 +28,7 @@ RUN \
 RUN \
     apt-get update -y && \
     apt-get dist-upgrade -y && \
-    apt-get install -y binutils ethtool vim-tiny net-tools iproute2 procps curl wget telnet less && \
+    apt-get install -y binutils ethtool vim-tiny net-tools iproute2 procps curl wget telnet less unzip && \
     rm -rf /var/lib/apt/lists/
 
 CMD ["/bin/bash"]

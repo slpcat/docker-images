@@ -1,0 +1,16 @@
+OpenZiti：下一代零信任开源网络解决方案
+https://github.com/openziti/ziti
+
+NeuVector 此次开源的并非某个组件或者安全工具，而是一套完整的容器安全平台。这与其他各大云原生安全厂商的开源策略有很大的区别。目前，云原生领域活跃的开源厂商包括：Aqua Security, Falco(sysdig), Anchore, Fairwinds, Portshift 等，以及被红帽收购的 Stackrox，除此还有像 Clair 这样来自大厂的安全工具。而传统的安全厂商虽然都有面向原生安全的产品，然而鲜有软件开源。云原生安全产品成为了创新型安全厂商突破传统厂商重围的一条重要赛道。而开源则更像他们检验其产品的试金石。
+
+KubeEye 是一款 Kubernetes 安全及配置问题检测工具，针对部署在 K8s 集群中的业务应用进行配置检测使用 OPA,针对集群部署的 Node 使用Node-Problem-Detector进行检测，同时除了系统内置有根据大多数业界常见场景的预定义规则，还支持用户自定义规则来进行集群检测。
+
+Gatekeeper 简介
+Gatekeeper[3] 是一个由 Google、微软等多个公司合作推出的开源项目，后来捐赠给了 CNCF。现已经历了三次迭代。Gatekeeper 是通用策略引擎 Open Policy Agent（OPA）的 Kubernetes 专用实现。由于 Open Policy Agent 与 Gatekeeper 之间的关系，该项目经常被写成“OPA Gatekeeper”来表明这层关系。Gatekeeper 实现了请求验证功能，最近还加入了变异能力。OPA 的一个主要特征是依赖于使用一种叫做 Rego 的专用编程语言，这种语言被用来实现策略决策的必要逻辑。通过 Rego，OPA 能够广泛适用于包括 Kubernetes 在内的多种不同的软件，实现高层次的逻辑操作。
+
+Kyverno 简介
+Kyverno[4] 是来自 Nirmata 的开源项目，后来也捐赠给了 CNCF。和 Gatekeeper 一样，Kyverno 也是一个具有验证和变异能力的 Kubernetes 策略引擎，但是它还有生成资源的功能，最近还加入了 API 对象查询的能力。与 Gatekeeper 不同，Kyverno 原本就是为 Kubernetes 编写的。和 Gatekeeper 相比，Kyverno 除了对象生成功能之外，还无需专用语言即可编写策略，从实现语言的角度上来看，Kyverno 的模型更为简洁。
+
+
+Kubeshark 是 2021 年由 UP9 公司开源的一个 K8s API 流量查看器 Mizu 发展而来，试图成为一款 K8s 全过程流量监控工具。
+https://github.com/kubeshark/kubeshark

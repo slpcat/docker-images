@@ -1,0 +1,20 @@
+docker run -itd \
+--name=fe \
+--env FE_SERVERS="fe1:${当前机器的内网IP}:9010" \
+--env FE_ID=1 \
+-p 8030:8030 \
+-p 9030:9030 \
+-v /data/fe/doris-meta:/opt/apache-doris/fe/doris-meta \
+-v /data/fe/log:/opt/apache-doris/fe/log \
+--net=host \
+apache/doris:2.0.3-fe-x86_64
+
+docker run -itd \
+--name=be \
+--env FE_SERVERS="fe1:${当前机器的内网IP}:9010" \
+--env BE_ADDR="${当前机器的内网IP}:9050" \
+-p 8040:8040 \
+-v /data/be/storage:/opt/apache-doris/be/storage \
+-v /data/be/log:/opt/apache-doris/be/log \
+--net=host \
+apache/doris:2.0.3-be-x86_64
