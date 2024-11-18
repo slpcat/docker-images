@@ -20,7 +20,6 @@ RUN apt-get update -y             \
        git                  \
        iptables             \
        jq                   \
-       openrc               \
        openssh-client       \
        unzip                \
        zip                  \
