@@ -75,12 +75,12 @@ ARG VERIFY_CHECKSUM=false
 #    && rm get_helm.sh
 RUN \
     curl https://baltocdn.com/helm/signing.asc | apt-key add - \
-    && echo "deb https://baltocdn.com/helm/stable/ubuntu/ all main" | tee /etc/apt/sources.list.d/helm-stable-ubuntu.list \
+    && echo "deb https://baltocdn.com/helm/stable/debian/ all main" | tee /etc/apt/sources.list.d/helm-stable-debian.list \
     && apt-get update \
     && apt-get install -y helm
 
 #istioctl
-ARG ISTIO_VERSION=1.12.2
+ARG ISTIO_VERSION=1.24.0
 RUN \
     curl -L https://istio.io/downloadIstio | sh - \
     && mv istio-${ISTIO_VERSION}/bin/istioctl /usr/local/bin \
