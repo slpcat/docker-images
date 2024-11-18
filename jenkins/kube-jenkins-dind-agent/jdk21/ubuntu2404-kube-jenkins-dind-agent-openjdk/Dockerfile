@@ -152,8 +152,8 @@ RUN \
 #COPY rootfs /
 
 #tencent cloud COSCMD
-RUN \
-    pip3 install coscmd -U
+#RUN \
+#    pip3 install coscmd -U --break-system-packages
 
 #baidu cloud BCE CMD
 RUN \
