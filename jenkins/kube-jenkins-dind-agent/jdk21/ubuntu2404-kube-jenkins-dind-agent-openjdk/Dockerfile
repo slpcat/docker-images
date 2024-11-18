@@ -210,10 +210,10 @@ RUN \
 
 #sealer
 
-RUN \
-    wget -c http://sealer.oss-cn-beijing.aliyuncs.com/sealers/sealer-v0.6.1-linux-amd64.tar.gz \
-    && tar -xvf sealer-v0.6.1-linux-amd64.tar.gz -C /usr/local/bin \
-    && rm sealer-v0.6.1-linux-amd64.tar.gz
+#RUN \
+#    wget -c http://sealer.oss-cn-beijing.aliyuncs.com/sealers/sealer-v0.6.1-linux-amd64.tar.gz \
+#    && tar -xvf sealer-v0.6.1-linux-amd64.tar.gz -C /usr/local/bin \
+#    && rm sealer-v0.6.1-linux-amd64.tar.gz
 
 #allure report depends on java8-runtime
 #RUN \
@@ -240,7 +240,7 @@ RUN rm -rf /root/ \
 
 LABEL Description="This is a base image, which provides the Jenkins agent executable (slave.jar)" Vendor="Jenkins project" Version="4.7"
 
-ARG VERSION=4.14
+ARG VERSION=3283.v92c105e0f819
 ARG AGENT_WORKDIR=/home/jenkins/agent
 
 RUN curl --create-dirs -sSLo /usr/share/jenkins/agent.jar https://repo.jenkins-ci.org/public/org/jenkins-ci/main/remoting/${VERSION}/remoting-${VERSION}.jar \
