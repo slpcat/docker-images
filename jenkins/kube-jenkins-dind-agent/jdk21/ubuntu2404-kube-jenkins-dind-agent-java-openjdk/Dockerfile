@@ -14,10 +14,10 @@ RUN \
 
 #jmeter
 RUN \
-    wget https://dlcdn.apache.org/jmeter/binaries/apache-jmeter-5.6.2.tgz \
-    && tar zxf apache-jmeter-5.6.2.tgz -C /usr/local \
-    && ln -sf /usr/local/apache-jmeter-5.6.2/bin/jmeter /usr/local/bin/jmeter \
-    && rm apache-jmeter-5.6.2.tgz
+    wget https://dlcdn.apache.org/jmeter/binaries/apache-jmeter-5.6.3.tgz \
+    && tar zxf apache-jmeter-5.6.3.tgz -C /usr/local \
+    && ln -sf /usr/local/apache-jmeter-5.6.3/bin/jmeter /usr/local/bin/jmeter \
+    && rm apache-jmeter-5.6.3.tgz
 
 #gradle
 RUN \
