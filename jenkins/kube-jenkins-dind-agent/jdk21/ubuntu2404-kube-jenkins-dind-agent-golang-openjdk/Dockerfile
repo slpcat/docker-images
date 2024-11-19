@@ -1,6 +1,6 @@
 #upstream https://github.com/jenkinsci/docker-inbound-agent
-FROM slpcat/kube-jenkins-dind-agent:oraclejdk11-bullseye
-MAINTAINER 若虚 <slpcat@qq.com>
+FROM slpcat/kube-jenkins-dind-agent:openjdk21-ubuntu2404
+LABEL org.opencontainers.image.authors="slpcat@qq.com"
 
 USER root
 
