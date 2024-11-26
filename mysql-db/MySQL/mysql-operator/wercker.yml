@@ -1,0 +1,173 @@
+box: golang:1.9
+no-response-timeout: 60
+command-timeout: 60
+
+test:
+  base-path: "/go/src/github.com/oracle/mysql-operator"
+  steps:
+    - script:
+      name: test
+      code: make test
+
+build:
+  base-path: "/go/src/github.com/oracle/mysql-operator"
+  steps:
+    - script:
+      name: build binaries
+      code: make build
+
+    - script:
+      name: copy build artifacts
+      code: |
+        mkdir -p ${WERCKER_OUTPUT_DIR}/bin
+        cp -R /go/bin/mysql-agent ${WERCKER_OUTPUT_DIR}/bin/
+        cp -R /go/bin/mysql-operator ${WERCKER_OUTPUT_DIR}/bin/
+        cp -R dist ${WERCKER_OUTPUT_DIR}/
+
+    - script:
+      name: copy test artifacts
+      code: |
+        cp -R Makefile ${WERCKER_OUTPUT_DIR}/
+        cp -R cmd ${WERCKER_OUTPUT_DIR}/
+        cp -R pkg ${WERCKER_OUTPUT_DIR}/
+        cp -R test ${WERCKER_OUTPUT_DIR}/
+        cp -R vendor ${WERCKER_OUTPUT_DIR}/
+        cp -R hack ${WERCKER_OUTPUT_DIR}/
+        cp -R mysql-operator ${WERCKER_OUTPUT_DIR}/
+        cp -R .git ${WERCKER_OUTPUT_DIR}/
+
+push-operator-image:
+  box:
+    id: oraclelinux:7.3
+  steps:
+    - script:
+      name: set environment variables
+      code: |
+        export VERSION=$(cat dist/version.txt)
+        echo "Pushing operator version ${VERSION}"
+
+    - script:
+      name: prepare
+      code: |
+        mv bin/mysql-operator /mysql-operator
+        chmod +x /mysql-operator
+
+    - internal/docker-push:
+      registry: https://iad.ocir.io/v2
+      repository: iad.ocir.io/oracle/mysql-operator
+      tag: $VERSION
+      entrypoint: /mysql-operator
+      username: $OCIRUSERNAME
+      password: $OCIRPASSWORD
+
+    - internal/docker-push:
+      registry: https://lhr.ocir.io/v2
+      repository: lhr.ocir.io/oracle/mysql-operator
+      tag: $VERSION
+      entrypoint: /mysql-operator
+      username: $OCIRUSERNAME
+      password: $OCIRPASSWORD
+
+    - internal/docker-push:
+      registry: https://phx.ocir.io/v2
+      repository: phx.ocir.io/oracle/mysql-operator
+      tag: $VERSION
+      entrypoint: /mysql-operator
+      username: $OCIRUSERNAME
+      password: $OCIRPASSWORD
+
+    - internal/docker-push:
+      registry: https://fra.ocir.io/v2
+      repository: fra.ocir.io/oracle/mysql-operator
+      tag: $VERSION
+      entrypoint: /mysql-operator
+      username: $OCIRUSERNAME
+      password: $OCIRPASSWORD
+
+push-agent-image:
+  box:
+    id: mysql/mysql-server:8.0.11
+  steps:
+    - script:
+      name: set environment variables
+      code: |
+        export VERSION=$(cat dist/version.txt)
+        echo "Pushing agent version ${VERSION}"
+
+    - script:
+      name: prepare
+      code: |
+        mv bin/mysql-agent /mysql-agent
+        chmod +x /mysql-agent
+
+    - internal/docker-push:
+      registry: https://iad.ocir.io/v2
+      username: $OCIRUSERNAME
+      password: $OCIRPASSWORD
+      repository: iad.ocir.io/oracle/mysql-agent
+      tag: $VERSION
+      entrypoint: /mysql-agent
+      user: mysql
+
+    - internal/docker-push:
+      registry: https://lhr.ocir.io/v2
+      username: $OCIRUSERNAME
+      password: $OCIRPASSWORD
+      repository: lhr.ocir.io/oracle/mysql-agent
+      tag: $VERSION
+      entrypoint: /mysql-agent
+      user: mysql
+
+    - internal/docker-push:
+      registry: https://phx.ocir.io/v2
+      username: $OCIRUSERNAME
+      password: $OCIRPASSWORD
+      repository: phx.ocir.io/oracle/mysql-agent
+      tag: $VERSION
+      entrypoint: /mysql-agent
+      user: mysql
+
+    - internal/docker-push:
+      registry: https://fra.ocir.io/v2
+      username: $OCIRUSERNAME
+      password: $OCIRPASSWORD
+      repository: fra.ocir.io/oracle/mysql-agent
+      tag: $VERSION
+      entrypoint: /mysql-agent
+      user: mysql
+
+e2e-test:
+  base-path: "/go/src/github.com/oracle/mysql-operator"
+  box:
+    registry: https://iad.ocir.io/v2
+    id: iad.ocir.io/oracle/mysql-operator-ci-e2e:1.1.1
+  steps:
+    - script:
+      name: e2e default tests
+      code: |
+        export KUBECONFIG="/tmp/kubeconfig"
+        echo -n "${KUBECONFIG_VAR}" | openssl enc -base64 -d -A > "${KUBECONFIG}"
+        ginkgo \
+          -nodes=5 \
+          -v \
+          test/e2e -- \
+          --kubeconfig="${KUBECONFIG}" \
+          --operator-version="$(cat dist/version.txt)" \
+          --s3-access-key="${S3_ACCESS_KEY}" \
+          --s3-secret-key="${S3_SECRET_KEY}" \
+
+release:
+  box:
+    id: oraclelinux:7-slim
+  steps:
+    - script:
+        name: set ENV vars
+        code: |
+          export VERSION=$(cat dist/version.txt)
+          echo "${VERSION}"
+
+    - github-create-release:
+      token: $GITHUB_TOKEN
+      tag: $VERSION
+      title: $VERSION
+      draft: false

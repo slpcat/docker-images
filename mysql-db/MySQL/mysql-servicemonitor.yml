@@ -1,0 +1,19 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: mysql
+  namespace: default
+  labels:
+    k8s-app: mysql
+spec:
+  selector:
+    matchLabels:
+      app: mysql
+  jobLabel: k8s-app
+  endpoints:
+  - port: metrics
+    interval: 10s
+    path: /metrics
+  namespaceSelector:
+    matchNames:
+      - default

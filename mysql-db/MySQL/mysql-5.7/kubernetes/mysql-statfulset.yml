@@ -1,0 +1,89 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql
+  namespace: default
+  labels:
+    app: mysql
+spec:
+  selector:
+    matchLabels:
+      app: mysql
+  serviceName: mysql-server
+  replicas: 1
+#  minReadySeconds: 60     #滚动升级时60s后认为该pod就绪
+  template:
+    metadata:
+      labels:
+        app: mysql
+      annotations:
+        #disable istio sidecar injection
+        sidecar.istio.io/inject: "false"
+    spec:
+      terminationGracePeriodSeconds: 60 ##k8s将会给应用发送SIGTERM信号，可以用来正确、优雅地关闭应用,默认为30秒
+      #imagePullSecrets:
+      #- name: registrykey-ali-ext
+      securityContext:
+        #runAsUser: 1000
+        #runAsGroup: 3000
+        fsGroup: 999
+        #fsGroupChangePolicy: "OnRootMismatch"
+      containers:
+      - name: mysql
+        image: mysql:5.7
+        imagePullPolicy: Always
+        #livenessProbe:
+        #  exec:
+        #    command: ["mysqladmin", "ping"]
+        #  initialDelaySeconds: 30
+        #  periodSeconds: 10
+        #  timeoutSeconds: 5
+        #readinessProbe:
+        #  exec:
+        #    # Check we can execute queries over TCP (skip-networking is off).
+        #    command: ["mysql", "-h", "127.0.0.1", "-e", "SELECT 1"]
+        #  initialDelaySeconds: 5
+        #  periodSeconds: 2
+        #  timeoutSeconds: 1
+        resources:
+          # keep request = limit to keep this container in guaranteed class
+          requests:
+            cpu: 500m
+            memory: 2Gi
+          limits:
+            cpu: 4000m
+            memory: 8Gi
+        env:
+          # Use secret in real usage
+        - name: MYSQL_ROOT_PASSWORD
+          value: root_password
+        - name: MYSQL_DATABASE
+          value: my_db
+        - name: MYSQL_USER
+          value: myuser
+        - name: MYSQL_USER_PASSWORD
+          value: myuser_password
+        - name: TZ
+          value: Asia/Shanghai
+        ports:
+        - containerPort: 3306
+          name: mysql
+        volumeMounts:
+        - name: config
+          mountPath: /etc/mysql
+        - name: mysql-data
+          mountPath: /var/lib/mysql
+      volumes:
+      - name: config
+        configMap:
+          name: mysql-etc-configmap
+  volumeClaimTemplates:
+  - metadata:
+      name: mysql-data
+    spec:
+      accessModes:
+        - "ReadWriteOnce"
+      #storageClassName: openebs-standard
+      resources:
+        requests:
+          storage: "80Gi"
