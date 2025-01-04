@@ -30,3 +30,97 @@ helm repo update
 
 helm upgrade --install vault-secrets-operator ricoberger/vault-secrets-operator
 
+# 创建数据目录
+mkdir -p /data/vault-data
+chown -R 100:1000 /data/vault-data
+
+# 启动Vault容器
+docker run --cap-add=IPC_LOCK -d \
+  --restart=always \
+  --name vault \
+  -p 8200:8200 \
+  -v /data/vault-data:/vault/data \
+  -e VAULT_LOG_LEVEL=debug \
+  hashicorp/vault server -config=/vault/data/vault.hcl
+
+客户端
+# 设置环境变量以便于使用Token
+export VAULT_ADDR='http://192.168.2.1:8200'
+export VAULT_TOKEN='your-root-token'  # 替换成你初始化时得到的Token
+
+# 测试API
+vault status
+
+添加policy并创建token
+vault policy write admin-policy admin.hcl
+vault policy write reader-policy reader.hcl
+
+creaete token
+
+vault token create -policy=admin-policy
+
+vault token create -policy=reader-policy
+
+考虑到线上环境一般都是通过接口方式对数据进行读写，接下来会用http api的方式进行操作。
+
+为了便于区分两个token，同时方便后续调用，将两个token写入环境变量：
+
+
+# admin的token
+$ export VAULT_TOKEN_ADMIN = s.aZUepwj4AL2vsC5bHIfkN15U
+
+# reader的token
+$ export VAULT_TOKEN_READER = s.5mTr03zVlAlrDim9jEwud5nF
+
+
+$  curl \
+    --header "X-Vault-Token: $VAULT_TOKEN_ADMIN" \
+    --request POST \
+    --data '{ "mysql": {"username":"myname","password": "my-long-password"} }' \
+    http://127.0.0.1:8200/v1/my-secret/data/creds
+
+试用reader token来获取数据：
+$  curl \
+    --header "X-Vault-Token: $VAULT_TOKEN_READER" \
+    --request GET \
+    http://127.0.0.1:8200/v1/my-secret/data/creds
+
+
+---
+
+example
+
+1.配置使用一次性密码登录SSH
+我们需要在被登录的服务器上配置 vault-ssh-helper 程序，它可以取代 Linux 默认的登录验证程序，在用户传递了登录用户名密码后，转而向 Vault 服务器请求验证用户名密码的正确性。用户首先登录 Vault，通过 Vault 创建一个属于目标服务器的 otp，随后远程连接目标服务器，给出这组 otp，在 vault-ssh-helper 验证通过后成功登录，同时 Vault 服务器会在成功验证后删除这个 otp，确保密码的确是一次性的。
+
+2.mysql使用动态数据库凭据
+
+3.Spring Boot与HashiCorp Vault的集成
+
+4.vault-go:与Hashicorp Vault进行交互的Go库
+
+使用 HashiCorp Vault 的动态 PostgreSQL 凭证(带有 PHP Symfony 和 Go 示例)示例应用程序
+
+https://github.com/synthesized-io/tdk-demo/tree/main/vault
+
+How to Set Up HashiCorp Vault KMIP Secrets Engine with MongoDB CSFLE or Queryable Encryption
+https://www.mongodb.com/developer/products/atlas/hashicorp-vault-kmip-secrets-engine-mongodb/
+
+vault +kes+minio 实现minio文件加密
+
+使用Hashicorp Vault管理PKI并颁发证书
+
+Apache APISIX 集成 HashiCorp Vault
+
+kong gateway集成 HashiCorp Vault
+https://docs.konghq.com/gateway/latest/kong-enterprise/secrets-management/backends/hashicorp-vault/
+
+Use HashiCorp Vault secrets in GitLab CI/CD
+https://docs.gitlab.com/ee/ci/secrets/hashicorp_vault.html
+
+Integrate HashiCorp Vault with Jenkins to secure your Secrets
+https://medium.com/@nanditasahu031/how-to-integrate-hashicorp-vault-with-jenkins-to-secure-your-secrets-f13bb36e28e9
+
+Secure Kubernetes clusters with the power of Vault and dynamic secrets.
+
+使用 HashiCorp Vault 保护 NGINX 中的 SSL 私钥

@@ -2,3 +2,6 @@ curl -O https://raw.githubusercontent.com/adamwalach/openvpn-web-ui/master/docs/
 docker-compose up -d
 
 https://eddie.website/
+
+OpenVPN-UI v.0.9.5.5
+

@@ -1,0 +1,19 @@
+https://github.com/RickyElune/CoinExchange
+开源核心代码的交易所
+
+https://github.com/the-web3/blockchain-wallet/blob/master/Omni/README.md
+
+官方提供了客户端下载和core项目下载；
+https://www.omnilayer.org/download.html
+
+docker run -itd --restart=unless-stopped -v /etc/localtime:/etc/localtime -v /etc/timezone:/etc/timezone --name usdt-0.8-1 -v $(pwd)/data:/root/.bitcoin -p 8332:8332 -p 8333:8333 btc/omnicore:0.8.0 -regtest=1 -server=1 -rpcuser=admin -rpcpassword=123456  -logtimestamps=1  -txindex=1 -omnidebug=tally -omnidebug=packets -omnidebug=pending -paytxfee=0.0002 -deprecatedrpc=generate -rpcworkqueue=1000 -addnode=172.31.56.92:18333 -addnode=172.31.56.92:28333 -rpcport=8332 -rpcallowip=0.0.0.0/0 -port=8333 -rpcbind=0.0.0.0:8332
+3节点
+
+
+获取测试币
+先给账户充一些测试比特币，需要使用水龙头网站：
+
+https://testnet.manu.backend.hamburg/faucet
+https://testnet.coinfaucet.eu/en/
+
+

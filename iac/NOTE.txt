@@ -48,3 +48,6 @@ https://docs.metal-stack.io/stable/
 https://cloudify.co/
 https://github.com/karmada-io/karmada
 
+
+https://www.localstack.cloud/
+

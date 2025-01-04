@@ -54,6 +54,7 @@ docker run -d --restart=always --name my_postgres \
   -e PGDATA=/var/lib/postgresql/data \
   -e TZ=Asia/Shanghai \
   postgres:12.1
+  postgres:14.2 
 
 
 目前在Kubernetes上部署PostgreSQL集群的方案有Stolon、Crunchy、Patroni

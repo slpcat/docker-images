@@ -1,7 +1,9 @@
 SonarQube代码扫描工具
 
-java8 支持最后的版本 7.8-comunity
-SonarQube 8.9.5 LTS
+java8 支持最后的版本 7.8-comunity sonar 对 jdk1.8 的最后一个版本，从 7.9 以后 sonar 最低支持版本为 jdk 1.11
+
+SonarQube 8.9.10 LTS  java11 + postgresql
+
 
 https://docs.sonarqube.org/latest/setup/get-started-2-minutes/
 
@@ -27,13 +29,13 @@ docker run -d --name sonarqube -e SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true -p 9000
 
 
 docker run -d -p 9000:9000 \
-    -e "SONARQUBE_JDBC_URL=jdbc:postgresql://192.168.0.3:5432/sonar" \
-    -e "SONARQUBE_JDBC_USERNAME=postgres" \
-    -e "SONARQUBE_JDBC_PASSWORD=1" \
+    -e "SONAR_JDBC_URL=jdbc:postgresql://192.168.0.3:5432/sonar" \
+    -e "SONAR_JDBC_USERNAME=postgres" \
+    -e "SONAR_JDBC_PASSWORD=1" \
     -v /data/sonarqube/conf:/opt/sonarqube/conf \
     -v /data/sonarqube/data:/opt/sonarqube/data \
     -v /data/sonarqube/extensions:/opt/sonarqube/extensions \
-    --name sonarqube sonarqube:9.2.3-community
+    --name sonarqube sonarqube:9.9-community
 
 plugins
 
@@ -42,3 +44,52 @@ https://github.com/SonarQubeCommunity/sonar-pdf-report
 https://github.com/SonarQubeCommunity/sonar-jira
 
 https://github.com/xuhuisheng/sonar-l10n-zh/releases/download/sonar-l10n-zh-plugin-1.28/sonar-l10n-zh-plugin-1.28.jar
+
+sonarqube中添加p3c-pmd整合阿里java开发规范
+https://github.com/95MISTAKE/sonar/tree/master/sonar-p3c-pmd
+
+
+01.  git 客户端主机安装sonar-scanner + jdk17  示例mac os： brew install sonar-scanner，安装完毕检查sonar-scanner 正常工作
+ 
+02. 设置git hook ，git仓库目录.git/hooks/pre-commit文件 
+内容
+#!/bin/bash
+# Run SonarQube analysis before committing
+
+echo “Running SonarQube analysis…”
+sonar-scanner
+
+if [ $? -eq 0 ]; then
+    echo “SonarQube analysis passed. Committing…”
+else
+    echo “SonarQube analysis failed. Commit aborted.”
+    exit 1
+fi
+添加执行权限
+chmod +x .git/hooks/pre-commit
+
+03.从sonarqube-ui添加项目名称并生存token，git客户端添加sonar 项目配置文件sonar-project.properties
+
+内容示例
+sonar.projectKey=app001
+sonar.projectName=app001
+
+sonar.sources=src/main
+sonar.java.binaries=target/classes
+
+sonar.host.url=http://10.0.1.1:9000
+sonar.login=123abc
+
+04.mvn 集成代码检测
+sonar7
+mvn sonar:sonar \
+  -Dsonar.projectKey=app001 \
+  -Dsonar.host.url=http://10.0.1.1:9000 \
+  -Dsonar.login=123abc
+
+sonar9
+mvn clean verify sonar:sonar \
+  -Dsonar.projectKey=app001 \
+  -Dsonar.host.url=http://10.0.1.1:9000 \
+  -Dsonar.login=123abc
+

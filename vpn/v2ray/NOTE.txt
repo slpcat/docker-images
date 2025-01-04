@@ -1,0 +1,18 @@
+主要特性
+多入口多出口: 一个 V2Ray 进程可并发支持多个入站和出站协议，每个协议可独立工作。
+可定制化路由: 入站流量可按配置由不同的出口发出。轻松实现按区域或按域名分流，以达到最优的网络性能。
+多协议支持: V2Ray 可同时开启多个协议支持，包括 Socks、HTTP、Shadowsocks、VMess 等。每个协议可单独设置传输载体，比如 TCP、mKCP、WebSocket 等。
+隐蔽性: V2Ray 的节点可以伪装成正常的网站（HTTPS），将其流量与正常的网页流量混淆，以避开第三方干扰。
+反向代理: 通用的反向代理支持，可实现内网穿透功能。
+多平台支持: 原生支持所有常见平台，如 Windows、Mac OS、Linux，并已有第三方支持移动平台。
+
+安装 V2Ray
+bash <(curl -s -L https://git.io/v2ray.sh)
+
+
+规则集
+https://github.com/Hackl0us/SS-Rule-Snippet
+
+
+$ sudo docker run -d --name v2ray -e TZ=Asia/Shanghai -v /etc/v2ray:/etc/v2ray -p 8888:8888 --restart always v2fly/v2fly-core run -c /etc/v2ray/config.json
+

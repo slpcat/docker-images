@@ -1,0 +1,28 @@
+docker run -d --restart always --name zipkin \
+  --network xxx-bridge -p 9411:9411 \
+  -e JAVA_OPTS='-Xms128m -Xmx128m -Xmn32m -Xss512k -XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=128m' \
+ZIPKIN_LOG_LEVEL=DEBUG
+  -e STORAGE_TYPE=elasticsearch \
+  -e ES_HOSTS=elasticsearch:9200 \
+ES_USERNAME
+ES_PASSWORD`
+  -e ES_INDEX=xxx-zipkin \
+  -e ES_INDEX_SHARDS=1 \
+  -e ES_INDEX_REPLICAS=0 \
+  openzipkin/zipkin:3.4.2
+
+#!/bin/bash
+docker run --rm --network xxx-bridge \
+  -e STORAGE_TYPE=elasticsearch \
+  -e ES_HOSTS=elasticsearch:9200 \
+  -e ES_INDEX=xxx-zipkin \
+  -e ES_INDEX_SHARDS=1 \
+  -e ES_INDEX_REPLICAS=0 \
+  openzipkin/zipkin-dependencies:3.4.2 $1
+SPARK_MASTER=spark://$HOSTNAME:7077 
+SPARK_CONF=spark.executor.heartbeatInterval=600000,spark.network.timeout=600000
+
+# 每日凌晨计算昨天
+5 0 * * * /work/zipkin/dependencies.sh `date -u -d '1 day ago' +%F` &
+# 每小时计算截止当前时间
+1 1-23 * * * /work/zipkin/dependencies.sh &

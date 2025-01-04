@@ -1,0 +1,51 @@
+version: '3.1'
+
+networks:
+  zk-net:
+    name: zk-net   # 网络名
+
+services:
+  zoo1:
+    image: zookeeper:3.8.0
+    container_name: zoo1   # 容器名称
+    restart: always       # 开机自启
+    hostname: zoo1        # 主机名
+    ports:
+      - 2181:2181         # 端口号
+    environment:
+      ZOO_MY_ID: 1
+      ZOO_SERVERS: server.1=zoo1:2888:3888;2181 server.2=zoo2:2888:3888;2181 server.3=zoo3:2888:3888;2181
+    networks:
+      - zk-net
+    volumes:
+      - ./data-1:/data
+
+  zoo2:
+    image: zookeeper:3.8.0
+    container_name: zoo2
+    restart: always
+    hostname: zoo2
+    ports:
+      - 2182:2181
+    environment:
+      ZOO_MY_ID: 2
+      ZOO_SERVERS: server.1=zoo1:2888:3888;2181 server.2=zoo2:2888:3888;2181 server.3=zoo3:2888:3888;2181
+    networks:
+      - zk-net
+    volumes:
+      - ./data-2:/data
+
+  zoo3:
+    image: zookeeper:3.8.0
+    container_name: zoo3
+    restart: always
+    hostname: zoo3
+    ports:
+      - 2183:2181
+    environment:
+      ZOO_MY_ID: 3
+      ZOO_SERVERS: server.1=zoo1:2888:3888;2181 server.2=zoo2:2888:3888;2181 server.3=zoo3:2888:3888;2181
+    networks:
+      - zk-net
+    volumes:
+      - ./data-3:/data

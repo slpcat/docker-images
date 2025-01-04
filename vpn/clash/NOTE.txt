@@ -7,4 +7,6 @@ secret: "your-secret"
 
 
 docker run -d --name clash --restart=unless-stopped  -v "/etc/clash/config.yaml:/root/.config/clash/config.yaml" -p 9090:9090 -p 7890:7890 dreamacro/clash
+docker run -d --name clash --restart=unless-stopped  -v "/etc/clash/config.yaml:/root/.config/clash/config.yaml" -p 9090:9090 -p 7890:7890 metacubex/clash-meta:Alpha
+
 docker run -p 1234:80 -d --name yacd haishanh/yacd:master

@@ -40,3 +40,9 @@ tailscale up --exit-node=<exit-node-ip>
 
 局域网路由优先
 ip rule add to 192.168.2.0/24 priority 2500 lookup main
+
+https://github.com/gurucomputing/headscale-ui
+
+https://github.com/GoodiesHQ/headscale-admin
+
+https://github.com/simcu/headscale-ui

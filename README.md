@@ -4,7 +4,7 @@ kubernetes网络方案在条件允许的情况下，推荐尽量使用kube-route
 
 默认采用的网络与存储是完全软件方案，在不投入硬件的前提下尽量高的性能和稳定性。
 
-硬件方案推荐FPGA。
+硬件方案推荐DPU,SuperNIC,FPGA,P4。
 
 容器内核参数已经为高并发大吞吐量低延迟场景优化，完美运行需要kubernetes版本>=v1.15和内核版本>=4.19.
 
@@ -114,10 +114,14 @@ FAAS: fission,fnproject,funktion,kubeless,nuclio,open-lambda,openfaas,openwhisk,
 APM/tracing: appdash,apm-server,pinpoint,jaeger,zipkin,skywalking,opentracing,opencensus,opentelemetry,Elastic APM(原Opbeat),Dapper(Google),StackDriver Trace (Google),鹰眼(taobao),谛听(盘古，阿里云云产品使用的Trace系统),云图(蚂蚁Trace系统),X-ray(aws),Datadog,AppDynamics,New Relic,ScienceLogic,SignalFx,Stackifya,Dynatrace,OneAPM,RichAPM,Instana,RapidSpike,IQLECT,Dynatrace,SolarWinds Server & Application Monitor,CloudMonix,Glowroot,2 Steps,inspectIT,Tempo,SigNoz,
 基础架构即代码: packer,terraform
 OpenTofu 是一个开源的基础设施即代码（IaC）框架，被提出作为 Terraform 的替代方案，并由 Linux 基金会管理。
+Policy-as-Code 工具: Sentinel, Open Policy Agent (OPA),Conftest,Kubernetes Gatekeeper,Chef InSpec,Cloud Custodiane
 分布式事务: seata,EasyTransaction
 
 kubernetes集群安装/升级: kubespray
 Kubernetes发行版: Rancher,CoreOS Tectonic,Canonical Distribution of Kubernetes（CDK）,Heptio Kubernetes,Kontena Pharos,Pivotal 容器服务 (PKS),Red Hat OpenShift,Telekube,Microk8s,k3s,
+OpenYurt is the intelligent edge computing platform which aims to extend the Cloud Native ecosystem to edge computing and IoT scenarios
+open-cluster-management.io
+
 kubernetes可视化管理工具: kubernetes-dashboard,weavescope,kubebox,kubedash,kube-ops-view,cabin,wayne(360),KubeSphere,openshift,rancher,Kuboard,lensapp/lens,karbon,instana
 Talos 是一个非常精简的操作系统，用 Golang 编写。Talos 被设计为一个特定于操作系统的操作系统，用于维护 Kubernetes 集群。
 kubernetes灾难恢复: ark/Velero,Velero/etcd,

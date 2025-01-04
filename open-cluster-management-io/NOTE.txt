@@ -1,0 +1,5 @@
+Install clusteradm CLI tool
+It’s recommended to run the following command to download and install the latest release of the clusteradm command-line tool:
+
+curl -L https://raw.githubusercontent.com/open-cluster-management-io/clusteradm/main/install.sh | bash
+

@@ -40,7 +40,7 @@
           <containers>
             <org.csanchez.jenkins.plugins.kubernetes.ContainerTemplate>
               <name>jnlp</name>
-              <image>slpcat/kube-jenkins-dind-agent</image>
+              <image>slpcat/kube-jenkins-dind-agent:openjdk21-ubuntu2404</image>
               <privileged>true</privileged>
               <alwaysPullImage>true</alwaysPullImage>
               <workingDir>/home/jenkins</workingDir>
@@ -54,15 +54,7 @@
               <envVars>
                 <org.csanchez.jenkins.plugins.kubernetes.model.KeyValueEnvVar>
                   <key>JAVA_OPTS</key>
-                  <value>-server -Djava.awt.headless=true -Djava.nio.channels.spi.SelectorProvider=sun.nio.ch.EPollSelectorProvider -
-Dfile.encoding=UTF8 -Xverify:none -XX:MetaspaceSize=128m -XX:+UseNUMA -XX:+UseNUMAInterleaving -XX:NUMAInterleaveGranularity=65536 -X
-X:+UseLargePages -XX:+UseCompressedOops -XX:MaxMetaspaceSize=512m -XX:ReservedCodeCacheSize=240M -XX:MaxRAMFraction=2 -XshowSettings:
-vm -XX:+AggressiveOpts -Djute.maxbuffer=41943040 -XX:-UseBiasedLocking -XX:+UseFastAccessorMethods -XX:+UnlockExperimentalVMOptions -
-XX:+UseCGroupMemoryLimitForHeap -XX:+UseCompressedOops -XX:+CMSClassUnloadingEnabled  -XX:+CMSScavengeBeforeRemark -XX:+DisableExplic
-itGC -XX:+UseG1GC -XX:+ExplicitGCInvokesConcurrent -XX:SoftRefLRUPolicyMSPerMB=0 -XX:G1ReservePercent=25 -XX:G1NewSizePercent=10 -XX:
-G1MaxNewSizePercent=25 -XX:MaxGCPauseMillis=20 -XX:-OmitStackTraceInFastThrow -XX:+ParallelRefProcEnabled -XX:ParallelGCThreads=8 -XX
-:MaxTenuringThreshold=1 -XX:G1HeapWastePercent=10 -XX:SurvivorRatio=8 -XX:G1MixedGCCountTarget=16 -XX:G1MixedGCLiveThresholdPercent=9
-0 -XX:InitiatingHeapOccupancyPercent=35 -XX:G1HeapRegionSize=32m -XX:+PerfDisableSharedMem -XX:-ResizePLAB</value>
+                  <value>-server -Djava.nio.channels.spi.SelectorProvider=sun.nio.ch.EPollSelectorProvider -Dfile.encoding=UTF8 -Xverify:none -XX:MetaspaceSize=128m -XX:+UseCompressedOops -XX:MaxMetaspaceSize=512m -XshowSettings:vm -Djute.maxbuffer=41943040 -XX:+UseCGroupMemoryLimitForHeap -XX:+UseCompressedOops -XX:+DisableExplicitGC -XX:+UseG1GC -XX:+ExplicitGCInvokesConcurrent -XX:SoftRefLRUPolicyMSPerMB=0 -XX:G1ReservePercent=25 -XX:G1NewSizePercent=10 -XX:G1MaxNewSizePercent=25 -XX:MaxGCPauseMillis=20 -XX:ParallelGCThreads=8 -XX:MaxTenuringThreshold=1 -XX:G1HeapWastePercent=10 -XX:SurvivorRatio=8 -XX:G1MixedGCCountTarget=16 -XX:G1MixedGCLiveThresholdPercent=90 -XX:InitiatingHeapOccupancyPercent=35 -XX:G1HeapRegionSize=32m -XX:+PerfDisableSharedMem -XX:-ResizePLAB</value>
                 </org.csanchez.jenkins.plugins.kubernetes.model.KeyValueEnvVar>
               </envVars>
               <ports/>
@@ -101,10 +93,10 @@ G1MaxNewSizePercent=25 -XX:MaxGCPauseMillis=20 -XX:-OmitStackTraceInFastThrow -X
           <containers>
             <org.csanchez.jenkins.plugins.kubernetes.ContainerTemplate>
               <name>jnlp</name>
-              <image>slpcat/kube-jenkins-dind-agent:golang</image>
+              <image>slpcat/kube-jenkins-dind-agent:openjdk21-ubuntu2404-golang</image>
               <privileged>true</privileged>
               <alwaysPullImage>true</alwaysPullImage>
-              <workingDir>/home/jenkins/agent</workingDir>
+              <workingDir>/home/jenkins</workingDir>
               <command></command>
               <args>${computer.jnlpmac} ${computer.name}</args>
               <ttyEnabled>false</ttyEnabled>
@@ -168,7 +160,7 @@ G1MaxNewSizePercent=25 -XX:MaxGCPauseMillis=20 -XX:-OmitStackTraceInFastThrow -X
           <containers>
             <org.csanchez.jenkins.plugins.kubernetes.ContainerTemplate>
               <name>jnlp</name>
-              <image>slpcat/kube-jenkins-dind-agent:java</image>
+              <image>slpcat/kube-jenkins-dind-agent:openjdk21-ubuntu2404-java</image>
               <privileged>true</privileged>
               <alwaysPullImage>true</alwaysPullImage>
               <workingDir>/home/jenkins/agent</workingDir>
