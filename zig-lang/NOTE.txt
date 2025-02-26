@@ -1,0 +1,46 @@
+https://ziglang.org/learn/getting-started/
+
+https://avestura.dev/blog/problems-of-c-and-how-zig-addresses-them
+
+https://github.com/ziglang/zig
+
+现在使用Zig的大型项目主要有金融交易数据库tigerbeetle、js运行时node.js的替代品bun、游戏引擎mach。
+
+https://github.com/tristanisham/zvm
+Zig Version Manager (zvm) is a tool for managing your Zig installs. With std under heavy development and a large feature roadmap, Zig is bound to continue changing. Breaking existing builds, updating valid syntax, and introducing new features like a package manager. While this is great for developers, it also can lead to headaches when you need multiple versions of a language installed to compile your projects, or a language gets updated frequently.
+
+https://zigistry.dev/
+
+https://www.trackawesomelist.com/catdevnull/awesome-zig/readme/
+https://github.com/nrdmn/awesome-zig
+
+https://github.com/zig-gamedev/zig-gamedev
+https://github.com/capy-ui/capy
+
+https://github.com/ghostty-org/ghostty
+
+Ghostty is a terminal emulator that differentiates itself by being fast, feature-rich, and native. While there are many excellent terminal emulators available, they all force you to choose between speed, features, or native UIs. Ghostty provides all three.
+
+目前Zig 在 HPC 领域已有一些边缘应用，例如 Cerebras 的 CSL 编程技术（用于其 Wafer Scale Engine，WSE）的开发是基于 Zig 
+
+https://www.jetzig.dev/
+
+Jetzig is an MIT licensed web framework written in Zig
+
+https://github.com/jetzig-framework/
+
+https://tomsik.cz/posts/tokamak/
+
+Tokamak: A web framework for Zig
+
+https://zigzap.org/
+Unleash the Low-Level Power of Zig for Blazingly Fast and Robust Web Applications.
+
+CC='zig cc -target x86_64-linux-gnu' CXX='zig cc -target x86_64-linux-gnu' go build
+
+构建出 linux 的使用 cgo 的静态链接的二进制可执行文件：
+CC='zig cc -target x86_64-linux-musl' \
+CXX='zig cc -target x86_64-linux-musl' \
+CGO_CFLAGS='-D_LARGEFILE64_SOURCE' \
+go build -ldflags='-linkmode=external -extldflags -static'
+

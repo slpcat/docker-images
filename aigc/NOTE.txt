@@ -15,12 +15,30 @@ stable-diffusion-webui
 https://github.com/AUTOMATIC1111/stable-diffusion-webui
 https://www.codewithgpu.com/i/AUTOMATIC1111/stable-diffusion-webui/Stable-Diffusion-for-NovelAI
 
+https://github.com/ggerganov/llama.cpp
+
 ControlNet
  https://github.com/lllyasviel/ControlNet.git
 https://huggingface.co/lllyasviel/ControlNet/tree/main/models
 
 https://github.com/riffusion/riffusion
 用这个转音频
+
+Neuronika是一个纯Rust编写的机器学习框架
+
+基于 Rust 实现简单、快速、轻量级的 AI Agent 框架 Rig
+
+https://github.com/wwwzhouhui/dify-for-dsl/tree/main/dsl
+
+Candle 适合 Rust 端的高效推理，特别是 Transformer 模型（LLaMA、Gemma）。
+Burn 适合训练和部署，是更通用的 深度学习框架（类似 PyTorch）。
+Rig（ARC） 是一个基于 Rust 优势面向 LLM 工作流引擎的 AI 系统构建框架，目的是要解决更底层的性能优化问题。值得关注的一个框架。
+逐渐采用 Rust 重构一些新框架，如Candle、Burn、DFDX、tch-rs、Linfa、ndarray、Polars等框架的出现。以及 OpenAI 、Google、微软等一些核心需要高性能，也换成了 Rust 来重构。
+官网：https://rig.rs
+
+https://docs.rs/rig-core/latest/rig
+
+Github：https://github.com/0xPlaygrounds/rig
 
 模型库
 huggingface
@@ -30,6 +48,8 @@ https://github.com/bmaltais/kohya_ss
 
 AI 法律助手
 https://github.com/lvwzhen/law-cn-ai
+
+LlamaEdge 项目: https://github.com/second-state/LlamaEdge
 
 https://minigpt-4.github.io/
 https://github.com/Vision-CAIR/MiniGPT-4
@@ -122,3 +142,6 @@ https://github.com/deepseek-ai/DeepSeek-LLM
 全部私有化部署，LLM用qwen2，embedding用gte-qwen2。这样就完全闭环了，可以用dify搭建内部知识库
 
 https://github.com/Haidra-Org/AI-Horde
+
+https://github.com/Lightricks/LTX-Video
+

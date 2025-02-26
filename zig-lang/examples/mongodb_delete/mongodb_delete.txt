@@ -1,0 +1,9 @@
+macos: 
+brew install mongo-c-driver
+zig build-exe mongodb_delete.zig \
+    -I/opt/homebrew/include/libmongoc-1.0 \
+    -I/opt/homebrew/include/libbson-1.0 \
+    -L/opt/homebrew/lib \
+    -lmongoc-1.0 \
+    -lbson-1.0 -O ReleaseSmall
+

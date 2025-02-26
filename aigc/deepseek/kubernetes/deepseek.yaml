@@ -1,0 +1,78 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: deepseek
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deepseek-deployment
+  namespace: deepseek
+  labels:
+    app: deepseek
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: deepseek
+  template:
+    metadata:
+      labels:
+        app: deepseek
+    spec:
+      tolerations:
+        - key: "nvidia.com/gpu"
+          operator: "Exists"
+          effect: "NoSchedule"
+      volumes:
+      - name: cache-volume
+        hostPath:
+          path: /tmp/deepseek
+          type: DirectoryOrCreate
+      # vLLM needs to access the host's shared memory for tensor parallel inference.
+      - name: shm
+        emptyDir:
+          medium: Memory
+          sizeLimit: "2Gi"
+      containers:
+      - name: deepseek
+        image: cloudpilotai-registry.cn-hangzhou.cr.aliyuncs.com/cloudpilotai/vllm-openai:latest
+        command: ["/bin/sh", "-c"]
+        args: [
+          "vllm serve deepseek-ai/DeepSeek-R1-Distill-Qwen-32B --max_model_len 2048 --tensor-parallel-size 4"
+        ]
+        env:
+        # - name: HF_ENDPOINT
+        #   value: https://hf-mirror.com
+        - name: HF_HUB_ENABLE_HF_TRANSFER
+          value: "0"
+        # - name: VLLM_USE_MODELSCOPE
+        #   value: "True"
+        ports:
+        - containerPort: 8000
+        resources:
+          requests:
+            nvidia.com/gpu: "4"
+          limits:
+            nvidia.com/gpu: "4"
+        volumeMounts:
+        - mountPath: /root/.cache/huggingface
+          name: cache-volume
+        - name: shm
+          mountPath: /dev/shm
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: deepseek-svc
+  namespace: deepseek
+spec:
+  ports:
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: 8000
+  # The label selector should match the deployment labels & it is useful for prefix caching feature
+  selector:
+    app: deepseek
+  type: ClusterIP

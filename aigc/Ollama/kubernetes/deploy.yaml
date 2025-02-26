@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ollama
+  namespace: ollama
+  labels:
+    app: ollama
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ollama
+  template:
+    metadata:
+      labels:
+        app: ollama
+    spec:
+      containers:
+      - name: ollama
+        image: ollama/ollama:latest
+        env:
+        - name: MODEL_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: ollama-config
+              key: MODEL_NAME
+        - name: API_TIMEOUT
+          valueFrom:
+            configMapKeyRef:
+              name: ollama-config
+              key: API_TIMEOUT
+        - name: API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: ollama-secrets
+              key: API_KEY
+        ports:
+        - containerPort: 11434
+        resources:
+          requests:
+            cpu: "1000m"
+            memory: "2Gi"
+          limits:
+            cpu: "2000m"
+            memory: "3Gi"
+        volumeMounts:
+        - mountPath: /models
+          name: model-storage
+        # ... other configurations
+      volumes:
+      - name: model-storage
+        persistentVolumeClaim:
+          claimName: ollama-pvc
+      - name: load-model
+        image: curlimages/curl
+        command: ["/bin/sh", "-c"]
+        args:
+          - "sleep infinity"
+        lifecycle:
+          postStart:
+            exec:
+              command:
+                - "/bin/sh"
+                - "-c"
+                - >
+                  curl -X POST http://localhost:11434/api/pull
+                  -H 'Content-Type: application/json'
+                  -d '{"name": "llama3.2"}'
+        resources:
+          requests:
+            cpu: "25m"
+            memory: "50Mi"
+          limits:
+            cpu: "25m"
+            memory: "50Mi"     
+

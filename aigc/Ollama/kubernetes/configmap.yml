@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ollama-config
+  namespace: ollama
+data:
+  MODEL_NAME: "llama3.2"
+  API_TIMEOUT: "30s"
+

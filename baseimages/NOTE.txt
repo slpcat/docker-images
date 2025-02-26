@@ -65,6 +65,7 @@ sed -e "s|^mirrorlist=|#mirrorlist=|g" \
     /etc/yum.repos.d/CentOS-*.repo
 
 amazonlinux
+https://cdn.amazonlinux.com/al2023/os-images/latest/
 
 精简版系统
 debian:buster-slim

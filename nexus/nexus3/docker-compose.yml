@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: sonatype/nexus3
+    container_name: nexus3  # 自定义容器名称
+    ports:
+      - "80:8081"
+    restart: always
+    volumes:
+      - ./nexus-data:/nexus-data  # 持久化数据，防止容器重启数据丢失

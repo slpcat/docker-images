@@ -14,7 +14,7 @@ docker run -d --name gitlab \
   -v /data/gitlab/data:/var/opt/gitlab \
   -v /data/gitlab/log:/var/log/gitlab gitlab/gitlab-ce:14.5.2-ce.0
 如果报告权限错误，进入容器运行update-permissions修复权限
-docker pull gitlab/gitlab-ce:14.5.2-ce.0
+docker pull gitlab/gitlab-ce:17.6.4-ce.0
 
 kubernets 部署示例
 1. 指定节点node 创建3个本地pv

@@ -1,0 +1,29 @@
+ 安装使用FVM，管理多版本flutter
+dart pub global activate fvm
+
+fvm install 3.2.2
+fvm use 3.2.2
+
+https://github.com/fluttergems/awesome-open-source-flutter-apps
+
+https://github.com/iampawan/FlutterExampleApps
+
+https://github.com/Solido/awesome-flutter
+
+https://github.com/felangel/bloc
+
+https://github.com/JideGuru/FlutterFoodybite
+
+https://github.com/PoojaB26/FlutterBasicWidgets
+
+https://github.com/gskinner/flutter_animate
+
+https://github.com/google/flutter-desktop-embedding
+
+https://github.com/mjl0602/flutter_tiktok
+
+https://github.com/yukilzw/dy_flutter
+
+https://github.com/kaina404/FlutterDouBan
+
+https://github.com/yubo725/flutter-osc

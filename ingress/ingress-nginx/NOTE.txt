@@ -4,6 +4,8 @@ https://kubernetes.github.io/ingress-nginx/deploy/#aws
 
 https://kubernetes.github.io/ingress-nginx/user-guide/multiple-ingress/
 
+https://kubernetes.github.io/ingress-nginx/user-guide/third-party-addons/modsecurity/
+
 日志分析
 
 accesslog -->es -->grafana

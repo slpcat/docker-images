@@ -1,0 +1,73 @@
+作者：ketchum
+链接：https://www.zhihu.com/question/667259199/answer/3626431672
+来源：知乎
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: vllm-app
+  name: vllm
+  namespace: vllm-ns
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: vllm-app
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: vllm-app
+    spec:
+      containers:
+      - command:
+        - python3
+        - -m
+        - vllm.entrypoints.openai.api_server
+        - --model
+        - TheBloke/Mistral-7B-Instruct-v0.2-AWQ
+        - --quantization=awq
+        - --trust-remote-code
+        image: vllm/vllm-openai:latest
+        imagePullPolicy: Always
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /health
+            port: 8000
+            scheme: HTTP
+          initialDelaySeconds: 240
+          periodSeconds: 5
+          successThreshold: 1
+          timeoutSeconds: 1
+        name: vllm-openai
+        ports:
+        - containerPort: 8000
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /health
+            port: 8000
+            scheme: HTTP
+          initialDelaySeconds: 240
+          periodSeconds: 5
+          successThreshold: 1
+          timeoutSeconds: 1
+        resources:
+          limits:
+            nvidia.com/gpu: "4"
+          requests:
+            nvidia.com/gpu: "4"
+        volumeMounts:
+        - mountPath: /root/.cache/huggingface
+          name: cache-volume
+      volumes:
+      - emptyDir: {}
+        name: cache-volume

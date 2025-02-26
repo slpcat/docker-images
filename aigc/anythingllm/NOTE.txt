@@ -1,0 +1,8 @@
+docker run -d --name anythingllm --add-host=host.docker.internal:host-gateway \
+  --env STORAGE_DIR=/app/server/storage \
+  --health-cmd "/bin/bash/usr/local/bin/docker-healthcheck.sh || exit 1"  \
+  --health-interval 60s --health-start-period 60s  \
+  --health-timeout 10s --cap-add SYS_ADMIN -p 3001:3001/tcp \
+  --restart=always --user anythingllm \
+  -v /data/anythingllm-env:/app/server/storage \
+  -v /data/anythingllm-storage:/app/server/storage/.env -w /app  mintplexlabs/anythingllm 
