@@ -3,6 +3,5 @@
   "live-restore": true,
   "storage-driver": "vfs",
   "max-concurrent-downloads": 10,
-  "oom-score-adjust": -1000,
   "debug": false
 }

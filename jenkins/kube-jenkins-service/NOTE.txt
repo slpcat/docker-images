@@ -13,7 +13,7 @@ docker run -d --restart=always --ip 10.0.0.8 --mac-address fa:20:20:2c:79:73 --n
     -v /zdata/data/jenkins-slave-java:/home/jenkins \
     -e JENKINS_AGENT_NAME=static-java8-0 \
     -e JENKINS_AGENT_WORKDIR=/home/jenkins \
-    -e JENKINS_URL=http://jenkins-vm-dev.deepway-inc.com:8080 \
+    -e JENKINS_URL=http://jenkins-vm-dev.example.com:8080 \
     -e JENKINS_SECRET=38ac5dd08338ca65e13ccd4670e58a5b054d98298932981083b8f23f526dbef7 \
     -e JAVA_OPTS='-server -Djava.awt.headless=true -Djava.nio.channels.spi.SelectorProvider=sun.nio.ch.EPollSelectorProvider
             -Dfile.encoding=UTF8 -Xverify:none -XX:MetaspaceSize=128m
@@ -29,8 +29,24 @@ docker run -d --restart=always --ip 10.0.0.8 --mac-address fa:20:20:2c:79:73 --n
             -XX:SurvivorRatio=8 -XX:G1MixedGCCountTarget=16 -XX:G1MixedGCLiveThresholdPercent=90
             -XX:InitiatingHeapOccupancyPercent=35 -XX:G1HeapRegionSize=32m -XX:+PerfDisableSharedMem
             -XX:-ResizePLAB' \
-    slpcat/kube-jenkins-dind-agent:oraclejdk11-bullseye-java
+    slpcat/kube-jenkins-dind-agent:openjdk21-ubuntu2404-java
 
+docker run -d --restart=always --name static-java8-0 \
+    -v /var/run/docker.sock:/var/run/docker.sock \
+    -v /data/jenkins-slave-java:/home/jenkins \
+    -e JENKINS_AGENT_NAME=static-java8-0 \
+    -e JENKINS_AGENT_WORKDIR=/home/jenkins \
+    -e JENKINS_URL=http://10.0.1.6:8080 \
+    -e JENKINS_SECRET=38ac5dd08338ca65e13ccd4670e58a5b054d98298932981083b8f23f526dbef7 \
+    -e JAVA_OPTS='-server -Djava.nio.channels.spi.SelectorProvider=sun.nio.ch.EPollSelectorProvider
+            -Dfile.encoding=UTF8 -Xverify:none -XX:MetaspaceSize=128m
+            -XX:NUMAInterleaveGranularity=65536 -XX:+UseLargePages -XX:+UseCompressedOops
+            -XX:MaxMetaspaceSize=512m -XX:ReservedCodeCacheSize=240M
+            -XshowSettings:vm -Djute.maxbuffer=41943040
+            -XX:+UseCompressedOops -XX:+UseZGC -XX:+ZGenerational
+            -XX:+DisableExplicitGC -XX:SoftRefLRUPolicyMSPerMB=0
+            -XX:-OmitStackTraceInFastThrow -XX:+ParallelRefProcEnabled' \
+    slpcat/kube-jenkins-dind-agent:openjdk21-ubuntu2404-java
 
 docker run -d -it --restart=always \
   --ip 10.0.0.9 --mac-address fa:20:20:2e:a2:de --network hostnic \
@@ -61,7 +77,7 @@ docker run -d -it --restart=always \
             -Dhudson.slaves.NodeProvisioner.MARGIN0=0.85
             -Dhudson.DNSMultiCast.disabled=true' \
   -v /zdata/data/jenkins-home:/var/jenkins_home \
-  slpcat/kube-jenkins-service:2.364-jdk11
+  slpcat/kube-jenkins-service:2.479-jdk21
 
 
 版本说明

@@ -7,6 +7,13 @@ RUN apt-get update -y             \
     && apt-get upgrade -y         \
     && apt-get install -y         \
        apt-transport-https        \
+       binutils                   \
+       ethtool                    \
+       vim-tiny                   \
+       iproute2                   \
+       wget                       \
+       telnet                     \
+       less                       \
        bison                      \
        ca-certificates            \
        net-tools                  \
@@ -19,15 +26,21 @@ RUN apt-get update -y             \
        sudo                 \
        git                  \
        iptables             \
+       vim                  \
        jq                   \
        openssh-client       \
        unzip                \
        zip                  \
        groff                \
+       snoopy               \
+       clamav               \
+       clamav-freshclam     \
        python3              \
-       python3-pip
-
-COPY pip.conf /etc/pip.conf
+       python3-pip          \
+       python3-all-venv     \
+       python3-pytest
+       
+COPY pip.conf ld.so.preload snoopy.ini /etc/
 
 #install docker-ce
 #RUN \    
@@ -57,9 +70,15 @@ RUN \
 RUN \
     apt-get install -y ansible ansible-mitogen
 
+# Environment variables substitution for Go
+RUN \
+    curl -L https://github.com/a8m/envsubst/releases/download/v1.4.3/envsubst-`uname -s`-`uname -m` -o envsubst && \
+    chmod +x envsubst && \
+    mv envsubst /usr/local/bin
+
 #Robot Framework is a generic open source automation framework.
-#RUN \
-#    pip3 install robotframework
+RUN \
+    pip3 install --break-system-packages robotframework
 
 #kubectl
 RUN \
@@ -164,8 +183,8 @@ RUN \
 
 #dependency-check
 RUN \
-    wget https://github.com/jeremylong/DependencyCheck/releases/download/v6.5.3/dependency-check-6.5.3-release.zip \
-    && unzip dependency-check-6.5.3-release.zip \
+    wget https://github.com/jeremylong/DependencyCheck/releases/download/v12.1.0/dependency-check-12.1.0-release.zip \
+    && unzip dependency-check-12.1.0-release.zip \
     && mv dependency-check /usr/local/ \
     && ln -sf /usr/local/dependency-check/bin/dependency-check.sh  /usr/local/bin/dependency-check \
     && rm -rf dependency-check*
@@ -222,10 +241,10 @@ RUN \
 #    && rm allure_2.17.2-1_all.deb
 
 RUN \
-    wget https://github.com/allure-framework/allure2/releases/download/2.17.2/allure-2.17.2.tgz \
-    && tar zxf allure-2.17.2.tgz -C /usr/local/ \
-    &&  ln -s /usr/local/allure-2.17.2/bin/allure  /usr/local/bin/allure \
-    && rm allure-2.17.2.tgz
+    wget https://github.com/allure-framework/allure2/releases/download/2.33.0/allure-2.33.0.tgz \
+    && tar zxf allure-2.33.0.tgz -C /usr/local/ \
+    &&  ln -s /usr/local/allure-2.33.0/bin/allure  /usr/local/bin/allure \
+    && rm allure-2.33.0.tgz
 
 # jenkins slave
 ENV HOME /home/jenkins
@@ -240,7 +259,7 @@ RUN rm -rf /root/ \
 
 LABEL Description="This is a base image, which provides the Jenkins agent executable (slave.jar)" Vendor="Jenkins project" Version="4.7"
 
-ARG VERSION=3283.v92c105e0f819
+ARG VERSION=3301.v4363ddcca_4e7
 ARG AGENT_WORKDIR=/home/jenkins/agent
 
 RUN curl --create-dirs -sSLo /usr/share/jenkins/agent.jar https://repo.jenkins-ci.org/public/org/jenkins-ci/main/remoting/${VERSION}/remoting-${VERSION}.jar \
