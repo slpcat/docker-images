@@ -1,0 +1,42 @@
+docker run --restart always \
+  --name derper -p 12345:12345 -p 3478:3478/udp \
+  -v /root/.acme.sh/xxxx/:/app/certs \
+  -e DERP_CERT_MODE=manual \
+  -e DERP_ADDR=12345 \
+  -e DERP_DOMAIN=xxxx \
+  -e DERP_VERIFY_CLIENTS=true \
+  -d slpcat/derper:latest
+
+docker run --restart always \
+  --name derper -p 80:8080 -p 3478:3478/udp \
+  -v /data/headscale/certs:/app/certs \
+  -v /var/run/tailscale/tailscaled.sock:/var/run/tailscale/tailscaled.sock \
+  -e DERP_ADDR=:8080 \
+  -e DERP_DOMAIN=vpn-relay.example.com \
+  -e DERP_VERIFY_CLIENTS=true \
+  -d slpcat/derper:latest
+
+
+防止 DERP 被白嫖
+默认情况下 DERP 服务器是可以被白嫖的，只要别人知道了你的 DERP 服务器的地址和端口，就可以为他所用。如果你的服务器是个小水管，用的人多了可能会把你撑爆，因此我们需要修改配置来防止被白嫖。
+
+特别声明：只有使用域名的方式才可以通过认证防止被白嫖，使用纯 IP 的方式无法防白嫖，你只能小心翼翼地隐藏好你的 IP 和端口，不能让别人知道。
+
+只需要做两件事情：
+
+1、在 DERP 服务器上安装 Tailscale。
+
+第一步需要在 DERP 服务所在的主机上安装 Tailscale 客户端，启动 tailscaled 进程。
+
+2、derper 启动时加上参数 --verify-clients。
+
+
+docker run --detach --name=my_tailscale_container --network=my_custom_network --volume /var/lib/tailscale-exitnode-1:/var/lib/tailscale --env TS_STATE_DIR=/var/lib/tailscale --env TS_USERSPACE=1 --env TS_AUTHKEY=tskey-auth-XXX --env TS_EXTRA_ARGS='--advertise-exit-node' tailscale/tailscale
+
+
+tailscale up --login-server http://server.example.com:8080 --advertise-routes 192.168.0.0/24,192.168.1.0/24 --advertise-exit-node --accept-routes --accept-dns=false --advertise-exit-node
+
+tailscale up --exit-node=<exit-node-ip>
+
+局域网路由优先
+ip rule add to 192.168.2.0/24 priority 2500 lookup main

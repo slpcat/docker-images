@@ -1,0 +1,1 @@
+https://documentation.wazuh.com/current/deploying-with-kubernetes/index.html
