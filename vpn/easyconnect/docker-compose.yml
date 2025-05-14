@@ -1,0 +1,17 @@
+version: '2'
+services:
+    easyconnect:
+        image: hagb/docker-easyconnect:7.6.7 # latest, vncless, 7.6.3, vncless-7.6.3, 7.6.7, vncless-7.6.7
+        devices:
+          - /dev/net/tun
+        cap_add: 
+          - NET_ADMIN
+        volumes:
+          - $HOME/.ecdata:/root
+        environment:
+          - URLWIN=1
+          - PASSWORD=xxxx
+        ports:
+          - "127.0.0.1:5901:5901"
+          - "127.0.0.1:1080:1080"
+          - "127.0.0.1:8888:8888"

@@ -1,0 +1,8 @@
+7.6.7.4为ARM银河麒麟V10 sp1系统EasyConnect，适用于处理器为麒麟990、飞腾2000。
+6.9-7.6.6为MAC版windows11 EasyConnect，适用于处理器为M1
+https://github.com/ws01759288/EasyConnect/releases/download/7.6.7.4/EasyConnect7.6.7.4.deb
+
+
+docker run -d --restart=always --device /dev/net/tun --cap-add NET_ADMIN -e IPTABLES_LEGACY=1 -v $HOME/.ecdata:/root -e PASSWORD=123abc -e URLWIN=1  -p 127.0.0.1:5901:5901 -p 127.0.0.1:21080:1080 -p 127.0.0.1:28888:8888 -p 127.0.0.1:54530:54530 hagb/docker-easyconnect:7.6.7
+
+arm64 和 mips64el 架构需要加入 `-e DISABLE_PKG_VERSION_XML=1` 参数
