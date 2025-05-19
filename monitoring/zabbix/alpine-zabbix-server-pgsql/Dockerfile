@@ -37,14 +37,10 @@ RUN set -ex \
 
 COPY pip.conf /etc/pip.conf
 
-#python2
-RUN \
-    apk add python2  py-pip \
-    && pip install requests
-
 #python3
 RUN \
-    apk add python3
+    apk add python3  py3-pip \
+    && pip install requests
 
 COPY ssh_config /etc/ssh/ssh_config
 
