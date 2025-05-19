@@ -39,8 +39,7 @@ COPY pip.conf /etc/pip.conf
 
 #python3
 RUN \
-    apk add python3  py3-pip \
-    && pip install requests
+    apk add python3  py3-pip py3-requests
 
 COPY ssh_config /etc/ssh/ssh_config
 
