@@ -31,10 +31,10 @@ RUN set -ex \
            tar \
            python3 \
            py3-pip \
+           py3-requests \
            wget \
            openssh \
            curl \
-    && pip install requests \
     && echo "${TIMEZONE}" > /etc/TZ \
     && ln -sf /usr/share/zoneinfo/${TIMEZONE} /etc/localtime \
     # Network fix
