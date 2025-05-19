@@ -1,6 +1,6 @@
 # Build a minimal distribution container
 # upstream https://github.com/gliderlabs/docker-alpine
-FROM zabbix/zabbix-web-nginx-pgsql:alpine-5.2.2
+FROM zabbix/zabbix-web-nginx-pgsql:alpine-7.0.12
 MAINTAINER 若虚 <slpcat@qq.com>
 
 # Container variables
@@ -35,7 +35,7 @@ RUN set -ex \
     && echo 'hosts: files mdns4_minimal [NOTFOUND=return] dns mdns4' >> /etc/nsswitch.conf
 
 RUN \
-    apk add php php7-opcache
+    apk add php php83-opcache
 
 #COPY wqy-microhei.ttf /usr/share/zabbix/fonts/
 COPY wqy-microhei.ttf /usr/share/zabbix/assets/fonts/
