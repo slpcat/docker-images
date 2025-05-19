@@ -29,8 +29,8 @@ RUN set -ex \
            su-exec \
            gzip \
            tar \
-           python2 \
-           py-pip \
+           python3 \
+           py3-pip \
            wget \
            openssh \
            curl \
