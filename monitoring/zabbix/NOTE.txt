@@ -124,7 +124,7 @@ docker run -d --restart=always --net=host --name timescaledb \
 -e TIMESCALEDB_TELEMETRY=off \
 -e TS_TUNE_MEMORY=4GB -e TS_TUNE_NUM_CPUS=4 \
 -e POSTGRES_USER=zabbix -e POSTGRES_DB=zabbix \
--e POSTGRES_PASSWORD=pg_password  timescale/timescaledb:latest-pg17-oss
+-e POSTGRES_PASSWORD=pg_password  timescale/timescaledb:2.18.0-pg17
 
 数据库配置参数调优(略)
 
