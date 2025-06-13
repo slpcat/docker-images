@@ -27,7 +27,7 @@ cluster-id 唯一
 A 安装Rancher服务端
 https://rancher.com/docs/rancher/v2.x/en/quick-start-guide/deployment/quickstart-manual-setup/#1-provision-a-linux-host
 
-docker run -d --restart=always --privileged -v /data/rancher:/var/lib/rancher/ -p 80:80 -p 443:443 rancher/rancher:v2.9.2
+docker run -d --restart=always --privileged -v /data/rancher:/var/lib/rancher/ -p 80:80 -p 443:443 -e AUDIT_LEVEL=3 rancher/rancher:v2.11.2
 
 v2.9.2
 

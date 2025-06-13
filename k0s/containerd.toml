@@ -1,3 +1,4 @@
+imports = ["/run/k0s/containerd-cri.toml"]
 oom_score = -999
 version = 2
 

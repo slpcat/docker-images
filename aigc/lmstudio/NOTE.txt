@@ -1,0 +1,9 @@
+https://lmstudio.ai/
+Your local AI toolkit.
+Download and run Llama, DeepSeek, Qwen, Phi on your computer.
+
+
+logo
+Download LM Studio for Mac (M series)
+
+

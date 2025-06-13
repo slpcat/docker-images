@@ -1,0 +1,94 @@
+apiVersion: provisioning.cattle.io/v1
+kind: Cluster
+metadata:
+  name: cluster01
+  namespace: fleet-default
+spec:
+  agentEnvVars:
+    - name: https_proxy
+      value: http://tom:tom-cat-passwd123@192.168.1.89:7890
+    - name: http_proxy
+      value: http://tom:tom-cat-passwd123@192.168.1.89:7890
+  clusterAgentDeploymentCustomization:
+    overrideAffinity: null
+    overrideResourceRequirements: null
+  defaultPodSecurityAdmissionConfigurationTemplateName: rancher-restricted
+  enableNetworkPolicy: false
+  fleetAgentDeploymentCustomization:
+    overrideAffinity: null
+    overrideResourceRequirements: null
+  kubernetesVersion: v1.32.4+rke2r1
+  localClusterAuthEndpoint:
+    enabled: false
+  rkeConfig:
+    chartValues:
+      rke2-flannel: {}
+    dataDirectories:
+      k8sDistro: ''
+      provisioning: ''
+      systemAgent: ''
+    etcd:
+      disableSnapshots: false
+      snapshotRetention: 5
+      snapshotScheduleCron: 0 */5 * * *
+    machineGlobalConfig:
+      cluster-cidr: 10.44.0.0/16
+      cni: flannel
+      disable:
+        - rke2-ingress-nginx
+        - rke2-metrics-server
+      disable-kube-proxy: false
+      etcd-expose-metrics: false
+      kube-apiserver-arg:
+        - >-
+          admission-control-config-file=/etc/rancher/rke2/config/rancher-psact.yaml
+        - event-ttl=24h0m0s
+        - kubelet-timeout=10s
+      kube-scheduler-arg:
+        - ''
+      service-cidr: 10.45.0.0/16
+    machineSelectorConfig:
+      - config:
+          kubelet-arg:
+            - allowed-unsafe-sysctls=net.*
+            - cgroup-driver=systemd
+          profile: ''
+          protect-kernel-defaults: false
+    machineSelectorFiles:
+      - fileSources:
+          - configMap:
+              name: ''
+            secret:
+              items:
+                - hash: LW5oTV9pmpX7+xWMjgC3IgbHtLkSMlCgyaKXG13CihA=
+                  key: admission-config-psact
+                  path: /etc/rancher/rke2/config/rancher-psact.yaml
+              name: cluster01-admission-configuration-psact
+        machineLabelSelector:
+          matchLabels:
+            rke.cattle.io/control-plane-role: 'true'
+    registries:
+      configs: {}
+      mirrors: {}
+    upgradeStrategy:
+      controlPlaneConcurrency: '1'
+      controlPlaneDrainOptions:
+        deleteEmptyDirData: true
+        disableEviction: false
+        enabled: false
+        force: false
+        gracePeriod: -1
+        ignoreDaemonSets: true
+        skipWaitForDeleteTimeoutSeconds: 0
+        timeout: 120
+      workerConcurrency: '1'
+      workerDrainOptions:
+        deleteEmptyDirData: true
+        disableEviction: false
+        enabled: false
+        force: false
+        gracePeriod: -1
+        ignoreDaemonSets: true
+        skipWaitForDeleteTimeoutSeconds: 0
+        timeout: 120
+

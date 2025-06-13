@@ -1,0 +1,14 @@
+https://kyverno.io/
+
+1. 默认添加 namespace 的 quotas/limitrange
+2. pod必须包含 rquest 和 limit 才允许运行
+3. 禁止绑定 docker sock
+4. 禁止特权容器
+5. 禁止 hostpid 和hostipc
+6. 禁止绑定 hostpath
+7. 默认增加 默认磁盘限制
+8. 必须包含nodeselect或affinity
+9. 只允许使用某镜像仓库的镜像
+10. 不允许使用latest镜像
+11. 禁止使用特定的nodeport端口
+12. 禁止配置external-ip

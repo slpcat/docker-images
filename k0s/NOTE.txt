@@ -71,8 +71,27 @@ k0sctl kubeconfig > kubeconfig
 nerdctl config
 /etc/nerdctl/nerdctl.toml
 
-wget https://github.com/containerd/nerdctl/releases/download/v1.1.0/nerdctl-1.1.0-linux-amd64.tar.gz
-https://github.com/containerd/nerdctl/releases/download/v1.2.1/nerdctl-1.2.1-linux-amd64.tar.gz
+wget https://github.com/containerd/nerdctl/releases/download/v2.1.2/nerdctl-2.1.2-linux-amd64.tar.gz
 
 https://github.com/k0sproject/k0s/blob/main/docs/runtime.md
 
+
+SystemD#
+Create a drop-in directory and add config file with a desired environment variable:
+
+mkdir -p /etc/systemd/system/k0scontroller.service.d
+tee -a /etc/systemd/system/k0scontroller.service.d/http-proxy.conf <<EOT
+[Service]
+Environment=HTTP_PROXY=192.168.33.10:3128
+EOT
+OpenRC#
+Export desired environment variable overriding service configuration in /etc/conf.d directory:
+
+echo 'export HTTP_PROXY="192.168.33.10:3128"' > /etc/conf.d/k0scontroller
+
+docker run -d --name k0s-controller --hostname k0s-controller \
+  -v /var/lib/k0s -v /var/log/pods `# this is where k0s stores its data` \
+  --tmpfs /run `# this is where k0s stores runtime data` \
+  --privileged `# this is the easiest way to enable container-in-container workloads` \
+  -p 6443:6443 `# publish the Kubernetes API server port` \
+  docker.io/k0sproject/k0s:v1.32.5-k0s.0

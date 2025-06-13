@@ -1,0 +1,4 @@
+https://github.com/seaweedfs/seaweedfs
+SeaweedFS is an independent Apache-licensed open source project with its ongoing development made possible entirely thanks to the support of these awesome backers. If you'd like to grow SeaweedFS even stronger, please consider joining our sponsors on Patreon.
+
+

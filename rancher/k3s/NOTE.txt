@@ -73,3 +73,23 @@ Launched: k3s
 multipass shell k3s
 接着运行命令安装k3s
 
+
+---
+curl -sfL https://get.k3s.io | sh -s - server --cluster-init --token ${SERVER_TOKEN} \
+--disable traefik \
+--flannel-backend=none \
+--disable network-policy \
+--disable-kube-proxy \
+--disable=servicelb \
+--tls-san=${MAIN_SERVER} \
+--write-kubeconfig-mode 644 \
+--write-kubeconfig ${KUBECONFIG}
+
+
+cilium install \
+--set=ipam.operator.clusterPoolIPv4PodCIDRList=10.42.0.0/16 \
+--set bgpControlPlane.enabled=true \
+--set kubeProxyReplacement=true \
+--set ingressController.enabled=true \
+--set k8sServiceHost=${MAIN_SERVER} \
+--set k8sServicePort=6443
