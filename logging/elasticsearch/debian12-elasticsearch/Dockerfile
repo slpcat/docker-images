@@ -119,7 +119,7 @@ LABEL org.label-schema.build-date="2021-07-29T20:49:32.864135063Z" \
   org.label-schema.vcs-ref="dd5a0a2acaa2045ff9624f3729fc8a6f40835aa1" \
   org.label-schema.vcs-url="https://github.com/elastic/elasticsearch" \
   org.label-schema.vendor="Elastic" \
-  org.label-schema.version="8.3.2" \
+  org.label-schema.version="8.16.1" \
   org.opencontainers.image.created="2022-09-29T20:49:32.864135063Z" \
   org.opencontainers.image.documentation="https://www.elastic.co/guide/en/elasticsearch/reference/index.html" \
   org.opencontainers.image.licenses="Elastic-License-2.0" \
@@ -128,7 +128,7 @@ LABEL org.label-schema.build-date="2021-07-29T20:49:32.864135063Z" \
   org.opencontainers.image.title="Elasticsearch" \
   org.opencontainers.image.url="https://www.elastic.co/products/elasticsearch" \
   org.opencontainers.image.vendor="Elastic" \
-  org.opencontainers.image.version="8.3.2"
+  org.opencontainers.image.version="8.16.1"
 
 ENTRYPOINT ["/bin/tini", "--", "/usr/local/bin/docker-entrypoint.sh"]
 # Dummy overridable parameter parsed by entrypoint
@@ -140,7 +140,7 @@ CMD ["eswrapper"]
 
 #install elasticsearch plugins
 #RUN bin/elasticsearch-plugin install --batch repository-gcs
-RUN bin/elasticsearch-plugin install --batch https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v8.3.2/elasticsearch-analysis-ik-8.3.2.zip
+RUN bin/elasticsearch-plugin install --batch https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v8.16.1/elasticsearch-analysis-ik-8.16.1.zip
 
 #analysis-pinyin
 #analysis-stconvert
