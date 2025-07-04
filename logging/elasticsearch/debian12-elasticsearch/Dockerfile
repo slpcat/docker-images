@@ -72,7 +72,7 @@ RUN sed -i -e 's/ES_DISTRIBUTION_TYPE=tar/ES_DISTRIBUTION_TYPE=docker/' bin/elas
 # Add entrypoint
 ################################################################################
 
-FROM slpcat/oraclejdk:17-bullseye
+FROM slpcat/oraclejdk:17-bookworm
 
 RUN \
     apt-get update && \
