@@ -140,7 +140,7 @@ CMD ["eswrapper"]
 
 #install elasticsearch plugins
 #RUN bin/elasticsearch-plugin install --batch repository-gcs
-RUN bin/elasticsearch-plugin install --batch https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v8.16.1/elasticsearch-analysis-ik-8.16.1.zip
+RUN bin/elasticsearch-plugin install --batch https://get.infini.cloud/elasticsearch/analysis-ik/8.16.1
 
 #analysis-pinyin
 #analysis-stconvert
