@@ -31,7 +31,10 @@ sidecar方式从pod采集日志
 
 https://github.com/leahnp/fluentbit-sidecar
 
-$ docker run -ti fluent/fluent-bit:1.8 /fluent-bit/bin/fluent-bit -i cpu -o stdout -f 1
+$ docker run -ti fluent/fluent-bit:4.0 /fluent-bit/bin/fluent-bit -i cpu -o stdout -f 1
+docker run -d --restart=always --name fluent-bit-log \
+  -v /data/fluent-bit/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf \
+  fluent/fluent-bit:4.0-debug /fluent-bit/bin/fluent-bit -c /fluent-bit/etc/fluent-bit.conf
 
 fluent-bit 接收syslog输出到kafka
 

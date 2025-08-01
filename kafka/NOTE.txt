@@ -1,5 +1,6 @@
 https://cwiki.apache.org/confluence/display/KAFKA/Ecosystem
 https://docs.cloudera.com/documentation/kafka/latest/topics/kafka_performance.html
+https://www.cloudera.com/
 
 kafka-operator: 
 Banzai Cloud

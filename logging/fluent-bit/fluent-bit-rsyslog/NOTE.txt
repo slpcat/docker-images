@@ -9,4 +9,4 @@ sudo service rsyslog restart
 docker run -d --restart=always --name fluent-bit-rsyslog \
   -p 514:514 -e TZ="Asia/Shanghai" \
   -v /data/fluent-bit/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf \
-  fluent/fluent-bit:1.8-debug /fluent-bit/bin/fluent-bit -c /fluent-bit/etc/fluent-bit.conf
+  fluent/fluent-bit:4.0-debug /fluent-bit/bin/fluent-bit -c /fluent-bit/etc/fluent-bit.conf

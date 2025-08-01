@@ -38,7 +38,9 @@ RUN \
 ARG TARGETARCH
 RUN apt-get update \
     && apt-get upgrade -y \
-    && apt-get install -y git curl wget openssh-client unzip jq groff python3 fonts-wqy-microhei
+    && apt-get install -y git curl wget openssh-client unzip jq groff python3 fonts-wqy-microhei snoopy
+
+COPY pip.conf ld.so.preload snoopy.ini /etc/
 
 ARG user=jenkins
 ARG group=jenkins
