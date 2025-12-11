@@ -47,7 +47,7 @@ ID: 455 Postgres Overview
 
 ID: 3742 AAA Postgres_exporter
 
-ID: 9628 PostgreSQL Database 推荐
+ID: 9628 PostgreSQL Database 推荐 13115
 
 ID: 763 Redis Dashboard for Prometheus Redis Exporter
  

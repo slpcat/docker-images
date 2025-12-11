@@ -44,7 +44,7 @@ docker基础镜像源：webdevops，bitnami,turnkey,distroless
 
 持续集成/发布: jenkins,jenkins-x,fabric8,spinnaker,gitlab-ci,drone,makisu,flagger(荐),shipper,Hubot,Lita,Err,StackStorm,Netflix Winston,Tekton,CDS,gaia,FlyWayDB,LiquiBase,Flocker,ArgoCD,
 测试: chaos-monkey,chaoskube,k8s-testsuite,test-infra,sonobuoy,PowerfulSeal,twemperf(memcached),locust，selenium,Cucumber,LoadRunner,SoapUI,appium,espresso, robotium
-混沌工程: kube-monkey,powerfulseal,chaostoolkit-kubernetes,ChaosMesh,Litmus Chaos
+混沌工程: kube-monkey,powerfulseal,chaostoolkit-kubernetes,ChaosMesh,Litmus Chaos,chaosblade
 artifactory仓库: nexus2,nexus3,harbor,registry,quay,jfrog/Artifactory
 image-syncer 的定位是一个简单、易用的批量镜像迁移/同步工具，支持几乎所有目前主流的基于 docker registry V2 搭建的镜像存储服务
 docker-mirror：神奇指令，一键把镜像拉回“家”
@@ -62,7 +62,8 @@ JuiceFS 是一款面向云原生设计的高性能共享文件系统
 内存分布式管理系统: Alluxio,apache ignite,Apache arrow,Hazelcast,Oracle Coherence,GemFire
 大数据集群: hadoop(hdfs+yarn),hbase,spark,flink,Drill
 实时流计算: Spark （micro batch），Storm， Flink，Samza,Kafka Stream,StreamBase,Hangout,Amazon Kinesis,Apache Ignite
-ETL/CDC工具: DataX,DataX Web,Kettle,Sqoop,streamSets,Apache NiFi,Kafka Connect,Debezium(荐),Waterdrop,databus,canal,maxwell,mysql_steamer,flinkx,datalink,
+ETL/CDC工具: DataX,DataX Web,Kettle,Sqoop,streamSets,Apache NiFi,Kafka Connect,Debezium(荐),Waterdrop,databus,canal,maxwell,mysql_steamer,flinkx,datalink,zero-etl
+Ape-DTS：开源 DTS 工具，助力自建 MySQL、PostgreSQL 迁移上云
 web服务器/容器: nginx-php,apache-php,tomcat,resin
 java虚拟机: graalvm,sdkman
 SQL数据库: mysql,percona,mariadb,postgresql,greenplum,MyRocks,Citus,mssql-linux
@@ -104,6 +105,7 @@ API网关/反向代理/ingress: kong,konga,kong-dashboard,fabio,traefik,envoy,Ap
 流媒体服务器: SRS(荐),Licode,Jitsi,Kurento,mediasoup,Janus,red5pro,Ant-Media-Server,Asterisk,FreeSWITCH, RestComm,BigBlueButton,NextRTC,OpenBroadcaster,livekit.io,jellyfin,Plex 是一款开源客户端服务器媒体服务器
 QUIC服务端: caddy,快手kQUIC,nginx-quic,
 直播服务器：SRS，jitsi，kurento，mediasoup,janus,licode,red5pro,ant-media-server,OpenVidu,
+2fa双因子认证：freeotp
 
 FAAS: fission,fnproject,funktion,kubeless,nuclio,open-lambda,openfaas,openwhisk,vmware-dispatch,Claudia
 日志集群: elastic-stack(elasticsearch+cerebro+kibana),Elassandra,sonic,grafana-loki,splunk,graylog
@@ -111,7 +113,8 @@ FAAS: fission,fnproject,funktion,kubeless,nuclio,open-lambda,openfaas,openwhisk,
 监控: Argus,bosun,Collectd,cadvisor,cortex,heapster,kube-state-metrics,metrics-server,searchlight,prometheus,thanos,kubewatch,searchlight,Molten,sensu,telegraf(TICK),Alerta,zabbix,statsite,statsd,riemann, Wavefront,Honeycomb,Graphite,open-falcon,Xhprof/Xhgui,nightingale,CAT（Central Application Tracking）,netdata,LEPUS天兔(专用于监控数据库)
 商业监控:监控宝，监控易，听云，
 动态性能追踪: bcc-tools,systemtap,sysdig,kubectl-trace,bpftrace
-APM/tracing: appdash,apm-server,pinpoint,jaeger,zipkin,skywalking,opentracing,opencensus,opentelemetry,Elastic APM(原Opbeat),Dapper(Google),StackDriver Trace (Google),鹰眼(taobao),谛听(盘古，阿里云云产品使用的Trace系统),云图(蚂蚁Trace系统),X-ray(aws),Datadog,AppDynamics,New Relic,ScienceLogic,SignalFx,Stackifya,Dynatrace,OneAPM,RichAPM,Instana,RapidSpike,IQLECT,Dynatrace,SolarWinds Server & Application Monitor,CloudMonix,Glowroot,2 Steps,inspectIT,Tempo,SigNoz,
+APM/tracing: appdash,apm-server,pinpoint,jaeger,zipkin,skywalking,opentracing,opencensus,opentelemetry,Elastic APM(原Opbeat),Dapper(Google),StackDriver Trace (Google),鹰眼(taobao),谛听(盘古，阿里云云产品使用的Trace系统),云图(蚂蚁Trace系统),X-ray(aws),Datadog,AppDynamics,New Relic,ScienceLogic,SignalFx,Stackifya,Dynatrace,OneAPM,RichAPM,Instana,RapidSpike,IQLECT,Dynatrace,SolarWinds Server & Application Monitor,CloudMonix,Glowroot,2 Steps,inspectIT,Tempo,SigNoz,deepflow
+Pixie is an open source observability tool for Kubernetes applications
 基础架构即代码: packer,terraform
 OpenTofu 是一个开源的基础设施即代码（IaC）框架，被提出作为 Terraform 的替代方案，并由 Linux 基金会管理。
 Policy-as-Code 工具: Sentinel, Open Policy Agent (OPA),Conftest,Kubernetes Gatekeeper,Chef InSpec,Cloud Custodiane
@@ -133,6 +136,7 @@ kubernetes配置导出: neat
 KubeVela 是一个简单易用且高度可扩展的应用管理平台与核心引擎。KubeVela 是基于 Kubernetes 与 OAM 技术构建的。
 CIS 安全基线:open-scap
 Paralus: 零信任安全
+身份认证: FreeIPA
 
 Maltrail恶意流量检测系统
 网络入侵检测系统: snort,suricata
@@ -347,6 +351,9 @@ https://12factor.net/
 不可变基础设施
 容器root不可写，普通用户权限运行，仅仅写入volume
 
+ai运维
+https://github.com/GoogleCloudPlatform/kubectl-ai
+https://github.com/k8sgpt-ai/k8sgpt/
 
 常用linux软件
 钉钉

@@ -14,3 +14,6 @@ docker-compose up -d
 
 演示项目
  https://github.com/rongfengliang/nginx-opentracing-demo
+
+scout_apm
+作为 Scout APM Agent 的核心二进制，负责采集应用性能数据（如响应时间、数据库查询、错误率等）并上报到 Scout APM 云端平台。

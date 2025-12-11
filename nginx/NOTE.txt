@@ -116,3 +116,30 @@ https://github.com/ysugimoto/lua-resty-grpc-gateway
 nginx + ktls
 https://docs.nvidia.com/doca/sdk/nvidia+tls+offload+guide/index.html
 https://www.quickhost.uk/blog/2021/11/14/nginx-tuning-with-kernel-tls-and-ssl_sendfile/
+
+    log_format json escape=json '{"timestamp":"$time_iso8601",'
+            '"client_addr":"$remote_addr",'
+            '"client_port":$remote_port,'
+            '"client_user":"$remote_user",'
+            '"request_body":"$request_body",'
+            '"request":"$request",'
+            '"request_length":$request_length,'
+            '"server_addr":"$server_addr",'
+            '"request_time":$request_time,'
+            '"server_protocol":"$server_protocol",'
+            '"ssl_protocol":"$ssl_protocol",'
+            '"ssl_cipher":"$ssl_cipher",'
+            '"upstream_addr":"$upstream_addr",'
+            '"upstream_response_time":"$upstream_response_time",'
+            '"upstream_status":"$upstream_status",'
+            '"http_host":"$http_host",'
+            '"http_referer":"$http_referer",'
+            '"http_x_forwarded_for":"$http_x_forwarded_for",'
+            '"http_user_agent":"$http_user_agent",'
+            '"server_host":"$host",'
+            '"server_port":$server_port,'
+            '"uri":"$uri",'
+            '"body_bytes_sent":$body_bytes_sent,'
+            '"bytes_sent":$body_bytes_sent,'
+            '"status":$status'
+            '}';

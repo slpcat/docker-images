@@ -1,0 +1,13 @@
+services:
+victoria-logs-syslog:
+image: docker.io/victoriametrics/victoria-logs:latest
+container_name: victoria-logs-syslog
+restart: always
+ports:
+-"9428:9428"
+-"514:514/udp"
+volumes:
+- ./victoria-logs-data:/victoria-logs-data
+command:
+- '-syslog.listenAddr.udp=:514'
+- '--retentionPeriod=30d'

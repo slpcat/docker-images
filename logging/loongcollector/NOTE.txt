@@ -3,4 +3,11 @@ kubernetes 日志采集方案 loongcollector（旧名iLogtail）
 日志采集使用阿里云开源工具iLogtail，支持部署于物理机，虚拟机，Kubernetes等多种环境中来采集遥测数据，例如logs、traces和metrics。
 github 项目地址：https://github.com/alibaba/loongcollector/tree/main/example_config/start_with_k8s
 
+docker run -d \
+    -v /:/logtail_host:ro \
+    -v /var/run/docker.sock:/var/run/docker.sock \
+    --env ALIYUN_LOGTAIL_CONFIG=/etc/ilogtail/conf/${sls_upload_channel}/ilogtail_config.json \
+    --env ALIYUN_LOGTAIL_USER_ID=${aliyun_account_id} \
+    --env ALIYUN_LOGTAIL_USER_DEFINED_ID=${user_defined_id} \
+    aliyun-observability-release-registry.${region_id}.cr.aliyuncs.com/loongcollector/loongcollector:v3.0.12.0-25723a1-aliyun
 

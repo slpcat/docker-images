@@ -10,3 +10,5 @@
 zabbix，falcon,statsd/collectd，prometheus/opentsdb，jaeger/zipkin，weave scope
 
 https://uptime.kuma.pet/
+
+https://samber.github.io/awesome-prometheus-alerts/rules#host-and-hardware

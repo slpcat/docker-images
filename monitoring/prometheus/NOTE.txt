@@ -249,3 +249,5 @@ docker run  -d \
    --query.max-concurrency=20 \
    --log.level=info \
    --log.format=logfmt
+
+https://github.com/thaum-xyz/ankhmorpork/tree/master/apps/monitoring/manifests

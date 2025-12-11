@@ -145,3 +145,4 @@ https://github.com/Haidra-Org/AI-Horde
 
 https://github.com/Lightricks/LTX-Video
 
+export HF_ENDPOINT=https://hf-mirror.com

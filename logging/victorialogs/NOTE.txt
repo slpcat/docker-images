@@ -1,0 +1,7 @@
+docker run -d --restart always \
+-p 9428:9428 \
+-p 514:514/udp \
+-v ./victoria-logs-data:/victoria-logs-data \
+--name victoria-logs-syslog-songxwn.com \
+docker.io/victoriametrics/victoria-logs:latest \
+-syslog.listenAddr.udp=:514
