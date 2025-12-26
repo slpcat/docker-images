@@ -301,9 +301,11 @@ RUN /usr/local/bin/install-plugins.sh       \
   maven-plugin:latest            \
   #maven-deploy-plugin:latest     \
   #maven-release-plugin:latest    \
+  mcp-server                     \
   #mercurial:latest              \
   #mesos:latest                  \
   metrics:latest                 \
+  miniorange-two-factor          \
   #momentjs:latest                \
   monitoring:latest              \
   #msbuild:latest                 \
@@ -319,6 +321,7 @@ RUN /usr/local/bin/install-plugins.sh       \
   #openshift-login:latest         \
   packer:latest                  \
   pam-auth:latest                \
+  parallel-test-executor         \
   parameterized-trigger:latest   \
   performance:latest             \
   periodicbackup:latest          \

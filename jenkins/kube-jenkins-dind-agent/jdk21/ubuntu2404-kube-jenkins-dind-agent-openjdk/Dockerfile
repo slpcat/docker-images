@@ -35,6 +35,8 @@ RUN apt-get update -y             \
        snoopy               \
        clamav               \
        clamav-freshclam     \
+       nodejs               \
+       npm                  \
        python3              \
        python3-pip          \
        python3-all-venv     \
@@ -66,6 +68,15 @@ RUN \
     apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
 
+# Install AI coding/Vibe coding tools 
+# Claude Code , Cursor CLI, CodeX
+RUN \
+    npm install -g @anthropic-ai/claude-code \
+    #curl https://cursor.com/install -fsS | bash \
+    #mv $HOME/.local/bin/cursor-agent /usr/local/bin/ \
+    npm install -g @openai/codex \
+    npm install -g cline
+    
 #install ansible
 RUN \
     apt-get install -y ansible ansible-mitogen

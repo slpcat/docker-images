@@ -36,6 +36,12 @@ docker run -d -p 9000:9000 \
     -v /data/sonarqube/data:/opt/sonarqube/data \
     -v /data/sonarqube/extensions:/opt/sonarqube/extensions \
     --name sonarqube sonarqube:9.9-community
+sonarqube:25.12.0.117093-community
+
+SonarQube MCP Server
+Interact with SonarQube Cloud, Server and Community build over the web API. Analyze code to identify quality and security issues.
+
+docker pull mcp/sonarqube
 
 plugins
 

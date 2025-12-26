@@ -146,3 +146,8 @@ https://github.com/Haidra-Org/AI-Horde
 https://github.com/Lightricks/LTX-Video
 
 export HF_ENDPOINT=https://hf-mirror.com
+
+SonarQube MCP Server
+The SonarQube MCP Server is designed to integrate code quality and code security tools with your favorite MCP clients.
+
+The SonarQube MCP Server is a Model Context Protocol (MCP) server that provides seamless integration with SonarQube Server or SonarQube Cloud for code quality and code security. It also enables the analysis of code snippets directly within the agent context.

@@ -135,6 +135,7 @@ kubernetes成本计算: Kubecost
 kubernetes配置导出: neat
 KubeVela 是一个简单易用且高度可扩展的应用管理平台与核心引擎。KubeVela 是基于 Kubernetes 与 OAM 技术构建的。
 CIS 安全基线:open-scap
+XCA（X Certificate and key management） 是作为证书和密钥存储，以及作为签发证书的签名应用程序，是一个开源的工具，底层还是基于openssl的类库和API的。
 Paralus: 零信任安全
 身份认证: FreeIPA
 

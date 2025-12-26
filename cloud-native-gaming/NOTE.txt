@@ -1,0 +1,2 @@
+https://dev.to/ashish_kumar_4dc2a7ee7693/cloud-native-gaming-with-kruisegame-49kh
+https://github.com/googleforgames/agones

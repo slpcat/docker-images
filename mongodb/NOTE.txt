@@ -3,6 +3,7 @@ docker run -d --restart=always --name mongo -p 27017:27017 \
 -e MONGO_INITDB_ROOT_USERNAME=root -e MONGO_INITDB_ROOT_PASSWORD=root \
 mongo --auth
 
+percona/percona-server-mongodb:6.0.12
 
 
 docker exec -it mongo mongo admin
@@ -23,3 +24,13 @@ mongo-express
 
 http://localhost:8081，
 在弹出的对话框中输入默认的用户名和密码User Name:admin,Password:pass
+
+MongoDB Controllers for Kubernetes
+MongoDB Controllers for Kubernetes (MCK) is an open-source project. It represents a merge of the previous MongoDB Community Operator (MCO) and MongoDB Enterprise Kubernetes Operator (MEKO).
+
+This release brings MongoDB Community and Enterprise editions together under a single, unified operator, making it easier to manage, scale, and upgrade your deployments. While the first version simply brings the capabilities of both into a single Operator, future changes will build on this to more closely align how Community and Enterprise are managed in Kubernetes, to offer an even more seamless and streamlined experience. As an open-source project, it now allows for community contributions, helping drive quicker bug fixes and ongoing innovation. The MongoDB Controllers for Kubernetes enable easy deploys of MongoDB into Kubernetes clusters, using our management, monitoring and backup platforms, Ops Manager and Cloud Manager.
+
+Percona is Cloud Native
+The Percona Distribution for MongoDB Kubernetes Operator automates the creation, modification, or deletion of items in your Percona Server for MongoDB environment. The Operator contains the necessary Kubernetes settings to maintain a consistent Percona Server for MongoDB instance modification, or deletion of items in your Percona Server for MongoDB environment. The Operator contains the necessary Kubernetes settings to maintain a consistent Percona Server for MongoDB instance. Consult the documentation on the Percona Kubernetes Operator for Percona Server for MongoDB for complete details on capabilities and options.
+
+

@@ -1,0 +1,9 @@
+docker run -d \
+  --name gpt-oss-20b \
+  --gpus all \
+  -p 8080:80 \
+  -e MAX_LENGTH=2048 \
+  -e TEMPERATURE=0.7 \
+  -e QUANTIZE=true \
+  ghcr.io/openai/gpt-oss-20b:v1.2
+
