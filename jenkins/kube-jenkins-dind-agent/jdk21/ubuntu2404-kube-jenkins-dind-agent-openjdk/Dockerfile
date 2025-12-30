@@ -38,8 +38,6 @@ RUN apt-get update -y             \
        xfonts-wqy           \
        clamav               \
        clamav-freshclam     \
-       nodejs               \
-       npm                  \
        python3              \
        python3-pip          \
        python3-all-venv     \
@@ -79,6 +77,11 @@ RUN \
     unzip chromedriver-linux64.zip && \
     mv chromedriver-linux64 /usr/local/bin && \
     chmod +x /usr/local/bin/chromedriver-linux64/chromedriver
+
+# Install nodejs lts
+RUN \
+    curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -  && \
+    apt-get update && apt-get install -y nodejs
 
 # Install AI coding/Vibe coding tools 
 # Claude Code , Cursor CLI, CodeX,Gemini CLI,cline
