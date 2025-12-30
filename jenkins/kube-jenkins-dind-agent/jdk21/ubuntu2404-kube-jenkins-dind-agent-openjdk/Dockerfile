@@ -120,10 +120,10 @@ ARG VERIFY_CHECKSUM=false
 #    && bash get_helm.sh \
 #    && rm get_helm.sh
 RUN \
-    curl https://baltocdn.com/helm/signing.asc | apt-key add - \
-    && echo "deb https://baltocdn.com/helm/stable/debian/ all main" | tee /etc/apt/sources.list.d/helm-stable-debian.list \
-    && apt-get update \
-    && apt-get install -y helm
+    curl -fsSL https://packages.buildkite.com/helm-linux/helm-debian/gpgkey | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null && \
+    echo "deb [signed-by=/usr/share/keyrings/helm.gpg] https://packages.buildkite.com/helm-linux/helm-debian/any/ any main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list &&\
+    apt-get update && \
+    apt-get install -y helm
 
 #istioctl
 ARG ISTIO_VERSION=1.24.0
