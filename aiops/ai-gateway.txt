@@ -1,0 +1,75 @@
+AI Gateway 应具备的核心能力
+统一模型接入
+多云/多厂商 LLM：支持接入 OpenAI、AWS Bedrock、Azure OpenAI、Google Vertex AI 等商业服务，以及企业自建开源模型。通过网关，开发者可在不同供应商间平滑切换，按性能或成本择优，实现“一处集成，多处可用”。例如社区项目 OpenRouter 将 OpenAI、Anthropic、Google 等主流模型统一为标准接口（多为 OpenAI API 兼容），并提供单一 API Key 管理入口，便于同时调用多家模型。
+统一调用接口：为不同模型提供统一调用方式与标准接口，屏蔽底层差异，降低集成成本。开发者仅需使用一种标准 API（如 OpenAI 风格接口）即可调用任意后端模型，无需关心鉴权或请求格式差异。已有应用可无缝切换模型。例如 AWS 的 Bedrock Access Gateway 通过兼容 OpenAI API 的代理，将对 OpenAI API 的调用自动转发至 Bedrock 后端，让应用无需改代码即可访问如 Claude 等模型。该统一化同样适用于 Embedding、语音等接口。
+流量治理与可靠性
+智能路由与负载均衡：可根据请求内容与模型画像选择最合适的模型/实例，并在多实例或多账号间分配负载。例如：简单任务走小模型、复杂任务走大模型，兼顾时延与成本。支持跨供应商的延迟/成本感知调度与多 API Key 均衡，避免单点过载。
+KV Cache 亲和（KV Cache 指推理过程中的键值对中间状态缓存；前缀缓存 Prefix Caching 指公共前缀的计算结果缓存复用）：推理 decode 过程为自回归，KV Cache 存放中间键值以加速连续对话或长序列生成。路由可基于会话标识或前缀缓存将请求导向已具缓存的实例，提高命中率与吞吐。
+异构设备感知：Kubernetes 集群常包含 A100、H20、H100 等异构 GPU。网关可按硬件性能动态调整权重：高性能 H100 承担更多流量，A100 较少，从而提升整体资源利用率。
+自动重试与降级：当后端报错、超时或被限流时，自动重试或切换到备用模型，避免业务中断。必要时进行优雅降级，返回部分结果或预设响应，保证连续性与可用性。例如 OpenRouter 的 runner 库支持多模型接入与自动 fallback。
+弹性限流与配额：支持基于 Token 用量或请求次数的速率限制与配额管理，可针对应用/用户/API Key 设置阈值、突发（Burst）与上限，既防滥用又保护后端稳定。
+可观测性与治理
+用量跟踪：细粒度监控各模型调用次数与 Token 消耗，支持按部门/应用进行费用分摊与预算预测。将成本与性能关联，辅助模型选型与容量规划。
+日志与审计：记录请求提示词、模型响应、时间、调用者等，形成完整审计链路，便于合规审查、问题定位与提示工程迭代。必要时，这些数据也可为持续优化提供素材。
+实时监控与报警：监控响应时间、吞吐、错误率等关键指标。可设置阈值（如成功率 < 99% 或平均延迟超标）触发告警，迅速定位故障或瓶颈，保障 SLA。
+提示词工程与响应优化
+Prompt 模板与装饰器：在网关层配置提示词模板，统一输入格式，降低前端拼接错误；通过装饰器在用户 Prompt 前后自动附加系统指令或上下文，实现统一封装与增强，保证输出风格一致并抵御 Prompt 注入。
+语义缓存：对问答进行向量化存储与相似度检索，命中相似问题时直接返回缓存答案，减少重复调用与时延。在实际场景中可显著降低调用次数与成本，显著提升响应速度。区别于键值缓存，语义缓存理解自然语言相似度，即便换种说法也能命中。
+安全与合规
+敏感信息保护：在请求链路中进行数据防护。对外发提示词进行敏感信息识别、脱敏或拦截；通信采用传输加密（HTTPS）与必要的存储加密，降低隐私泄露风险。
+提示词防护与规范：对输入启用敏感内容检测与策略校验，阻断违规/恶意请求（如仇恨言论、违法教唆、Prompt 注入 等）；对输出集成内容安全审核，发现不当信息立即拦截并返回安全提示，构建输入到输出的合规闭环。
+
+Solo.io Gloo AI Gateway
+针对企业级 AI 应用的云原生网关，强调安全与生产可用性。特点包括：集中管理各模型的凭证和认证、提示过滤和增强（防御 Prompt 注入，统一追加系统提示）、使用监控与治理（实时统计各应用 LLM Token 消耗，防滥用)、模型性能优化（内置 RAG 检索增强，减少幻觉；语义向量缓存减少重复调用延迟）。
+
+Portkey
+https://github.com/Portkey-AI/gateway
+
+vercel
+https://vercel.com/ai-gateway
+
+OpenRouter
+https://openrouter.ai/docs/quickstart
+
+Cloudflare AI Gateway
+
+Azure AI-Gateway
+https://github.com/Azure-Samples/AI-Gateway
+
+Apache APISIX AI Gateway/Apache APISIX 的 LLM Proxy 
+https://apisix.apache.org/zh/ai-gateway/
+
+Envoy AI Gateway
+https://github.com/envoyproxy/ai-gateway
+
+llm-instance-gateway
+
+Gateway API Inference Extension
+https://github.com/kubernetes-sigs/gateway-api-inference-extension
+https://gateway-api-inference-extension.sigs.k8s.io/
+
+Kong AI Gateway
+https://konghq.com/en-gb/blog/enterprise/what-is-an-ai-gateway
+
+Higress
+
+F5 AI Gateway
+
+MLflow AI Gateway
+https://www.mlflow.org/docs/3.0.1/llms/deployments
+
+oneapi：强大而易用的OpenAI接口管理和分发系统
+https://github.com/songquanpeng/one-api
+
+new-api
+https://github.com/kingbug/new-api
+New API 是一款基于 One API 二次开发的 AI模型接口管理与分发系统，支持将多种大模型（如GPT-4、Suno、Midjourney等）统一封装为OpenAI格式接口调用，并兼容易支付协议。无论是个人开发者还是企业，都能用它高效管理AI资产、降低开发成本。
+
+Zenlayer AI Gateway 
+
+APIPark 是一款高性能的开源LLM网关和API开发平台,旨在帮助开发者和企业轻松管理、集成及部署 AI 服务,基于 Apache 2.0 协议开源，支持免费商用。
+文档：https://docs.apipark.com/docs/overview
+
+Github:https://github.com/APIParkLab/APIPark
+
+

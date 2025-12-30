@@ -1,0 +1,32 @@
+命令参数
+在iterm2 中使用本地大语言模型 ollama 进行工作
+warp.dev The terminal with agents built in
+
+配置文件
+mysql/redis/pgsql/nginx
+
+
+ci/cd pipeline
+
+sql
+
+dashboard
+
+k8s yaml
+
+json
+
+Dockerfile
+
+ansible
+
+Iac
+packer
+
+terraform
+
+platform develop
+
+
+示例:
+visual studio code + continue + ollama

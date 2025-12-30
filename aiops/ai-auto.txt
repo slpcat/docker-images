@@ -1,0 +1,38 @@
+ssh/cli 
+
+gui
+
+mobile app
+豆包ai手机助手
+智谱AutoGLM手机助手
+
+browser
+AI浏览器助手
+Claude Chrome插件
+微软Magentic UI 开源Agent助手
+
+
+任务示例:
+
+1.设备初始化
+服务器bmc/idrac组建磁盘阵列
+交换机/wifi ac,ap配置
+
+2.备份恢复
+数据库自动备份
+
+3.系统和软件升级
+jenkins gitlab mysql 版本升级
+windows域控制器升级
+操作系统更新打补丁
+Linux跨越大版本升级
+K8S版本升级
+
+4.环境/实例搭建
+kafka集群搭建
+hadoop集群搭建
+
+5.性能优化/运行参数调优
+sysctl.conf
+
+ai助手 登陆ssh/rdp/web后台操作 执行指定任务 最后达成目标

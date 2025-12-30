@@ -4,3 +4,10 @@ Run Llama 3, Mistral, Gemma, and other models. Customize and create your own.
 
 docker run -d -p 11434:11434 --name ollama ollama/ollama:latest
 
+OLLAMA_HOST=0.0.0.0
+OLLAMA_PORT=11434
+OLLAMA_MODELS=/data/ollama/models
+OLLAMA_NUM_PARALLEL=4
+OLLAMA_MAX_LOADED_MODELS=4
+OLLAMA_KEEP_ALIVE=24h
+

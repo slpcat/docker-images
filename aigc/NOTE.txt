@@ -147,7 +147,16 @@ https://github.com/Lightricks/LTX-Video
 
 export HF_ENDPOINT=https://hf-mirror.com
 
+用n8n打造一个AI智能体
+
 SonarQube MCP Server
 The SonarQube MCP Server is designed to integrate code quality and code security tools with your favorite MCP clients.
 
 The SonarQube MCP Server is a Model Context Protocol (MCP) server that provides seamless integration with SonarQube Server or SonarQube Cloud for code quality and code security. It also enables the analysis of code snippets directly within the agent context.
+
+Cherry Studio 是一个支持多平台的 AI 客户端，我们致力于让更多人能够享受到 AI 带来的便利。
+https://www.cherry-ai.com/
+https://github.com/CherryHQ/cherry-studio
+
+index-tts-vllm
+index-tts-vllm 是一款开源的文本转语音（TTS）项目，基于 index-tts 进行了优化，通过引入 vllm 库重新实现了 GPT 模型的推理过程，大幅提升了推理速度和并发处理能力。项目旨在为开发者提供一个高效、稳定、易于集成的 TTS 解决方案。

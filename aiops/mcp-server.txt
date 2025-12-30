@@ -1,0 +1,150 @@
+https://mcp.so/
+https://www.mcpworld.com/
+https://mcp.aibase.com/zh/explore
+
+理想的MCP Server是SSE的，直接一个url就可以接入
+mcphub
+MCPHub 通过将多个 MCP（Model Context Protocol）服务器组织为灵活的流式 HTTP（SSE）端点，简化了管理与扩展工作。系统支持按需访问全部服务器、单个服务器或按场景分组的服务器集合。
+https://github.com/samanhappy/mcphub
+mcp-proxy
+https://github.com/sparfenyuk/mcp-proxy
+
+mcp-gateway
+https://github.com/microsoft/mcp-gateway
+
+Envoy AI Gateway provides first-class support for Model Context Protocol (MCP), enabling AI agents to securely connect to external tools and data sources.
+
+mcp servers
+
+文件系统操作:
+mcp-server-everything
+全局文件搜索
+
+操作系统整合：
+mcp-server-commands - 执行系统命令
+macos-mcp-server - macOS 系统整合
+windows-mcp-server - Windows 系统操作
+
+sonarqube mcp server
+
+jenkins mcp server
+
+grafana mcp server
+
+loki mcp server
+
+Elasticsearch MCP server
+Elastic 9.2.0+
+
+OpenSearch MCP Server
+
+https://github.com/opensearch-project/opensearch-mcp-server-py
+
+Apache SkyWalking MCP server
+
+Google MCP Toolbox
+Google MCP Toolbox是一个开源的MCP服务器，旨在简化应用程序和AI代理与数据库之间的安全高效交互。该项目以前被称为“GenAI Toolbox for Databases”，在完全兼容Model Context Protocol[6]（MCP）后改名。其目的是通过处理连接池、身份验证、可观察性及其他操作性问题，来消除传统上连接代理与数据库时的繁重工作。
+https://github.com/googleapis/genai-toolbox
+
+
+Docker Hub MCP server
+
+MCP Harbor
+https://github.com/nomagicln/mcp-harbor
+
+Notion MCP server
+
+Sonatype MCP server
+
+cypress-mcp - Cypress E2E 测试
+
+
+Splunk MCP Server
+
+Graylog Security (v7.0+) with MCP enabled
+
+prometheus mcp server
+
+InfluxDB MCP Server
+
+VictoriaMetrics MCP Server
+
+VictoriaLogs MCP server
+
+MySQL MCP server
+
+PostgreSQL MCP server
+
+ClickHouse MCP Server
+
+Redis MCP Server
+
+Chrome DevTools MCP server
+浏览器调试
+
+Cloudflare MCP Server
+
+AWS MCP Server
+
+Azure DevOps MCP server
+
+Kubernetes MCP Server 
+
+Pulumi MCP server
+人气基础设施即代码工具Pulumi也发布了官方MCP server，允许智能体查询Pulumi组织的注册表（提供云资源与基础设施访问权限）并执行Pulumi命令。
+
+Zabbix MCP Server
+
+IoT MCP Server
+
+Terraform MCP server
+
+OpenTofu MCP server
+
+Atlassian Remote MCP server
+Jira项目管理工具及Confluence协作平台
+
+Osquery MCP Server & Client
+
+Selenium MCP server
+
+Argo CD MCP server
+
+Snyk MCP server
+开发者安全平台Snyk打造的MCP server，可扫描并修复代码、开源依赖项、基础设施即代码、容器及软件物料清单（SBOM）中的漏洞等。
+
+Docker MCP server
+
+Playwright MCP Server
+持续测试
+
+Linear MCP server
+问题追踪
+
+OpenMemory MCP
+https://github.com/mem0ai/mem0
+
+Repo Context MCP
+
+https://github.com/pablo-peek/Repo-context
+
+Sekora GitLab MCP
+https://gitlab.com/sekora-ai/sekora-gitlab-mcp
+
+GitLab MCP Server
+https://github.com/zereight/gitlab-mcp
+
+https://github.com/VitalyOstanin/gitlab-mcp
+https://github.com/yoda-digital/mcp-gitlab-server
+https://github.com/Adit-999/gitlab-mcp
+https://github.com/yoda-digital/mcp-gitlab-server
+
+GitHub MCP server
+
+https://github.com/github/github-mcp-server
+
+n8n-MCP
+https://github.com/czlonkowski/n8n-mcp
+
+Slack MCP Server
+https://github.com/korotovsky/slack-mcp-server

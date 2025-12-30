@@ -1,0 +1,11 @@
+https://ai-dba.net/
+https://sqlflash.ai/
+
+1. Introduction to AI Database Tools for DBAs
+
+2. AI-Powered Performance Tuning and Optimization Tools
+
+3. AI-Driven Anomaly Detection and Alerting
+
+4. AI for Automated Database Management Tasks
+

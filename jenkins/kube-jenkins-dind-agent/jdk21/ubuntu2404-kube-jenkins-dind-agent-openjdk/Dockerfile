@@ -33,6 +33,9 @@ RUN apt-get update -y             \
        zip                  \
        groff                \
        snoopy               \
+       ttf-wqy-microhei     \
+       ttf-wqy-zenhei       \
+       xfonts-wqy           \
        clamav               \
        clamav-freshclam     \
        nodejs               \
@@ -67,14 +70,24 @@ RUN \
     apt-get update && \
     apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
+# Install Google Chrome and driver
+RUN \
+    wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add - && \
+    sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list' && \
+    apt-get update && apt-get install -y google-chrome-stable && \
+    wget https://storage.googleapis.com/chrome-for-testing-public/138.0.7204.183/linux64/chromedriver-linux64.zip && \
+    unzip chromedriver-linux64.zip && \
+    mv chromedriver-linux64 /usr/local/bin && \
+    chmod +x /usr/local/bin/chromedriver-linux64/chromedriver
 
 # Install AI coding/Vibe coding tools 
-# Claude Code , Cursor CLI, CodeX
+# Claude Code , Cursor CLI, CodeX,Gemini CLI,cline
 RUN \
-    npm install -g @anthropic-ai/claude-code \
+    npm install -g @anthropic-ai/claude-code && \
     #curl https://cursor.com/install -fsS | bash \
     #mv $HOME/.local/bin/cursor-agent /usr/local/bin/ \
-    npm install -g @openai/codex \
+    npm install -g @openai/codex && \
+    npm install -g @google/gemini-cli && \
     npm install -g cline
     
 #install ansible
