@@ -42,7 +42,8 @@ RUN apt-get update -y             \
        python3-pip          \
        python3-all-venv     \
        python3-pytest       \
-       pipx
+       pipx                 \
+       xvfb
        
 COPY pip.conf ld.so.preload snoopy.ini /etc/
 
