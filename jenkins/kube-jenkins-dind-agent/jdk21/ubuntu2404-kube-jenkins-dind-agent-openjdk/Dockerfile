@@ -28,6 +28,7 @@ RUN apt-get update -y             \
        iptables             \
        vim                  \
        jq                   \
+       yq                   \
        openssh-client       \
        unzip                \
        zip                  \
