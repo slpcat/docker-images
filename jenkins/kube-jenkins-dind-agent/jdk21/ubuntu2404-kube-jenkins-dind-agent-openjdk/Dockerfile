@@ -84,6 +84,23 @@ RUN \
     mv chrome-headless-shell-linux64 /opt/google/ && \
     ln -s /opt/google/chrome-headless-shell-linux64/chrome-headless-shell /usr/local/bin/chrome-headless-shell
 
+# Install Mozilla Firefox and driver
+COPY install-firefox.sh /tmp/install-firefox.sh
+RUN \
+    bash /tmp/install-firefox.sh && rm -f /tmp/install-firefox.sh && \
+    wget https://github.com/mozilla/geckodriver/releases/download/v0.36.0/geckodriver-v0.36.0-linux64.tar.gz && \
+    tar zxf geckodriver-v0.36.0-linux64.tar.gz && \
+    mv geckodriver /usr/local/bin/
+
+# Install Microsoft Edge and driver
+RUN \
+    curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > /etc/apt/trusted.gpg.d/microsoft.gpg && \
+    echo "deb [arch=amd64] https://packages.microsoft.com/repos/edge stable main" > /etc/apt/sources.list.d/microsoft-edge-dev.list && \
+    apt-get update && apt-get install -y microsoft-edge-stable && \
+    wget https://msedgedriver.microsoft.com/143.0.3650.96/edgedriver_linux64.zip && \
+    unzip edgedriver_linux64.zip && \
+    mv msedgedriver /usr/local/bin
+
 # Install nodejs lts
 RUN \
     curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -  && \
