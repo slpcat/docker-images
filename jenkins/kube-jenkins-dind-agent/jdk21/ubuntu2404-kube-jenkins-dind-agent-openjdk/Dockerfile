@@ -78,7 +78,11 @@ RUN \
     wget https://storage.googleapis.com/chrome-for-testing-public/143.0.7499.169/linux64/chromedriver-linux64.zip && \
     unzip chromedriver-linux64.zip && \
     mv chromedriver-linux64/chromedriver /usr/local/bin && \
-    chmod +x /usr/local/bin/chromedriver
+    chmod +x /usr/local/bin/chromedriver && \
+    wget https://storage.googleapis.com/chrome-for-testing-public/143.0.7499.169/linux64/chrome-headless-shell-linux64.zip && \
+    unzip chrome-headless-shell-linux64.zip && \
+    mv chrome-headless-shell-linux64 /opt/google/ && \
+    ln -s /opt/google/chrome-headless-shell-linux64/chrome-headless-shell /usr/local/bin/chrome-headless-shell
 
 # Install nodejs lts
 RUN \
