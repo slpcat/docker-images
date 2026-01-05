@@ -106,16 +106,18 @@ RUN \
     curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -  && \
     apt-get update && apt-get install -y nodejs
 
+# Install selenium-side-runner
 # Install AI coding/Vibe coding tools 
 # Claude Code , Cursor CLI, CodeX,Gemini CLI,cline
-RUN \
-    npm install -g @anthropic-ai/claude-code && \
     #curl https://cursor.com/install -fsS | bash \
     #mv $HOME/.local/bin/cursor-agent /usr/local/bin/ \
+RUN \
+    npm install -g selenium-side-runner && \
+    npm install -g @anthropic-ai/claude-code && \
     npm install -g @openai/codex && \
     npm install -g @google/gemini-cli && \
     npm install -g cline
-    
+
 #install ansible
 RUN \
     apt-get install -y ansible ansible-mitogen
