@@ -1,5 +1,5 @@
 #upstream https://github.com/jenkinsci/docker-inbound-agent
-FROM eclipse-temurin:21.0.4_7-jdk-noble
+FROM eclipse-temurin:21.0.9_10-jdk-noble
 
 LABEL org.opencontainers.image.authors="slpcat@qq.com"
 
@@ -41,7 +41,8 @@ RUN apt-get update -y             \
        python3              \
        python3-pip          \
        python3-all-venv     \
-       python3-pytest
+       python3-pytest       \
+       pipx
        
 COPY pip.conf ld.so.preload snoopy.ini /etc/
 
@@ -73,10 +74,10 @@ RUN \
     wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add - && \
     sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list' && \
     apt-get update && apt-get install -y google-chrome-stable && \
-    wget https://storage.googleapis.com/chrome-for-testing-public/138.0.7204.183/linux64/chromedriver-linux64.zip && \
+    wget https://storage.googleapis.com/chrome-for-testing-public/143.0.7499.169/linux64/chromedriver-linux64.zip && \
     unzip chromedriver-linux64.zip && \
-    mv chromedriver-linux64 /usr/local/bin && \
-    chmod +x /usr/local/bin/chromedriver-linux64/chromedriver
+    mv chromedriver-linux64/chromedriver /usr/local/bin && \
+    chmod +x /usr/local/bin/chromedriver
 
 # Install nodejs lts
 RUN \
@@ -202,11 +203,11 @@ RUN \
 #    pip3 install coscmd -U --break-system-packages
 
 #baidu cloud BCE CMD
-RUN \
-   wget https://bce-doc-on.bj.bcebos.com/bce-documentation/BOS/linux-bcecmd-0.3.1.zip \
-   && unzip linux-bcecmd-0.3.1.zip \
-   && mv linux-bcecmd-0.3.1/bcecmd /usr/local/bin/ \
-   && rm -rf linux-bcecmd*
+#RUN \
+#   wget https://bce-doc-on.bj.bcebos.com/bce-documentation/BOS/linux-bcecmd-0.3.1.zip \
+#   && unzip linux-bcecmd-0.3.1.zip \
+#   && mv linux-bcecmd-0.3.1/bcecmd /usr/local/bin/ \
+#   && rm -rf linux-bcecmd*
 
 #dependency-check
 RUN \
@@ -286,7 +287,7 @@ RUN rm -rf /root/ \
 
 LABEL Description="This is a base image, which provides the Jenkins agent executable (slave.jar)" Vendor="Jenkins project" Version="4.7"
 
-ARG VERSION=3301.v4363ddcca_4e7
+ARG VERSION=3355.v388858a_47b_33
 ARG AGENT_WORKDIR=/home/jenkins/agent
 
 RUN curl --create-dirs -sSLo /usr/share/jenkins/agent.jar https://repo.jenkins-ci.org/public/org/jenkins-ci/main/remoting/${VERSION}/remoting-${VERSION}.jar \

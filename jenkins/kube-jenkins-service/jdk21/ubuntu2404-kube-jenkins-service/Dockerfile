@@ -1,5 +1,5 @@
 #upstream: https://github.com/jenkinsci/docker
-FROM eclipse-temurin:21.0.4_7-jdk-noble
+FROM eclipse-temurin:21.0.9_10-jdk-noble
 
 LABEL org.opencontainers.image.authors="slpcat@qq.com"
 
