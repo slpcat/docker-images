@@ -21,12 +21,10 @@ RUN \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y $ADDITIONAL_APT_GET_OPTS \
       dbus-x11 \
       fonts-noto-cjk \
-      ibus \
-      ibus-gtk \
-      ibus-gtk3 \
-      ibus-gtk4 \
-      ibus-mozc \
-      im-config \
+      fcitx5 \
+      fcitx5-chinese-addons \
+      fcitx5-material-color \
+      im-switch \
       #language-pack-ja \
       #language-pack-ja-base \
       lxqt \
