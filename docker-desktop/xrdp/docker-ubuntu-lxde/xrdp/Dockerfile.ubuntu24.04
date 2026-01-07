@@ -1,0 +1,122 @@
+FROM ubuntu:24.04 as build
+
+RUN apt-get update \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y curl make gcc
+
+RUN curl -s -L https://github.com/ncopa/su-exec/archive/v0.2.tar.gz | tar zx -C /opt/ \
+    && mv /opt/su-exec* /opt/su-exec \
+    && cd /opt/su-exec \
+    && make
+
+####################################
+
+FROM ubuntu:24.04
+
+# For slim:
+#   --build-arg ADDITIONAL_APT_GET_OPTS=--no-install-recommends
+ARG ADDITIONAL_APT_GET_OPTS=""
+
+RUN \
+    apt-get update \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y $ADDITIONAL_APT_GET_OPTS \
+      dbus-x11 \
+      fonts-noto-cjk \
+      ibus \
+      ibus-gtk \
+      ibus-gtk3 \
+      ibus-gtk4 \
+      ibus-mozc \
+      im-config \
+      #language-pack-ja \
+      #language-pack-ja-base \
+      lxqt \
+      papirus-icon-theme \
+      sudo \
+      supervisor \
+      tzdata \
+      xorg \
+      xorgxrdp \
+      xrdp \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY --from=build \
+    /opt/su-exec/su-exec /usr/sbin/su-exec
+
+RUN apt-get update && apt-get install -y locales && rm -rf /var/lib/apt/lists/* \
+    && localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
+
+ENV \
+    TERM="xterm-256color" \
+    LANG="en_US.UTF-8" \
+    LANGUAGE="en_US.UTF-8" \
+    LC_ALL="en_US.UTF-8"
+
+# Set timezone and locales
+RUN \
+    echo "$LANG UTF-8" > /etc/locale.gen \
+    && apt-get update -q \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -yq apt-utils dialog tzdata \
+    && update-locale LANG=$LANG \
+    && locale-gen $LANG \
+    && DEBIAN_FRONTEND=noninteractive dpkg-reconfigure locales
+
+
+# Set default vars
+ENV DEFAULT_USER=developer \
+    DEFAULT_PASSWD=xrdppasswd
+
+# Set sudoers for any user
+RUN echo "ALL ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/ALL
+
+# Change permission so that non-root user can add users and groups
+RUN chmod u+s /usr/sbin/useradd \
+    && chmod u+s /usr/sbin/groupadd
+
+# Expose RDP port
+EXPOSE 3389
+
+# Setup
+RUN { \
+        echo 'if [[ -d /run/user/$(id -u) ]]; then'; \
+        echo '  export XDG_RUNTIME_DIR=/run/user/$(id -u)'; \
+        echo 'fi'; \
+        echo 'exec dbus-run-session -- startlxqt'; \
+    } > /etc/skel/.xsession \
+    && install -o root -g xrdp -m 2775 -d /var/run/xrdp \
+    && install -o root -g xrdp -m 3777 -d /var/run/xrdp/sockdir \
+    && install -o root -g root -m 0755 -d /var/run/dbus \
+    && install -o root -g root -m 0644 /dev/null /etc/securetty \
+    && usermod -aG ssl-cert xrdp \
+    && if [ -e /usr/share/lxqt/wallpapers/origami-dark.png ]; then \
+         update-alternatives --install \
+           /usr/share/images/desktop-base/desktop-background desktop-background \
+           /usr/share/lxqt/wallpapers/origami-dark.png 99; \
+       fi
+
+
+# Disable unavailable features
+RUN sed -i 's|.*pam_systemd.so|#&|g' /etc/pam.d/common-session \
+    && sed -i.org 's/plugins=.*/plugins=mainmenu, showdesktop, desktopswitch, quicklaunch, taskbar, tray, statusnotifier, worldclock/' /etc/xdg/lxqt/panel.conf \
+    && mv /etc/xdg/autostart/lxqt-powermanagement.desktop /etc/xdg/autostart/lxqt-powermanagement.desktop.disabled
+
+# Set supervisord conf for xrdp service
+RUN { \
+      echo "[supervisord]"; \
+      echo "user=root"; \
+      echo "nodaemon=true"; \
+      echo "logfile=/var/log/supervisor/supervisord.log"; \
+      echo "childlogdir=/var/log/supervisor"; \
+      echo "[program:dbus]"; \
+      echo "command=/usr/bin/dbus-daemon --system --nofork --nopidfile"; \ 
+      echo "[program:xrdp-sesman]"; \
+      echo "command=/usr/sbin/xrdp-sesman --nodaemon"; \
+      echo "[program:xrdp]"; \
+      echo "command=/usr/sbin/xrdp --nodaemon"; \
+      echo "user=xrdp"; \
+    } > /etc/supervisor/xrdp.conf
+
+# Copy entrypoint script
+COPY docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+ENTRYPOINT ["docker-entrypoint.sh"]
