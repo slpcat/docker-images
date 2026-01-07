@@ -6,3 +6,19 @@ redis
 redis-ha
 
 docker run -d --restart=always --name redis -p 6379:6379 -v /data/redis:/var/lib/redis redis:7.2 --requirepass "redis123"
+
+https://github.com/patrikx3/redis-ui
+P3X Redis UI: A highly functional and convenient database GUI that fits in your pocket, accessible on both responsive web and desktop applications
+
+https://github.com/qishibo/AnotherRedisDesktopManager
+
+https://github.com/joeferner/redis-commander
+docker run --rm --name redis-commander -d -p 8081:8081 \
+  --env REDIS_HOSTS=local:localhost:6379,myredis:10.10.20.30 \
+  ghcr.io/joeferner/redis-commander:latest
+
+docker run --rm --name redis-commander -d -p 8081:8081 \
+  -e REDIS_HOST=10.10.20.30 \
+  -e REDIS_PORT=6379 \
+  -e REDIS_PASSWORD=123 \
+  ghcr.io/joeferner/redis-commander:latest
