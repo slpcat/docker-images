@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#! /usr/bin/bash -e
 
 USER_ID=$(id -u)
 GROUP_ID=$(id -g)

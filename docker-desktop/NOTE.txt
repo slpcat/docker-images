@@ -74,6 +74,13 @@ If you use glamor when building xorgxrdp (--enable-glamor) you should be hardwar
 
 Anbox（Android in a box），一款通过沙盒直接运行安卓程序的软件
 
+https://github.com/infrastlabs/docker-headless
+docker run -it --rm --shm-size 1g --net=host infrastlabs/docker-headless:latest
+--	Conn	PASS	ReadOnly
+noVnc	https://192.168.0.x:10081	headless	View123
+RDP	192.168.0.x:10089	headless	-
+SSH	ssh -p 10022 headless@192.168.0.x	headless	-
+
 docker run -d --restart=always \
   --name=blackarch \
   --security-opt seccomp=unconfined `#optional` \
@@ -85,6 +92,33 @@ docker run -d --restart=always \
   --shm-size="1gb" `#optional` \
   blackarchlinux/blackarch:novnc
   slpcat/blackarchlinux:novnc-full
+
+docker run -p 5900:5900 -p 6080:80 -e VNC_PASSWORD=123456 dorowu/ubuntu-desktop-lxde-vnc
+
+#username: foo password: bar  allow sudo: yes
+docker run -d -p 33890:3389 danchitnis/xrdp:ubuntu-xfce foo bar yes
+
+docker run --detach \
+    --rm \
+    --hostname="$(hostname)" \
+    --publish="3389:3389/tcp" \
+    --name="remote-desktop" \
+    scottyhardy/docker-remote-desktop:latest
+
+docker run -d \
+  --name remote-desktop-rdp-xfce-audio-firefox \
+  -p 3389:3389 \
+  ayushkhaire/remote-desktop-rdp-xfce-audio-firefox
+
+ docker run -it \
+    --shm-size="1gb" `#optional` \
+    -p 3389:3389 \
+    -u $(id -u):$(id -g) \
+    -e USER=yama07 \
+    -e PASSWD=mypasswd \
+    slpcat/docker-ubuntu-lxqt:24.04-xrdp_audio
+    slpcat/docker-ubuntu-lxqt:24.04-xrdp_full
+
 
 xrdp安装脚本
 
