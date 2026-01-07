@@ -31,7 +31,7 @@ RUN apt-get update -y             \
        unzip                \
        zip                  \
        groff                \
-       snoopy               \
+       #snoopy               \
        ttf-wqy-microhei     \
        ttf-wqy-zenhei       \
        xfonts-wqy           \
