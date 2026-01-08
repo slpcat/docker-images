@@ -110,14 +110,19 @@ docker run -d \
   -p 3389:3389 \
   ayushkhaire/remote-desktop-rdp-xfce-audio-firefox
 
- docker run -it \
-    --shm-size="1gb" `#optional` \
-    -p 3389:3389 \
-    -u $(id -u):$(id -g) \
-    -e USER=yama07 \
-    -e PASSWD=mypasswd \
-    slpcat/docker-ubuntu-lxqt:24.04-xrdp_audio
-    slpcat/docker-ubuntu-lxqt:24.04-xrdp_full
+docker run -d \
+   --cap-add=SYS_ADMIN \
+   --security-opt apparmor=unconfined \
+   --security-opt seccomp=unconfined \
+   --shm-size="1gb" `#optional` \
+   --device /dev/dri:/dev/dri `#optional` \
+   -p 3389:3389 \
+   -u $(id -u):$(id -g) \
+   -e USER=yama07 \
+   -e PASSWD=mypasswd \
+   -v /var/run/docker.sock:/var/run/docker.sock `#optional` \
+   slpcat/docker-ubuntu-lxqt:24.04-xrdp_full
+   slpcat/docker-ubuntu-lxqt:24.04-xrdp_audio
 
 
 xrdp安装脚本

@@ -72,11 +72,11 @@ RUN \
     wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add - && \
     sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list' && \
     apt-get update && apt-get install -y google-chrome-stable && \
-    wget https://storage.googleapis.com/chrome-for-testing-public/143.0.7499.169/linux64/chromedriver-linux64.zip && \
+    wget https://storage.googleapis.com/chrome-for-testing-public/143.0.7499.192/linux64/chromedriver-linux64.zip && \
     unzip chromedriver-linux64.zip && \
     mv chromedriver-linux64/chromedriver /usr/local/bin && \
     chmod +x /usr/local/bin/chromedriver && \
-    wget https://storage.googleapis.com/chrome-for-testing-public/143.0.7499.169/linux64/chrome-headless-shell-linux64.zip && \
+    wget https://storage.googleapis.com/chrome-for-testing-public/143.0.7499.192/linux64/chrome-headless-shell-linux64.zip && \
     unzip chrome-headless-shell-linux64.zip && \
     mv chrome-headless-shell-linux64 /opt/google/ && \
     ln -s /opt/google/chrome-headless-shell-linux64/chrome-headless-shell /usr/local/bin/chrome-headless-shell
@@ -92,7 +92,7 @@ RUN \
 # Install Microsoft Edge and driver
 RUN \
     curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > /etc/apt/trusted.gpg.d/microsoft.gpg && \
-    echo "deb [arch=amd64] https://packages.microsoft.com/repos/edge stable main" > /etc/apt/sources.list.d/microsoft-edge-dev.list && \
+    echo "deb [arch=amd64] https://packages.microsoft.com/repos/edge stable main" > /etc/apt/sources.list.d/microsoft-edge.list && \
     apt-get update && apt-get install -y microsoft-edge-stable && \
     wget https://msedgedriver.microsoft.com/143.0.3650.96/edgedriver_linux64.zip && \
     unzip edgedriver_linux64.zip && \
