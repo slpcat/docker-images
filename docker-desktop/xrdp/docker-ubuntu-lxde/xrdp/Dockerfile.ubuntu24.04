@@ -35,7 +35,7 @@ RUN \
       xorg \
       xorgxrdp \
       xrdp \
-    && apt-get purge -y pm-utils xscreensaver* \
+    && apt-get purge -y pm-utils xscreensaver* upower* libupower* udisks2 && apt-get autoremove --purge -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -96,8 +96,8 @@ RUN { \
 COPY xdg/ /etc/xdg
 # Disable unavailable features
 RUN sed -i 's|.*pam_systemd.so|#&|g' /etc/pam.d/common-session \
-    && sed -i.org 's/plugins=.*/plugins=mainmenu, showdesktop, desktopswitch, quicklaunch, taskbar, tray, statusnotifier,  volume, worldclock/' /etc/xdg/lxqt/panel.conf \
-    && mv /etc/xdg/autostart/lxqt-powermanagement.desktop /etc/xdg/autostart/lxqt-powermanagement.desktop.disabled
+    && sed -i.org 's/plugins=.*/plugins=mainmenu, showdesktop, desktopswitch, quicklaunch, taskbar, tray, statusnotifier,  volume, worldclock/' /etc/xdg/lxqt/panel.conf
+    #&& mv /etc/xdg/autostart/lxqt-powermanagement.desktop /etc/xdg/autostart/lxqt-powermanagement.desktop.disabled
 
 # Set supervisord conf for xrdp service
 RUN { \
