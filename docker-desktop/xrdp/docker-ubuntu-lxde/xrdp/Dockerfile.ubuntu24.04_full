@@ -176,7 +176,7 @@ RUN \
 
 # redis-ui
 RUN \
-    https://github.com/patrikx3/redis-ui/releases/download/v2025.10.110/p3x-redis-ui_2025.10.110_amd64.deb && \
+    wget https://github.com/patrikx3/redis-ui/releases/download/v2025.10.110/p3x-redis-ui_2025.10.110_amd64.deb && \
     apt-get install -y ./p3x-redis-ui_2025.10.110_amd64.deb &&  rm -f p3x-redis-ui_2025.10.110_amd64.deb
 
 # mongodb compass
@@ -191,7 +191,8 @@ RUN \
     apt-get update && sudo apt-get install -y dbeaver-ce
 
 ## VSCode
-RUN curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor -o /usr/share/keyrings/microsoft-keyring.gpg \
+RUN \
+    curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor -o /usr/share/keyrings/microsoft-keyring.gpg \
     && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/microsoft-keyring.gpg] https://packages.microsoft.com/repos/vscode stable main" > /etc/apt/sources.list.d/vscode.list \
     && apt-get update \
     && apt-get install -y code \
