@@ -93,10 +93,10 @@ RUN { \
            /usr/share/lxqt/wallpapers/origami-dark.png 99; \
        fi
 
-
+COPY xdg/ /etc/xdg
 # Disable unavailable features
 RUN sed -i 's|.*pam_systemd.so|#&|g' /etc/pam.d/common-session \
-    && sed -i.org 's/plugins=.*/plugins=mainmenu, showdesktop, desktopswitch, quicklaunch, taskbar, tray, statusnotifier, worldclock/' /etc/xdg/lxqt/panel.conf \
+    && sed -i.org 's/plugins=.*/plugins=mainmenu, showdesktop, desktopswitch, quicklaunch, taskbar, tray, statusnotifier,  volume, worldclock/' /etc/xdg/lxqt/panel.conf \
     && mv /etc/xdg/autostart/lxqt-powermanagement.desktop /etc/xdg/autostart/lxqt-powermanagement.desktop.disabled
 
 # Set supervisord conf for xrdp service
