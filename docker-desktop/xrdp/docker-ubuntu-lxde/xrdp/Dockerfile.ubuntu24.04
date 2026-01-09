@@ -1,7 +1,7 @@
 FROM ubuntu:24.04 as build
 
 RUN apt-get update \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -y curl make gcc htop iotop iftop ethtool
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y curl make gcc
 
 RUN curl -s -L https://github.com/ncopa/su-exec/archive/v0.2.tar.gz | tar zx -C /opt/ \
     && mv /opt/su-exec* /opt/su-exec \
@@ -42,7 +42,7 @@ RUN \
 COPY --from=build \
     /opt/su-exec/su-exec /usr/sbin/su-exec
 
-RUN apt-get update && apt-get install -y locales && rm -rf /var/lib/apt/lists/* \
+RUN apt-get update && apt-get install -y htop iotop iftop ethtool locales && rm -rf /var/lib/apt/lists/* \
     && localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
 
 ENV \

@@ -6,6 +6,10 @@ RUN apt-get update -y             \
        apt-transport-https        \
        binutils                   \
        ethtool                    \
+       htop                       \
+       iotop                      \
+       iftop                      \
+       ethtool                    \
        vim-tiny                   \
        iproute2                   \
        wget                       \
@@ -154,9 +158,9 @@ RUN \
     && rm -rf  istio-${ISTIO_VERSION}
 
 RUN \
-    curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add - \
-    && apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main" \
-    && apt-get update -y && apt-get install -y packer terraform consul
+    wget -O - https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg \
+    && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(grep -oP '(?<=UBUNTU_CODENAME=).*' /etc/os-release || lsb_release -cs) main" | tee /etc/apt/sources.list.d/hashicorp.list \
+    && apt-get update && apt-get install -y packer terraform consul
 
 #aliyun-cli
 ARG ALIYUN_CLI_VERSION=3.0.60
