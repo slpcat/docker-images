@@ -1,7 +1,7 @@
 FROM ubuntu:24.04 as build
 
 RUN apt-get update \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -y curl make gcc
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y curl make gcc htop iotop iftop ethtool
 
 RUN curl -s -L https://github.com/ncopa/su-exec/archive/v0.2.tar.gz | tar zx -C /opt/ \
     && mv /opt/su-exec* /opt/su-exec \
@@ -35,7 +35,7 @@ RUN \
       xorg \
       xorgxrdp \
       xrdp \
-    && apt-get purge -y system-config-printer* pm-utils xscreensaver* udisks2 && apt-get autoremove --purge -y \
+    && apt-get purge -y system-config-printer* pm-utils xscreensaver* && apt-get autoremove --purge -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
