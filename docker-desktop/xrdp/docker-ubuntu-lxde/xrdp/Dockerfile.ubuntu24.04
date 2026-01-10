@@ -97,7 +97,8 @@ RUN { \
 
 COPY xdg/ /etc/xdg
 # Disable unavailable features
-#RUN sed -i 's|.*pam_systemd.so|#&|g' /etc/pam.d/common-session \
+RUN sed -i 's|.*pam_systemd.so|#&|g' /etc/pam.d/common-session \
+    rm -f /etc/xdg/autostart/fcitx5.desktop
 #    && sed -i.org 's/plugins=.*/plugins=mainmenu, showdesktop, desktopswitch, quicklaunch, taskbar, tray, statusnotifier, volume, worldclock/' /etc/xdg/lxqt/panel.conf \
 #    && rm -f /etc/xdg/autostart/lxqt-powermanagement.desktop
 
