@@ -1,0 +1,6 @@
+https://tailscale.com/
+A Zero Trust identity-based connectivity platform that replaces your legacy VPN, SASE, and PAM and connects remote teams, multi-cloud environments, CI/CD pipelines, Edge & IoT devices, and AI workloads.
+
+https://www.zerotier.com/
+
+ZeroTier: Next-generation connectivity and cybersecurity.

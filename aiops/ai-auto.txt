@@ -1,6 +1,8 @@
 ssh/cli 
 
 gui
+https://www.autoitscript.com/
+AutoIt is a freeware BASIC-like scripting language designed for automating the Windows GUI and general scripting. It uses a combination of simulated keystrokes, mouse movement and window manipulation in order to automate tasks in a way not possible or reliable with other languages.
 
 mobile app
 豆包ai手机助手

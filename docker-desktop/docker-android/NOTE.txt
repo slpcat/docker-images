@@ -1,6 +1,19 @@
- docker run --privileged -d -p 6080:6080 -p 5554:5554 -p 5555:5555 -e DEVICE="Samsung Galaxy S6" --name android-container budtmo/docker-android-x86-8.1
+一· 检查内核
+首先查看一下你的内核版本是否>=5.0,根据介绍，如果内核在此版本之下，许多指令无法适配，为了不出错还是升级一下内核。
 
- docker run --privileged -d -p 6080:6080 -p 5554:5554 -p 5555:5555 -e DEVICE="Samsung Galaxy S6" --name android-container budtmo/docker-android-x86-8.1
+uname -r
+5.15.0-1013-oracle #这里最好>=5.0
+二. 安装模块
+apt install linux-modules-extra-`uname -r`
+modprobe binder_linux devices="binder,hwbinder,vndbinder" #进程通信模块
+modprobe ashmem_linux #内存共享模块
+ 
+#后两条命令不提示错误 Enter 后没有任何反应说明启动成功
+上面两个模块都是Android运行所必须的依赖，必须启动成功，否则虚拟化失败，如果这里出错请不要下面的步骤，请自己先解决模块启动失败的问题，如果你是用的oracle 原生镜像，这里应该是没问题的，如果是已经通过网络dd系统发生的错误，这里不给出解决办法请自己查询。(oracle 自带的ubuntu 20.04正常，其他自测)
+
+docker run --privileged -d -p 6080:6080 -p 5554:5554 -p 5555:5555 -e DEVICE="Samsung Galaxy S6" --name android-container budtmo/docker-android-x86-8.1
+
+docker run --privileged -d -p 6080:6080 -p 5554:5554 -p 5555:5555 -e DEVICE="Samsung Galaxy S6" --name android-container budtmo/docker-android-x86-8.1
 
 
 https://github.com/sickcodes/dock-droid
@@ -24,4 +37,55 @@ docker run -it \
     sickcodes/dock-droid:latest
 For headless, in the QEMU console, type change vnc password user
 
+https://github.com/remote-android/redroid-doc
 
+# running redroid
+docker run -itd --rm --privileged \
+    --pull always \
+    -v ~/data:/data \
+    -p 5555:5555 \
+    redroid/redroid:12.0.0_64only-latest
+
+### Explanation:
+###   --pull always    -- use latest image
+###   -v ~/data:/data  -- mount data partition
+###   -p 5555:5555     -- expose adb port
+
+
+https://github.com/budtmo/docker-android
+
+docker run -d -p 6080:6080 \
+  -e EMULATOR_DEVICE="Samsung Galaxy S10" \
+  -e WEB_VNC=true \
+  --device /dev/kvm \
+  --name my-android-emulator \
+  budtmo/docker-android:emulator_11.0
+
+docker run -p 5555:5555 -e ADB=true \
+  -e CONNECT_TO_GRID=true \
+  -v android_data:/home/androidusr \
+  --name android-adb \
+  budtmo/docker-android:emulator_11.0
+
+docker run -p 4723:4723 -e APPIUM=true \
+  -e APPIUM_HOST="0.0.0.0" \
+  --name android-appium \
+  budtmo/docker-android:emulator_11.0
+
+https://github.com/MrWQ/android_docker
+
+https://github.com/yongjhih/docker-android-studio
+docker run -it \
+  --privileged \
+  -v `pwd`/AndroidStudioProjects:/home/ubuntu/AndroidStudioProjects \
+  -v `pwd`/.android:/home/ubuntu/.android \
+  -v `pwd`/.AndroidStudio3.1:/home/ubuntu/.AndroidStudio3.1 \
+  -v `pwd`/.gradle:/home/ubuntu/.gradle \
+  -v `pwd`/opt:/opt/android-sdk \
+  -v /dev/bus/usb:/dev/bus/usb \
+  -v /dev/kvm:/dev/kvm \
+  -e DISPLAY=$DISPLAY \
+  -v /tmp/.X11-unix:/tmp/.X11-unix \
+  -v $XAUTHORITY:/home/ubuntu/.Xauthority \
+  --net host \
+  android-studio

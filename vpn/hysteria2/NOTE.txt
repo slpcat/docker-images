@@ -1,0 +1,9 @@
+https://github.com/apernet/hysteria
+
+bash <(curl -fsSL https://raw.githubusercontent.com/B1gCarr0t/Hysteria2-/main/hysteria2oneclick.sh)
+bash <(curl -fsSL https://raw.githubusercontent.com/B1gCarr0t/Hysteria2-/main/ForCentOS%26Fedora.sh)
+
+# 安装或升级 Hysteria
+bash <(curl -fsSL https://get.hy2.sh/)
+# 移除 Hysteria
+# bash <(curl -fsSL https://get.hy2.sh/) --remove

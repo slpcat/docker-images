@@ -1,0 +1,25 @@
+Selenium Grid 采用 Hub-Node 架构：
+
+Hub：中心节点，负责接收测试请求并将任务分发到合适的节点上执行。
+Node：执行节点，负责实际执行测试任务。每个节点可以配置不同的浏览器和操作系统。
+
+# Step 1: Create a Docker network
+docker network create grid
+docker run -d -p 4442-4444:4442-4444 --net grid --name selenium-hub selenium/hub:latest
+docker run -d --net grid -e SE_EVENT_BUS_HOST=selenium-hub \
+   --shm-size="2g" selenium/node-chrome:latest
+docker run -d --net grid -e SE_EVENT_BUS_HOST=selenium-hub \
+   --shm-size="2g" selenium/node-chromium:latest
+docker run -d --net grid -e SE_EVENT_BUS_HOST=selenium-hub \
+   --shm-size="2g" selenium/node-firefox:latest
+docker run -d --net grid -e SE_EVENT_BUS_HOST=selenium-hub \
+   --shm-size="2g" selenium/node-edge:latest
+
+docker run -d -p 5555:5555 \
+    --shm-size="2g" \
+    -e SE_EVENT_BUS_HOST=<ip-from-machine-1> \
+    -e SE_NODE_HOST=<ip-from-machine-2> \
+    -e SE_NODE_PORT=5555 \
+    selenium/node-chrome:4.39.0-20251212
+
+https://github.com/SeleniumHQ/docker-selenium/blob/trunk/README.md

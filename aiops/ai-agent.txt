@@ -1,0 +1,49 @@
+A2A协议（Agent间通信框架）
+https://a2aprotocol.ai/
+https://github.com/a2aproject/A2A
+
+AG-UI协议（人机交互标准化）
+
+
+OpenManus
+https://openmanus.org/
+https://github.com/FoundationAgents/OpenManus
+
+OpenManus 的核心设计是构建一个非常精简的 Agent 框架，强调模块化和可扩展性。它通过可插拔的工具（Tools）和提示词（Prompt）的组合来定义 Agent 的功能和行为，降低了开发和定制 Agent 的门槛。
+ZenoMind
+https://zenomind.org/
+
+owl
+https://github.com/camel-ai/owl/blob/main/README.md
+OWL 的多智能体协作机制通过分层架构和模块化设计实现高效协作。它的核心组件包括 BaseAgent、ChatAgent、RolePlaying、Workforce 以及 Task 相关 Agent 等，这些组件各司其职，共同完成任务分解、角色分配和任务执行等功能。
+
+DeerFlow
+https://github.com/bytedance/deer-flow/blob/main/README_zh.md
+DeerFlow（Deep Exploration and Efficient Research Flow）是一个社区驱动的深度研究框架，它建立在开源社区的杰出工作基础之上。我们的目标是将语言模型与专业工具（如网络搜索、爬虫和 Python 代码执行）相结合，同时回馈使这一切成为可能的社区。
+
+TARS
+TARS* 是一个多模态 AI Agent Stack，目前包含两个项目：Agent TARS 和 UI-TARS-desktop：
+Agent TARS 是一个通用的多模态 AI Agent Stack，它将 GUI Agent 和 Vision 的强大功能带入你的终端、计算机、浏览器和产品中。
+UI-TARS Desktop 是一个桌面应用程序，基于 UI-TARS 模型提供原生的 GUI Agent。
+
+https://github.com/bytedance/UI-TARS-desktop/blob/main/README.zh-CN.md
+
+https://github.com/langchain-ai/langgraph
+https://github.com/langchain-ai/langchain
+
+AutoGen
+https://github.com/microsoft/autogen
+
+CrewAI
+类团队协作的多 Agent 编排
+
+smolagents
+
+OpenAI Swarm
+
+
+三阶段
+1.生成指令和操作手册
+2.人类监督操作
+3.全自动无人值守
+

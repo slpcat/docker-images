@@ -1,0 +1,24 @@
+AirtestProject是由网易游戏推出的UI自动化测试解决方案
+https://airtest.doc.io.netease.com/
+Airtest：基于图像识别的跨平台自动化框架（支持 Android/iOS/Windows），适合动态 UI 场景（如游戏、不规则按钮）。
+Poco：基于UI控件识别的定位工具，通过控件属性定位，适合静态 UI（如原生 APP、Unity/Cocos 游戏），它本质上也是 python 第三方库。
+
+组合价值：互补覆盖 90%+自动化场景，支持低代码开发（AirtestIDE），降低脚本维护成本。
+
+LeanRunner
+LeanRunner是Windows平台的RPA自动化开发工具软件。它支持JavaScript语言；支持多种自动化技术，包括Windows原生应用、.NET、Java、QT、WPF、Web、OCR等。
+
+pywinauto：用于 Windows GUI 应用程序的自动化测试。
+PyAutoGUI
+ATOMac：使用 Apple Accessibility API 来完整测试 Mac 应用程序的 Python 库。
+SikuliX：同上，基于 OpenCV 的 GUI 测试框架，使用图像识别定位元素，脚本基于 Python 2.7。
+
+AutoIt：用于 Windows 平台的自动化测试，支持模拟键盘和鼠标操作。
+
+AutoJS
+Puppeteer
+Cypress
+
+WinAppDriver，全称为 Windows Application Driver，它是 Windows 上一个类似 Selenium 的 UI 自动化驱动服务框架
+Winium.Desktop
+

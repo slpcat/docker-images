@@ -17,3 +17,7 @@ docker-compose up -d
 
 scout_apm
 作为 Scout APM Agent 的核心二进制，负责采集应用性能数据（如响应时间、数据库查询、错误率等）并上报到 Scout APM 云端平台。
+
+https://signoz.io/
+SigNoz is an open-source Datadog or New Relic alternative. Get APM, logs,
+traces, metrics, exceptions, & alerts in a single tool.

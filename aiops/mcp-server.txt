@@ -16,6 +16,14 @@ Envoy AI Gateway provides first-class support for Model Context Protocol (MCP), 
 
 mcp servers
 
+web search:
+
+Tavily MCP server
+https://www.tavily.com/
+
+Jina AI Remote MCP Server
+https://jina.ai/
+
 文件系统操作:
 mcp-server-everything
 全局文件搜索
@@ -148,3 +156,8 @@ https://github.com/czlonkowski/n8n-mcp
 
 Slack MCP Server
 https://github.com/korotovsky/slack-mcp-server
+
+Playwright MCP Server 
+Firecrawl MCP Server
+Chrome DevTools MCP
+

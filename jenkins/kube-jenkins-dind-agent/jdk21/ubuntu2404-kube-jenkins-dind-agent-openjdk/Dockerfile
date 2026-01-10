@@ -27,6 +27,7 @@ RUN apt-get update -y             \
        git                  \
        iptables             \
        vim                  \
+       tmux                 \
        jq                   \
        yq                   \
        openssh-client       \
@@ -76,14 +77,15 @@ RUN \
     wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add - && \
     sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list' && \
     apt-get update && apt-get install -y google-chrome-stable && \
-    wget https://storage.googleapis.com/chrome-for-testing-public/143.0.7499.169/linux64/chromedriver-linux64.zip && \
+    wget https://storage.googleapis.com/chrome-for-testing-public/143.0.7499.192/linux64/chromedriver-linux64.zip && \
     unzip chromedriver-linux64.zip && \
     mv chromedriver-linux64/chromedriver /usr/local/bin && \
     chmod +x /usr/local/bin/chromedriver && \
-    wget https://storage.googleapis.com/chrome-for-testing-public/143.0.7499.169/linux64/chrome-headless-shell-linux64.zip && \
+    wget https://storage.googleapis.com/chrome-for-testing-public/143.0.7499.192/linux64/chrome-headless-shell-linux64.zip && \
     unzip chrome-headless-shell-linux64.zip && \
     mv chrome-headless-shell-linux64 /opt/google/ && \
-    ln -s /opt/google/chrome-headless-shell-linux64/chrome-headless-shell /usr/local/bin/chrome-headless-shell
+    ln -s /opt/google/chrome-headless-shell-linux64/chrome-headless-shell /usr/local/bin/chrome-headless-shell && \
+    rm -rf chromedriver* chrome-headless-shell*
 
 # Install Mozilla Firefox and driver
 COPY install-firefox.sh /tmp/install-firefox.sh
@@ -91,16 +93,18 @@ RUN \
     bash /tmp/install-firefox.sh && rm -f /tmp/install-firefox.sh && \
     wget https://github.com/mozilla/geckodriver/releases/download/v0.36.0/geckodriver-v0.36.0-linux64.tar.gz && \
     tar zxf geckodriver-v0.36.0-linux64.tar.gz && \
-    mv geckodriver /usr/local/bin/
+    mv geckodriver /usr/local/bin/ && \
+    rm -rf geckodriver*
 
 # Install Microsoft Edge and driver
 RUN \
     curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > /etc/apt/trusted.gpg.d/microsoft.gpg && \
-    echo "deb [arch=amd64] https://packages.microsoft.com/repos/edge stable main" > /etc/apt/sources.list.d/microsoft-edge-dev.list && \
+    echo "deb [arch=amd64] https://packages.microsoft.com/repos/edge stable main" > /etc/apt/sources.list.d/microsoft-edge.list && \
     apt-get update && apt-get install -y microsoft-edge-stable && \
     wget https://msedgedriver.microsoft.com/143.0.3650.96/edgedriver_linux64.zip && \
     unzip edgedriver_linux64.zip && \
-    mv msedgedriver /usr/local/bin
+    mv msedgedriver /usr/local/bin && \
+    rm -rf edgedriver* Driver_Notes
 
 # Install nodejs lts
 RUN \
@@ -198,9 +202,9 @@ RUN \
 #   && rm terraform_${TERRAFORM_VERSION}_linux_amd64.zip
 
 RUN \
-    curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add - \
-    && apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main" \
-    && apt-get update -y && apt-get install -y packer terraform consul
+    wget -O - https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg \
+    && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(grep -oP '(?<=UBUNTU_CODENAME=).*' /etc/os-release || lsb_release -cs) main" | tee /etc/apt/sources.list.d/hashicorp.list \
+    && apt-get update && apt-get install -y packer terraform consul
 
 #aliyun-cli
 ARG ALIYUN_CLI_VERSION=3.0.60
