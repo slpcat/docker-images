@@ -1,4 +1,4 @@
-FROM slpcat/docker-ubuntu-lxqt:24.04-xrdp_audio
+FROM slpcat/docker-ubuntu-lxde:24.04-xrdp_audio
 
 RUN apt-get update -y             \
     && apt-get upgrade -y         \

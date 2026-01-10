@@ -27,7 +27,8 @@ RUN \
       im-switch \
       #language-pack-ja \
       #language-pack-ja-base \
-      lxde \
+      lxqt \
+      papirus-icon-theme \
       sudo \
       supervisor \
       tzdata \
@@ -79,7 +80,7 @@ RUN { \
         echo 'if [[ -d /run/user/$(id -u) ]]; then'; \
         echo '  export XDG_RUNTIME_DIR=/run/user/$(id -u)'; \
         echo 'fi'; \
-        echo 'exec dbus-run-session -- startlxde'; \
+        echo 'exec dbus-run-session -- startlxqt'; \
     } > /etc/skel/.xsession \
     && install -o root -g xrdp -m 2775 -d /var/run/xrdp \
     && install -o root -g xrdp -m 3777 -d /var/run/xrdp/sockdir \
@@ -94,9 +95,9 @@ RUN { \
 
 COPY xdg/ /etc/xdg
 # Disable unavailable features
-#RUN sed -i 's|.*pam_systemd.so|#&|g' /etc/pam.d/common-session \
-#    && sed -i.org 's/plugins=.*/plugins=mainmenu, showdesktop, desktopswitch, quicklaunch, taskbar, tray, statusnotifier, volume, worldclock/' /etc/xdg/lxqt/panel.conf \
-#    && rm -f /etc/xdg/autostart/lxqt-powermanagement.desktop
+RUN sed -i 's|.*pam_systemd.so|#&|g' /etc/pam.d/common-session \
+    && sed -i.org 's/plugins=.*/plugins=mainmenu, showdesktop, desktopswitch, quicklaunch, taskbar, tray, statusnotifier, volume, worldclock/' /etc/xdg/lxqt/panel.conf \
+    && rm -f /etc/xdg/autostart/lxqt-powermanagement.desktop
 
 # Set supervisord conf for xrdp service
 RUN { \
