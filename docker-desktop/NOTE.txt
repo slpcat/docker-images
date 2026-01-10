@@ -121,6 +121,7 @@ docker run -d \
    -e USER=yama07 \
    -e PASSWD=mypasswd \
    -v /var/run/docker.sock:/var/run/docker.sock `#optional` \
+   slpcat/docker-ubuntu-lxde:24.04-xrdp_full
    slpcat/docker-ubuntu-lxqt:24.04-xrdp_full
    slpcat/docker-ubuntu-lxqt:24.04-xrdp_audio
 
