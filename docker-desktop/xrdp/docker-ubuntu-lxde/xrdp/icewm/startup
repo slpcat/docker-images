@@ -1,5 +1,6 @@
 #!/bin/sh
 # 启动 fcitx5 输入法
 fcitx5 &
+/usr/libexec/pipewire-module-xrdp/load_pw_modules.sh &
 #kmix &
 pasystray &
