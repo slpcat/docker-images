@@ -183,8 +183,8 @@ RUN \
 
 # clash-verge-rev
 RUN \
-    wget https://github.com/clash-verge-rev/clash-verge-rev/releases/download/autobuild/Clash.Verge_2.4.5+autobuild.0111.57d4149_amd64.deb \
-    && apt-get install -y ./Clash.Verge_2.4.5+autobuild.0111.57d4149_amd64.deb \
+    wget https://github.com/clash-verge-rev/clash-verge-rev/releases/download/autobuild/Clash.Verge_2.4.5+autobuild.0113.66e9851_amd64.deb \
+    && apt-get install -y ./Clash.Verge_2.4.5+autobuild.0113.66e9851_amd64.deb \
     && rm -rf Clash.Verge *
 
 # redis-ui
