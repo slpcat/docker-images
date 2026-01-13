@@ -181,6 +181,12 @@ RUN \
 RUN \
     curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b /usr/local/bin
 
+# clash-verge-rev
+RUN \
+    wget https://github.com/clash-verge-rev/clash-verge-rev/releases/download/autobuild/Clash.Verge_2.4.5+autobuild.0111.57d4149_amd64.deb \
+    && apt-get install -y ./Clash.Verge_2.4.5+autobuild.0111.57d4149_amd64.deb \
+    && rm -rf Clash.Verge *
+
 # redis-ui
 RUN \
     wget https://github.com/patrikx3/redis-ui/releases/download/v2025.10.110/p3x-redis-ui_2025.10.110_amd64.deb && \

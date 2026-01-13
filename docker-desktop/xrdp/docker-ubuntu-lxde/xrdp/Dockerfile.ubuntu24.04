@@ -24,13 +24,15 @@ RUN \
       fcitx5 \
       fcitx5-chinese-addons \
       fcitx5-material-color \
-      im-switch \
+      #im-switch \
       #language-pack-ja \
       #language-pack-ja-base \
       lxde \
       #lxpanel can not work
-      tint2 \
-      pasystray \
+      icewm \
+      gexec \
+      l3afpad \
+      lxterminal \
       sudo \
       supervisor \
       tzdata \
@@ -82,7 +84,7 @@ RUN { \
         echo 'if [[ -d /run/user/$(id -u) ]]; then'; \
         echo '  export XDG_RUNTIME_DIR=/run/user/$(id -u)'; \
         echo 'fi'; \
-        echo 'exec dbus-run-session -- startlxde'; \
+        echo 'exec dbus-run-session -- icewm-session'; \
     } > /etc/skel/.xsession \
     && install -o root -g xrdp -m 2775 -d /var/run/xrdp \
     && install -o root -g xrdp -m 3777 -d /var/run/xrdp/sockdir \
@@ -96,16 +98,15 @@ RUN { \
        fi
 
 COPY xdg/ /etc/xdg
+COPY icewm/ /usr/share/icewm
 # Disable unavailable features
 RUN sed -i 's|.*pam_systemd.so|#&|g' /etc/pam.d/common-session \
-    && rm -f /etc/xdg/autostart/im-launch.desktop \
     && rm -f /etc/xdg/autostart/geoclue-demo-agent.desktop \
     && rm -f /etc/xdg/autostart/at-spi-dbus-bus.desktop \
     && rm -f /etc/xdg/autostart/parcellite-startup.desktop \
     && rm -f /etc/xdg/autostart/nm-applet.desktop \
     && rm -f /etc/xdg/autostart/org.gnome.Evolution-alarm-notify.desktop \
     && rm -f /etc/xdg/autostart/org.gnome.SettingsDaemon.Power.desktop
-
 
 #    && sed -i.org 's/plugins=.*/plugins=mainmenu, showdesktop, desktopswitch, quicklaunch, taskbar, tray, statusnotifier, volume, worldclock/' /etc/xdg/lxqt/panel.conf \
 #    && rm -f /etc/xdg/autostart/lxqt-powermanagement.desktop

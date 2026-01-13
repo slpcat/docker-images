@@ -1,0 +1,5 @@
+#!/bin/sh
+# 启动 fcitx5 输入法
+fcitx5 &
+#kmix &
+pasystray &
