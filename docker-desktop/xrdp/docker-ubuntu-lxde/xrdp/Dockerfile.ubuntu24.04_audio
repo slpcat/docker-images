@@ -9,7 +9,7 @@ RUN \
     sed -i -r 's/^( *module.jackdbus-detect = )true$/\1false/' /usr/share/pipewire/pipewire.conf \
     # Launch the audio server before starting LXDE session
     && sed -i \
-      -e "/exec icewm-session/iDISABLE_RTKIT=true PIPEWIRE_LOG_SYSTEMD=false pipewire &" \
-      -e "/exec icewm-session/iDISABLE_RTKIT=true PIPEWIRE_LOG_SYSTEMD=false pipewire-pulse &" \
-      -e "/exec icewm-session/iDISABLE_RTKIT=true PIPEWIRE_LOG_SYSTEMD=false wireplumber &" \
+      -e "/icewm-session/iDISABLE_RTKIT=true PIPEWIRE_LOG_SYSTEMD=false pipewire &" \
+      -e "/icewm-session/iDISABLE_RTKIT=true PIPEWIRE_LOG_SYSTEMD=false pipewire-pulse &" \
+      -e "/icewm-session/iDISABLE_RTKIT=true PIPEWIRE_LOG_SYSTEMD=false wireplumber &" \
       /etc/skel/.xsession
