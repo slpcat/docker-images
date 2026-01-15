@@ -33,11 +33,20 @@ linux/mips64le
 3.monit
 4.dumb-init
 5.tini
-6.s6 
+6.s6
 采用s6-svscan 代替 supervisord 进行程序管理
 https://github.com/just-containers/s6-overlay
-7.runit VoidLinux
-8.OpenRC gentoo,AlpineLinux
+7.runit
+VoidLinux
+8.OpenRC
+gentoo,AlpineLinux
+9.dinit
+https://github.com/davmac314/dinit.git
+Chimera
+https://github.com/chimera-linux/dinit-chimera
+Dinit on Devuan
+
+artixlinux openrc,runit,s6-base,dinit
 
 docker run -d -t -i --privileged -v /sys/fs/cgroup:/sys/fs/cgroup --tmpfs /run --tmpfs /run/lock  slpcat/debian:systemd-bookworm
 
@@ -71,7 +80,7 @@ https://cdn.amazonlinux.com/al2023/os-images/latest/
 
 精简版系统
 debian:buster-slim
-
+antixlinux
 
 tinycore linux
 
