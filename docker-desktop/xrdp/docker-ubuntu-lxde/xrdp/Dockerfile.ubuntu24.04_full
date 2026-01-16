@@ -76,11 +76,11 @@ RUN \
     wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | gpg --dearmour -o /usr/share/keyrings/chrome-keyring.gpg && \
     sh -c 'echo "deb [arch=amd64 signed-by=/usr/share/keyrings/chrome-keyring.gpg] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list' && \
     apt-get update && apt-get install -y google-chrome-stable && \
-    wget https://storage.googleapis.com/chrome-for-testing-public/143.0.7499.192/linux64/chromedriver-linux64.zip && \
+    wget https://storage.googleapis.com/chrome-for-testing-public/143.0.7499.193/linux64/chromedriver-linux64.zip && \
     unzip chromedriver-linux64.zip && \
     mv chromedriver-linux64/chromedriver /usr/local/bin && \
     chmod +x /usr/local/bin/chromedriver && \
-    wget https://storage.googleapis.com/chrome-for-testing-public/143.0.7499.192/linux64/chrome-headless-shell-linux64.zip && \
+    wget https://storage.googleapis.com/chrome-for-testing-public/143.0.7499.193/linux64/chrome-headless-shell-linux64.zip && \
     unzip chrome-headless-shell-linux64.zip && \
     mv chrome-headless-shell-linux64 /opt/google/ && \
     ln -s /opt/google/chrome-headless-shell-linux64/chrome-headless-shell /usr/local/bin/chrome-headless-shell && \
@@ -151,7 +151,7 @@ RUN \
     apt-get install -y helm
 
 #istioctl
-ARG ISTIO_VERSION=1.24.0
+ARG ISTIO_VERSION=1.28.0
 RUN \
     curl -L https://istio.io/downloadIstio | sh - \
     && mv istio-${ISTIO_VERSION}/bin/istioctl /usr/local/bin \
@@ -183,8 +183,8 @@ RUN \
 
 # clash-verge-rev
 RUN \
-    wget https://github.com/clash-verge-rev/clash-verge-rev/releases/download/autobuild/Clash.Verge_2.4.5+autobuild.0113.66e9851_amd64.deb \
-    && apt-get install -y ./Clash.Verge_2.4.5+autobuild.0113.66e9851_amd64.deb \
+    wget https://github.com/clash-verge-rev/clash-verge-rev/releases/download/v2.4.4/Clash.Verge_2.4.4_amd64.deb \
+    && apt-get install -y ./Clash.Verge_2.4.4_amd64.deb \
     && rm -rf Clash.Verge*
 
 # redis-ui
