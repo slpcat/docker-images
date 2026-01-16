@@ -76,11 +76,11 @@ RUN \
     wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | gpg --dearmour -o /usr/share/keyrings/chrome-keyring.gpg && \
     sh -c 'echo "deb [arch=amd64 signed-by=/usr/share/keyrings/chrome-keyring.gpg] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list' && \
     apt-get update && apt-get install -y google-chrome-stable && \
-    wget https://storage.googleapis.com/chrome-for-testing-public/143.0.7499.193/linux64/chromedriver-linux64.zip && \
+    wget https://storage.googleapis.com/chrome-for-testing-public/144.0.7559.60/linux64/chromedriver-linux64.zip && \
     unzip chromedriver-linux64.zip && \
     mv chromedriver-linux64/chromedriver /usr/local/bin && \
     chmod +x /usr/local/bin/chromedriver && \
-    wget https://storage.googleapis.com/chrome-for-testing-public/143.0.7499.193/linux64/chrome-headless-shell-linux64.zip && \
+    wget https://storage.googleapis.com/chrome-for-testing-public/144.0.7559.60/linux64/chrome-headless-shell-linux64.zip && \
     unzip chrome-headless-shell-linux64.zip && \
     mv chrome-headless-shell-linux64 /opt/google/ && \
     ln -s /opt/google/chrome-headless-shell-linux64/chrome-headless-shell /usr/local/bin/chrome-headless-shell && \
