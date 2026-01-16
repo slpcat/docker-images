@@ -107,13 +107,13 @@ RUN { \
 COPY xdg/ /etc/xdg
 COPY icewm/ /usr/share/icewm
 # Disable unavailable features
-RUN sed -i 's|.*pam_systemd.so|#&|g' /etc/pam.d/common-session
-#    && rm -f /etc/xdg/autostart/geoclue-demo-agent.desktop \
+RUN sed -i 's|.*pam_systemd.so|#&|g' /etc/pam.d/common-session \
+    && rm -f /etc/xdg/autostart/geoclue-demo-agent.desktop \
 #    && rm -f /etc/xdg/autostart/at-spi-dbus-bus.desktop \
 #    && rm -f /etc/xdg/autostart/parcellite-startup.desktop \
 #    && rm -f /etc/xdg/autostart/nm-applet.desktop \
-#    && rm -f /etc/xdg/autostart/org.gnome.Evolution-alarm-notify.desktop \
-#    && rm -f /etc/xdg/autostart/org.gnome.SettingsDaemon.Power.desktop
+    && rm -f /etc/xdg/autostart/org.gnome.Evolution-alarm-notify.desktop \
+    && rm -f /etc/xdg/autostart/org.gnome.SettingsDaemon.Power.desktop
 
 #    && sed -i.org 's/plugins=.*/plugins=mainmenu, showdesktop, desktopswitch, quicklaunch, taskbar, tray, statusnotifier, volume, worldclock/' /etc/xdg/lxqt/panel.conf \
 #    && rm -f /etc/xdg/autostart/lxqt-powermanagement.desktop
