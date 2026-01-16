@@ -32,7 +32,12 @@ RUN \
       icewm \
       gexec \
       l3afpad \
+      qpdfview \
       lxterminal \
+      audacious \
+      audacious-plugins \
+      gpicview \
+      #vlc \
       smplayer \
       sudo \
       tzdata \

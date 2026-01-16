@@ -1,4 +1,4 @@
 # 快速启动区
-prog "Files"     pcmanfm.png  pcmanfm
-prog "Terminal"  lxterminal.png  lxterminal
-prog "Browser"   google-chrome.png  google-chrome
+prog "Files"     file-manager.png  pcmanfm
+prog "Terminal"  terminal.png  lxterminal
+prog "Browser"   browser.png  google-chrome
