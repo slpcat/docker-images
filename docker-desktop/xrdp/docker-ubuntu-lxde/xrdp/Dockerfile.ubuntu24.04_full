@@ -194,8 +194,8 @@ RUN \
 
 # mongodb compass
 RUN \
-    wget https://downloads.mongodb.com/compass/mongodb-compass_1.48.2_amd64.deb && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y ./mongodb-compass_1.48.2_amd64.deb && rm -f mongodb-compass_1.48.2_amd64.deb
+    wget https://downloads.mongodb.com/compass/mongodb-compass_1.49.0_amd64.deb && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y ./mongodb-compass_1.49.0_amd64.deb && rm -f mongodb-compass_1.49.0_amd64.deb
 
 # dbeaver
 RUN \
@@ -230,3 +230,41 @@ COPY applications/ /usr/share/applications
 RUN \
     add-apt-repository ppa:obsproject/obs-studio && \
     apt-get update && apt-get install -y obs-studio
+
+# gimp
+# zed.dev
+RUN \
+    curl -f https://zed.dev/install.sh | sh
+
+# sublime
+RUN \
+    wget -qO - https://download.sublimetext.com/sublimehq-pub.gpg | tee /etc/apt/keyrings/sublimehq-pub.asc > /dev/null \
+    && echo -e 'Types: deb\nURIs: https://download.sublimetext.com/\nSuites: apt/stable/\nSigned-By: /etc/apt/keyrings/sublimehq-pub.asc' | tee /etc/apt/sources.list.d/sublime-text.sources \
+    &&  apt-get update &&  apt-get install -ysublime-text
+
+# WPS office
+COPY wps-office_12.1.2.24722.AK.preread.sw_612408_amd64.deb /tmp/
+RUN \
+    apt-get install -y /tmp/wps-office_12.1.2.24722.AK.preread.sw_612408_amd64.deb && rm -f /tmp/wps-office_12.1.2.24722.AK.preread.sw_612408_amd64.deb
+
+# slack
+RUN \
+    wget https://downloads.slack-edge.com/desktop-releases/linux/x64/4.47.69/slack-desktop-4.47.69-amd64.deb \
+    && apt-get install -y ./slack-desktop-4.47.69-amd64.deb && rm -f slack-desktop-4.47.69-amd64.deb
+# telegram
+# zoom
+
+# wechat
+RUN \
+    wget https://dldir1v6.qq.com/weixin/Universal/Linux/WeChatLinux_x86_64.deb \
+    && apt-get install -y ./WeChatLinux_x86_64.deb && rm -f WeChatLinux_x86_64.deb
+   
+# QQ
+RUN \
+    wget https://dldir1v6.qq.com/qqfile/qq/QQNT/Linux/QQ_3.2.23_260108_amd64_01.deb \
+    && apt-get install -y ./QQ_3.2.23_260108_amd64_01.deb && rm -f QQ_3.2.23_260108_amd64_01.deb
+
+# baidunetdisk
+RUN \
+    wget  https://d24f57-1874119703.antpcdn.com:19001/b/pkg-ant.baidu.com/issue/netdisk/LinuxGuanjia/4.17.7/baidunetdisk_4.17.7_amd64.deb \
+    && apt-get install -y ./baidunetdisk_4.17.7_amd64.deb  && rm -f baidunetdisk_4.17.7_amd64.deb
