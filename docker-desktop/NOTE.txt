@@ -49,6 +49,21 @@ https://github.com/dockur/windows
 https://github.com/dockur/windows-arm/
 
 docker run -it --rm --name windows -p 8006:8006 --device=/dev/kvm --cap-add NET_ADMIN --stop-timeout 120 dockurr/windows
+三 webOS
+
+https://github.com/HeyPuter/puter
+mkdir puter && cd puter && mkdir -p puter/config puter/data && sudo chown -R 1000:1000 puter && docker run --rm -p 4100:4100 -v `pwd`/puter/config:/etc/puter -v `pwd`/puter/data:/var/puter  ghcr.io/heyputer/puter
+
+kasm workspace
+
+docker-webtop远程桌面
+linuxserver/webtop
+
+Apache Guacamole is a clientless remote desktop gateway. It supports standard protocols like VNC, RDP, and SSH.
+
+ImmyBot
+https://community.immy.bot/
+
 
 桌面环境
 
@@ -115,6 +130,7 @@ docker run -d \
    --security-opt apparmor=unconfined \
    --security-opt seccomp=unconfined \
    --shm-size="1gb" `#optional` \
+   --device /dev/fuse:/dev/fuse `#optional` \
    --device /dev/dri:/dev/dri `#optional` \
    -p 3389:3389 \
    -u $(id -u):$(id -g) \

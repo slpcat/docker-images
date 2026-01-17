@@ -12,7 +12,7 @@ browser
 AI浏览器助手
 Claude Chrome插件
 微软Magentic UI 开源Agent助手
-
+https://kasm.com/
 
 任务示例:
 

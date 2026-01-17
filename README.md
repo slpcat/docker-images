@@ -106,6 +106,10 @@ API网关/反向代理/ingress: kong,konga,kong-dashboard,fabio,traefik,envoy,Ap
 QUIC服务端: caddy,快手kQUIC,nginx-quic,
 直播服务器：SRS，jitsi，kurento，mediasoup,janus,licode,red5pro,ant-media-server,OpenVidu,
 2fa双因子认证：freeotp
+kasm:
+https://kasm.com/
+The Workspace Streaming Platform
+Stream your workspace directly to your web browser on any device and from any location.
 
 FAAS: fission,fnproject,funktion,kubeless,nuclio,open-lambda,openfaas,openwhisk,vmware-dispatch,Claudia
 日志集群: elastic-stack(elasticsearch+cerebro+kibana),Elassandra,sonic,grafana-loki,splunk,graylog
