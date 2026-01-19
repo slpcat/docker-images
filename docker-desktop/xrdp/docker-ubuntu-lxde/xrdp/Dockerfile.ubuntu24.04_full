@@ -219,8 +219,6 @@ RUN \
     && ln -s /opt/Postman/Postman /usr/local/bin/postman \
     && rm -rf postman.tar.gz
 
-COPY applications/ /usr/share/applications
-
 # kodi
 #RUN \
 #    add-apt-repository ppa:team-xbmc/ppa && \
@@ -268,3 +266,18 @@ RUN \
 RUN \
     wget  https://d24f57-1874119703.antpcdn.com:19001/b/pkg-ant.baidu.com/issue/netdisk/LinuxGuanjia/4.17.7/baidunetdisk_4.17.7_amd64.deb \
     && apt-get install -y ./baidunetdisk_4.17.7_amd64.deb  && rm -f baidunetdisk_4.17.7_amd64.deb
+# thunder
+# feishu
+# dingtalk
+
+# sunshine
+# 
+# anydesk
+#RUN \
+#    wget https://download.anydesk.com/linux/anydesk_7.1.2-1_amd64.deb
+#    && apt-get install -y ./anydesk_7.1.2-1_amd64.deb  && rm -f anydesk_7.1.2-1_amd64.deb
+
+# moonlight
+
+# steam
+
