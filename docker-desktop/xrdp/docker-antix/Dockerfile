@@ -10,7 +10,7 @@ RUN curl -s -L https://github.com/ncopa/su-exec/archive/v0.2.tar.gz | tar zx -C 
 
 ####################################
 
-FROM slpcat/antix:32.2
+FROM slpcat/antix:23.2
 LABEL org.opencontainers.image.authors="slpcat@qq.com"
 
 RUN rm -f /etc/apt/sources.list.d/debian.sources
