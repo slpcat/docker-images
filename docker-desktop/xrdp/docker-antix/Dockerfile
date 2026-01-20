@@ -21,7 +21,7 @@ RUN \
     apt-get update -y && \
     apt-get dist-upgrade -y && \
     apt-get install -y binutils ethtool vim-tiny net-tools iproute2 procps curl wget telnet less unzip && \
-    apt-get install -y runit-init-diversity runit-service-boot-module runit-service-connmand runit-service-dbus runit-service-udevd runit-service-manager && \
+    apt-get install -y runit-antix runit-full-core-services-antix && \
     rm -rf /var/lib/apt/lists/
 
 
@@ -56,7 +56,6 @@ RUN \
       #smplayer \
       sudo \
       tzdata \
-      runit \
       #xorg \
       xorgxrdp \
       xrdp \
