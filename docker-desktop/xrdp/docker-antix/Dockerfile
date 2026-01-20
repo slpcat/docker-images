@@ -14,7 +14,6 @@ FROM slpcat/antix:23.2
 LABEL org.opencontainers.image.authors="slpcat@qq.com"
 
 RUN rm -f /etc/apt/sources.list.d/debian.sources
-COPY rootfs/ /
 
 # For slim:
 #   --build-arg ADDITIONAL_APT_GET_OPTS=--no-install-recommends
