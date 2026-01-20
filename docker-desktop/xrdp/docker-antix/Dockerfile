@@ -38,7 +38,7 @@ RUN \
       #l3afpad \
       qpdfview \
       lxterminal \
-      #zzzfm \
+      zzzfm \
       xfe \
       audacious \
       audacious-plugins \
