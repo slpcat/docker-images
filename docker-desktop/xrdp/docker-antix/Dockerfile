@@ -33,9 +33,9 @@ RUN \
       vim-tiny \
       dbus-x11 \
       fonts-noto-cjk \
-      fcitx5 \
-      fcitx5-chinese-addons \
-      fcitx5-material-color \
+      #fcitx5 \
+      #fcitx5-chinese-addons \
+      #fcitx5-material-color \
       #im-switch \
       #language-pack-ja \
       #language-pack-ja-base \
