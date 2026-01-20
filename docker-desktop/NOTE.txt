@@ -145,3 +145,14 @@ docker run -d \
 xrdp安装脚本
 
 https://c-nergy.be/downloads/xRDP/xrdp-installer-1.4.8.zip
+
+https://www.c-nergy.be/downloads/xRDP/xrdp-installer-1.5.5.zip
+
+Script version & Supported Ubuntu Version
+The xrdp-installer-1.5.5.sh script will support the following Ubuntu operating system version assuming that Gnome Desktop is the default Desktop interface (and that gnome version is lower than 49).
+
+Ubuntu 22.04.x
+Ubuntu 24.04.x
+Debian 11 (only if you select custom mode installation !!!) 
+Debian 12 and later
+Zorin OS 

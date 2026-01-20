@@ -1,12 +1,25 @@
 #upstream https://github.com/debuerreotype/docker-debian-artifacts/blob/de09dd55b6328b37b89a33e76b698f9dbe611fab/jessie/backports/Dockerfile
 FROM debian:bookworm as build
 RUN apt-get update \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -y curl make gcc
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y curl make gcc sudo wget unzip
 
 RUN curl -s -L https://github.com/ncopa/su-exec/archive/v0.2.tar.gz | tar zx -C /opt/ \
     && mv /opt/su-exec* /opt/su-exec \
     && cd /opt/su-exec \
     && make
+
+RUN \
+    useradd -m -s /bin/bash debian && \
+    echo "ALL ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/ALL && \
+    apt-get update && apt-get install -y xorg xdg-user-dirs lsb-release xdg-utils
+
+USER debian
+WORKDIR /home/debian
+
+RUN \
+    wget https://www.c-nergy.be/downloads/xRDP/xrdp-installer-1.5.5.zip && \
+    unzip xrdp-installer-1.5.5.zip && \
+    bash ./xrdp-installer-1.5.5/xrdp-installer-1.5.5.sh -c -l -s -e
 
 ####################################
 
@@ -31,12 +44,15 @@ RUN \
       #language-pack-ja-base \
       #lxde-core \
       #lxpanel can not work
+      desktop-defaults-core-antix \
       icewm-lite \
       icewm-base-themes-antix \
+      icewm-icons-papirus-antix \
       gexec \
       #l3afpad \
       qpdfview \
-      lxterminal \
+      #lxterminal \
+      roxterm-gtk2 \
       zzzfm \
       xfe \
       audacious \
@@ -47,14 +63,18 @@ RUN \
       sudo \
       tzdata \
       xorg \
-      xorgxrdp \
-      xrdp \
+      #xorgxrdp \
+      #xrdp \
     && apt-get remove --purge -y at-spi2-core system-config-printer* cups* pm-utils xscreensaver* ibus* upower udisks2 network-manager && apt-get autoremove --purge -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
 COPY --from=build \
     /opt/su-exec/su-exec /usr/sbin/su-exec
+
+COPY --from=build \
+    /home/debian/Downloads/xrdp/xrdp_0.10.4.1-1_amd64.deb /tmp/
+   xorg-xrdp pulse-audio
 
 RUN apt-get update && apt-get install -y locales && rm -rf /var/lib/apt/lists/* \
     && localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
