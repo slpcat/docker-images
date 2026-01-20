@@ -243,7 +243,7 @@ RUN \
 # WPS office
 COPY wps-office_12.1.2.24722.AK.preread.sw_612408_amd64.deb /tmp/
 RUN \
-    debconf-set-selections <<< "wps-office wps-office/eula_accepted boolean true" && \
+    echo 'wps-office wps-office/eula_accepted boolean true' | debconf-set-selections && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y /tmp/wps-office_12.1.2.24722.AK.preread.sw_612408_amd64.deb && rm -f /tmp/wps-office_12.1.2.24722.AK.preread.sw_612408_amd64.deb
 
 # slack

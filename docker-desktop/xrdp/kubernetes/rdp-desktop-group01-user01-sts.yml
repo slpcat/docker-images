@@ -2,27 +2,27 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   #命名规范:应用名称-版本
-  name: rdp-desktop-id01
+  name: rdp-desktop-group01-user01
   namespace: desktop
   labels:
-    app: rdp-desktop-id01
-    canary: rdp-desktop-id01
+    app: rdp-desktop-group01-user01
+    canary: rdp-desktop-group01-user01
 spec:
   #保留历史版本数量
   revisionHistoryLimit: 3
   replicas: 1
-  serviceName: rdp-desktop-id01
+  serviceName: rdp-desktop-group01-user01
   selector:
     matchLabels:
-      app: rdp-desktop-id01
-      canary: rdp-desktop-id01
+      app: rdp-desktop-group01-user01
+      canary: rdp-desktop-group01-user01
       version: v2
 #  minReadySeconds: 60     #滚动升级时60s后认为该pod就绪
   template:
     metadata:
       labels:
-        app: rdp-desktop-id01
-        canary: rdp-desktop-id01
+        app: rdp-desktop-group01-user01
+        canary: rdp-desktop-group01-user01
         version: v2
       annotations:
         #enable istio sidecar injection
@@ -90,7 +90,7 @@ spec:
       volumes:
       - emptyDir:
           medium: Memory
-          sizeLimit: 640Mi
+          sizeLimit: 1Gi
         name: shm-volume
   volumeClaimTemplates:
   - metadata:
