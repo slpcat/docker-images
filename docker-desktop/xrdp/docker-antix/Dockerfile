@@ -102,9 +102,9 @@ RUN { \
     && install -o root -g root -m 0755 -d /var/run/dbus \
     && install -o root -g root -m 0644 /dev/null /etc/securetty \
     && usermod -aG ssl-cert xrdp \
-    && sed -i 's|\[Session\]|&\npolkit/command=|' /etc/xdg/lxsession/LXDE/desktop.conf \
-    && usermod -aG ssl-cert xrdp \
-    && ln -s /usr/share/lxde/wallpapers/lxde_blue.jpg /etc/alternatives/desktop-background
+    #&& sed -i 's|\[Session\]|&\npolkit/command=|' /etc/xdg/lxsession/LXDE/desktop.conf \
+    && usermod -aG ssl-cert xrdp
+    #&& ln -s /usr/share/lxde/wallpapers/lxde_blue.jpg /etc/alternatives/desktop-background
 
 COPY rootfs/ /
 # Disable unavailable features
