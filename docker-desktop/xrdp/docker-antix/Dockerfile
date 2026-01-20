@@ -19,7 +19,7 @@ COPY rootfs/ /
 # Install required packages
 RUN \
     apt-get update -y && \
-    apt-get dist-upgrade -y && \
+    #apt-get dist-upgrade -y && \
     apt-get install -y binutils ethtool vim-tiny net-tools iproute2 procps curl wget telnet less unzip && \
     apt-get install -y runit-antix runit-core-services-antix && \
     rm -rf /var/lib/apt/lists/
