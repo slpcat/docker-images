@@ -35,16 +35,17 @@ RUN \
       #lxde-core \
       #lxpanel can not work
       icewm \
-      #gexec \
+      gexec \
       #l3afpad \
-      #qpdfview \
-      #lxterminal \
-      zzzfm \
-      #audacious \
-      #audacious-plugins \
-      #gpicview \
+      qpdfview \
+      lxterminal \
+      #zzzfm \
+      xfe \
+      audacious \
+      audacious-plugins \
+      gpicview \
       #vlc \
-      #smplayer \
+      smplayer \
       sudo \
       tzdata \
       xorg \
