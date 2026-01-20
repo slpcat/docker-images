@@ -31,7 +31,8 @@ RUN \
       #language-pack-ja-base \
       #lxde-core \
       #lxpanel can not work
-      icewm \
+      icewm-lite \
+      icewm-base-themes-antix \
       gexec \
       #l3afpad \
       qpdfview \
@@ -93,7 +94,7 @@ RUN { \
         echo 'if [[ -d /run/user/$(id -u) ]]; then'; \
         echo '  export XDG_RUNTIME_DIR=/run/user/$(id -u)'; \
         echo 'fi'; \
-        echo 'exec dbus-run-session -- icewm-session'; \
+        echo 'exec dbus-run-session -- icewm-session-lite'; \
     } > /etc/skel/.xsession \
     && install -o root -g xrdp -m 2775 -d /var/run/xrdp \
     && install -o root -g xrdp -m 3777 -d /var/run/xrdp/sockdir \
@@ -113,6 +114,12 @@ RUN sed -i 's|.*pam_systemd.so|#&|g' /etc/pam.d/common-session \
 #    && rm -f /etc/xdg/autostart/nm-applet.desktop \
     && rm -f /etc/xdg/autostart/org.gnome.Evolution-alarm-notify.desktop \
     && rm -f /etc/xdg/autostart/org.gnome.SettingsDaemon.Power.desktop
+
+RUN \
+    unlink /etc/service/lightdm && \
+    unlink /etc/service/elogind && \
+    ln -s /etc/sv/xrdp /etc/service/xrdp && \
+    ln -s /etc/sv/xrdp-sesman /etc/service/xrdp-sesman
 
 # Copy entrypoint script
 COPY runit-entrypoint.sh /usr/local/bin/
