@@ -51,11 +51,11 @@ RUN \
       audacious-plugins \
       gpicview \
       #vlc \
-      smplayer \
+      #smplayer \
       sudo \
       tzdata \
       runit \
-      #xorg \
+      xorg \
       xorgxrdp \
       xrdp \
     && apt-get remove --purge -y at-spi2-core system-config-printer* cups* pm-utils xscreensaver* ibus* upower udisks2 network-manager && apt-get autoremove --purge -y \
