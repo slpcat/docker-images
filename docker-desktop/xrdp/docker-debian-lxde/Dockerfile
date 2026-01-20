@@ -93,7 +93,7 @@ RUN { \
         echo 'if [[ -d /run/user/$(id -u) ]]; then'; \
         echo '  export XDG_RUNTIME_DIR=/run/user/$(id -u)'; \
         echo 'fi'; \
-        echo 'exec dbus-run-session -- icewm-session-lite'; \
+        echo 'exec dbus-run-session -- icewm-session'; \
     } > /etc/skel/.xsession \
     && install -o root -g xrdp -m 2775 -d /var/run/xrdp \
     && install -o root -g xrdp -m 3777 -d /var/run/xrdp/sockdir \
@@ -115,8 +115,6 @@ RUN sed -i 's|.*pam_systemd.so|#&|g' /etc/pam.d/common-session \
     && rm -f /etc/xdg/autostart/org.gnome.SettingsDaemon.Power.desktop
 
 RUN \
-    unlink /etc/service/lightdm && \
-    unlink /etc/service/elogind && \
     ln -s /etc/sv/xrdp /etc/service/xrdp && \
     ln -s /etc/sv/xrdp-sesman /etc/service/xrdp-sesman
 
