@@ -10,20 +10,11 @@ RUN curl -s -L https://github.com/ncopa/su-exec/archive/v0.2.tar.gz | tar zx -C 
 
 ####################################
 
-FROM debian:bookworm
+FROM slpcat/antix:32.2
 LABEL org.opencontainers.image.authors="slpcat@qq.com"
 
 RUN rm -f /etc/apt/sources.list.d/debian.sources
 COPY rootfs/ /
-
-# Install required packages
-RUN \
-    apt-get update -y && \
-    #apt-get dist-upgrade -y && \
-    apt-get install -y binutils ethtool vim-tiny net-tools iproute2 procps curl wget telnet less unzip && \
-    apt-get install -y runit-antix runit-core-services-antix && \
-    rm -rf /var/lib/apt/lists/
-
 
 # For slim:
 #   --build-arg ADDITIONAL_APT_GET_OPTS=--no-install-recommends
@@ -35,9 +26,9 @@ RUN \
       vim-tiny \
       dbus-x11 \
       fonts-noto-cjk \
-      #fcitx5 \
-      #fcitx5-chinese-addons \
-      #fcitx5-material-color \
+      fcitx5 \
+      fcitx5-chinese-addons \
+      fcitx5-material-color \
       #im-switch \
       #language-pack-ja \
       #language-pack-ja-base \
@@ -56,7 +47,7 @@ RUN \
       #smplayer \
       sudo \
       tzdata \
-      #xorg \
+      xorg \
       xorgxrdp \
       xrdp \
     && apt-get remove --purge -y at-spi2-core system-config-printer* cups* pm-utils xscreensaver* ibus* upower udisks2 network-manager && apt-get autoremove --purge -y \

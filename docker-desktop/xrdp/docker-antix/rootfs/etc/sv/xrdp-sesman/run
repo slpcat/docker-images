@@ -1,4 +1,0 @@
-#!/bin/sh
-exec 2>&1
-rm -f /var/run/xrdp-sesman/sesman.sock
-exec xrdp-sesman --nodaemon

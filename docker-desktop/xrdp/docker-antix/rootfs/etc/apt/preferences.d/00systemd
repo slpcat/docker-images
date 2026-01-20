@@ -1,3 +1,0 @@
-Package: *systemd*:any
-Pin: origin *
-Pin-Priority: -1
