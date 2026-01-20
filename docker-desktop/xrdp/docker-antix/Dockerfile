@@ -42,20 +42,20 @@ RUN \
       #lxde-core \
       #lxpanel can not work
       icewm \
-      gexec \
-      l3afpad \
-      qpdfview \
+      #gexec \
+      #l3afpad \
+      #qpdfview \
       #lxterminal \
       zzzfm \
-      audacious \
-      audacious-plugins \
-      gpicview \
+      #audacious \
+      #audacious-plugins \
+      #gpicview \
       #vlc \
       #smplayer \
       sudo \
       tzdata \
       runit \
-      xorg \
+      #xorg \
       xorgxrdp \
       xrdp \
     && apt-get remove --purge -y at-spi2-core system-config-printer* cups* pm-utils xscreensaver* ibus* upower udisks2 network-manager && apt-get autoremove --purge -y \
