@@ -1,0 +1,26 @@
+# Debian Bookworm/Stable
+deb http://ftp.de.debian.org/debian/ bookworm main contrib non-free non-free-firmware
+deb-src http://ftp.de.debian.org/debian/ bookworm main contrib non-free non-free-firmware
+deb http://security.debian.org/ bookworm-security main contrib non-free non-free-firmware
+deb-src http://security.debian.org/ bookworm-security main contrib non-free non-free-firmware
+
+# Multimedia Stable!
+# ONLY use to install libdvdcss2 and codecs.
+# deb http://www.deb-multimedia.org bookworm main non-free
+
+# Debian Testing. 
+# Testing enabled for 'rolling' release.
+# deb http://ftp.de.debian.org/debian/ testing main contrib non-free non-free-firmware
+# deb http://security.debian.org testing-security main contrib non-free non-free-firmware
+# deb-src http://ftp.de.debian.org/debian/ testing main contrib non-free non-free-firmware
+
+# Multimedia Testing!
+# Only use to install libdvdcss2 and codecs.
+# deb http://www.deb-multimedia.org testing main non-free
+
+###### Debian Unstable/Sid##########
+###### Use at your own risk! ########
+# deb http://ftp.de.debian.org/debian/ unstable main contrib non-free non-free-firmware
+# Multimedia Unstable/Sid!
+# Only use to install libdvdcss2 and codecs.
+# deb http://www.deb-multimedia.org sid main non-free

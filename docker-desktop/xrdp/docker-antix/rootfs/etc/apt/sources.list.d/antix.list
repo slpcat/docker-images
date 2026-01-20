@@ -1,0 +1,11 @@
+# Use with Debian Bookworm repositories. 
+deb [signed-by=/etc/apt/keyrings/antix-archive-keyring.gpg] http://la.mxrepo.com/antix/bookworm bookworm main nonfree nosystemd  
+deb-src [signed-by=/etc/apt/keyrings/antix-archive-keyring.gpg] http://la.mxrepo.com/antix/bookworm bookworm main nonfree nosystemd
+
+# Use with Debian Testing/'rolling' repositories.
+# deb http://la.mxrepo.com/antix/testing testing main nosystemd nonfree
+# deb-src http://la.mxrepo.com/antix/testing testing main nosystemd nonfree
+
+# Use with Debian Sid repositories. 
+# deb http://la.mxrepo.com/antix/sid sid main nosystemd nonfree
+# deb-src http://la.mxrepo.com/antix/sid sid main nosystemd nonfree
