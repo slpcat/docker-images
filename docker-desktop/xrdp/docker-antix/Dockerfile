@@ -44,8 +44,8 @@ RUN \
       #language-pack-ja-base \
       #lxde-core \
       #lxpanel can not work
-      desktop-defaults-antix \
-      gir1.2-gtk-3.0 \
+      desktop-defaults-base-antix \
+      #gir1.2-gtk-3.0 \
       icewm-lite \
       icewm-base-themes-antix \
       icewm-icons-papirus-antix \
