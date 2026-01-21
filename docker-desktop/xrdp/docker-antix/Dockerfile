@@ -44,7 +44,7 @@ RUN \
       #language-pack-ja-base \
       #lxde-core \
       #lxpanel can not work
-      desktop-defaults-core-antix \
+      desktop-defaults-antix \
       icewm-lite \
       icewm-base-themes-antix \
       icewm-icons-papirus-antix \
