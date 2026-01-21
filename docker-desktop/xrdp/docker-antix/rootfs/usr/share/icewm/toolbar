@@ -1,4 +1,4 @@
 # 快速启动区
 prog "Files"     xfe.xpm  xfe
-prog "Terminal"  terminal.png  roxterm
+prog "Terminal"  roxterm.xpm  roxterm
 prog "Browser"   browser.png  google-chrome

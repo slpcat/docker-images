@@ -23,7 +23,7 @@ RUN curl -s -L https://github.com/ncopa/su-exec/archive/v0.2.tar.gz | tar zx -C 
 
 ####################################
 
-FROM slpcat/antix:23.2
+FROM slpcat/antix:core-23.2
 LABEL org.opencontainers.image.authors="slpcat@qq.com"
 
 # For slim:
@@ -45,6 +45,7 @@ RUN \
       #lxde-core \
       #lxpanel can not work
       desktop-defaults-antix \
+      gir1.2-gtk-3.0 \
       icewm-lite \
       icewm-base-themes-antix \
       icewm-icons-papirus-antix \
@@ -62,7 +63,7 @@ RUN \
       smplayer \
       sudo \
       tzdata \
-      xorg \
+      #xorg \
       xorgxrdp \
       xrdp \
     #&& apt-get remove --purge -y at-spi2-core system-config-printer* cups* pm-utils xscreensaver* ibus* upower udisks2 network-manager && apt-get autoremove --purge -y \
