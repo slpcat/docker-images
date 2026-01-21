@@ -48,6 +48,11 @@ RUN apt-get update -y             \
        pipx                 \
        xvfb
 
+# Install Flatpak
+RUN \
+    apt-get update && apt-get install -y flatpak && \
+    flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+
 #install docker-ce
 
 # Add Docker's official GPG key:
