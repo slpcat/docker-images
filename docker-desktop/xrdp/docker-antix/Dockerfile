@@ -45,8 +45,10 @@ RUN \
       #lxde-core \
       #lxpanel can not work
       desktop-defaults-base-antix \
-      #gir1.2-gtk-3.0 \
-      icewm-lite \
+      desktop-defaults-icewm-antix \
+      desktop-menu-antix \
+      gir1.2-gtk-3.0 \
+      icewm \
       icewm-base-themes-antix \
       icewm-icons-papirus-antix \
       gexec \
@@ -137,10 +139,13 @@ RUN sed -i 's|.*pam_systemd.so|#&|g' /etc/pam.d/common-session \
     && rm -f /etc/xdg/autostart/org.gnome.SettingsDaemon.Power.desktop
 
 RUN \
-    unlink /etc/service/lightdm && \
-    unlink /etc/service/elogind && \
+    unlink /etc/service/slimski && \
+    unlink /etc/service/avahi-daemon && \
+    #unlink /etc/service/lightdm && \
+    #unlink /etc/service/elogind && \
     ln -s /etc/sv/xrdp /etc/service/xrdp && \
-    ln -s /etc/sv/xrdp-sesman /etc/service/xrdp-sesman
+    ln -s /etc/sv/xrdp-sesman /etc/service/xrdp-sesman && \
+    rm -f rm /var/run/xrdp/xrdp-sesman.pid /var/run/xrdp/xrdp.pid
 
 # Copy entrypoint script
 COPY runit-entrypoint.sh /usr/local/bin/

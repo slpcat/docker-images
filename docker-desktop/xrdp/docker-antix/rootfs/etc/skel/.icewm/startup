@@ -1,0 +1,8 @@
+#!/bin/bash
+#Check localization of Zzz File Manager:r:
+if [ ! -f ~/.config/zzzfm/zzzfm_already_localized ]; then zzzfmlocalize ; fi
+# 启动 fcitx5 输入法
+fcitx5 &
+/usr/libexec/pipewire-module-xrdp/load_pw_modules.sh &
+#kmix &
+#pasystray &
