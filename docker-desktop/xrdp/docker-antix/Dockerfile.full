@@ -97,7 +97,7 @@ RUN \
     curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > /etc/apt/trusted.gpg.d/microsoft.gpg && \
     echo "deb [arch=amd64] https://packages.microsoft.com/repos/edge stable main" > /etc/apt/sources.list.d/microsoft-edge.list && \
     apt-get update && apt-get install -y microsoft-edge-stable && \
-    wget https://msedgedriver.microsoft.com/143.0.3650.96/edgedriver_linux64.zip && \
+    wget https://msedgedriver.microsoft.com/143.0.3650.139/edgedriver_linux64.zip && \
     unzip edgedriver_linux64.zip && \
     mv msedgedriver /usr/local/bin && \
     rm -rf edgedriver* Driver_Notes
