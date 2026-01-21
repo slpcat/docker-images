@@ -49,11 +49,6 @@ RUN apt-get update -y             \
        xvfb
 
 #install docker-ce
-#RUN \
-#    curl -fsSL http://mirrors.aliyun.com/docker-ce/linux/debian/gpg | apt-key add - && \
-#    echo 'deb [arch=amd64] http://mirrors.aliyun.com/docker-ce/linux/debian bullseye stable' > /etc/apt/sources.list.d/docker-ce.list && \
-#    apt-get update -y &&\
-#    apt-get install -y docker-ce
 
 # Add Docker's official GPG key:
 RUN \
@@ -69,7 +64,7 @@ RUN \
       "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
        tee /etc/apt/sources.list.d/docker.list > /dev/null && \
     apt-get update && \
-    apt-get install -y --no-install-recommends docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin && \
+    apt-get install -y --no-install-recommends docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin && \
     rm -f /etc/init.d/docker /var/lib/dpkg/info/docker-ce.postinst || true && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
