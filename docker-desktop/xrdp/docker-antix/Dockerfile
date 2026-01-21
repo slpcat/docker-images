@@ -1,7 +1,7 @@
 #upstream https://github.com/debuerreotype/docker-debian-artifacts/blob/de09dd55b6328b37b89a33e76b698f9dbe611fab/jessie/backports/Dockerfile
 FROM slpcat/antix:core-23.2 as build
 RUN apt-get update \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -y curl make gcc sudo wget unzip
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y curl make gcc libc6-dev sudo wget unzip
 
 RUN curl -s -L https://github.com/ncopa/su-exec/archive/v0.2.tar.gz | tar zx -C /opt/ \
     && mv /opt/su-exec* /opt/su-exec \
