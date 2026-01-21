@@ -37,9 +37,10 @@ RUN \
       dbus-x11 \
       fonts-noto-cjk \
       fcitx5 \
+      fcitx5-frontend-all \
       fcitx5-chinese-addons \
       fcitx5-material-color \
-      #im-switch \
+      im-config \
       #language-pack-ja \
       #language-pack-ja-base \
       #lxde-core \
@@ -117,7 +118,7 @@ RUN { \
         echo 'if [[ -d /run/user/$(id -u) ]]; then'; \
         echo '  export XDG_RUNTIME_DIR=/run/user/$(id -u)'; \
         echo 'fi'; \
-        echo 'exec dbus-run-session -- icewm-session-lite'; \
+        echo 'exec dbus-run-session -- icewm-session'; \
     } > /etc/skel/.xsession \
     && install -o root -g xrdp -m 2775 -d /var/run/xrdp \
     && install -o root -g xrdp -m 3777 -d /var/run/xrdp/sockdir \
