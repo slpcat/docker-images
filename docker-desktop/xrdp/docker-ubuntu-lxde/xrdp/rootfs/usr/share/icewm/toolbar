@@ -1,4 +1,4 @@
 # 快速启动区
-prog "Files"     file-manager.png  xfe
-prog "Terminal"  terminal.png  lxterminal
-prog "Browser"   browser.png  google-chrome
+prog "Files"     xfe.xpm  xfe
+prog "Terminal"  lxterminal.png  lxterminal
+prog "Browser"   google-chrome.png  google-chrome

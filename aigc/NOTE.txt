@@ -160,3 +160,17 @@ https://github.com/CherryHQ/cherry-studio
 
 index-tts-vllm
 index-tts-vllm 是一款开源的文本转语音（TTS）项目，基于 index-tts 进行了优化，通过引入 vllm 库重新实现了 GPT 模型的推理过程，大幅提升了推理速度和并发处理能力。项目旨在为开发者提供一个高效、稳定、易于集成的 TTS 解决方案。
+
+ollama
+https://github.com/vllm-project/vllm
+docker run --runtime nvidia --gpus all \
+    -v ~/.cache/huggingface:/root/.cache/huggingface \
+    --env "HF_TOKEN=$HF_TOKEN" \
+    -p 8000:8000 \
+    --ipc=host \
+    vllm/vllm-openai:latest \
+    --model Qwen/Qwen3-0.6B
+https://github.com/bentoml/OpenLLM
+
+docker run -p 8080:8080 --name local-ai -ti localai/localai:latest
+

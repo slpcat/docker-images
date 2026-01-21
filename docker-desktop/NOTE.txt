@@ -126,10 +126,13 @@ docker run -d \
   ayushkhaire/remote-desktop-rdp-xfce-audio-firefox
 
 docker run -d \
+   --name ubuntu2404-lxde-xrdp-user01 \
    --cap-add=SYS_ADMIN \
+   --cap-add=SYS_NICE \
    --security-opt apparmor=unconfined \
    --security-opt seccomp=unconfined \
    --shm-size="1gb" `#optional` \
+   --ipc=host \
    --device /dev/fuse:/dev/fuse `#optional` \
    --device /dev/dri:/dev/dri `#optional` \
    -p 3389:3389 \
@@ -137,10 +140,43 @@ docker run -d \
    -e USER=yama07 \
    -e PASSWD=mypasswd \
    -v /var/run/docker.sock:/var/run/docker.sock `#optional` \
+   -v /data/ubuntu2404-home:/home \
    slpcat/docker-ubuntu-lxde:24.04-xrdp_full
    slpcat/docker-ubuntu-lxqt:24.04-xrdp_full
    slpcat/docker-ubuntu-lxqt:24.04-xrdp_audio
+   slpcat/docker-antix-icewm:23.2-xrdp_full
 
+#with GPU and sunshine
+docker run -d \
+   --name ubuntu2404-lxde-xrdp-user01 \
+   --privileged `#for flatpk` \
+   --gpus all \
+   --runtime=nvidia \
+   --cap-add=SYS_ADMIN \
+   --cap-add=SYS_NICE \
+   --cap-add=SYS_PTRACE \
+   --cap-add=SETUID \
+   --cap-add=SETGID \
+   --group-add $(getent group video | cut -d: -f3) \
+   --group-add $(getent group input | cut -d: -f3) \
+   --security-opt apparmor=unconfined \
+   --security-opt seccomp=unconfined \
+   --shm-size="1gb" `#optional` \
+   --ipc=host \
+   --device /dev/fuse:/dev/fuse `#optional` \
+   --device /dev/dri:/dev/dri `#optional` \
+   --device /dev/uinput:/dev/uinput \
+   -p 3390:3389 \
+   -p 47984-47990:47984-47990/tcp \
+   -p 48010:48010 \
+   -p 47998-48000:47998-48000/udp \
+   -u 2000:2000 \
+   -e USER=yama07 \
+   -e PASSWD=mypasswd \
+   -v /sys/fs/cgroup:/sys/fs/cgroup:ro \
+   -v /var/run/docker.sock:/var/run/docker.sock `#optional` \
+   -v /data/ubuntu2404-home:/home \
+   slpcat/docker-ubuntu-lxde:24.04-xrdp_full
 
 xrdp安装脚本
 

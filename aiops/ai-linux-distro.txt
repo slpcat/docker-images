@@ -1,0 +1,6 @@
+The latest version of Makulu Linux integrates artificial intelligence into traditional desktop usage, thanks to its new AI platform, called Electra. Electra has been integrated into the following applications:
+https://www.makululinux.com/
+
+Gnoppix AI Overview
+https://wiki.gnoppix.org/community/gnoppix-ai/
+
