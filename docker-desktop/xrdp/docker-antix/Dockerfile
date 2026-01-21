@@ -1,5 +1,5 @@
 #upstream https://github.com/debuerreotype/docker-debian-artifacts/blob/de09dd55b6328b37b89a33e76b698f9dbe611fab/jessie/backports/Dockerfile
-FROM debian:bookworm as build
+FROM slpcat/antix:core-23.2 as build
 RUN apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y curl make gcc sudo wget unzip
 
@@ -9,11 +9,10 @@ RUN curl -s -L https://github.com/ncopa/su-exec/archive/v0.2.tar.gz | tar zx -C 
     && make
 
 #RUN \
-#    useradd -m -s /bin/bash debian && \
 #    echo "ALL ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/ALL && \
 #    apt-get update && apt-get install -y xorg xdg-user-dirs lsb-release xdg-utils
 #
-#USER debian
+#USER antix
 #WORKDIR /home/debian
 #
 #RUN \
@@ -53,11 +52,11 @@ RUN \
       icewm-base-themes-antix \
       icewm-icons-papirus-antix \
       gexec \
-      #l3afpad \
+      leafpad \
       qpdfview \
-      #lxterminal \
-      roxterm-gtk2 \
-      zzzfm \
+      lxterminal \
+      #roxterm \
+      #zzzfm \
       xfe \
       audacious \
       audacious-plugins \
@@ -69,7 +68,7 @@ RUN \
       #xorg \
       xorgxrdp \
       xrdp \
-    #&& apt-get remove --purge -y at-spi2-core system-config-printer* cups* pm-utils xscreensaver* ibus* upower udisks2 network-manager && apt-get autoremove --purge -y \
+    && apt-get remove --purge -y at-spi2-core system-config-printer* cups* pm-utils xscreensaver* ibus* upower udisks2 network-manager && apt-get autoremove --purge -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -140,7 +139,10 @@ RUN sed -i 's|.*pam_systemd.so|#&|g' /etc/pam.d/common-session \
     && rm -f /etc/xdg/autostart/org.gnome.SettingsDaemon.Power.desktop
 
 RUN \
+    # update desktop menus
+    /usr/local/lib/desktop-menu/desktop-menu-apt-update check && \
     unlink /etc/service/slimski && \
+    unlink /etc/service/slim && \
     unlink /etc/service/avahi-daemon && \
     #unlink /etc/service/lightdm && \
     #unlink /etc/service/elogind && \
