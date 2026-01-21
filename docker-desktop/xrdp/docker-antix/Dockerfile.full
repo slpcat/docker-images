@@ -43,7 +43,7 @@ RUN apt-get update -y             \
        clamav-freshclam     \
        python3              \
        python3-pip          \
-       python3-all-venv     \
+       python3-venv         \
        python3-pytest       \
        pipx                 \
        xvfb
