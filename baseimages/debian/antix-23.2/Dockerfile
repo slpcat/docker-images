@@ -9,7 +9,8 @@ ENV \
     LC_ALL="en_US.UTF-8" \
     TZ="Asia/Shanghai"
 
-ADD antix-net.tgz /
+#ADD antix-net.tgz /
+ADD antix-core.tgz /
 
 # Set timezone and locales
 RUN \
