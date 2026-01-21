@@ -13,7 +13,7 @@ RUN curl -s -L https://github.com/ncopa/su-exec/archive/v0.2.tar.gz | tar zx -C 
 #    apt-get update && apt-get install -y xorg xdg-user-dirs lsb-release xdg-utils
 #
 #USER antix
-#WORKDIR /home/debian
+#WORKDIR /home/antix
 #
 #RUN \
 #    wget https://www.c-nergy.be/downloads/xRDP/xrdp-installer-1.5.5.zip && \

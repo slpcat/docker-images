@@ -222,7 +222,7 @@ RUN \
 
 # OBS Studio 
 RUN \
-    add-apt-repository ppa:obsproject/obs-studio && \
+    #add-apt-repository ppa:obsproject/obs-studio && \
     apt-get update && apt-get install -y obs-studio
 
 # gimp
