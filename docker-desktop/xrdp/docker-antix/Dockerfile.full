@@ -70,9 +70,9 @@ RUN \
        tee /etc/apt/sources.list.d/docker.list > /dev/null && \
     apt-get update && \
     apt-get install -y --no-install-recommends docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin && \
-    systemctl disable docker.service || true && \
+    systemctl disable --now docker.service || true && \
     systemctl disable docker.socket || true && \
-    # 清理
+    systemctl musk docker.service || true && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install Google Chrome and driver
@@ -80,11 +80,11 @@ RUN \
     wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | gpg --dearmour -o /usr/share/keyrings/chrome-keyring.gpg && \
     sh -c 'echo "deb [arch=amd64 signed-by=/usr/share/keyrings/chrome-keyring.gpg] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list' && \
     apt-get update && apt-get install -y google-chrome-stable && \
-    wget https://storage.googleapis.com/chrome-for-testing-public/144.0.7559.60/linux64/chromedriver-linux64.zip && \
+    wget https://storage.googleapis.com/chrome-for-testing-public/144.0.7559.96/linux64/chromedriver-linux64.zip && \
     unzip chromedriver-linux64.zip && \
     mv chromedriver-linux64/chromedriver /usr/local/bin && \
     chmod +x /usr/local/bin/chromedriver && \
-    wget https://storage.googleapis.com/chrome-for-testing-public/144.0.7559.60/linux64/chrome-headless-shell-linux64.zip && \
+    wget https://storage.googleapis.com/chrome-for-testing-public/144.0.7559.96/linux64/chrome-headless-shell-linux64.zip && \
     unzip chrome-headless-shell-linux64.zip && \
     mv chrome-headless-shell-linux64 /opt/google/ && \
     ln -s /opt/google/chrome-headless-shell-linux64/chrome-headless-shell /usr/local/bin/chrome-headless-shell && \
