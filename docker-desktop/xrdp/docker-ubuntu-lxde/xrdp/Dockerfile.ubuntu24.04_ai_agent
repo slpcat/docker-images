@@ -1,10 +1,19 @@
 #kubectl-ai
-#trae ai编程工具
+
+#claude
+#openai codex
+#gemini
+#cline
+#opencode
 #n8n
+
+#trae ai编程工具
 #dify
 #ollama
 #vLLM 推理服务
 #腾讯ima
+#Cherry Studio
+
 #Gnoppix AI Linux
 #AI Email Support
 #AI Vulnerability Scanning
@@ -12,4 +21,13 @@
 #AI Web Chat Agent
 #AI HR Agent
 #AI Webscraper
-#Cherry Studio
+
+# Install AI coding/Vibe coding tools
+# Claude Code , Cursor CLI, CodeX,Gemini CLI,cline
+    #curl https://cursor.com/install -fsS | bash \
+    #mv $HOME/.local/bin/cursor-agent /usr/local/bin/ \
+RUN \
+    npm install -g @anthropic-ai/claude-code && \
+    npm install -g @openai/codex && \
+    npm install -g @google/gemini-cli && \
+    npm install -g cline
