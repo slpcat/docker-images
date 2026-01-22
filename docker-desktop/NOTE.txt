@@ -149,7 +149,7 @@ docker run -d \
 #with GPU and sunshine
 docker run -d \
    --name ubuntu2404-lxde-xrdp-user01 \
-   --privileged `#for flatpk` \
+   --privileged `#for flatpak` \
    --gpus all \
    --runtime=nvidia \
    --cap-add=SYS_ADMIN \

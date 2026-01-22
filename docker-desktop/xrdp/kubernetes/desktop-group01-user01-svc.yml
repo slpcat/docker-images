@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: desktop-group01-user01
+  namespace: desktop
+spec:
+  ports:
+    - name: rdp
+      protocol: TCP
+      port: 3389
+      targetPort: 3389
+  type: NodePort
+  selector:
+    app: desktop-group01-user01
+    #version: v1

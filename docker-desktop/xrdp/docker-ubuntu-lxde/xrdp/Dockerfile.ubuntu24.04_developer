@@ -1,0 +1,169 @@
+FROM slpcat/docker-ubuntu-lxde:24.04-xrdp_office
+
+RUN apt-get update -y             \
+    && apt-get upgrade -y         \
+    && apt-get install -y         \
+       redis                 \
+       mysql-client          \
+       postgresql-client     \
+       scrcpy                \
+       scrcpy-server
+
+#install docker-ce
+# Add Docker's official GPG key:
+RUN \
+    apt-get update && \
+    apt-get install -y ca-certificates curl gnupg && \
+    install -m 0755 -d /etc/apt/keyrings && \
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg && \
+    chmod a+r /etc/apt/keyrings/docker.gpg && \
+
+# Add the repository to Apt sources:
+    echo \
+      "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+      "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
+       tee /etc/apt/sources.list.d/docker.list > /dev/null && \
+    apt-get update && \
+    apt-get install -y docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+#nerdctl
+RUN \
+    wget https://github.com/containerd/nerdctl/releases/download/v2.2.1/nerdctl-2.2.1-linux-amd64.tar.gz && \
+    tar Cxzvvf /usr/local/bin nerdctl-2.2.1-linux-amd64.tar.gz && rm -f nerdctl-2.2.1-linux-amd64.tar.gz
+
+# Install nodejs lts
+RUN \
+    curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -  && \
+    apt-get update && apt-get install -y nodejs
+
+# Install selenium-side-runner
+# Install AI coding/Vibe coding tools
+# Claude Code , Cursor CLI, CodeX,Gemini CLI,cline
+    #curl https://cursor.com/install -fsS | bash \
+    #mv $HOME/.local/bin/cursor-agent /usr/local/bin/ \
+RUN \
+    npm install -g selenium-side-runner && \
+    npm install -g @anthropic-ai/claude-code && \
+    npm install -g @openai/codex && \
+    npm install -g @google/gemini-cli && \
+    npm install -g cline
+
+#install ansible
+RUN \
+    apt-get install -y ansible ansible-mitogen
+
+# Environment variables substitution for Go
+RUN \
+    curl -L https://github.com/a8m/envsubst/releases/download/v1.4.3/envsubst-`uname -s`-`uname -m` -o envsubst && \
+    chmod +x envsubst && \
+    mv envsubst /usr/local/bin
+
+#kubectl
+RUN \
+    curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" \
+    && chmod +x kubectl \
+    && mv kubectl /usr/local/bin/
+
+#k9s
+RUN \
+    wget https://github.com/derailed/k9s/releases/download/v0.50.18/k9s_linux_amd64.deb && \
+    apt-get install -y ./k9s_linux_amd64.deb && rm -f k9s_linux_amd64.deb
+#openlens
+RUN \
+    wget https://github.com/MuhammedKalkan/OpenLens/releases/download/v6.5.2-366/OpenLens-6.5.2-366.amd64.deb && \
+    apt-get install -y ./OpenLens-6.5.2-366.amd64.deb && rm -f OpenLens-6.5.2-366.amd64.deb
+
+#calicoctl
+
+#cilium
+
+#helm
+ARG VERIFY_CHECKSUM=false
+#RUN \
+#    curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 \
+#    && bash get_helm.sh \
+#    && rm get_helm.sh
+RUN \
+    curl -fsSL https://packages.buildkite.com/helm-linux/helm-debian/gpgkey | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null && \
+    echo "deb [signed-by=/usr/share/keyrings/helm.gpg] https://packages.buildkite.com/helm-linux/helm-debian/any/ any main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list &&\
+    apt-get update && \
+    apt-get install -y helm
+
+#istioctl
+ARG ISTIO_VERSION=1.28.0
+RUN \
+    curl -L https://istio.io/downloadIstio | sh - \
+    && mv istio-${ISTIO_VERSION}/bin/istioctl /usr/local/bin \
+    && rm -rf  istio-${ISTIO_VERSION}
+
+RUN \
+    wget -O - https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg \
+    && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(grep -oP '(?<=UBUNTU_CODENAME=).*' /etc/os-release || lsb_release -cs) main" | tee /etc/apt/sources.list.d/hashicorp.list \
+    && apt-get update && apt-get install -y packer terraform consul
+
+#aliyun-cli
+ARG ALIYUN_CLI_VERSION=3.0.60
+RUN \
+    wget https://aliyuncli.alicdn.com/aliyun-cli-linux-${ALIYUN_CLI_VERSION}-amd64.tgz \
+    && tar -zxvf aliyun-cli-linux-${ALIYUN_CLI_VERSION}-amd64.tgz \
+    && mv aliyun /usr/local/bin \
+    && rm aliyun-cli-linux-${ALIYUN_CLI_VERSION}-amd64.tgz
+
+#awscli
+RUN \
+    wget https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip \
+    && unzip awscli-exe-linux-x86_64.zip \
+    && ./aws/install \
+    && rm -rf aws*
+
+#eksctl
+RUN \
+    curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp && \
+    mv /tmp/eksctl /usr/local/bin
+
+#grype scanner
+RUN \
+    curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b /usr/local/bin
+
+# redis-ui
+RUN \
+    wget https://github.com/patrikx3/redis-ui/releases/download/v2025.10.110/p3x-redis-ui_2025.10.110_amd64.deb && \
+    apt-get install -y ./p3x-redis-ui_2025.10.110_amd64.deb &&  rm -f p3x-redis-ui_2025.10.110_amd64.deb
+
+# mongodb compass
+RUN \
+    wget https://downloads.mongodb.com/compass/mongodb-compass_1.49.0_amd64.deb && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y ./mongodb-compass_1.49.0_amd64.deb && rm -f mongodb-compass_1.49.0_amd64.deb
+
+# dbeaver
+RUN \
+    wget -O /usr/share/keyrings/dbeaver.gpg.key https://dbeaver.io/debs/dbeaver.gpg.key && \
+    echo "deb [signed-by=/usr/share/keyrings/dbeaver.gpg.key] https://dbeaver.io/debs/dbeaver-ce /" | tee /etc/apt/sources.list.d/dbeaver.list && \
+    apt-get update && sudo apt-get install -y dbeaver-ce
+
+## VSCode
+RUN \
+    curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor -o /usr/share/keyrings/microsoft-keyring.gpg \
+    && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/microsoft-keyring.gpg] https://packages.microsoft.com/repos/vscode stable main" > /etc/apt/sources.list.d/vscode.list \
+    && apt-get update \
+    && apt-get install -y code \
+    && apt-get clean \
+    && rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/*
+# Postman
+RUN \
+    wget https://dl.pstmn.io/download/latest/linux64 -O postman.tar.gz \
+    && tar -xzf postman.tar.gz \
+    && mv Postman /opt \
+    && ln -s /opt/Postman/Postman /usr/local/bin/postman \
+    && rm -rf postman.tar.gz
+
+# zed.dev
+#RUN \
+#    curl -f https://zed.dev/install.sh | sh
+
+# sublime
+#RUN \
+#    wget -qO - https://download.sublimetext.com/sublimehq-pub.gpg | tee /etc/apt/keyrings/sublimehq-pub.asc > /dev/null \
+#    && echo -e 'Types: deb\nURIs: https://download.sublimetext.com/\nSuites: apt/stable/\nSigned-By: /etc/apt/keyrings/sublimehq-pub.asc' | tee /etc/apt/sources.list.d/sublime-text.sources \
+#    &&  apt-get update &&  apt-get install -ysublime-text
+

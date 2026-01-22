@@ -1,0 +1,209 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  #命名规范:应用名称-版本
+  name: desktop-group01-user01
+  namespace: desktop
+  labels:
+    app: desktop-group01-user01
+spec:
+  #保留历史版本数量
+  revisionHistoryLimit: 3
+  replicas: 1
+  serviceName: desktop-group01-user01
+  selector:
+    matchLabels:
+      app: desktop-group01-user01
+      version: v2
+      #  minReadySeconds: 60     #滚动升级时60s后认为该pod就绪
+  template:
+    metadata:
+      labels:
+        app: desktop-group01-user01
+        version: v2
+      annotations:
+        #enable istio sidecar injection
+        sidecar.istio.io/inject: "false"
+    spec:
+      terminationGracePeriodSeconds: 60 ##k8s将会给应用发送SIGTERM信号，可以用来正确、优雅地关闭应用,默认为30秒
+      #imagePullSecrets:
+      #- name: registrykey-ali-ext
+      hostIPC: true
+      securityContext:
+        sysctls:
+          #kubernetes >= v1.11 and kernel version >= 4.15 needed
+          #- name: kernel.msgmax
+          #  value: "65536"
+          - name: net.ipv4.tcp_syncookies
+            value: "0"
+          - name: net.ipv4.ip_local_port_range
+            value: "1024 65535"
+          - name: net.core.somaxconn
+            value: "65535"
+          - name: net.ipv4.ip_unprivileged_port_start
+            value: "0"
+          - name: net.ipv4.tcp_tw_reuse
+            value: "2"
+          - name: net.ipv4.tcp_fin_timeout
+            value: "20"
+          - name: net.ipv4.tcp_keepalive_intvl
+            value: "10"
+          - name: net.ipv4.tcp_keepalive_probes
+            value: "2"
+          - name: net.ipv4.tcp_keepalive_time
+            value: "120"
+          - name: net.ipv4.tcp_ecn
+            value: "1"
+          - name: net.ipv4.tcp_max_syn_backlog
+            value: "65536"
+          - name: net.ipv4.tcp_rfc1337
+            value: "1"
+          - name: net.ipv4.tcp_slow_start_after_idle
+            value: "0"
+          - name: net.ipv4.tcp_fack
+            value: "1"
+          - name: net.ipv4.tcp_max_tw_buckets
+            value: "1048576"
+          - name: net.ipv4.tcp_fastopen
+            value: "3"
+          - name: net.ipv4.icmp_ratelimit
+            value: "100"
+          - name: net.ipv4.tcp_abort_on_overflow
+            value: "1"
+          - name: net.ipv4.tcp_adv_win_scale
+            value: "2"
+          - name: net.ipv4.tcp_retries2
+            value: "8"
+          - name: net.ipv4.tcp_syn_retries
+            value: "3"
+          - name: net.ipv4.tcp_synack_retries
+            value: "2"
+          - name: net.unix.max_dgram_qlen
+            value: "512"
+          - name: net.ipv4.tcp_fwmark_accept
+            value: "1"
+          - name: net.ipv4.fwmark_reflect
+            value: "1"
+        runAsUser: 2000
+        runAsGroup: 2000
+        fsGroup: 2000
+      dnsConfig:
+        nameservers:
+          - 169.254.20.10
+        options:
+          - name: ndots
+            value: "5"
+          - name: attempts
+            value: "2"
+          - name: timeout
+            value: "1"
+        searches:
+          - svc.cluster.local
+          - cluster.local
+      dnsPolicy: None
+      containers:
+        - name: desktop
+          image: slpcat/docker-ubuntu-lxde:24.04-xrdp_full
+          imagePullPolicy: Always
+          #livenessProbe: #kubernetes认为该pod是存活的,不存活则需要重启
+          #  httpGet:
+          #    path: /
+          #    port: 80
+          #    scheme: HTTP
+          #  initialDelaySeconds: 60 ## equals to the maximum startup time of the application + couple of seconds
+          #  timeoutSeconds: 5
+          #  successThreshold: 1
+          #  failureThreshold: 5
+          #readinessProbe: #kubernetes认为该pod是启动成功的
+          #  httpGet:
+          #    path: /
+          #    port: 80
+          #    scheme: HTTP
+          #  initialDelaySeconds: 30 ## equals to minimum startup time of the application
+          #  timeoutSeconds: 5
+          #  successThreshold: 1
+          #  failureThreshold: 5
+          resources:
+            # keep request = limit to keep this container in guaranteed class
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 4
+              memory: 8Gi
+          securityContext:
+            privileged: true
+            #capabilities:
+            #  add: ["NET_ADMIN"]
+          env:
+            - name: USER
+              value: "user01"
+            - name: PASSWD
+              value: "mypassword"
+            #- name: LC_ALL
+            #  value: "zh_CN.UTF-8"
+            #- name: LANG
+            #  value: "zh_CN.UTF-8"
+            - name: TZ
+              value: "UTC"
+          ports:
+            - name: rdp
+              containerPort: 3389
+          volumeMounts:
+            - name: cgroup
+              mountPath: /sys/fs/cgroup
+              readOnly: true
+            #- name: dockersock
+            #  mountPath: /var/run/docker.sock
+            - name: containerdsock
+              mountPath: /run/containerd/containerd.sock
+            - name: devdri
+              mountPath: /dev/dri
+            - name: devfuse
+              mountPath: /dev/fuse
+            - name: devuinput
+              mountPath: /dev/uinput
+            - mountPath: /dev/shm
+              name: shm-volume
+            - mountPath: /home
+              name: home
+      volumes:
+        - name: cgroup
+          hostPath:
+            path: /sys/fs/cgroup
+            type: Directory
+        #- name: dockersock
+        #  hostPath:
+        #    path: /var/run/docker.sock
+        #    type: Socket
+        - name: containerdsock
+          hostPath:
+            path: /run/containerd/containerd.sock
+            type: Socket
+        - name: devdri
+          hostPath:
+            path: /dev/dri
+            type: Directory
+        - name: devfuse
+          hostPath:
+            path: /dev/fuse
+            type: CharDevice
+        - name: devuinput
+          hostPath:
+            path: /dev/uinput
+            type: CharDevice
+        - emptyDir:
+            medium: Memory
+            sizeLimit: 1Gi
+          name: shm-volume
+  volumeClaimTemplates:
+    - metadata:
+        name: home
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        #ceph rbd storageclass
+        storageClassName: ebs-gp3-encrypted-sc
+        resources:
+          requests:
+            storage: 60Gi
