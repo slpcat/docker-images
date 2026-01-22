@@ -32,16 +32,8 @@ RUN \
       #lxpanel can not work
       icewm \
       gexec \
-      l3afpad \
-      qpdfview \
       lxterminal \
       xfe \
-      audacious \
-      audacious-plugins \
-      gpicview \
-      #vlc \
-      smplayer \
-      seahorse \
       sudo \
       tzdata \
       runit \

@@ -990,25 +990,25 @@ WorkspaceNames=" 1 ", " 2 ", " 3 ", " 4 "
 # ActiveButtonFontName="-misc-dejavu sans-bold-r-normal--12-*-*-*-*-*-*-*"
 
 #  Name of the active button font.
-# ActiveButtonFontNameXft="DejaVu Sans:size=12:bold,Sans:size=12:bold,Sans:size=12"
+ActiveButtonFontNameXft="DejaVu Sans:size=12:bold,Sans:size=12:bold,Sans:size=12,Noto Sans CJK SC:style=Medium:size=12"
 
 #  Name of the active task bar item font.
 # ActiveTaskBarFontName="-misc-dejavu sans-bold-r-normal--12-*-*-*-*-*-*-*"
 
 #  Name of the active task bar item font.
-# ActiveTaskBarFontNameXft="DejaVu Sans:size=12:bold,Sans:size=12:bold,Sans:size=12"
+ActiveTaskBarFontNameXft="DejaVu Sans:size=12:bold,Sans:size=12:bold,Sans:size=12,Noto Sans CJK SC:style=Medium:size=12"
 
 #  Name of the active workspace button font (fallback: ActiveButtonFontName).
 # ActiveWorkspaceFontName="-misc-dejavu sans-medium-r-normal--12-*-*-*-*-*-*-*"
 
 #  Name of the active workspace button font (fallback: ActiveButtonFontName).
-# ActiveWorkspaceFontNameXft="DejaVu Sans:size=12,Sans:size=12"
+ActiveWorkspaceFontNameXft="DejaVu Sans:size=12,Sans:size=12,Noto Sans CJK SC:style=Medium:size=12"
 
 #  Name of the task bar battery font.
 # ApmFontName="-misc-dejavu sans mono-medium-r-normal--14-*-*-*-*-*-*-*"
 
 #  Name of the task bar battery font.
-# ApmFontNameXft="DejaVu Sans Mono:monospace:size=12,Sans Mono:monospace:size=12"
+ApmFontNameXft="DejaVu Sans Mono:monospace:size=12,Sans Mono:monospace:size=12,Noto Sans CJK SC:style=Medium:size=12"
 
 #  Horizontal window border.
 BorderSizeX=4 # [0-128]
@@ -1020,7 +1020,7 @@ BorderSizeY=4 # [0-128]
 # ClockFontName="-misc-dejavu sans mono-medium-r-normal--14-*-*-*-*-*-*-*"
 
 #  Name of the task bar clock font.
-# ClockFontNameXft="DejaVu Sans Mono:monospace:size=12,Sans Mono:monospace:size=12"
+ClockFontNameXft="DejaVu Sans Mono:monospace:size=12,Sans Mono:monospace:size=12,Noto Sans CJK SC:style=Medium:size=12"
 
 #  Border of active windows.
 # ColorActiveBorder="rgb:C0/C0/C0"
@@ -1299,13 +1299,13 @@ BorderSizeY=4 # [0-128]
 # InputFontName="-misc-dejavu sans mono-medium-r-normal--14-*-*-*-*-*-*-*"
 
 #  Name of the input field font.
-# InputFontNameXft="DejaVu Sans:size=12:bold,Sans:size=12:bold,Sans:size=12"
+InputFontNameXft="DejaVu Sans:size=12:bold,Sans:size=12:bold,Sans:size=12,Noto Sans CJK SC:style=Medium:size=12"
 
 #  Name of the label font.
 # LabelFontName="-misc-dejavu sans-medium-r-normal--14-*-*-*-*-*-*-*"
 
 #  Name of the label font.
-# LabelFontNameXft="DejaVu Sans:size=12,Sans:size=12"
+LabelFontNameXft="DejaVu Sans:size=12,Sans:size=12,Noto Sans CJK SC:style=Medium:size=12"
 
 #  Dimension of the large icons.
 # LargeIconSize=32 # [8-128]
@@ -1314,7 +1314,7 @@ BorderSizeY=4 # [0-128]
 # ListBoxFontName="-misc-dejavu sans-medium-r-normal--12-*-*-*-*-*-*-*"
 
 #  Name of the window list font.
-# ListBoxFontNameXft="DejaVu Sans:size=12,Sans:size=12"
+ListBoxFontNameXft="DejaVu Sans:size=12,Sans:size=12,Noto Sans CJK SC:style=Medium:size=12"
 
 #  The theme look.
 # Look="nice"
@@ -1326,7 +1326,7 @@ BorderSizeY=4 # [0-128]
 # MenuFontName="-misc-dejavu sans-bold-r-normal--10-*-*-*-*-*-*-*"
 
 #  Name of the menu font.
-# MenuFontNameXft="DejaVu Sans:size=10:bold,Sans:size=10:bold,Sans:size=10"
+MenuFontNameXft="DejaVu Sans:size=10:bold,Sans:size=10:bold,Sans:size=10,Noto Sans CJK SC:style=Medium:size=10"
 
 #  Menu icon size.
 # MenuIconSize=16 # [8-128]
@@ -1335,13 +1335,13 @@ BorderSizeY=4 # [0-128]
 # NormalButtonFontName="-misc-dejavu sans-medium-r-normal--12-*-*-*-*-*-*-*"
 
 #  Name of the normal button font.
-# NormalButtonFontNameXft="DejaVu Sans:size=12,Sans:size=12"
+NormalButtonFontNameXft="DejaVu Sans:size=12,Sans:size=12,Noto Sans CJK SC:style=Medium:size=12"
 
 #  Name of the normal task bar item font.
 # NormalTaskBarFontName="-misc-dejavu sans-medium-r-normal--12-*-*-*-*-*-*-*"
 
 #  Name of the normal task bar item font.
-# NormalTaskBarFontNameXft="DejaVu Sans:size=12,Sans:size=12"
+NormalTaskBarFontNameXft="DejaVu Sans:size=12,Sans:size=12,Noto Sans CJK SC:style=Medium:size=12"
 
 #  Name of the normal workspace button font (fallback: NormalButtonFontName).
 # NormalWorkspaceFontName="-misc-dejavu sans-medium-r-normal--12-*-*-*-*-*-*-*"
@@ -1353,7 +1353,7 @@ BorderSizeY=4 # [0-128]
 # QuickSwitchFontName="-misc-dejavu sans mono-bold-r-normal--12-*-*-*-*-*-*-*"
 
 #  Name of the font for Alt+Tab switcher window.
-# QuickSwitchFontNameXft="DejaVu Sans Mono:monospace:size=12:bold,Sans Mono:monospace:size=12DejaVu Sans:size=12,Sans:size=12:bold,Sans Mono:monospace:size=12"
+QuickSwitchFontNameXft="DejaVu Sans Mono:monospace:size=12:bold,Sans Mono:monospace:size=12DejaVu Sans:size=12,Sans:size=12:bold,Sans Mono:monospace:size=12,Noto Sans CJK SC:style=Medium:size=12"
 
 #  Horizontal margin of the quickswitch window.
 # QuickSwitchHorzMargin=3 # [0-64]
@@ -1389,7 +1389,7 @@ BorderSizeY=4 # [0-128]
 # StatusFontName="-misc-dejavu sans mono-bold-r-normal--12-*-*-*-*-*-*-*"
 
 #  Name of the status display font.
-# StatusFontNameXft="DejaVu Sans Mono:monospace:size=12:bold,Sans Mono:monospace:size=12DejaVu Sans:size=12,Sans:size=12:bold,Sans Mono:monospace:size=12"
+StatusFontNameXft="DejaVu Sans Mono:monospace:size=12:bold,Sans Mono:monospace:size=12DejaVu Sans:size=12,Sans:size=12:bold,Sans Mono:monospace:size=12,Noto Sans CJK SC:style=Medium:size=12"
 
 #  Width of battery Monitor.
 # TaskBarApmGraphWidth=10 # [1-1000]
@@ -1416,7 +1416,7 @@ BorderSizeY=4 # [0-128]
 # TempFontName="-misc-dejavu sans mono-medium-r-normal--14-*-*-*-*-*-*-*"
 
 #  Name of the task bar temperature font.
-# TempFontNameXft="DejaVu Sans Mono:monospace:size=12,Sans Mono:monospace:size=12"
+TempFontNameXft="DejaVu Sans Mono:monospace:size=12,Sans Mono:monospace:size=12,Noto Sans CJK SC:style=Medium:size=12"
 
 #  Theme author, e-mail address, credits.
 # ThemeAuthor=""
@@ -1458,19 +1458,19 @@ BorderSizeY=4 # [0-128]
 # TitleFontName="-misc-dejavu sans-medium-r-normal--12-*-*-*-*-*-*-*"
 
 #  Name of the title bar font.
-# TitleFontNameXft="DejaVu Sans:size=12,Sans:size=12"
+TitleFontNameXft="DejaVu Sans:size=12,Sans:size=12,Noto Sans CJK SC:style=Medium:size=12"
 
 #  Name of the tool button font (fallback: NormalButtonFontName).
 # ToolButtonFontName="-misc-dejavu sans-medium-r-normal--12-*-*-*-*-*-*-*"
 
 #  Name of the tool button font (fallback: NormalButtonFontName).
-# ToolButtonFontNameXft="DejaVu Sans:size=12,Sans:size=12"
+ToolButtonFontNameXft="DejaVu Sans:size=12,Sans:size=12,Noto Sans CJK SC:style=Medium:size=12"
 
 #  Name of the tool tip font.
 # ToolTipFontName="-misc-dejavu sans-medium-r-normal--12-*-*-*-*-*-*-*"
 
 #  Name of the tool tip font.
-# ToolTipFontNameXft="DejaVu Sans:size=12,Sans:size=12"
+ToolTipFontNameXft="DejaVu Sans:size=12,Sans:size=12,Noto Sans CJK SC:style=Medium:size=12"
 
 #  Surround the tray with plastic border.
 # TrayDrawBevel=0 # 0/1

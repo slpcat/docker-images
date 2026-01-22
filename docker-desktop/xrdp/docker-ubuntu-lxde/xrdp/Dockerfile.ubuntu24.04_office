@@ -41,6 +41,13 @@ RUN apt-get update -y             \
        xfonts-wqy           \
        clamav               \
        clamav-freshclam     \
+       l3afpad              \
+       qpdfview             \
+       audacious            \
+       audacious-plugins    \
+       gpicview             \
+       smplayer             \
+       seahorse             \
        audacity             \
        gimp                 \
        kdenlive             \
