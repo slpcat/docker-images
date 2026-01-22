@@ -62,6 +62,11 @@ RUN \
     apt-get update && apt-get install -y flatpak && \
     flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 
+# 星火应用商店 https://www.spark-app.store/download
+RUN \
+    wget https://gitee.com/spark-store-project/spark-store/releases/download/4.8.4/spark-store_4.8.4_amd64.deb && \
+    apt-get install -y ./spark-store_4.8.4_amd64.deb && rm -f spark-store_4.8.4_amd64.deb
+
 # Install Google Chrome and driver
 RUN \
     wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | gpg --dearmour -o /usr/share/keyrings/chrome-keyring.gpg && \
@@ -133,6 +138,8 @@ RUN \
 RUN \
     wget https://dldir1v6.qq.com/qqfile/qq/QQNT/Linux/QQ_3.2.23_260108_amd64_01.deb \
     && apt-get install -y ./QQ_3.2.23_260108_amd64_01.deb && rm -f QQ_3.2.23_260108_amd64_01.deb
+# QQ music
+# 腾讯视频Tenvideo
 
 # baidunetdisk
 RUN \
@@ -143,7 +150,7 @@ RUN \
 # dingtalk
 
 # sunshine
-# 
+# Todesk
 # anydesk
 RUN \
     wget https://download.anydesk.com/linux/anydesk_7.1.2-1_amd64.deb \

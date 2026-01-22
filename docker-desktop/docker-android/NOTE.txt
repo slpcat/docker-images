@@ -89,3 +89,13 @@ docker run -it \
   -v $XAUTHORITY:/home/ubuntu/.Xauthority \
   --net host \
   android-studio
+
+KMRE是麒麟软件研发的Linux桌面操作系统产品的高效的Android运行环境解决方案，而当前 UEngine 的 Android 版本过老（现在的 deepin 23 也无法安装就是了），故做了此移植 当前移植的 Kmre Android 版本是 11,在原版 Kmre 的基础上做出了以下修改：
+
+新增支持获取 DDE/KDE 缩放比例，不再仅 UKUI 可用
+生成的 .desktop文件添加X-GXDE-KMREAPP=true、X-GXDE-KMRE-PKGNAME标签以支持一键卸载安卓应用
+生成的 .desktop 添加 gxme 前缀 ，避免出现与 UOS 标准包名撞车
+支持通过 CLI 安装或卸载 apk 应用，并定义相应的返回值方便 deb 打包
+支持双击 apk 一键安装应用
+将 Arm 翻译层更换为 libhoudini，提升应用兼容性
+接入 GXDE 构建系统
