@@ -1,0 +1,171 @@
+FROM slpcat/docker-antix-icewm:23.2-xrdp
+
+RUN apt-get update -y             \
+    && apt-get upgrade -y         \
+    && apt-get install -y         \
+       apt-transport-https        \
+       binutils                   \
+       ethtool                    \
+       htop                       \
+       iotop                      \
+       iftop                      \
+       ethtool                    \
+       vim-tiny                   \
+       iproute2                   \
+       wget                       \
+       telnet                     \
+       less                       \
+       bison                      \
+       ca-certificates            \
+       net-tools                  \
+       procps                     \
+       curl                       \
+       rsync                      \
+       gnupg-agent                \
+       software-properties-common \
+       bzip2                \
+       sudo                 \
+       git                  \
+       iptables             \
+       vim                  \
+       tmux                 \
+       jq                   \
+       yq                   \
+       openssh-client       \
+       unzip                \
+       zip                  \
+       groff                \
+       #snoopy               \
+       ttf-wqy-microhei     \
+       ttf-wqy-zenhei       \
+       xfonts-wqy           \
+       clamav               \
+       clamav-freshclam     \
+       leafpad              \
+       qpdfview             \
+       audacious            \
+       audacious-plugins    \
+       gpicview             \
+       smplayer             \
+       seahorse             \
+       audacity             \
+       gimp                 \
+       kdenlive             \
+       vlc                  \
+       blender              \
+       filezilla            \
+       okular               \
+       inkscape             \
+       pdf2svg              \
+       pdftk                \
+       python3              \
+       python3-pip          \
+       python3-all-venv     \
+       pipx                 \
+       xvfb
+
+# Install Flatpak
+RUN \
+    apt-get update && apt-get install -y flatpak && \
+    flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+
+# 星火应用商店 https://www.spark-app.store/download
+RUN \
+    wget https://gitee.com/spark-store-project/spark-store/releases/download/4.8.4/spark-store_4.8.4_amd64.deb && \
+    apt-get install -y ./spark-store_4.8.4_amd64.deb && rm -f spark-store_4.8.4_amd64.deb
+
+# Install Google Chrome and driver
+RUN \
+    wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | gpg --dearmour -o /usr/share/keyrings/chrome-keyring.gpg && \
+    sh -c 'echo "deb [arch=amd64 signed-by=/usr/share/keyrings/chrome-keyring.gpg] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list' && \
+    apt-get update && apt-get install -y google-chrome-stable && \
+    wget https://storage.googleapis.com/chrome-for-testing-public/144.0.7559.96/linux64/chromedriver-linux64.zip && \
+    unzip chromedriver-linux64.zip && \
+    mv chromedriver-linux64/chromedriver /usr/local/bin && \
+    chmod +x /usr/local/bin/chromedriver && \
+    wget https://storage.googleapis.com/chrome-for-testing-public/144.0.7559.96/linux64/chrome-headless-shell-linux64.zip && \
+    unzip chrome-headless-shell-linux64.zip && \
+    mv chrome-headless-shell-linux64 /opt/google/ && \
+    ln -s /opt/google/chrome-headless-shell-linux64/chrome-headless-shell /usr/local/bin/chrome-headless-shell && \
+    rm -rf chromedriver* chrome-headless-shell*
+
+# Install Mozilla Firefox and driver
+COPY install-firefox.sh /tmp/install-firefox.sh
+RUN \
+    bash /tmp/install-firefox.sh && rm -f /tmp/install-firefox.sh && \
+    wget https://github.com/mozilla/geckodriver/releases/download/v0.36.0/geckodriver-v0.36.0-linux64.tar.gz && \
+    tar zxf geckodriver-v0.36.0-linux64.tar.gz && \
+    mv geckodriver /usr/local/bin/ && \
+    rm -rf geckodriver*
+
+# Install Microsoft Edge and driver
+RUN \
+    curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > /etc/apt/trusted.gpg.d/microsoft.gpg && \
+    echo "deb [arch=amd64] https://packages.microsoft.com/repos/edge stable main" > /etc/apt/sources.list.d/microsoft-edge.list && \
+    apt-get update && apt-get install -y microsoft-edge-stable && \
+    wget https://msedgedriver.microsoft.com/143.0.3650.139/edgedriver_linux64.zip && \
+    unzip edgedriver_linux64.zip && \
+    mv msedgedriver /usr/local/bin && \
+    rm -rf edgedriver* Driver_Notes
+
+# clash-verge-rev
+RUN \
+    wget https://github.com/clash-verge-rev/clash-verge-rev/releases/download/v2.4.4/Clash.Verge_2.4.4_amd64.deb \
+    && apt-get install -y ./Clash.Verge_2.4.4_amd64.deb \
+    && rm -rf Clash.Verge*
+
+# kodi
+#RUN \
+#    add-apt-repository ppa:team-xbmc/ppa && \
+#    apt-get update && apt-get install -y  kodi
+
+# OBS Studio 
+RUN \
+    add-apt-repository ppa:obsproject/obs-studio && \
+    apt-get update && apt-get install -y obs-studio
+
+# WPS office
+COPY wps-office_12.1.2.24722.AK.preread.sw_612408_amd64.deb /tmp/
+RUN \
+    echo 'wps-office wps-office/eula_accepted boolean true' | debconf-set-selections && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y /tmp/wps-office_12.1.2.24722.AK.preread.sw_612408_amd64.deb && rm -f /tmp/wps-office_12.1.2.24722.AK.preread.sw_612408_amd64.deb
+
+# slack
+RUN \
+    wget https://downloads.slack-edge.com/desktop-releases/linux/x64/4.47.69/slack-desktop-4.47.69-amd64.deb \
+    && apt-get install -y ./slack-desktop-4.47.69-amd64.deb && rm -f slack-desktop-4.47.69-amd64.deb
+# telegram
+# zoom
+
+# wechat
+RUN \
+    wget https://dldir1v6.qq.com/weixin/Universal/Linux/WeChatLinux_x86_64.deb \
+    && apt-get install -y ./WeChatLinux_x86_64.deb && rm -f WeChatLinux_x86_64.deb
+# QQ
+RUN \
+    wget https://dldir1v6.qq.com/qqfile/qq/QQNT/Linux/QQ_3.2.23_260108_amd64_01.deb \
+    && apt-get install -y ./QQ_3.2.23_260108_amd64_01.deb && rm -f QQ_3.2.23_260108_amd64_01.deb
+# QQ music
+# 腾讯视频Tenvideo
+
+# baidunetdisk
+RUN \
+    wget  https://d24f57-1874119703.antpcdn.com:19001/b/pkg-ant.baidu.com/issue/netdisk/LinuxGuanjia/4.17.7/baidunetdisk_4.17.7_amd64.deb \
+    && apt-get install -y ./baidunetdisk_4.17.7_amd64.deb  && rm -f baidunetdisk_4.17.7_amd64.deb
+# thunder
+# feishu
+# dingtalk
+
+# sunshine
+# Todesk
+# anydesk
+RUN \
+    wget https://download.anydesk.com/linux/anydesk_7.1.2-1_amd64.deb \
+    && apt-get install -y ./anydesk_7.1.2-1_amd64.deb  && rm -f anydesk_7.1.2-1_amd64.deb
+
+# moonlight
+
+# steam
+# epic games
+# ubisoft
+# battle.net

@@ -52,17 +52,10 @@ RUN \
       icewm-base-themes-antix \
       icewm-icons-papirus-antix \
       gexec \
-      leafpad \
-      qpdfview \
       lxterminal \
       #roxterm \
       #zzzfm \
       xfe \
-      audacious \
-      audacious-plugins \
-      gpicview \
-      #vlc \
-      smplayer \
       sudo \
       tzdata \
       #xorg \
