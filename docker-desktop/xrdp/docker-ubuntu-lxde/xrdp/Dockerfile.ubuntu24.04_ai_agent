@@ -6,6 +6,8 @@
 #cline
 #opencode
 #n8n
+#Void开源AI代码编辑器 https://voideditor.com/ paused
+#
 
 #trae ai编程工具
 #dify
@@ -31,3 +33,10 @@ RUN \
     npm install -g @openai/codex && \
     npm install -g @google/gemini-cli && \
     npm install -g cline
+
+# zed.dev
+#    curl -f https://zed.dev/install.sh | sh
+RUN \
+    curl -sS https://debian.griffo.io/EA0F721D231FDD3A0A17B9AC7808B4DD62C41256.asc | gpg --dearmor --yes -o /etc/apt/trusted.gpg.d/debian.griffo.io.gpg && \
+    echo "deb https://debian.griffo.io/apt $(lsb_release -sc 2>/dev/null) main" | tee /etc/apt/sources.list.d/debian.griffo.io.list && \
+    apt-get update && apt-get install -y zig ghostty lazygit yazi eza uv fzf zoxide bun tigerbeetle
