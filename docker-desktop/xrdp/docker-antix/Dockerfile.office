@@ -115,13 +115,11 @@ RUN \
     && rm -rf Clash.Verge*
 
 # kodi
-#RUN \
-#    add-apt-repository ppa:team-xbmc/ppa && \
-#    apt-get update && apt-get install -y  kodi
+RUN \
+    apt-get update && apt-get install -y  kodi
 
 # OBS Studio 
 RUN \
-    add-apt-repository ppa:obsproject/obs-studio && \
     apt-get update && apt-get install -y obs-studio
 
 # WPS office
