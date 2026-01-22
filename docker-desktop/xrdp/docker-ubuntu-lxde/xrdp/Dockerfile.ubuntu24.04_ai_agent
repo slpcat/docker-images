@@ -1,3 +1,5 @@
+FROM slpcat/docker-ubuntu-lxde:24.04-xrdp_developer
+
 #kubectl-ai
 
 #claude
