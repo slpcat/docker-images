@@ -146,7 +146,7 @@ RUN \
 # 
 # anydesk
 RUN \
-    wget https://download.anydesk.com/linux/anydesk_7.1.2-1_amd64.deb
+    wget https://download.anydesk.com/linux/anydesk_7.1.2-1_amd64.deb \
     && apt-get install -y ./anydesk_7.1.2-1_amd64.deb  && rm -f anydesk_7.1.2-1_amd64.deb
 
 # moonlight
