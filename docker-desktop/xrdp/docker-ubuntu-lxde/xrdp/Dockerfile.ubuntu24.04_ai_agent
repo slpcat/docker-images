@@ -47,7 +47,8 @@ RUN \
     npm install -g @anthropic-ai/claude-code && \
     npm install -g @openai/codex && \
     npm install -g @google/gemini-cli && \
-    npm install -g cline
+    npm install -g cline && \
+    rm -rf /root/.npm
 
 # zed.dev
 #    curl -f https://zed.dev/install.sh | sh
