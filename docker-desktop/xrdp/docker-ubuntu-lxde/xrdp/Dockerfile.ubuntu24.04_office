@@ -61,6 +61,8 @@ RUN apt-get update -y             \
        inkscape             \
        pdf2svg              \
        pdftk                \
+       freerdp3-x11         \
+       #rdesktop             \
        remmina              \
        tigervnc-viewer      \
        python3              \
@@ -82,6 +84,11 @@ RUN \
 # 屏幕录像工具
 RUN \
     apt-get install -y recordmydesktop simplescreenrecorder libavcodec-extra kazam
+
+# Install Chromium and driver
+RUN \
+    add-apt-repository ppa:xtradeb/apps -y && \
+    apt-get update && apt-get  install -y chromium chromium-l10n chromium-shell chromium-driver
 
 # Install Google Chrome and driver
 RUN \
