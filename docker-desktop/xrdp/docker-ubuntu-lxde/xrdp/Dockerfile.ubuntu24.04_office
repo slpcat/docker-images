@@ -53,6 +53,8 @@ RUN apt-get update -y             \
        seahorse             \
        audacity             \
        gimp                 \
+       #shotcut              \
+       #openshot-qt          \
        kdenlive             \
        vlc                  \
        blender              \
