@@ -5,6 +5,9 @@ RUN apt-get update -y             \
     && apt-get install -y         \
        apt-transport-https        \
        binutils                   \
+       lsof                       \
+       anacron                    \
+       cron                       \
        ethtool                    \
        htop                       \
        iotop                      \
@@ -58,6 +61,8 @@ RUN apt-get update -y             \
        inkscape             \
        pdf2svg              \
        pdftk                \
+       remmina              \
+       tigervnc-viewer      \
        python3              \
        python3-pip          \
        python3-all-venv     \
@@ -73,6 +78,10 @@ RUN \
 RUN \
     wget https://gitee.com/spark-store-project/spark-store/releases/download/4.8.4/spark-store_4.8.4_amd64.deb && \
     apt-get install -y ./spark-store_4.8.4_amd64.deb && rm -f spark-store_4.8.4_amd64.deb
+
+# 屏幕录像工具
+RUN \
+    apt-get install -y recordmydesktop simplescreenrecorder libavcodec-extra kazam
 
 # Install Google Chrome and driver
 RUN \
@@ -157,6 +166,11 @@ RUN \
 # dingtalk
 
 # sunshine
+# rustdesk
+RUN \
+    wget https://github.com/rustdesk/rustdesk/releases/download/1.4.5/rustdesk-1.4.5-x86_64.deb && \
+    apt-get install -y ./rustdesk-1.4.5-x86_64.deb && rm -f rustdesk-1.4.5-x86_64.deb
+
 # Todesk
 # anydesk
 RUN \

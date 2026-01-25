@@ -1,0 +1,145 @@
+#!/bin/sh
+
+# ============================================
+# 由窗口管理器在会话终止时调用
+# ============================================
+
+USER_NAME=`whoami`       # 传递的用户名
+LOG_FILE="/tmp/$USER_NAME-session-cleanup.log"
+
+# 日志函数
+log_msg() {
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1" >> "$LOG_FILE"
+}
+
+log_msg "=== 会话清理开始 ==="
+log_msg "用户: $USER_NAME, Display: $DISPLAY"
+
+# 执行图形会话检测
+if [ -z "$DISPLAY" ]; then
+    log_msg "xrdp-session 错误：DISPLAY 未设置，停止执行"
+    exit 1
+fi
+
+# ============================================
+# 清理 PipeWire 音频服务
+# ============================================
+cleanup_pipewire() {
+    log_msg "清理 PipeWire 进程..."
+
+    # 获取用户 UID
+    USER_UID=$(id -u "$USER_NAME" 2>/dev/null)
+    if [ -z "$USER_UID" ]; then
+        log_msg "错误: 无法获取用户 $USER_NAME 的 UID"
+        return 1
+    fi
+
+    # 杀死该用户的所有 pipewire 相关进程
+    pkill -u "$USER_UID" -x "pipewire" 2>/dev/null && log_msg "  - pipewire 已终止"
+    pkill -u "$USER_UID" -x "pipewire-pulse" 2>/dev/null && log_msg "  - pipewire-pulse 已终止"
+    pkill -u "$USER_UID" -x "wireplumber" 2>/dev/null && log_msg "  - wireplumber 已终止"
+    pkill -u "$USER_UID" -f "pw-cli.*" 2>/dev/null && log_msg "  - pw-cli xrdp 模块已终止"
+
+    # 清理 socket 文件
+    RUNTIME_DIR="/run/user/$USER_UID"
+    if [ -d "$RUNTIME_DIR" ]; then
+        rm -rf "$RUNTIME_DIR/pipewire*" 2>/dev/null && log_msg "  - pipewire runtime 已清理"
+        rm -rf "$RUNTIME_DIR/pulse" 2>/dev/null && log_msg "  - pulse runtime 已清理"
+    fi
+}
+
+# ============================================
+# 清理 RTKit（实时权限守护进程）
+# ============================================
+cleanup_rtkit() {
+    log_msg "清理 RTKit 进程..."
+
+    # 注意：rtkit-daemon 通常是系统服务，但每个会话会触发一个实例
+    # 只杀死该用户启动的 rtkit 相关进程
+    pkill -u "$USER_UID" -x "rtkit-daemon" 2>/dev/null && log_msg "  ✓ rtkit-daemon (user) 已终止"
+
+    if [ "$(id -u)" -ne 0 ]; then
+        log_msg "警告: 脚本未以 root 运行，某些清理可能失败"
+        sudo -n rtkitctl -k
+    else
+        rtkitctl -k
+    fi
+
+    # 清理 rtkit 运行时文件
+    rm -rf "/run/user/$USER_UID/rtkit" 2>/dev/null
+}
+
+# ============================================
+# 清理 SSH Agent
+# ============================================
+cleanup_ssh_agent() {
+    log_msg "清理 SSH Agent..."
+
+    # 杀死该用户的 ssh-agent
+    pkill -u "$USER_UID" -x "ssh-agent" 2>/dev/null && log_msg "  ✓ ssh-agent 已终止"
+
+    # 清理 SSH agent socket 和环境变量文件
+    rm -f "/tmp/ssh-*/agent.*" 2>/dev/null
+    rm -f "/run/user/$USER_UID/ssh-agent*" 2>/dev/null
+    rm -f "/home/$USER_NAME/.ssh/agent-*" 2>/dev/null
+
+    # 清理环境变量文件
+    rm -f "/home/$USER_NAME/.ssh-agent-env" 2>/dev/null
+}
+
+# ============================================
+# 清理 im-launch 及相关会话进程
+# ============================================
+cleanup_im_launch() {
+    log_msg "清理 im-launch 及相关进程..."
+
+    # 杀死 im-launch
+    pkill -u "$USER_UID" -x "im-launch" 2>/dev/null && log_msg "  ✓ im-launch 已终止"
+
+    # 常见的输入法框架
+    pkill -u "$USER_UID" -x "ibus-daemon" 2>/dev/null && log_msg "  ✓ ibus-daemon 已终止"
+    pkill -u "$USER_UID" -x "fcitx" 2>/dev/null && log_msg "  ✓ fcitx 已终止"
+    pkill -u "$USER_UID" -x "fcitx5" 2>/dev/null && log_msg "  ✓ fcitx5 已终止"
+
+    # 清理输入法 socket
+    rm -rf "/run/user/$USER_UID/ibus" 2>/dev/null
+    rm -rf "/run/user/$USER_UID/fcitx" 2>/dev/null
+}
+
+# ============================================
+# 清理用户进程（可选，激进模式）
+# ============================================
+cleanup_user_processes() {
+    log_msg "检查残留用户进程..."
+
+    USER_UID=$(id -u "$USER_NAME" 2>/dev/null)
+
+    # 只清理无父进程的孤儿进程（PPID = 1）
+    ps -u "$USER_UID" -o pid,ppid,comm | while read pid ppid comm; do
+        if [ "$ppid" = "1" ] && [ "$pid" != "$$" ]; then
+                    log_msg "  - 终止孤儿进程: $comm (PID: $pid)"
+                    kill -TERM "$pid" 2>/dev/null
+                    sleep 0.5
+        fi
+    done
+}
+
+# ============================================
+# 主执行流程
+# ============================================
+
+# 检测 root 运行
+if [ "$(id -u)" -ne 0 ]; then
+    log_msg "警告: 脚本未以 root 运行，某些清理可能失败"
+fi
+
+cleanup_pipewire
+cleanup_rtkit
+cleanup_ssh_agent
+cleanup_im_launch
+cleanup_user_processes
+
+log_msg "=== 会话清理完成 ==="
+log_msg ""
+
+exit 0

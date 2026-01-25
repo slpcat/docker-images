@@ -12,6 +12,12 @@ RUN curl -s -L https://github.com/ncopa/su-exec/archive/v0.2.tar.gz | tar zx -C 
 
 FROM ubuntu:24.04
 
+RUN \
+    userdel -r ubuntu \
+    && apt-get update \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y runit \
+    && ln -sf /usr/sbin/runit /sbin/init
+
 # For slim:
 #   --build-arg ADDITIONAL_APT_GET_OPTS=--no-install-recommends
 ARG ADDITIONAL_APT_GET_OPTS=""
@@ -36,7 +42,6 @@ RUN \
       xfe \
       sudo \
       tzdata \
-      runit \
       xorg \
       xorgxrdp \
       xrdp \
@@ -105,6 +110,12 @@ RUN sed -i 's|.*pam_systemd.so|#&|g' /etc/pam.d/common-session \
 #    && rm -f /etc/xdg/autostart/nm-applet.desktop \
     && rm -f /etc/xdg/autostart/org.gnome.Evolution-alarm-notify.desktop \
     && rm -f /etc/xdg/autostart/org.gnome.SettingsDaemon.Power.desktop
+
+# runit config
+RUN \
+    ln -s /etc/sv/dbus /etc/service/dbus && \
+    ln -s /etc/sv/xrdp /etc/service/xrdp && \
+    ln -s /etc/sv/xrdp-sesman /etc/service/xrdp-sesman
 
 # Copy entrypoint script
 COPY runit-entrypoint.sh /usr/local/bin/

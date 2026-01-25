@@ -1,0 +1,106 @@
+runit 方案
+普通用户身份 + 等 X Server 真正起来后再开始录像
+核心思路：
+服务目录放在 ~/service（runit 支持 per-user 模式），用 runsvdir 拉起；
+run 脚本里循环检测 DISPLAY 与 X11 socket 是否可用，检测通过才 exec ffmpeg；
+利用 sudo loginctl enable-linger <username> 实现“用户级开机自启”，无需登录图形界面；
+日志仍走 svlogd，但目录改到 ~/.log/screenrec。
+
+一、安装依赖（Debian/Ubuntu 示例）
+bash
+
+sudo apt install runit ffmpeg rsync
+# 让普通用户也能开机就跑后台服务
+sudo apt install --no-install-recommends systemd-services   # 提供 loginctl
+二、给用户开“常驻”权限
+bash
+
+sudo loginctl enable-linger $USER   # 开机即启用户级 runsvdir，无需图形登录
+三、建用户级服务目录
+bash
+
+mkdir -p ~/service/screenrec/log
+四、主启动脚本 ~/service/screenrec/run
+bash
+
+#!/bin/bash
+export DISPLAY=:0
+TMP_DIR=$HOME/.cache/screenrec
+OUT_DIR=$HOME/Videos/screen
+LOG_DIR=$HOME/.log/screenrec
+mkdir -p "$TMP_DIR" "$OUT_DIR" "$LOG_DIR"
+
+# 等 X Server 真正就绪再往下走
+while :; do
+    # 1. DISPLAY 变量存在 2. socket 文件可打开 3. xrandr 能吐出分辨率
+    if [ -n "$DISPLAY" ] && \
+       [ -S "/tmp/.X11-unix/X${DISPLAY#*:}" ] && \
+       xrandr >/dev/null 2>&1; then
+        break
+    fi
+    sleep 5
+done
+
+# 前台执行，runit 会 supervise
+exec 2>&1
+cd "$TMP_DIR"
+exec ffmpeg -hide_banner -loglevel error \
+     -f x11grab -r 10 -s $(xrandr | grep '*' | awk '{print $1}' | head -n1) -i $DISPLAY \
+     -an -c:v libx264 -preset ultrafast -tune zerolatency -crf 28 \
+     -strftime 1 -segment_time 3600 -f segment "$TMP_DIR/%Y%m%d_%H%M%S.mp4"
+赋可执行
+exec ffmpeg -hide_banner -loglevel error \
+     -f x11grab -r 10 -s $(xrandr | grep '*' | awk '{print $1}' | head -n1) -i ${DISPLAY}.0 \
+     -f pulse -i default \
+     -c:v libx264 -preset ultrafast -tune zerolatency -crf 28 \
+     -ac 2 \
+     -strftime 1 -segment_time 3600 -f segment "$TMP_DIR/%Y%m%d_%H%M%S.mp4"
+
+bash
+
+chmod +x ~/service/screenrec/run
+五、日志子服务 ~/service/screenrec/log/run
+bash
+
+#!/bin/bash
+exec svlogd -tt ~/.log/screenrec
+bash
+
+chmod +x ~/service/screenrec/log/run
+六、让用户级 runsvdir 开机自启
+Debian/Ubuntu 默认已装 runit-systemd 包，系统会拉 /lib/systemd/system/runsvdir-start.service，我们只需确保用户级实例随 lingering 启动即可；
+若想手动验证：
+bash
+
+# 当前终端先跑起来
+runsvdir -P ~/service &
+# 查看状态
+sv status ~/service/screenrec
+七、分段文件搬移 + 清理
+搬移脚本 ~/bin/rec_mv.sh
+bash
+
+#!/bin/bash
+TMP=$HOME/.cache/screenrec
+DEST=$HOME/Videos/screen
+mkdir -p "$DEST"
+find "$TMP" -name '*.mp4' -mmin +5 -exec mv -n {} "$DEST/" \;
+定时任务（用户级 crontab）
+bash
+
+crontab -e
+# 加入
+*/10 * * * * $HOME/bin/rec_mv.sh >/dev/null 2>&1
+0  4 * * *  find $HOME/Videos/screen -mtime +7 -delete
+八、日常运维（用户身份即可）
+bash
+
+sv status screenrec              # 状态
+sv up/down screenrec             # 启停
+sv restart screenrec             # 重拉
+tail -f ~/.log/screenrec/current # 实时日志
+九、关键点小结
+全程 普通用户身份，无需 root；
+run 脚本里 循环检测 X11 socket + xrandr，真正就绪才 exec ffmpeg，避免“黑屏/无 DISPLAY”失败；
+利用 loginctl enable-linger 实现 开机自启，无需图形登录；
+runit 自带 supervise，ffmpeg 崩溃即重启，7×24 h 不掉线。

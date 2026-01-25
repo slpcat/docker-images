@@ -1,3 +1,16 @@
 #!/bin/sh
 exec 2>&1
+
+rm -f /var/run/xrdp/xrdp.pid
+# xrdp 需要 sesman 先运行
+if [ -e /etc/sv/xrdp-sesman ]; then
+    sv start xrdp-sesman >/dev/null 2>&1
+    # 等待 sesman 就绪（最多5秒）
+    for i in 1 2 3 4 5; do
+        sv status xrdp-sesman | grep -q "^run:" && break
+        sleep 1
+    done
+fi
+
+echo "Starting xrdp..."
 exec xrdp --nodaemon

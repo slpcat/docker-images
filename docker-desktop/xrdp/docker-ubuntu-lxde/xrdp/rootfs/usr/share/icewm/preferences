@@ -47,7 +47,7 @@
 # AutoReloadMenus=1 # 0/1
 
 #  Auto scroll delay in ms.
-# AutoScrollDelay=60 # [0-5000]
+AutoScrollDelay=250 # [0-5000]
 
 #  Auto scroll start delay in ms.
 # AutoScrollStartDelay=500 # [0-5000]
@@ -135,7 +135,7 @@ ClockCommand=""
 # DelayFuzziness=0 # [0-100]
 
 #  Delay pointer focusing when mouse moves.
-# DelayPointerFocus=1 # 0/1
+DelayPointerFocus=1 # 0/1
 
 #  Desktop mouse-button click to show the root menu.
 # DesktopMenuButton=3 # [0-20]
@@ -516,7 +516,7 @@ DoubleBuffer=0 # 0/1
 # LogoutCancelCommand=""
 
 #  Command to start logout.
-#LogoutCommand="lxsession-logout"
+# LogoutCommand="lxsession-logout"
 
 #  Lower the active window when clicked again.
 # LowerOnClickWhenRaised=0 # 0/1
@@ -609,10 +609,13 @@ NetStatusShowOnlyRunning=1 # 0/1
 # NewMailCommand=""
 
 #  Opaque window move.
-OpaqueMove=0 # 0/1
+#  Don't change , otherwise anydesk/rustdesk can't move window
+OpaqueMove=1 # 0/1
 
 #  Opaque window resize.
-OpaqueResize=0 # 0/1
+OpaqueResize=1 # 0/1
+
+FullRepaint=0
 
 #  Command to select and run a program.
 # OpenCommand=""
@@ -723,7 +726,7 @@ OpaqueResize=0 # 0/1
 RunCommand="gexec"
 
 #  Scroll bar autoscroll delay in ms.
-# ScrollBarDelay=30 # [0-5000]
+ScrollBarDelay=250 # [0-5000]
 
 #  Inital scroll bar autoscroll delay in ms.
 # ScrollBarStartDelay=500 # [0-5000]
@@ -1492,7 +1495,7 @@ ToolTipFontNameXft="DejaVu Sans:size=12,Sans:size=12,Noto Sans CJK SC:style=Medi
 # DesktopBackgroundCenter=0 # 0/1
 
 #  Desktop background color(s), comma separated.
-# DesktopBackgroundColor=""
+DesktopBackgroundColor="#220533"
 
 #  Desktop background image(s), comma separated.
 # DesktopBackgroundImage=""

@@ -135,7 +135,7 @@ ClockCommand=""
 # DelayFuzziness=0 # [0-100]
 
 #  Delay pointer focusing when mouse moves.
-# DelayPointerFocus=1 # 0/1
+DelayPointerFocus=1 # 0/1
 
 #  Desktop mouse-button click to show the root menu.
 # DesktopMenuButton=3 # [0-20]
@@ -609,10 +609,13 @@ NetStatusShowOnlyRunning=1 # 0/1
 # NewMailCommand=""
 
 #  Opaque window move.
-OpaqueMove=0 # 0/1
+#  Don't change , otherwise anydesk/rustdesk can't move window
+OpaqueMove=1 # 0/1
 
 #  Opaque window resize.
-OpaqueResize=0 # 0/1
+OpaqueResize=1 # 0/1
+
+FullRepaint=0
 
 #  Command to select and run a program.
 # OpenCommand=""
