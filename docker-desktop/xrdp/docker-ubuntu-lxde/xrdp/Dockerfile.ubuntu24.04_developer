@@ -141,6 +141,7 @@ RUN \
     && apt-get install -y code \
     && apt-get clean \
     && rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/*
+# intellij-idea-community pycharm-community from xtradeb
 # Postman
 RUN \
     wget https://dl.pstmn.io/download/latest/linux64 -O postman.tar.gz \
@@ -157,4 +158,8 @@ RUN \
 
 #Neovim，Atom、Helix
 
-
+#openQA基于图像识别，测试整个 OS操作系统安装、GUI 测试
+#Selenium浏览器自动化Web 应用测试
+#Taskotron/Fedora CI包级别测试软件包构建验证
+#Autotest内核/底层测试驱动、内核功能
+#

@@ -31,6 +31,7 @@ FROM slpcat/docker-ubuntu-lxde:24.04-xrdp_developer
 #腾讯ima
 #Cherry Studio
 
+
 #Gnoppix AI Linux
 #AI Email Support
 #AI Vulnerability Scanning
@@ -56,3 +57,33 @@ RUN \
 #    curl -sS https://debian.griffo.io/EA0F721D231FDD3A0A17B9AC7808B4DD62C41256.asc | gpg --dearmor --yes -o /etc/apt/trusted.gpg.d/debian.griffo.io.gpg && \
 #    echo "deb https://debian.griffo.io/apt $(lsb_release -sc 2>/dev/null) main" | tee /etc/apt/sources.list.d/debian.griffo.io.list && \
 #    apt-get update && apt-get install -y zig ghostty lazygit yazi eza uv fzf zoxide bun tigerbeetle
+
+# Warp Terminal
+RUN \
+    wget https://releases.warp.dev/stable/v0.2026.01.21.08.14.stable_03/warp-terminal_0.2026.01.21.08.14.stable.03_amd64.deb && \
+    apt-get install -y ./warp-terminal_0.2026.01.21.08.14.stable.03_amd64.deb && rm -f warp-terminal_0.2026.01.21.08.14.stable.03_amd64.deb
+
+# Wave Termianl
+
+#bytebot
+#https://github.com/bytebot-ai/bytebot.git
+#everywhere 桌面智能
+#https://github.com/DearVa/Everywhere
+#open agent
+#omniparser
+#os-copilot
+#appagent
+#腾讯youtu-agent
+#字节ui-tars-desktop
+#ssh-mcp
+#obsidian 
+#微软magentic ui
+#iflow
+#turix cua
+#sima打游戏
+#agent browser
+#ghosty + claude
+#qoder
+#newwelle
+#cowork
+

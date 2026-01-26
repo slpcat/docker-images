@@ -78,16 +78,26 @@ RUN \
     apt-get update && apt-get install -y flatpak && \
     flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 
+# Install appimagemanager
+RUN \
+    wget https://github.com/tunjayoff/appimagemanager/releases/download/v1.0.4/appimagemanager_1.0.4_amd64.deb && \
+    apt-get install -y ./appimagemanager_1.0.4_amd64.deb  && rm -f appimagemanager_1.0.4_amd64.deb
+
 # 星火应用商店 https://www.spark-app.store/download
 RUN \
     wget https://gitee.com/spark-store-project/spark-store/releases/download/4.8.4/spark-store_4.8.4_amd64.deb && \
     apt-get install -y ./spark-store_4.8.4_amd64.deb && rm -f spark-store_4.8.4_amd64.deb
 
+# Install XnView MP
+RUN \
+    wget https://download.xnview.com/XnViewMP-linux-x64.deb && \
+    apt-get install -y ./XnViewMP-linux-x64.deb && rm -f XnViewMP-linux-x64.deb
+
 # 屏幕录像工具
 RUN \
     apt-get install -y recordmydesktop simplescreenrecorder libavcodec-extra kazam
 
-# Install Chromium and driver
+# Install Chromium and driver from xtradeb
 RUN \
     add-apt-repository ppa:xtradeb/apps -y && \
     apt-get update && apt-get  install -y chromium chromium-l10n chromium-shell chromium-driver
@@ -107,14 +117,9 @@ RUN \
     ln -s /opt/google/chrome-headless-shell-linux64/chrome-headless-shell /usr/local/bin/chrome-headless-shell && \
     rm -rf chromedriver* chrome-headless-shell*
 
-# Install Mozilla Firefox and driver
-COPY install-firefox.sh /tmp/install-firefox.sh
+# Install Mozilla Firefox and driver from xtradeb
 RUN \
-    bash /tmp/install-firefox.sh && rm -f /tmp/install-firefox.sh && \
-    wget https://github.com/mozilla/geckodriver/releases/download/v0.36.0/geckodriver-v0.36.0-linux64.tar.gz && \
-    tar zxf geckodriver-v0.36.0-linux64.tar.gz && \
-    mv geckodriver /usr/local/bin/ && \
-    rm -rf geckodriver*
+    apt-get update && apt-get  install -y firefox firefox-geckodriver
 
 # Install Microsoft Edge and driver
 RUN \
@@ -126,13 +131,37 @@ RUN \
     mv msedgedriver /usr/local/bin && \
     rm -rf edgedriver* Driver_Notes
 
+# Install Opera Browser
+RUN \
+    wget -O- https://deb.opera.com/archive.key | gpg --dearmor > /etc/apt/trusted.gpg.d/opera.gpg && \
+    echo "deb [arch=amd64] https://deb.opera.com/opera-stable/ stable non-free" | tee /etc/apt/sources.list.d/opera-stable.list && \
+    echo "opera-stable opera-stable/add-deb-source boolean true" | sudo debconf-set-selections && \
+    apt-get update && apt-get install -y opera-stable
+
+# Install Brave Browser
+RUN \
+    curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg && \
+    curl -fsSLo /etc/apt/sources.list.d/brave-browser-release.sources https://brave-browser-apt-release.s3.brave.com/brave-browser.sources && \
+    apt-get update && apt-get install -y brave-browser
+
+# Install Tangram Browser
+#flatpak install flathub re.sonny.Tangram
+
+# Install peazip nextcloud-desktop thunderbird from xtradeb
+
+RUN \
+    apt-get install -y peazip nextcloud-desktop thunderbird
+
 # clash-verge-rev
 RUN \
     wget https://github.com/clash-verge-rev/clash-verge-rev/releases/download/v2.4.4/Clash.Verge_2.4.4_amd64.deb \
-    && apt-get install -y ./Clash.Verge_2.4.4_amd64.deb \
-    && rm -rf Clash.Verge*
+    && apt-get install -y ./Clash.Verge_2.4.4_amd64.deb && rm -f Clash.Verge*
+
+# PotPlayer
 
 # kodi
+# flatpak install tv.kodi.Kodi
+
 #RUN \
 #    add-apt-repository ppa:team-xbmc/ppa && \
 #    apt-get update && apt-get install -y  kodi
@@ -154,6 +183,7 @@ RUN \
     && apt-get install -y ./slack-desktop-4.47.69-amd64.deb && rm -f slack-desktop-4.47.69-amd64.deb
 # telegram
 # zoom
+# Figma
 
 # wechat
 RUN \
@@ -163,6 +193,7 @@ RUN \
 RUN \
     wget https://dldir1v6.qq.com/qqfile/qq/QQNT/Linux/QQ_3.2.23_260108_amd64_01.deb \
     && apt-get install -y ./QQ_3.2.23_260108_amd64_01.deb && rm -f QQ_3.2.23_260108_amd64_01.deb
+
 # QQ music
 # 腾讯视频Tenvideo
 
@@ -175,6 +206,13 @@ RUN \
 # dingtalk
 
 # sunshine
+RUN \
+    wget https://github.com/LizardByte/Sunshine/releases/download/v2025.924.154138/sunshine-ubuntu-24.04-amd64.deb \
+    && apt-get install -y ./sunshine-ubuntu-24.04-amd64.deb && rm -f sunshine-ubuntu-24.04-amd64.deb
+
+# moonlight
+# wget https://github.com/moonlight-stream/moonlight-qt/releases/download/v6.1.0/Moonlight-6.1.0-x86_64.AppImage
+
 # rustdesk
 RUN \
     wget https://github.com/rustdesk/rustdesk/releases/download/1.4.5/rustdesk-1.4.5-x86_64.deb && \
@@ -185,8 +223,6 @@ RUN \
 RUN \
     wget https://download.anydesk.com/linux/anydesk_7.1.2-1_amd64.deb \
     && apt-get install -y ./anydesk_7.1.2-1_amd64.deb  && rm -f anydesk_7.1.2-1_amd64.deb
-
-# moonlight
 
 # steam
 # epic games
