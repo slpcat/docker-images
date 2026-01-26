@@ -33,8 +33,8 @@ RUN \
       fcitx5-chinese-addons \
       fcitx5-material-color \
       #im-switch \
-      #language-pack-ja \
-      #language-pack-ja-base \
+      language-pack-zh-hans \
+      language-pack-zh-hans-base \
       lxde-core \
       #lxpanel can not work
       icewm \
@@ -53,24 +53,15 @@ RUN \
 COPY --from=build \
     /opt/su-exec/su-exec /usr/sbin/su-exec
 
-RUN apt-get update && apt-get install -y locales && rm -rf /var/lib/apt/lists/* \
-    && localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
-
 ENV \
     TERM="xterm-256color" \
     LANG="en_US.UTF-8" \
     LANGUAGE="en_US.UTF-8" \
     LC_ALL="en_US.UTF-8"
 
-# Set timezone and locales
-RUN \
-    echo "$LANG UTF-8" > /etc/locale.gen \
-    && apt-get update -q \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -yq apt-utils dialog tzdata \
-    && update-locale LANG=$LANG \
-    && locale-gen $LANG \
-    && DEBIAN_FRONTEND=noninteractive dpkg-reconfigure locales
-
+RUN locale-gen $LANG \
+    && echo "LC_ALL=$LANG" > /etc/default/locale \
+    && echo "LANG=$LANG" >> /etc/default/locale
 
 # Set default vars
 ENV DEFAULT_USER=developer \
