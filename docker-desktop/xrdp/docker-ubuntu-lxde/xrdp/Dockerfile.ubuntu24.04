@@ -28,6 +28,7 @@ RUN \
       vim-tiny \
       dbus-x11 \
       fonts-noto-cjk \
+      fonts-noto-color-emoji \
       fcitx5 \
       fcitx5-chinese-addons \
       fcitx5-material-color \
