@@ -152,6 +152,14 @@ RUN \
 RUN \
     apt-get install -y peazip nextcloud-desktop thunderbird
 
+# tailscale
+RUN \
+    curl -fsSL https://tailscale.com/install.sh | sh
+
+# zerotier-one
+RUN \
+    curl -s https://install.zerotier.com | bash
+
 # clash-verge-rev
 RUN \
     wget https://github.com/clash-verge-rev/clash-verge-rev/releases/download/v2.4.4/Clash.Verge_2.4.4_amd64.deb \
