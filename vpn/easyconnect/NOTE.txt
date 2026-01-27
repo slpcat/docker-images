@@ -7,6 +7,9 @@ docker run -d --restart=always --device /dev/net/tun --cap-add NET_ADMIN -e IPTA
 
 arm64 和 mips64el 架构需要加入 `-e DISABLE_PKG_VERSION_XML=1` 参数
 
+
+docker run --rm --device /dev/net/tun --cap-add NET_ADMIN -ti -e PASSWORD=123abc321 -e URLWIN=1 -v $HOME/.atrust-data:/root -p 5901:5901 -p 1080:1080 -p 8888:8888 -p 127.0.0.1:54631:54631 --sysctl net.ipv4.conf.default.route_localnet=1 hagb/docker-atrust
+
 clash 配置
 
 proxies 列表加一行

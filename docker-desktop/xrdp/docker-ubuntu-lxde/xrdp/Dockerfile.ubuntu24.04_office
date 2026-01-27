@@ -138,6 +138,11 @@ RUN \
     echo "opera-stable opera-stable/add-deb-source boolean true" | sudo debconf-set-selections && \
     apt-get update && apt-get install -y opera-stable
 
+# Install 360 browser
+#RUN \
+#    wget https://mirrors.sdu.edu.cn/spark-store-repository/amd64-store/network/browser360-cn-stable/browser360-cn-stable_13.4.1120.32-1_amd64.deb && \
+#    apt-get install -y ./browser360-cn-stable_13.4.1120.32-1_amd64.deb && rm -f browser360-cn-stable_13.4.1120.32-1_amd64.deb
+
 # Install Brave Browser
 RUN \
     curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg && \
@@ -216,7 +221,11 @@ RUN \
 RUN \
     wget  https://d24f57-1874119703.antpcdn.com:19001/b/pkg-ant.baidu.com/issue/netdisk/LinuxGuanjia/4.17.7/baidunetdisk_4.17.7_amd64.deb \
     && apt-get install -y ./baidunetdisk_4.17.7_amd64.deb  && rm -f baidunetdisk_4.17.7_amd64.deb
-# thunder
+
+# 迅雷/thunder
+RUN \
+    wget https://mirrors.sdu.edu.cn/spark-store-repository/amd64-store/network/com.xunlei.download/com.xunlei.download_1.0.0.3spark3_amd64.deb \
+    && apt-get install -y ./com.xunlei.download_1.0.0.3spark3_amd64.deb && rm -f com.xunlei.download_1.0.0.3spark3_amd64.deb
 
 # feishu
 #COPY Feishu-linux_x64-7.58.14.deb /
@@ -256,3 +265,9 @@ RUN \
 # epic games
 # ubisoft
 # battle.net
+
+# Google Earth
+RUN \
+    wget https://dl.google.com/dl/earth/client/current/google-earth-pro-stable_current_amd64.deb \
+    && apt-get install -y ./google-earth-pro-stable_current_amd64.deb && rm -f google-earth-pro-stable_current_amd64.deb
+
