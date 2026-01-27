@@ -59,9 +59,9 @@ ENV \
     LANGUAGE="en_US.UTF-8" \
     LC_ALL="en_US.UTF-8"
 
-RUN locale-gen $LANG \
-    && echo "LC_ALL=$LANG" > /etc/default/locale \
-    && echo "LANG=$LANG" >> /etc/default/locale
+#RUN locale-gen $LANG \
+#    && echo "LC_ALL=$LANG" > /etc/default/locale \
+#    && echo "LANG=$LANG" >> /etc/default/locale
 
 # Set default vars
 ENV DEFAULT_USER=developer \
