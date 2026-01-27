@@ -21,7 +21,7 @@ ENV \
 # Set timezone and locales
 RUN \
     apt-get update -q \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -yq apt-utils dialog locales tzdata \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -yq apt-utils dialog locales tzdata language-pack-zh-hans language-pack-zh-hans-base \
     && update-locale LANG=$LANG \
     && locale-gen $LANG en_US.UTF-8
 
@@ -50,8 +50,6 @@ RUN \
       fcitx5-chinese-addons \
       fcitx5-material-color \
       #im-switch \
-      language-pack-zh-hans \
-      language-pack-zh-hans-base \
       lxde-core \
       #lxpanel can not work
       icewm \
