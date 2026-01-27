@@ -64,8 +64,7 @@ RUN \
     apt-get update -q \
     && DEBIAN_FRONTEND=noninteractive apt-get install -yq apt-utils dialog tzdata \
     && update-locale LANG=$LANG \
-    && locale-gen $LANG \
-    && locale-gen en_US.UTF-8 \
+    && locale-gen $LANG en_US.UTF-8 \
     && DEBIAN_FRONTEND=noninteractive dpkg-reconfigure locales
 
 #RUN locale-gen $LANG \
