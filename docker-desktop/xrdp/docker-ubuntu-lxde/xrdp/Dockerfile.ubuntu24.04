@@ -15,7 +15,7 @@ FROM ubuntu:24.04
 ENV \
     TERM="xterm-256color" \
     LANG="zh_CN.UTF-8" \
-    LANGUAGE="zh_CN.UTF-8" \
+    LANGUAGE="zh_CN:zh" \
     LC_ALL="zh_CN.UTF-8"
 
 # Set timezone and locales
