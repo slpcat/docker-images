@@ -21,7 +21,7 @@ ENV \
 # Set timezone and locales
 RUN \
     apt-get update -q \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -yq apt-utils dialog tzdata \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -yq apt-utils dialog locales tzdata \
     && update-locale LANG=$LANG \
     && locale-gen $LANG en_US.UTF-8
 
