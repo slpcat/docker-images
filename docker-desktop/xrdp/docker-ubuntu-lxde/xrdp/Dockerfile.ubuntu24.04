@@ -21,7 +21,7 @@ ENV \
 # Set timezone and locales
 RUN \
     apt-get update -q \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -yq apt-utils dialog locales tzdata language-pack-zh-hans language-pack-zh-hans-base \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -yq apt-utils dialog locales tzdata language-pack-en language-pack-en-base language-pack-zh-hans language-pack-zh-hans-base \
     && update-locale LANG=$LANG \
     && locale-gen $LANG zh_CN.UTF-8
 
