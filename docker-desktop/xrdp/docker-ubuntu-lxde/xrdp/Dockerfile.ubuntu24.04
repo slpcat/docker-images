@@ -20,10 +20,13 @@ ENV \
     LANGUAGE="en_US:en" \
     LC_ALL="en_US.UTF-8"
 
+RUN apt-get update && apt-get install -y locales && rm -rf /var/lib/apt/lists/* \
+    && localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
+
 # Set timezone and locales
 RUN \
     apt-get update -q \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -yq apt-utils dialog locales tzdata language-pack-en language-pack-en-base language-pack-zh-hans language-pack-zh-hans-base \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -yq apt-utils dialog tzdata language-pack-zh-hans language-pack-zh-hans-base \
     && echo "$LANG UTF-8" > /etc/locale.gen \
     && update-locale LANG=$LANG \
     && locale-gen $LANG zh_CN.UTF-8

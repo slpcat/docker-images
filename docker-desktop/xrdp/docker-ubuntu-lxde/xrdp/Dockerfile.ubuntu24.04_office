@@ -119,7 +119,7 @@ RUN \
 
 # Install Mozilla Firefox and driver from xtradeb
 RUN \
-    apt-get update && apt-get  install -y firefox firefox-geckodriver
+    apt-get update && apt-get  install -y firefox firefox-locale-zh-hans firefox-geckodriver
 
 # Install Microsoft Edge and driver
 RUN \
@@ -147,10 +147,10 @@ RUN \
 # Install Tangram Browser
 #flatpak install flathub re.sonny.Tangram
 
-# Install peazip nextcloud-desktop thunderbird from xtradeb
+# Install peazip nextcloud-desktop from xtradeb
 
 RUN \
-    apt-get install -y peazip nextcloud-desktop thunderbird
+    apt-get install -y peazip nextcloud-desktop
 
 # tailscale
 RUN \
