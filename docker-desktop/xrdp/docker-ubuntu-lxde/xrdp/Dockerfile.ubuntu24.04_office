@@ -190,6 +190,8 @@ RUN \
     wget https://downloads.slack-edge.com/desktop-releases/linux/x64/4.47.69/slack-desktop-4.47.69-amd64.deb \
     && apt-get install -y ./slack-desktop-4.47.69-amd64.deb && rm -f slack-desktop-4.47.69-amd64.deb
 # telegram
+#flatpak install https://dl.flathub.org/repo/appstream/org.telegram.desktop.flatpakref
+
 # zoom
 # Figma
 
@@ -197,12 +199,17 @@ RUN \
 RUN \
     wget https://dldir1v6.qq.com/weixin/Universal/Linux/WeChatLinux_x86_64.deb \
     && apt-get install -y ./WeChatLinux_x86_64.deb && rm -f WeChatLinux_x86_64.deb
+
 # QQ
 RUN \
     wget https://dldir1v6.qq.com/qqfile/qq/QQNT/Linux/QQ_3.2.23_260108_amd64_01.deb \
     && apt-get install -y ./QQ_3.2.23_260108_amd64_01.deb && rm -f QQ_3.2.23_260108_amd64_01.deb
 
 # QQ music
+#COPY qqmusic_1.1.8_amd64.deb /
+#RUN \
+#    apt-get install -y ./qqmusic_1.1.8_amd64.deb && rm -f qqmusic_1.1.8_amd64.deb
+
 # 腾讯视频Tenvideo
 
 # baidunetdisk
@@ -210,8 +217,21 @@ RUN \
     wget  https://d24f57-1874119703.antpcdn.com:19001/b/pkg-ant.baidu.com/issue/netdisk/LinuxGuanjia/4.17.7/baidunetdisk_4.17.7_amd64.deb \
     && apt-get install -y ./baidunetdisk_4.17.7_amd64.deb  && rm -f baidunetdisk_4.17.7_amd64.deb
 # thunder
+
 # feishu
+#COPY Feishu-linux_x64-7.58.14.deb /
+#RUN \
+#    apt-get install -y ./Feishu-linux_x64-7.58.14.deb && rm -f Feishu-linux_x64-7.58.14.deb
+
+# lark
+#COPY Lark-linux_x64-7.59.12.deb /
+#RUN \
+#    apt-get install -y ./Lark-linux_x64-7.59.12.deb && rm -f Lark-linux_x64-7.59.12.deb
+
 # dingtalk
+RUN \
+    wget https://dtapp-pub.dingtalk.com/dingtalk-desktop/xc_dingtalk_update/linux_deb/Release/com.alibabainc.dingtalk_8.1.0.6011301_amd64.deb \
+    && apt-get install -y ./com.alibabainc.dingtalk_8.1.0.6011301_amd64.deb && rm -f com.alibabainc.dingtalk_8.1.0.6011301_amd64.deb
 
 # sunshine
 RUN \
