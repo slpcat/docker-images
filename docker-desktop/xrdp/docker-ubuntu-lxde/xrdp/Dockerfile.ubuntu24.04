@@ -12,6 +12,23 @@ RUN curl -s -L https://github.com/ncopa/su-exec/archive/v0.2.tar.gz | tar zx -C 
 
 FROM ubuntu:24.04
 
+ENV \
+    TERM="xterm-256color" \
+    LANG="zh_CN.UTF-8" \
+    LANGUAGE="zh_CN.UTF-8" \
+    LC_ALL="zh_CN.UTF-8"
+
+# Set timezone and locales
+RUN \
+    apt-get update -q \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -yq apt-utils dialog tzdata \
+    && update-locale LANG=$LANG \
+    && locale-gen $LANG en_US.UTF-8
+
+#RUN locale-gen $LANG \
+#    && echo "LC_ALL=$LANG" > /etc/default/locale \
+#    && echo "LANG=$LANG" >> /etc/default/locale
+
 RUN \
     userdel -r ubuntu \
     && apt-get update \
@@ -52,24 +69,6 @@ RUN \
 
 COPY --from=build \
     /opt/su-exec/su-exec /usr/sbin/su-exec
-
-ENV \
-    TERM="xterm-256color" \
-    LANG="zh_CN.UTF-8" \
-    LANGUAGE="zh_CN.UTF-8" \
-    LC_ALL="zh_CN.UTF-8"
-
-# Set timezone and locales
-RUN \
-    apt-get update -q \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -yq apt-utils dialog tzdata \
-    && update-locale LANG=$LANG \
-    && locale-gen $LANG en_US.UTF-8 \
-    && DEBIAN_FRONTEND=noninteractive dpkg-reconfigure locales
-
-#RUN locale-gen $LANG \
-#    && echo "LC_ALL=$LANG" > /etc/default/locale \
-#    && echo "LANG=$LANG" >> /etc/default/locale
 
 # Set default vars
 ENV DEFAULT_USER=developer \
