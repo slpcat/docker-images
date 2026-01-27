@@ -55,9 +55,18 @@ COPY --from=build \
 
 ENV \
     TERM="xterm-256color" \
-    LANG="en_US.UTF-8" \
-    LANGUAGE="en_US.UTF-8" \
-    LC_ALL="en_US.UTF-8"
+    LANG="zh_CN.UTF-8" \
+    LANGUAGE="zh_CN.UTF-8" \
+    LC_ALL="zh_CN.UTF-8"
+
+# Set timezone and locales
+RUN \
+    apt-get update -q \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -yq apt-utils dialog tzdata \
+    && update-locale LANG=$LANG \
+    && locale-gen $LANG \
+    && locale-gen en_US.UTF-8 \
+    && DEBIAN_FRONTEND=noninteractive dpkg-reconfigure locales
 
 #RUN locale-gen $LANG \
 #    && echo "LC_ALL=$LANG" > /etc/default/locale \
