@@ -14,16 +14,16 @@ FROM ubuntu:24.04
 
 ENV \
     TERM="xterm-256color" \
-    LANG="zh_CN.UTF-8" \
-    LANGUAGE="zh_CN:zh" \
-    LC_ALL="zh_CN.UTF-8"
+    LANG="en_US.UTF-8" \
+    LANGUAGE="en_US:en" \
+    LC_ALL="en_US.UTF-8"
 
 # Set timezone and locales
 RUN \
     apt-get update -q \
     && DEBIAN_FRONTEND=noninteractive apt-get install -yq apt-utils dialog locales tzdata language-pack-zh-hans language-pack-zh-hans-base \
     && update-locale LANG=$LANG \
-    && locale-gen $LANG en_US.UTF-8
+    && locale-gen $LANG zh_CN.UTF-8
 
 #RUN locale-gen $LANG \
 #    && echo "LC_ALL=$LANG" > /etc/default/locale \
