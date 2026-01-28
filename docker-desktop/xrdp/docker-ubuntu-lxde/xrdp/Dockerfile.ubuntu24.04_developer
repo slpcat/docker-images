@@ -128,12 +128,14 @@ RUN \
     DEBIAN_FRONTEND=noninteractive apt-get install -y ./mongodb-compass_1.49.0_amd64.deb && rm -f mongodb-compass_1.49.0_amd64.deb
 
 # dbeaver
+# flatpak install flathub io.dbeaver.DBeaverCommunity
 RUN \
     wget -O /usr/share/keyrings/dbeaver.gpg.key https://dbeaver.io/debs/dbeaver.gpg.key && \
     echo "deb [signed-by=/usr/share/keyrings/dbeaver.gpg.key] https://dbeaver.io/debs/dbeaver-ce /" | tee /etc/apt/sources.list.d/dbeaver.list && \
     apt-get update && sudo apt-get install -y dbeaver-ce
 
 ## VSCode
+# flatpak install flathub com.visualstudio.code
 RUN \
     curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor -o /usr/share/keyrings/microsoft-keyring.gpg \
     && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/microsoft-keyring.gpg] https://packages.microsoft.com/repos/vscode stable main" > /etc/apt/sources.list.d/vscode.list \

@@ -5,3 +5,5 @@ fcitx5 &
 /usr/libexec/pipewire-module-xrdp/load_pw_modules.sh &
 #kmix &
 #pasystray &
+#anydesk --tray &
+#rustdesk --tray &
