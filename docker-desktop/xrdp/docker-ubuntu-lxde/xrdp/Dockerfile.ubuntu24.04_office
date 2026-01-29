@@ -6,6 +6,7 @@ RUN apt-get update -y             \
        apt-transport-https        \
        binutils                   \
        lsof                       \
+       pciutils                   \
        anacron                    \
        cron                       \
        ethtool                    \
@@ -78,12 +79,14 @@ RUN \
     apt-get update && apt-get install -y flatpak && \
     flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 
-# 对当前用户生效，后续安装的 Flatpak 应用也会继承
-#flatpak override --user \
-#    --env=GTK_IM_MODULE=fcitx5 \
-#    --env=QT_IM_MODULE=fcitx5 \
-#    --env=XMODIFIERS=@im=fcitx5 \
-#    --env=SDL_IM_MODULE=fcitx5
+# Chinese Input support
+RUN \
+    flatpak install -y flathub org.fcitx.Fcitx5 \
+    && flatpak override \
+    --env=GTK_IM_MODULE=fcitx5 \
+    --env=QT_IM_MODULE=fcitx5 \
+    --env=XMODIFIERS=@im=fcitx5 \
+    --env=SDL_IM_MODULE=fcitx5
 
 # Install appimagemanager
 RUN \
@@ -110,7 +113,7 @@ RUN \
     apt-get update && apt-get install -y chromium chromium-l10n chromium-shell chromium-driver
 
 # Ungoogled Chromium
-# flatpak install flathub io.github.ungoogled_software.ungoogled_chromium
+# flatpak install -y flathub io.github.ungoogled_software.ungoogled_chromium
 RUN \
     apt-get install -y ungoogled-chromium ungoogled-chromium-l10n ungoogled-chromium-shell ungoogled-chromium-driver
 
@@ -156,13 +159,14 @@ RUN \
 #    apt-get install -y ./browser360-cn-stable_13.4.1120.32-1_amd64.deb && rm -f browser360-cn-stable_13.4.1120.32-1_amd64.deb
 
 # Install Yandex Browser
-#flatpak -y --noninteractive install flathub ru.yandex.Browser
+#flatpak install -y flathub ru.yandex.Browser
 #RUN \
 #    wget -q -O - https://repo.yandex.ru/yandex-browser/YANDEX-BROWSER-KEY.GPG | gpg --dearmor -o /usr/share/keyrings/yandex-browser-keyring.gpg \
 #    && echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/yandex-browser-keyring.gpg] https://repo.yandex.ru/yandex-browser/ stable main' | tee /etc/apt/sources.list.d/yandex-browser.list \
 #    && apt-get update && apt-get install -y yandex-browser-stable
 
 # Install Brave Browser
+#flatpak install -y flathub com.brave.Browser
 RUN \
     curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg && \
     curl -fsSLo /etc/apt/sources.list.d/brave-browser-release.sources https://brave-browser-apt-release.s3.brave.com/brave-browser.sources && \
@@ -170,7 +174,7 @@ RUN \
 
 # workspace browser
 # Install Tangram Browser
-#flatpak -y --noninteractive install flathub re.sonny.Tangram
+#flatpak install -y flathub re.sonny.Tangram
 # Rambox
 # Franz
 # Ferdium
@@ -178,8 +182,11 @@ RUN \
     wget https://github.com/ferdium/ferdium-app/releases/download/v7.1.1/Ferdium-linux-7.1.1-amd64.deb \
     && apt-get install -y ./Ferdium-linux-7.1.1-amd64.deb && rm -f Ferdium-linux-7.1.1-amd64.deb
 
-# Install peazip nextcloud-desktop from xtradeb
+#Thunderbird Mail
+RUN \
+    flatpak install -y flathub org.mozilla.Thunderbird
 
+# Install peazip nextcloud-desktop from xtradeb
 RUN \
     apt-get install -y peazip nextcloud-desktop
 
@@ -207,19 +214,19 @@ RUN \
 # PotPlayer
 
 # kodi
-# flatpak -y --noninteractive install tv.kodi.Kodi
+# flatpak install -y tv.kodi.Kodi
 
 #RUN \
 #    add-apt-repository ppa:team-xbmc/ppa && \
 #    apt-get update && apt-get install -y  kodi
 
 # OpenShot Editor
-# flatpak install flathub org.openshot.OpenShot
+# flatpak install -y flathub org.openshot.OpenShot
 # Shotcut Editor
-# flatpak install flathub org.shotcut.Shotcut
+# flatpak install -y flathub org.shotcut.Shotcut
 
 # OBS Studio 
-# flatpak install -y --noninteractive flathub com.obsproject.Studio
+# flatpak install -y flathub com.obsproject.Studio
 RUN \
     add-apt-repository ppa:obsproject/obs-studio && \
     apt-get update && apt-get install -y obs-studio
@@ -230,12 +237,10 @@ RUN \
     && apt-get install -y ./jopdf-linux-amd64_setup.deb && rm -f jopdf-linux-amd64_setup.deb
 
 # Obsidian is a multi-platform note taking application. See https://obsidian.md
-#cd /tmp
-#OBSIDIAN_VERSION=$(curl -s https://api.github.com/repos/obsidianmd/obsidian-releases/releases/latest | grep -Po '"tag_name": "v\K[^"]*')
-#wget -O obsidian.deb "https://github.com/obsidianmd/obsidian-releases/releases/latest/download/obsidian_${OBSIDIAN_VERSION}_amd64.deb"
-#sudo apt install -y ./obsidian.deb
-#rm obsidian.deb
-#cd -
+RUN \
+    OBSIDIAN_VERSION=$(curl -s https://api.github.com/repos/obsidianmd/obsidian-releases/releases/latest | grep -Po '"tag_name": "v\K[^"]*') \
+    && wget -O obsidian.deb "https://github.com/obsidianmd/obsidian-releases/releases/latest/download/obsidian_${OBSIDIAN_VERSION}_amd64.deb" \
+    && apt install -y ./obsidian.deb && rm -f obsidian.deb
 
 # Typora is a markdown editor and reader. See https://typora.io/
 RUN \
@@ -244,13 +249,13 @@ RUN \
     && apt-get update && apt-get install -y typora
 
 # Install draw.io
-#flatpak install flathub com.jgraph.drawio.desktop
+#flatpak install -y flathub com.jgraph.drawio.desktop
 RUN \
     wget https://github.com/jgraph/drawio-desktop/releases/download/v29.3.0/drawio-amd64-29.3.0.deb \
     && apt-get install -y ./drawio-amd64-29.3.0.deb && rm -f drawio-amd64-29.3.0.deb
 
 # WPS office
-# flatpak install flathub com.wps.Office
+# flatpak install -y flathub com.wps.Office
 COPY wps-office_12.1.2.24722.AK.preread.sw_612408_amd64.deb /tmp/
 RUN \
     echo 'wps-office wps-office/eula_accepted boolean true' | debconf-set-selections && \
@@ -270,44 +275,51 @@ RUN \
     && apt-get install ./winfonts_1.3_all.deb ./fonts-cesi-* && rm -f winfonts_1.3_all.deb fonts-cesi-*
 
 # slack
-# flatpak install flathub com.slack.Slack
+# flatpak install -y flathub com.slack.Slack
 RUN \
     wget https://downloads.slack-edge.com/desktop-releases/linux/x64/4.47.69/slack-desktop-4.47.69-amd64.deb \
     && apt-get install -y ./slack-desktop-4.47.69-amd64.deb && rm -f slack-desktop-4.47.69-amd64.deb
 
 # telegram
-#flatpak -y --noninteractive install https://dl.flathub.org/repo/appstream/org.telegram.desktop.flatpakref
+#flatpak install -y https://dl.flathub.org/repo/appstream/org.telegram.desktop.flatpakref
 RUN \
     add-apt-repository ppa:atareao/telegram \
     && apt-get update && apt-get install -y telegram telegram-cli
 
 # A Communication platform for voice, video, and text messaging https://discord.com/
+#flatpak install -y flathub com.discordapp.Discord
 RUN \
     wget https://discord.com/api/download?platform=linux -O discord.deb \
     apt-get install -y ./discord.deb && rm -f discord.deb
 
 # zoom
+#flatpak install -y flathub us.zoom.Zoom
 # Make video calls using https://zoom.us/
 RUN \
     wget https://zoom.us/client/latest/zoom_amd64.deb \
     && apt-get install -y ./zoom_amd64.deb && rm -f zoom_amd64.deb
 
+# 腾讯会议
+RUN \
+    flatpak install -y flathub com.tencent.wemeet
+#https://updatecdn.meeting.qq.com/cos/72e0e0023e1d1e6d4123fba28821aea1/TencentMeeting_0300000000_3.26.10.401_x86_64_default.publish.officialwebsite.deb
+
 # Figma
 
 # wechat
-# flatpak install flathub com.tencent.WeChat
+# flatpak install -y flathub com.tencent.WeChat
 RUN \
     wget https://dldir1v6.qq.com/weixin/Universal/Linux/WeChatLinux_x86_64.deb \
     && apt-get install -y ./WeChatLinux_x86_64.deb && rm -f WeChatLinux_x86_64.deb
 
 # QQ
-# flatpak install flathub com.qq.QQ
+# flatpak install -y flathub com.qq.QQ
 RUN \
     wget https://dldir1v6.qq.com/qqfile/qq/QQNT/Linux/QQ_3.2.23_260108_amd64_01.deb \
     && apt-get install -y ./QQ_3.2.23_260108_amd64_01.deb && rm -f QQ_3.2.23_260108_amd64_01.deb
 
-# QQ music
 # Stream music using https://spotify.com
+#flatpak install -y flathub com.spotify.Client
 #if [ ! -f /etc/apt/sources.list.d/spotify.list ]; then
 #  [ -f /etc/apt/trusted.gpg.d/spotify.gpg ] && sudo rm /etc/apt/trusted.gpg.d/spotify.gpg
 #  curl -sS https://download.spotify.com/debian/pubkey_C85668DF69375001.gpg | sudo gpg --dearmor --yes -o /etc/apt/trusted.gpg.d/spotify.gpg
@@ -317,11 +329,12 @@ RUN \
 #sudo apt update
 #sudo apt install -y spotify-client
 
-# flatpak install flathub com.qq.QQmusic
+# QQ music
+# flatpak install -y flathub com.qq.QQmusic
 
-#COPY qqmusic_1.1.8_amd64.deb /
-#RUN \
-#    apt-get install -y ./qqmusic_1.1.8_amd64.deb && rm -f qqmusic_1.1.8_amd64.deb
+COPY qqmusic_1.1.8_amd64.deb /
+RUN \
+    apt-get install -y ./qqmusic_1.1.8_amd64.deb && rm -f qqmusic_1.1.8_amd64.deb
 
 # 腾讯视频Tenvideo
 
@@ -332,13 +345,13 @@ RUN \
     && apt-get install -y ./baidunetdisk_4.17.7_amd64.deb  && rm -f baidunetdisk_4.17.7_amd64.deb
 
 # 迅雷/thunder
-# flatpak install flathub com.xunlei.Thunder
+# flatpak install -y flathub com.xunlei.Thunder
 RUN \
     wget https://mirrors.sdu.edu.cn/spark-store-repository/amd64-store/network/com.xunlei.download/com.xunlei.download_1.0.0.3spark3_amd64.deb \
     && apt-get install -y ./com.xunlei.download_1.0.0.3spark3_amd64.deb && rm -f com.xunlei.download_1.0.0.3spark3_amd64.deb
 
 # feishu
-# flatpak -y --noninteractive install flathub cn.feishu.Feishu
+# flatpak install -y flathub cn.feishu.Feishu
 COPY Feishu-linux_x64-7.58.14.deb /
 RUN \
     apt-get install -y ./Feishu-linux_x64-7.58.14.deb && rm -f Feishu-linux_x64-7.58.14.deb
@@ -349,7 +362,7 @@ RUN \
 #    apt-get install -y ./Lark-linux_x64-7.59.12.deb && rm -f Lark-linux_x64-7.59.12.deb
 
 # dingtalk
-#flatpak -y --noninteractive install flathub com.dingtalk.DingTalk
+#flatpak install -y flathub com.dingtalk.DingTalk
 RUN \
     wget https://dtapp-pub.dingtalk.com/dingtalk-desktop/xc_dingtalk_update/linux_deb/Release/com.alibabainc.dingtalk_8.1.0.6011301_amd64.deb \
     && apt-get install -y ./com.alibabainc.dingtalk_8.1.0.6011301_amd64.deb && rm -f com.alibabainc.dingtalk_8.1.0.6011301_amd64.deb
@@ -360,7 +373,8 @@ RUN \
     && apt-get install -y ./sunshine-ubuntu-24.04-amd64.deb && rm -f sunshine-ubuntu-24.04-amd64.deb
 
 # moonlight
-#flatpak install flathub com.moonlight_stream.Moonlight
+RUN \
+    flatpak install -y flathub com.moonlight_stream.Moonlight
 # wget https://github.com/moonlight-stream/moonlight-qt/releases/download/v6.1.0/Moonlight-6.1.0-x86_64.AppImage
 
 # rustdesk
@@ -369,14 +383,15 @@ RUN \
     apt-get install -y ./rustdesk-1.4.5-x86_64.deb && rm -f rustdesk-1.4.5-x86_64.deb
 
 # Todesk
+#
 # anydesk
-# flatpak install flathub com.anydesk.Anydesk
+# flatpak install -y flathub com.anydesk.Anydesk
 RUN \
     wget https://download.anydesk.com/linux/anydesk_7.1.2-1_amd64.deb \
     && apt-get install -y ./anydesk_7.1.2-1_amd64.deb  && rm -f anydesk_7.1.2-1_amd64.deb
 
 # steam
-#flatpak install flathub com.valvesoftware.Steam
+#flatpak install -y flathub com.valvesoftware.Steam
 # Play games from https://store.steampowered.com/
 #cd /tmp
 #wget https://cdn.akamai.steamstatic.com/client/installer/steam.deb
@@ -388,6 +403,7 @@ RUN \
 # battle.net
 
 # Google Earth
+#flatpak install -y flathub com.google.EarthPro
 RUN \
     wget https://dl.google.com/dl/earth/client/current/google-earth-pro-stable_current_amd64.deb \
     && apt-get install -y ./google-earth-pro-stable_current_amd64.deb && rm -f google-earth-pro-stable_current_amd64.deb
