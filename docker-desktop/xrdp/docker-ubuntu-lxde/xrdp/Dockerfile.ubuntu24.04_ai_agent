@@ -1,6 +1,17 @@
 FROM slpcat/docker-ubuntu-lxde:24.04-xrdp_developer
 
 #kubectl-ai
+RUN \
+    wget https://github.com/GoogleCloudPlatform/kubectl-ai/releases/download/v0.0.29/kubectl-ai_Linux_x86_64.tar.gz \
+    && tar -xzf kubectl-ai_Linux_x86_64.tar.gz \
+    && chmod +x kubectl-ai \
+    && mv kubectl-ai /usr/local/bin \
+    && rm -f kubectl-ai_Linux_x86_64.tar.gz
+
+#k8sgpt
+RUN \
+    wget https://github.com/k8sgpt-ai/k8sgpt/releases/download/v0.4.27/k8sgpt_amd64.deb \
+    && apt-get install -y ./k8sgpt_amd64.deb && rm -f k8sgpt_amd64.deb
 
 #claude
 #openai codex
@@ -24,13 +35,20 @@ FROM slpcat/docker-ubuntu-lxde:24.04-xrdp_developer
 #Visibility and governance
 
 
-#trae ai编程工具
+#trae ai编程工具 https://www.trae.ai/
+
+#Qoder, Agentic Coding Platform for Real Software
+#https://qoder.com/
+RUN \
+    wget https://download.qoder.com/release/latest/qoder_amd64.deb \
+    && apt-get install -y ./qoder_amd64.deb && rm -f qoder_amd64.deb
+
+#
 #dify
 #ollama
 #vLLM 推理服务
 #腾讯ima
 #Cherry Studio
-
 
 #Gnoppix AI Linux
 #AI Email Support
@@ -52,12 +70,49 @@ RUN \
     rm -rf /root/.npm
 
 # zed.dev
-# flatpak install flathub dev.zed.Zed
+RUN \
+    flatpak install -y flathub dev.zed.Zed
 #    curl -f https://zed.dev/install.sh | sh
 #RUN \
 #    curl -sS https://debian.griffo.io/EA0F721D231FDD3A0A17B9AC7808B4DD62C41256.asc | gpg --dearmor --yes -o /etc/apt/trusted.gpg.d/debian.griffo.io.gpg && \
 #    echo "deb https://debian.griffo.io/apt $(lsb_release -sc 2>/dev/null) main" | tee /etc/apt/sources.list.d/debian.griffo.io.list && \
 #    apt-get update && apt-get install -y zig ghostty lazygit yazi eza uv fzf zoxide bun tigerbeetle
+
+#Cursor is the best way to code with AI.
+RUN \
+    wget https://downloads.cursor.com/production/618c607a249dd7fd2ffc662c6531143833bebd44/linux/x64/deb/amd64/deb/cursor_2.4.22_amd64.deb \
+    && apt-get install -y ./cursor_2.4.22_amd64.deb && rm -f cursor_2.4.22_amd64.deb
+
+#cd /tmp
+#curl -L "https://www.cursor.com/api/download?platform=linux-x64&releaseTrack=stable" | jq -r '.downloadUrl' | xargs curl -L -o cursor.appimage
+#sudo mv cursor.appimage /opt/cursor.appimage
+#sudo chmod +x /opt/cursor.appimage
+#sudo apt install -y fuse3
+#sudo apt install -y libfuse2t64
+#
+#DESKTOP_FILE="/usr/share/applications/cursor.desktop"
+#
+#sudo bash -c "cat > $DESKTOP_FILE" <<EOL
+#[Desktop Entry]
+#Name=Cursor
+#Comment=AI-powered code editor
+#Exec=/opt/cursor.appimage --no-sandbox
+#Icon=/home/$USER/.local/share/omakub/applications/icons/cursor.png
+#Type=Application
+#Categories=Development;IDE;
+#EOL
+
+#if [ -f "$DESKTOP_FILE" ]; then
+#	echo "cursor.desktop created successfully"
+#else
+#	echo "Failed to create cursor.desktop"
+#fi
+
+# windsurf The best AI for Coding
+RUN \
+    curl -fsSL "https://windsurf-stable.codeiumdata.com/wVxQEIWkwPUEAGf3/windsurf.gpg" | gpg --dearmor -o /usr/share/keyrings/windsurf-stable-archive-keyring.gpg \
+    && echo "deb [signed-by=/usr/share/keyrings/windsurf-stable-archive-keyring.gpg arch=amd64] https://windsurf-stable.codeiumdata.com/wVxQEIWkwPUEAGf3/apt stable main" | tee /etc/apt/sources.list.d/windsurf.list >/dev/null \
+    && apt-get update && apt-get install -y windsurf
 
 # Warp Terminal
 RUN \
@@ -66,8 +121,8 @@ RUN \
 
 # Wave Termianl
 
-# Clawdbot
-#https://github.com/clawdbot/clawdbot
+# Clawdbot/moltbot
+#https://github.com/moltbot/moltbot
 #bytebot
 #https://github.com/bytebot-ai/bytebot.git
 #everywhere 桌面智能
@@ -86,7 +141,6 @@ RUN \
 #sima打游戏
 #agent browser
 #ghosty + claude
-#qoder
 #newwelle
 #cowork
 

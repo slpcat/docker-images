@@ -168,8 +168,15 @@ RUN \
     curl -fsSLo /etc/apt/sources.list.d/brave-browser-release.sources https://brave-browser-apt-release.s3.brave.com/brave-browser.sources && \
     apt-get update && apt-get install -y brave-browser
 
+# workspace browser
 # Install Tangram Browser
 #flatpak -y --noninteractive install flathub re.sonny.Tangram
+# Rambox
+# Franz
+# Ferdium
+RUN \
+    wget https://github.com/ferdium/ferdium-app/releases/download/v7.1.1/Ferdium-linux-7.1.1-amd64.deb \
+    && apt-get install -y ./Ferdium-linux-7.1.1-amd64.deb && rm -f Ferdium-linux-7.1.1-amd64.deb
 
 # Install peazip nextcloud-desktop from xtradeb
 
@@ -193,6 +200,9 @@ RUN \
 RUN \
     wget https://downloads.bdrive.com/rclone_view/linux/1.2/rclone_view-1.2.533+1-linux-x86_64.deb \
     && apt-get install -y ./rclone_view-1.2.533+1-linux-x86_64.deb && rm -f rclone_view-1.2.533+1-linux-x86_64.deb
+
+# Pinta is a simple drawing and image editing program. See https://www.pinta-project.com/
+#flatpak install -y flathub com.github.PintaProject.Pinta
 
 # PotPlayer
 
@@ -218,6 +228,20 @@ RUN \
 RUN \
     wget https://cdn.jopdf.com/download/jopdf/jopdf-linux-amd64_setup.deb \
     && apt-get install -y ./jopdf-linux-amd64_setup.deb && rm -f jopdf-linux-amd64_setup.deb
+
+# Obsidian is a multi-platform note taking application. See https://obsidian.md
+#cd /tmp
+#OBSIDIAN_VERSION=$(curl -s https://api.github.com/repos/obsidianmd/obsidian-releases/releases/latest | grep -Po '"tag_name": "v\K[^"]*')
+#wget -O obsidian.deb "https://github.com/obsidianmd/obsidian-releases/releases/latest/download/obsidian_${OBSIDIAN_VERSION}_amd64.deb"
+#sudo apt install -y ./obsidian.deb
+#rm obsidian.deb
+#cd -
+
+# Typora is a markdown editor and reader. See https://typora.io/
+RUN \
+    curl -fsSL https://downloads.typora.io/typora.gpg | tee /usr/share/keyrings/typora.gpg > /dev/null \
+    && echo "deb [signed-by=/usr/share/keyrings/typora.gpg] https://downloads.typora.io/linux ./" | tee /etc/apt/sources.list.d/typora.list \
+    && apt-get update && apt-get install -y typora
 
 # Install draw.io
 #flatpak install flathub com.jgraph.drawio.desktop
@@ -253,8 +277,21 @@ RUN \
 
 # telegram
 #flatpak -y --noninteractive install https://dl.flathub.org/repo/appstream/org.telegram.desktop.flatpakref
+RUN \
+    add-apt-repository ppa:atareao/telegram \
+    && apt-get update && apt-get install -y telegram telegram-cli
+
+# A Communication platform for voice, video, and text messaging https://discord.com/
+RUN \
+    wget https://discord.com/api/download?platform=linux -O discord.deb \
+    apt-get install -y ./discord.deb && rm -f discord.deb
 
 # zoom
+# Make video calls using https://zoom.us/
+RUN \
+    wget https://zoom.us/client/latest/zoom_amd64.deb \
+    && apt-get install -y ./zoom_amd64.deb && rm -f zoom_amd64.deb
+
 # Figma
 
 # wechat
@@ -270,13 +307,25 @@ RUN \
     && apt-get install -y ./QQ_3.2.23_260108_amd64_01.deb && rm -f QQ_3.2.23_260108_amd64_01.deb
 
 # QQ music
+# Stream music using https://spotify.com
+#if [ ! -f /etc/apt/sources.list.d/spotify.list ]; then
+#  [ -f /etc/apt/trusted.gpg.d/spotify.gpg ] && sudo rm /etc/apt/trusted.gpg.d/spotify.gpg
+#  curl -sS https://download.spotify.com/debian/pubkey_C85668DF69375001.gpg | sudo gpg --dearmor --yes -o /etc/apt/trusted.gpg.d/spotify.gpg
+#  echo "deb [signed-by=/etc/apt/trusted.gpg.d/spotify.gpg] https://repository.spotify.com stable non-free" | sudo tee /etc/apt/sources.list.d/spotify.list
+#fi
+#
+#sudo apt update
+#sudo apt install -y spotify-client
+
 # flatpak install flathub com.qq.QQmusic
+
 #COPY qqmusic_1.1.8_amd64.deb /
 #RUN \
 #    apt-get install -y ./qqmusic_1.1.8_amd64.deb && rm -f qqmusic_1.1.8_amd64.deb
 
 # 腾讯视频Tenvideo
 
+# Sync files across machines using https://dropbox.com
 # baidunetdisk
 RUN \
     wget  https://d24f57-1874119703.antpcdn.com:19001/b/pkg-ant.baidu.com/issue/netdisk/LinuxGuanjia/4.17.7/baidunetdisk_4.17.7_amd64.deb \
@@ -328,6 +377,11 @@ RUN \
 
 # steam
 #flatpak install flathub com.valvesoftware.Steam
+# Play games from https://store.steampowered.com/
+#cd /tmp
+#wget https://cdn.akamai.steamstatic.com/client/installer/steam.deb
+#sudo apt install -y ./steam.deb
+#rm steam.deb
 
 # epic games
 # ubisoft
