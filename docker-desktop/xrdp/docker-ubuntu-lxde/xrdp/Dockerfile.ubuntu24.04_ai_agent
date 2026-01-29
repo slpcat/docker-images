@@ -81,7 +81,7 @@ RUN \
 #Cursor is the best way to code with AI.
 RUN \
     wget https://downloads.cursor.com/production/618c607a249dd7fd2ffc662c6531143833bebd44/linux/x64/deb/amd64/deb/cursor_2.4.22_amd64.deb \
-    && apt-get install -y ./cursor_2.4.22_amd64.deb && rm -f cursor_2.4.22_amd64.deb
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y ./cursor_2.4.22_amd64.deb && rm -f cursor_2.4.22_amd64.deb
 
 #cd /tmp
 #curl -L "https://www.cursor.com/api/download?platform=linux-x64&releaseTrack=stable" | jq -r '.downloadUrl' | xargs curl -L -o cursor.appimage
