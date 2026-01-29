@@ -290,7 +290,7 @@ RUN \
 #flatpak install -y flathub com.discordapp.Discord
 RUN \
     wget https://discord.com/api/download?platform=linux -O discord.deb \
-    apt-get install -y ./discord.deb && rm -f discord.deb
+    && apt-get install -y ./discord.deb && rm -f discord.deb
 
 # zoom
 #flatpak install -y flathub us.zoom.Zoom
@@ -379,8 +379,8 @@ RUN \
 
 # rustdesk
 RUN \
-    wget https://github.com/rustdesk/rustdesk/releases/download/1.4.5/rustdesk-1.4.5-x86_64.deb && \
-    apt-get install -y ./rustdesk-1.4.5-x86_64.deb && rm -f rustdesk-1.4.5-x86_64.deb
+    wget https://github.com/rustdesk/rustdesk/releases/download/1.4.5/rustdesk-1.4.5-x86_64.deb \
+    && apt-get install -y ./rustdesk-1.4.5-x86_64.deb && rm -f rustdesk-1.4.5-x86_64.deb
 
 # Todesk
 #
