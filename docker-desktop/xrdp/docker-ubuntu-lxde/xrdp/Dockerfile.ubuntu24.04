@@ -68,9 +68,7 @@ RUN \
       xorg \
       xorgxrdp \
       xrdp \
-    && apt-get remove --purge -y xscreensaver* network-manager && apt-get autoremove --purge -y \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+    && apt-get remove --purge -y xscreensaver* network-manager && apt-get autoremove --purge -y
 
 COPY --from=build \
     /opt/su-exec/su-exec /usr/sbin/su-exec
@@ -86,12 +84,11 @@ RUN echo "ALL ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/ALL
 RUN chmod u+s /usr/sbin/useradd \
     && chmod u+s /usr/sbin/groupadd
 
-# Expose RDP port
-EXPOSE 3389
-
 RUN \
     apt-get install -y fluxbox fbpager fbautostart xfonts-terminus-oblique yudit-doc yudit \
-    xcompmgr dmenu lxappearance nitrogen
+            xcompmgr dmenu lxappearance nitrogen \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 #generates an applications menu for Fluxbox using the freedesktop.org (XDG) standard.
 RUN \
@@ -130,6 +127,9 @@ RUN \
     ln -s /etc/sv/dbus /etc/service/dbus && \
     ln -s /etc/sv/xrdp /etc/service/xrdp && \
     ln -s /etc/sv/xrdp-sesman /etc/service/xrdp-sesman
+
+# Expose RDP port
+EXPOSE 3389
 
 # Copy entrypoint script
 COPY runit-entrypoint.sh /usr/local/bin/
