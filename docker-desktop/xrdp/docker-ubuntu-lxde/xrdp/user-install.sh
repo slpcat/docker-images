@@ -1,6 +1,17 @@
 #!/bin/bash
 set -x -e
 
+#pyenv
+#git clone https://gitcode.com/GitHub_Trending/py/pyenv.git ~/.pyenv
+#export PYENV_ROOT="$HOME/.pyenv"
+#export PATH="$PYENV_ROOT/bin:$PATH"
+#eval "$(pyenv init - bash)"
+
+#Conda
+#https://www.anaconda.com/download/success
+#wget https://repo.anaconda.com/archive/Anaconda3-2025.12-1-Linux-x86_64.sh
+#wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+
 # sdkman
 # https://sdkman.io/
 curl -s "https://get.sdkman.io" | bash

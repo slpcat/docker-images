@@ -70,7 +70,7 @@ RUN \
       xorg \
       xorgxrdp \
       xrdp \
-    && apt-get remove --purge -y system-config-printer* pm-utils xscreensaver* ibus* network-manager && apt-get autoremove --purge -y \
+    && apt-get remove --purge -y xscreensaver* && apt-get autoremove --purge -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
