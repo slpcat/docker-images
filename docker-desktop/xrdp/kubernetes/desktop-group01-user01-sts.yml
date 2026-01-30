@@ -103,7 +103,7 @@ spec:
       dnsPolicy: None
       containers:
         - name: desktop
-          image: slpcat/docker-ubuntu-lxde:24.04-xrdp_ai_agent
+          image: slpcat/docker-ubuntu-lxde:24.04-xrdp_ai_workspace
           imagePullPolicy: Always
           #livenessProbe: #kubernetes认为该pod是存活的,不存活则需要重启
           #  httpGet:

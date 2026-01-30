@@ -154,7 +154,7 @@ docker run -d \
    slpcat/docker-antix-icewm:23.2-xrdp_full
    slpcat/docker-ubuntu-lxde:24.04-xrdp_office
    slpcat/docker-ubuntu-lxde:24.04-xrdp_developer
-   slpcat/docker-ubuntu-lxde:24.04-xrdp_ai_agent
+   slpcat/docker-ubuntu-lxde:24.04-xrdp_ai_workspace
 
 #with GPU and sunshine
 docker run -d \
@@ -187,7 +187,7 @@ docker run -d \
    -v /sys/fs/cgroup:/sys/fs/cgroup:ro \
    -v /var/run/docker.sock:/var/run/docker.sock `#optional` \
    -v /data/ubuntu2404-home:/home \
-   slpcat/docker-ubuntu-lxde:24.04-xrdp_ai_agent
+   slpcat/docker-ubuntu-lxde:24.04-xrdp_ai_workspace
 
 xrdp安装脚本
 
