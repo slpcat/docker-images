@@ -59,6 +59,8 @@ RUN \
       lxde-core \
       #lxpanel can not work
       icewm \
+      fluxbox fbpager fbautostart xfonts-terminus-oblique yudit-doc yudit \
+      xcompmgr dmenu lxappearance nitrogen \
       gexec \
       lxterminal \
       xfe \
@@ -95,6 +97,7 @@ RUN { \
         echo 'fi'; \
         echo 'exec dbus-run-session -- icewm-session'; \
     } > /etc/skel/.xsession \
+    && update-alternatives --set x-terminal-emulator /usr/bin/lxterminal \
     && install -o root -g xrdp -m 2775 -d /var/run/xrdp \
     && install -o root -g xrdp -m 3777 -d /var/run/xrdp/sockdir \
     && install -o root -g root -m 0755 -d /var/run/dbus \
