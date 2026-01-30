@@ -1,5 +1,7 @@
 FROM slpcat/docker-ubuntu-lxde:24.04-xrdp_office
 
+COPY user-install.sh /etc/skel/
+
 RUN apt-get update -y             \
     && apt-get upgrade -y         \
     && apt-get install -y         \

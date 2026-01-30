@@ -82,11 +82,15 @@ RUN \
 # Chinese Input support
 RUN \
     flatpak install -y flathub org.fcitx.Fcitx5 \
+    #flatpak install -y flathub org.fcitx.Fcitx5.Addon.Rime \
+    flatpak install -y flathub org.fcitx.Fcitx5.Addon.ChineseAddons \
     && flatpak override \
+    --env=INPUT_METHOD=fcitx5 \
     --env=GTK_IM_MODULE=fcitx5 \
     --env=QT_IM_MODULE=fcitx5 \
     --env=XMODIFIERS=@im=fcitx5 \
-    --env=SDL_IM_MODULE=fcitx5
+    --env=SDL_IM_MODULE=fcitx5 \
+    --env=GLFW_IM_MODULE=ibus
 
 # Install appimagemanager
 RUN \
@@ -302,9 +306,9 @@ RUN \
 # 腾讯会议
 # bwrap: Creating new namespace failed: Operation not permitted
 #    flatpak install -y flathub com.tencent.wemeet
-#RUN \
-#    wget https://updatecdn.meeting.qq.com/cos/72e0e0023e1d1e6d4123fba28821aea1/TencentMeeting_0300000000_3.26.10.401_x86_64_default.publish.officialwebsite.deb \
-#    && apt-get install -y ./TencentMeeting_0300000000_3.26.10.401_x86_64_default.publish.officialwebsite.deb && rm -f TencentMeeting_0300000000_3.26.10.401_x86_64_default.publish.officialwebsite.deb
+RUN \
+    wget https://updatecdn.meeting.qq.com/cos/72e0e0023e1d1e6d4123fba28821aea1/TencentMeeting_0300000000_3.26.10.401_x86_64_default.publish.officialwebsite.deb \
+    && apt-get install -y ./TencentMeeting_0300000000_3.26.10.401_x86_64_default.publish.officialwebsite.deb && rm -f TencentMeeting_0300000000_3.26.10.401_x86_64_default.publish.officialwebsite.deb
 
 # Figma
 
@@ -336,7 +340,8 @@ RUN \
 
 COPY qqmusic_1.1.8_amd64.deb /
 RUN \
-    apt-get install -y ./qqmusic_1.1.8_amd64.deb && rm -f qqmusic_1.1.8_amd64.deb
+    apt-get install -y ./qqmusic_1.1.8_amd64.deb && rm -f qqmusic_1.1.8_amd64.deb \
+    && sed -i 's/^Exec=.*$/Exec=\/opt\/qqmusic\/qqmusic\ --use-gl=swiftshader-webgl\ --disable-gpu-sandbox\ \%U/' /usr/share/applications/qqmusic.desktop
 
 # 腾讯视频Tenvideo
 
