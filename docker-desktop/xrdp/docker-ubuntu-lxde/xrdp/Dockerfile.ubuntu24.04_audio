@@ -2,7 +2,7 @@ FROM slpcat/docker-ubuntu-lxde:24.04-xrdp
 
 RUN \
     apt-get update \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -y pasystray pipewire pipewire-pulseaudio wireplumber
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y pasystray pipewire pipewire-alsa pipewire-pulse wireplumber
 
 
 RUN \
