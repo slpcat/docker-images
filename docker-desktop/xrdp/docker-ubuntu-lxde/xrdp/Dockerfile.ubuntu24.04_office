@@ -265,6 +265,15 @@ RUN \
     echo 'wps-office wps-office/eula_accepted boolean true' | debconf-set-selections && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y /tmp/wps-office_12.1.2.24722.AK.preread.sw_612408_amd64.deb && rm -f /tmp/wps-office_12.1.2.24722.AK.preread.sw_612408_amd64.deb
 
+# AppleColorEmoji
+RUN \
+    wget https://github.com/samuelngs/apple-emoji-linux/releases/latest/download/AppleColorEmoji.ttf \
+    && mkdir /usr/share/fonts/truetype/AppleColorEmoji \
+    && mv AppleColorEmoji.ttf /usr/share/fonts/truetype/AppleColorEmoji \
+    && fc-cache -f -v
+
+# HMOSColorEmojiCompat
+
 # fonts pack
 # https://bbs.deepin.org/zh/post/210103
 # https://bbs.deepin.org/post/205869

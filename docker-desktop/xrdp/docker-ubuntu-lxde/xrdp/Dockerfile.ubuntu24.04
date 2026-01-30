@@ -54,6 +54,7 @@ RUN \
       fonts-noto-cjk \
       fonts-noto-color-emoji \
       fonts-symbola \
+      ttf-ancient-fonts \
       fcitx5 \
       fcitx5-rime \
       fcitx5-table-emoji \
