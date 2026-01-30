@@ -53,8 +53,10 @@ RUN \
       dbus-x11 \
       fonts-noto-cjk \
       fonts-noto-color-emoji \
+      fonts-symbola \
       fcitx5 \
       fcitx5-rime \
+      fcitx5-table-emoji \
       fcitx5-chinese-addons \
       fcitx5-material-color \
       #im-switch \
