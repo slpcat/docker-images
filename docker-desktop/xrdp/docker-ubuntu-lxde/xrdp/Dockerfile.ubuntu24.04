@@ -60,8 +60,6 @@ RUN \
       lxde-core \
       #lxpanel can not work
       icewm \
-      fluxbox fbpager fbautostart xfonts-terminus-oblique yudit-doc yudit \
-      xcompmgr dmenu lxappearance nitrogen \
       gexec \
       lxterminal \
       xfe \
@@ -70,7 +68,7 @@ RUN \
       xorg \
       xorgxrdp \
       xrdp \
-    && apt-get remove --purge -y xscreensaver* && apt-get autoremove --purge -y \
+    && apt-get remove --purge -y xscreensaver* network-manager && apt-get autoremove --purge -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -90,6 +88,10 @@ RUN chmod u+s /usr/sbin/useradd \
 
 # Expose RDP port
 EXPOSE 3389
+
+RUN \
+    apt-get install -y fluxbox fbpager fbautostart xfonts-terminus-oblique yudit-doc yudit \
+    xcompmgr dmenu lxappearance nitrogen
 
 #generates an applications menu for Fluxbox using the freedesktop.org (XDG) standard.
 RUN \
