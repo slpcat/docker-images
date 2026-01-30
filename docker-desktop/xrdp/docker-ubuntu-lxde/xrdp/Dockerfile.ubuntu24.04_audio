@@ -2,7 +2,8 @@ FROM slpcat/docker-ubuntu-lxde:24.04-xrdp
 
 RUN \
     apt-get update \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -y pasystray
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y pasystray pipewire pipewire-pulseaudio wireplumber
+
 
 RUN \
     # Disable unavailable pipewire features
