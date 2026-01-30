@@ -82,8 +82,8 @@ RUN \
 # Chinese Input support
 RUN \
     flatpak install -y flathub org.fcitx.Fcitx5 \
-    #flatpak install -y flathub org.fcitx.Fcitx5.Addon.Rime \
-    flatpak install -y flathub org.fcitx.Fcitx5.Addon.ChineseAddons \
+    && flatpak install -y flathub org.fcitx.Fcitx5.Addon.Rime \
+    && flatpak install -y flathub org.fcitx.Fcitx5.Addon.ChineseAddons \
     && flatpak override \
     --env=INPUT_METHOD=fcitx5 \
     --env=GTK_IM_MODULE=fcitx5 \
