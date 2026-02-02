@@ -130,6 +130,7 @@ docker run -d \
 
 docker run -d \
    --name ubuntu2404-lxde-xrdp-user01 \
+   --privileged `#for flatpak` \
    --cap-add=SYS_ADMIN \
    --cap-add=SYS_NICE \
    --security-opt apparmor=unconfined \
@@ -146,6 +147,7 @@ docker run -d \
    -u $(id -u):$(id -g) \
    -e USER=yama07 \
    -e PASSWD=mypasswd \
+   -v /sys/fs/cgroup:/sys/fs/cgroup:ro \
    -v /var/run/docker.sock:/var/run/docker.sock `#optional` \
    -v /data/ubuntu2404-home:/home \
    slpcat/docker-ubuntu-lxde:24.04-xrdp_full
@@ -188,6 +190,10 @@ docker run -d \
    -v /var/run/docker.sock:/var/run/docker.sock `#optional` \
    -v /data/ubuntu2404-home:/home \
    slpcat/docker-ubuntu-lxde:24.04-xrdp_ai_workspace
+
+禁止OpenGL硬件加速
+export LIBGL_ALWAYS_SOFTWARE=1
+export GALLIUM_DRIVER=llvmpipe
 
 xrdp安装脚本
 

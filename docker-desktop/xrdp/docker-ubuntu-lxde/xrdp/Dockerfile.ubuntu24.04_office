@@ -5,6 +5,7 @@ RUN apt-get update -y             \
     && apt-get install -y         \
        apt-transport-https        \
        binutils                   \
+       conky-std                  \
        lsof                       \
        pciutils                   \
        anacron                    \
@@ -37,6 +38,7 @@ RUN apt-get update -y             \
        yq                   \
        openssh-client       \
        unzip                \
+       unrar                \
        zip                  \
        groff                \
        #snoopy               \
@@ -54,8 +56,9 @@ RUN apt-get update -y             \
        seahorse             \
        audacity             \
        gimp                 \
-       #shotcut              \
-       #openshot-qt          \
+       shotcut              \
+       flowblade            \
+       openshot-qt          \
        kdenlive             \
        vlc                  \
        blender              \
@@ -89,8 +92,8 @@ RUN \
     --env=GTK_IM_MODULE=fcitx5 \
     --env=QT_IM_MODULE=fcitx5 \
     --env=XMODIFIERS=@im=fcitx5 \
-    --env=SDL_IM_MODULE=fcitx5 \
-    --env=GLFW_IM_MODULE=ibus
+    --env=SDL_IM_MODULE=fcitx5
+    #--env=GLFW_IM_MODULE=ibus
 
 # Install appimagemanager
 RUN \
@@ -176,6 +179,15 @@ RUN \
     curl -fsSLo /etc/apt/sources.list.d/brave-browser-release.sources https://brave-browser-apt-release.s3.brave.com/brave-browser.sources && \
     apt-get update && apt-get install -y brave-browser
 
+# Painting program
+# Pinta is a simple drawing and image editing program. See https://www.pinta-project.com/
+#flatpak install -y flathub com.github.PintaProject.Pinta
+#apt-get install -y pinta
+
+#Krita is a professional FREE and open source painting program. 
+RUN \
+    apt-get install -y krita
+
 # workspace browser
 # Install Tangram Browser
 #flatpak install -y flathub re.sonny.Tangram
@@ -212,22 +224,15 @@ RUN \
     wget https://downloads.bdrive.com/rclone_view/linux/1.2/rclone_view-1.2.533+1-linux-x86_64.deb \
     && apt-get install -y ./rclone_view-1.2.533+1-linux-x86_64.deb && rm -f rclone_view-1.2.533+1-linux-x86_64.deb
 
-# Pinta is a simple drawing and image editing program. See https://www.pinta-project.com/
-#flatpak install -y flathub com.github.PintaProject.Pinta
-
 # PotPlayer
 
 # kodi
-# flatpak install -y tv.kodi.Kodi
+RUN \
+    flatpak install -y tv.kodi.Kodi
 
 #RUN \
 #    add-apt-repository ppa:team-xbmc/ppa && \
 #    apt-get update && apt-get install -y  kodi
-
-# OpenShot Editor
-# flatpak install -y flathub org.openshot.OpenShot
-# Shotcut Editor
-# flatpak install -y flathub org.shotcut.Shotcut
 
 # OBS Studio 
 # flatpak install -y flathub com.obsproject.Studio
@@ -258,6 +263,18 @@ RUN \
     wget https://github.com/jgraph/drawio-desktop/releases/download/v29.3.0/drawio-amd64-29.3.0.deb \
     && apt-get install -y ./drawio-amd64-29.3.0.deb && rm -f drawio-amd64-29.3.0.deb
 
+#digiKam is a Digital photo management program designed to import, organize, enhance, search, and export your digital images to and from your computer.
+#RawTherapee is a powerful, cross-platform raw photo processing system
+#https://rawtherapee.com/shared/builds/linux/RawTherapee_5.12_release.AppImage
+#Photivo is a multi platform photo processor for RAW and bitmap images with 16 bit precision. 
+#Darktable
+RUN \
+    apt-get install -y rawtherapee digikam darktable
+
+#Scribus is the Go-To Libre Desktop Publishing Application
+RUN \
+    apt-get install -y scribus
+
 # WPS office
 # flatpak install -y flathub com.wps.Office
 COPY wps-office_12.1.2.24722.AK.preread.sw_612408_amd64.deb /tmp/
@@ -265,14 +282,48 @@ RUN \
     echo 'wps-office wps-office/eula_accepted boolean true' | debconf-set-selections && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y /tmp/wps-office_12.1.2.24722.AK.preread.sw_612408_amd64.deb && rm -f /tmp/wps-office_12.1.2.24722.AK.preread.sw_612408_amd64.deb
 
-# AppleColorEmoji
+# HMOSColorEmojiCompat
+COPY HMOSColorEmojiCompat.ttf /tmp
+
 RUN \
-    wget https://github.com/samuelngs/apple-emoji-linux/releases/latest/download/AppleColorEmoji.ttf \
+    mkdir /usr/share/fonts/truetype/HMOSColorEmoji \
+    && mv /tmp/HMOSColorEmojiCompat.ttf /usr/share/fonts/truetype/HMOSColorEmoji \
+
+# Adobe  EmojiOne
+    && wget https://github.com/adobe-fonts/emojione-color/raw/refs/heads/master/EmojiOneBW.otf \
+    && wget https://github.com/adobe-fonts/emojione-color/blob/master/EmojiOneColor.otf \
+
+# AppleColorEmoji
+    && wget https://github.com/samuelngs/apple-emoji-linux/releases/latest/download/AppleColorEmoji.ttf \
     && mkdir /usr/share/fonts/truetype/AppleColorEmoji \
     && mv AppleColorEmoji.ttf /usr/share/fonts/truetype/AppleColorEmoji \
-    && fc-cache -f -v
+    && ln -s /usr/share/fontconfig/conf.avail/99-apple-emoji.conf /etc/fonts/conf.d/99-apple-emoji.conf \
 
-# HMOSColorEmojiCompat
+# Microsoft Emoji Pack
+# fluentui-emoji
+    && wget https://tetunori.github.io/fluent-emoji-webfont/dist/FluentEmojiColor.ttf \
+    && wget https://tetunori.github.io/fluent-emoji-webfont/dist/FluentEmojiFlat.ttf \
+    && wget https://tetunori.github.io/fluent-emoji-webfont/dist/FluentEmojiHighContrast.ttf \
+    && wget https://tetunori.github.io/fluent-emoji-webfont/dist/FluentEmojiHighContrastInverted.ttf \
+    && mkdir /usr/share/fonts/truetype/FluentEmoji \
+    && mv FluentEmoji* /usr/share/fonts/truetype/FluentEmoji \
+
+# twemoji-color-font
+    && wget https://github.com/JoeBlakeB/ttf-twemoji/releases/download/17.0.2/Twemoji-17.0.2.ttf \
+    && mkdir /usr/share/fonts/truetype/Twemoji \
+    && mv Twemoji-17.0.2.ttf /usr/share/fonts/truetype/Twemoji/Twemoji.ttf \
+
+# mozilla/fxemoji
+    && wget https://github.com/mozilla/fxemoji/raw/refs/heads/gh-pages/dist/FirefoxEmoji/FirefoxEmoji.ttf \
+    && mkdir /usr/share/fonts/truetype/FirefoxEmoji \
+    && mv FirefoxEmoji.ttf /usr/share/fonts/truetype/FirefoxEmoji \
+
+# openmoji
+#wget https://github.com/hfg-gmuend/openmoji/raw/refs/heads/master/font/OpenMoji-color-colr0_svg/OpenMoji-color-colr0_svg.ttf
+    && wget https://github.com/hfg-gmuend/openmoji/raw/refs/heads/master/font/OpenMoji-color-colr1_svg/OpenMoji-color-colr1_svg.ttf
+    && mkdir /usr/share/fonts/truetype/OpenMoji \
+    && mv OpenMoji* /usr/share/fonts/truetype/OpenMoji \
+    && fc-cache -f -v
 
 # fonts pack
 # https://bbs.deepin.org/zh/post/210103

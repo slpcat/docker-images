@@ -1,3 +1,5 @@
+https://github.com/sickcodes/Docker-eyeOS
+
 mkdir -p images
 cd images
 

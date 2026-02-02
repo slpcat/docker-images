@@ -12,18 +12,20 @@ set -x -e
 #wget https://repo.anaconda.com/archive/Anaconda3-2025.12-1-Linux-x86_64.sh
 #wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
 
+# Jupyter Notebook
+
 # sdkman
 # https://sdkman.io/
 curl -s "https://get.sdkman.io" | bash
 
 # gvm
-https://github.com/moovweb/gvm
+#https://github.com/moovweb/gvm
 bash < <(curl -s -S -L https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer)
 # 激活 gvm，使用上述命令屏幕展示的命令
 #source ~/.gvm/scripts/gvm
 
 # nvm
-https://github.com/nvm-sh/nvm
+#https://github.com/nvm-sh/nvm
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
 
 # rustup
@@ -34,9 +36,18 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 # https://github.com/marler8997/zigup
 curl -L https://github.com/marler8997/zigup/releases/latest/download/zigup-x86_64-linux.tar.gz | tar xz
 
-# android studio
+# redroid (Remote anDroid) is a GPU accelerated AIC (Android In Cloud) solution.
+#https://github.com/remote-android/redroid-doc
 
 # android sdkmanager
+#https://dl.google.com/android/repository/platform-tools-latest-linux.zip
+
+# Android Emulator
+# https://developer.android.com/studio/emulator_archive
+
+# android studio
+# https://developer.android.com/studio/archive
+# https://edgedl.me.gvt1.com/android/studio/ide-zips/2025.2.3.9/android-studio-2025.2.3.9-linux.tar.gz
 
 # dart sdk
 #sudo apt update && sudo apt install -y apt-transport-https wget gnupg
@@ -52,6 +63,12 @@ curl -L https://github.com/marler8997/zigup/releases/latest/download/zigup-x86_6
 
 # fvm
 #curl（curl -sL https://install.fvm.sh |bash
+
+# HarmonyOS SDK
+# DevEco Studio
+#https://developer.huawei.com/consumer/cn/deveco-studio/
+
+# Arduino IDE
 
 # sonar-scanner-cli
 
@@ -69,9 +86,9 @@ pip3 install playwright
 playwright install
 
 # appium
-npm install -g appium-doctor
-npm install -g appium
-npm install -g appium-android-driver
+#npm install -g appium-doctor
+#npm install -g appium
+#npm install -g appium-android-driver
 
 
 # vscode extensions
@@ -93,3 +110,5 @@ npm install -g cline
 
 # appimage
 
+# https://github.com/sickcodes/Docker-OSX
+# https://github.com/sickcodes/Docker-eyeOS

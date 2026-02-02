@@ -1,12 +1,22 @@
 FROM slpcat/docker-ubuntu-lxde:24.04-xrdp_office
 
-COPY user-install.sh /etc/skel/
+COPY developer-install.sh /etc/skel/
+
+# enable i386 support
+RUN \
+    dpkg --add-architecture i386 \
+    && apt-get update && apt-get install -y libc6:i386 libncurses5:i386 libstdc++6:i386 lib32z1 libbz2-1.0:i386
 
 RUN apt-get update -y             \
     && apt-get upgrade -y         \
     && apt-get install -y         \
        build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev \
-       llvm libncursesw5-dev tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev \
+       flex bison zlib1g-dev gcc-multilib g++-multilib \
+       x11proto-core-dev \
+       libx11-dev libgl1-mesa-dev \
+       llvm tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev \
+       gstreamer1.0-tools gstreamer1.0-plugins-base gstreamer1.0-plugins-good \
+       cmake libopencv-dev   \
        neovim                \
        golang                \
        nodejs yarn           \

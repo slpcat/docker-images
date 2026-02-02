@@ -44,7 +44,7 @@
 # AutoRaiseDelay=400 # [0-5000]
 
 #  Reload menu files automatically.
-# AutoReloadMenus=1 # 0/1
+AutoReloadMenus=0 # 0/1
 
 #  Auto scroll delay in ms.
 AutoScrollDelay=250 # [0-5000]
@@ -762,7 +762,7 @@ ScrollBarDelay=250 # [0-5000]
 # ShowPopupsAbovePointer=0 # 0/1
 
 #  Show programs submenu in the program menu.
-# ShowProgramsMenu=1 # 0/1
+ShowProgramsMenu=0 # 0/1
 
 #  Show the run menu item in the program menu.
 # ShowRun=1 # 0/1

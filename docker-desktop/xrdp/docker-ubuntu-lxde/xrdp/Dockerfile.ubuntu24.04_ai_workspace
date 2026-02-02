@@ -96,9 +96,10 @@ RUN \
 
 # Wave Termianl
 
-# Clawdbot/moltbot
-#https://github.com/moltbot/moltbot
-#bytebot
+# Clawdbot/moltbot/openclaw
+#https://github.com/openclaw/openclaw
+#AgenticSeek
+#Bytebot GUI
 #https://github.com/bytebot-ai/bytebot.git
 #everywhere 桌面智能
 #https://github.com/DearVa/Everywhere
