@@ -320,7 +320,7 @@ RUN \
 
 # openmoji
 #wget https://github.com/hfg-gmuend/openmoji/raw/refs/heads/master/font/OpenMoji-color-colr0_svg/OpenMoji-color-colr0_svg.ttf
-    && wget https://github.com/hfg-gmuend/openmoji/raw/refs/heads/master/font/OpenMoji-color-colr1_svg/OpenMoji-color-colr1_svg.ttf
+    && wget https://github.com/hfg-gmuend/openmoji/raw/refs/heads/master/font/OpenMoji-color-colr1_svg/OpenMoji-color-colr1_svg.ttf \
     && mkdir /usr/share/fonts/truetype/OpenMoji \
     && mv OpenMoji* /usr/share/fonts/truetype/OpenMoji \
     && fc-cache -f -v
