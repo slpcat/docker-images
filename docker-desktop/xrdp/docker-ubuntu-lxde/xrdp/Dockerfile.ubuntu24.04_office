@@ -92,8 +92,8 @@ RUN \
     --env=GTK_IM_MODULE=fcitx5 \
     --env=QT_IM_MODULE=fcitx5 \
     --env=XMODIFIERS=@im=fcitx5 \
-    --env=SDL_IM_MODULE=fcitx5
-    #--env=GLFW_IM_MODULE=ibus
+    --env=SDL_IM_MODULE=fcitx5 \
+    --env=GLFW_IM_MODULE=ibus
 
 # Install appimagemanager
 RUN \
