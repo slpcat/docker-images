@@ -311,7 +311,7 @@ RUN \
     && wget https://github.com/adobe-fonts/emojione-color/raw/refs/heads/master/EmojiOneBW.otf \
     && wget https://github.com/adobe-fonts/emojione-color/blob/master/EmojiOneColor.otf \
     && mkdir /usr/share/fonts/truetype/AdobeEmojiOne \
-    && mv EmojiOne* /usr/share/fonts/truetype/AdobeEmojiOne
+    && mv EmojiOne* /usr/share/fonts/truetype/AdobeEmojiOne \
 
 # AppleColorEmoji
     && wget https://github.com/samuelngs/apple-emoji-linux/releases/latest/download/AppleColorEmoji.ttf \
