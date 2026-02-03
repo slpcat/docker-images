@@ -253,6 +253,15 @@ RUN \
     wget https://cdn.jopdf.com/download/jopdf/jopdf-linux-amd64_setup.deb \
     && apt-get install -y ./jopdf-linux-amd64_setup.deb && rm -f jopdf-linux-amd64_setup.deb
 
+#Kiwix is an offline reader - meaning that it allows you to check text or video that is normally only available on the internet.
+RUN \
+    flatpak install -y flathub org.kiwix.desktop
+
+#https://download.kiwix.org/release/kiwix-desktop/kiwix-desktop_x86_64.appimage
+#https://download.kiwix.org/zim/wikipedia/
+#RUN \
+#    apt-get install -y kiwix-tools
+
 # Obsidian is a multi-platform note taking application. See https://obsidian.md
 RUN \
     OBSIDIAN_VERSION=$(curl -s https://api.github.com/repos/obsidianmd/obsidian-releases/releases/latest | grep -Po '"tag_name": "v\K[^"]*') \

@@ -4,6 +4,8 @@ set -x -e
 #Kiwix is an offline reader - meaning that it allows you to check text or video that is normally only available on the internet.
 #flatpak install flathub org.kiwix.desktop
 #https://download.kiwix.org/release/kiwix-desktop/kiwix-desktop_x86_64.appimage
+#https://download.kiwix.org/zim/wikipedia/
+
 # OpenShot Editor
 # flatpak install -y flathub org.openshot.OpenShot
 # Shotcut Editor
