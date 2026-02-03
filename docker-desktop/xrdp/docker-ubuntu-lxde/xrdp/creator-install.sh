@@ -90,5 +90,8 @@ set -x -e
 #SolveSpace
 #BRL-CAD
 
-
+#LCEDA (Chinese: 嘉立创EDA), Chinese editon of EasyEDA, is a web-based, ready-to-use, easy-to-use, team-collaborative EDA tool.
+#flatpak install flathub cn.lceda.LCEDAPro
+#EasyEDA, the international edition of LCEDA, is a web-based, ready-to-use, easy-to-use, team-collaborative EDA tool.
+#flatpak install flathub com.easyeda.EasyEDAPro
 

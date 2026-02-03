@@ -28,6 +28,11 @@ bash < <(curl -s -S -L https://raw.githubusercontent.com/moovweb/gvm/master/bins
 #https://github.com/nvm-sh/nvm
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
 
+# Bun is an all-in-one toolkit for JavaScript and TypeScript apps.
+curl -fsSL https://bun.sh/install | bash
+# or you can use npm
+# npm install -g bun
+
 # rustup
 # https://rustup.rs/
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
@@ -69,6 +74,7 @@ curl -L https://github.com/marler8997/zigup/releases/latest/download/zigup-x86_6
 #https://developer.huawei.com/consumer/cn/deveco-studio/
 
 # Arduino IDE
+#wget https://downloads.arduino.cc/arduino-ide/arduino-ide_2.3.7_Linux_64bit.zip
 
 # sonar-scanner-cli
 
@@ -90,7 +96,6 @@ playwright install
 #npm install -g appium
 #npm install -g appium-android-driver
 
-
 # vscode extensions
 # Install default supported themes
 code --install-extension enkia.tokyo-night
@@ -98,8 +103,7 @@ code --install-extension enkia.tokyo-night
 # Install AI coding/Vibe coding tools
 
 # Claude Code , Cursor CLI, CodeX,Gemini CLI,cline
-curl https://cursor.com/install -fsS | bash \
-mv $HOME/.local/bin/cursor-agent /usr/local/bin/ \
+curl https://cursor.com/install -fsS | bash
 
 npm install -g @anthropic-ai/claude-code
 npm install -g @openai/codex

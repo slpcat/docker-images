@@ -6,7 +6,7 @@ RUN \
     && tar -xzf kubectl-ai_Linux_x86_64.tar.gz \
     && chmod +x kubectl-ai \
     && mv kubectl-ai /usr/local/bin \
-    && rm -f kubectl-ai_Linux_x86_64.tar.gz
+    && rm -f kubectl-ai_Linux_x86_64.tar.gz LICENSE README.md
 
 #k8sgpt
 RUN \
