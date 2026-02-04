@@ -124,9 +124,9 @@ RUN \
     apt-get install -y recordmydesktop simplescreenrecorder libavcodec-extra kazam
 
 # Install Chromium and driver from xtradeb
-RUN \
-    add-apt-repository ppa:xtradeb/apps -y && \
-    apt-get update && apt-get install -y chromium chromium-l10n chromium-shell chromium-driver
+#RUN \
+#    add-apt-repository ppa:xtradeb/apps -y && \
+#    apt-get update && apt-get install -y chromium chromium-l10n chromium-shell chromium-driver
 
 # Ungoogled Chromium
 # flatpak install -y flathub io.github.ungoogled_software.ungoogled_chromium
@@ -482,8 +482,8 @@ RUN \
 
 # sunshine
 RUN \
-    wget https://github.com/LizardByte/Sunshine/releases/download/v2025.924.154138/sunshine-ubuntu-24.04-amd64.deb \
-    && apt-get install -y ./sunshine-ubuntu-24.04-amd64.deb && rm -f sunshine-ubuntu-24.04-amd64.deb
+    wget https://github.com/LizardByte/Sunshine/releases/download/v2025.628.4510/sunshine-debian-bookworm-amd64.deb \
+    && apt-get install -y ./sunshine-debian-bookworm-amd64.deb && rm -f sunshine-debian-bookworm-amd64.deb
 
 # moonlight
 RUN \
