@@ -124,14 +124,14 @@ RUN \
     apt-get install -y recordmydesktop simplescreenrecorder libavcodec-extra kazam
 
 # Install Chromium and driver from xtradeb
-#RUN \
+RUN \
 #    add-apt-repository ppa:xtradeb/apps -y && \
 #    apt-get update && apt-get install -y chromium chromium-l10n chromium-shell chromium-driver
 
 # Ungoogled Chromium
 # flatpak install -y flathub io.github.ungoogled_software.ungoogled_chromium
-RUN \
-    apt-get install -y ungoogled-chromium ungoogled-chromium-l10n ungoogled-chromium-shell ungoogled-chromium-driver
+#RUN \
+#    apt-get install -y ungoogled-chromium ungoogled-chromium-l10n ungoogled-chromium-shell ungoogled-chromium-driver
 
 # Install Google Chrome and driver
 RUN \
