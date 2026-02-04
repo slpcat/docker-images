@@ -69,7 +69,6 @@ RUN \
       #language-pack-ja \
       #language-pack-ja-base \
       #lxde-core \
-      #lxpanel can not work
       desktop-defaults-base-antix \
       desktop-defaults-icewm-antix \
       desktop-menu-antix \
@@ -87,9 +86,7 @@ RUN \
       #xorg \
       xorgxrdp \
       xrdp \
-    && apt-get remove --purge -y xscreensaver* && apt-get autoremove --purge -y \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+    && apt-get remove --purge -y xscreensaver* && apt-get autoremove --purge -y
 
 COPY --from=build \
     /opt/su-exec/su-exec /usr/sbin/su-exec
