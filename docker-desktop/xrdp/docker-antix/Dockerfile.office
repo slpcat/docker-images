@@ -124,7 +124,7 @@ RUN \
     apt-get install -y recordmydesktop simplescreenrecorder libavcodec-extra kazam
 
 # Install Chromium and driver from xtradeb
-RUN \
+#RUN \
 #    add-apt-repository ppa:xtradeb/apps -y && \
 #    apt-get update && apt-get install -y chromium chromium-l10n chromium-shell chromium-driver
 
