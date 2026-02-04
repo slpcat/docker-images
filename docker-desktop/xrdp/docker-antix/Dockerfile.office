@@ -213,7 +213,7 @@ RUN \
 
 # Install peazip nextcloud-desktop from xtradeb
 RUN \
-    apt-get install -y peazip nextcloud-desktop
+    apt-get install -y nextcloud-desktop
 
 # tailscale
 RUN \
