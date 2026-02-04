@@ -4,8 +4,6 @@ RUN apt-get update -y             \
     && apt-get upgrade -y         \
     && apt-get install -y         \
        apt-transport-https        \
-       roxterm                    \
-       zzzfm                      \
        #linux-tools-generic        \
        #linux-tools-generic-hwe-24.04 \
        hwdata                     \
