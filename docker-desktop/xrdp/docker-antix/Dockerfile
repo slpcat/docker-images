@@ -108,7 +108,7 @@ RUN chmod u+s /usr/sbin/useradd \
 
 RUN \
     apt-get install -y fluxbox fbpager fbautostart xfonts-terminus-oblique yudit-doc yudit \
-            xcompmgr dmenu lxappearance language-selector-gnome \
+            xcompmgr dmenu lxappearance \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
