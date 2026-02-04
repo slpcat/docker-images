@@ -260,10 +260,11 @@ RUN \
 #    apt-get update && apt-get install -y  kodi
 
 # OBS Studio 
-# flatpak install -y flathub com.obsproject.Studio
 RUN \
-    add-apt-repository ppa:obsproject/obs-studio && \
-    apt-get update && apt-get install -y obs-studio
+    flatpak install -y flathub com.obsproject.Studio
+#RUN \
+#    add-apt-repository ppa:obsproject/obs-studio && \
+#    apt-get update && apt-get install -y obs-studio
 
 # Install jopdf editor
 RUN \
@@ -391,10 +392,11 @@ RUN \
     && apt-get install -y ./slack-desktop-4.47.69-amd64.deb && rm -f slack-desktop-4.47.69-amd64.deb
 
 # telegram
-#flatpak install -y https://dl.flathub.org/repo/appstream/org.telegram.desktop.flatpakref
 RUN \
-    add-apt-repository ppa:atareao/telegram \
-    && apt-get update && apt-get install -y telegram telegram-cli
+    flatpak install -y https://dl.flathub.org/repo/appstream/org.telegram.desktop.flatpakref
+#RUN \
+#    add-apt-repository ppa:atareao/telegram \
+#    && apt-get update && apt-get install -y telegram telegram-cli
 
 # A Communication platform for voice, video, and text messaging https://discord.com/
 #flatpak install -y flathub com.discordapp.Discord
