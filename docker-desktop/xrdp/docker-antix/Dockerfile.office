@@ -150,7 +150,7 @@ RUN \
 
 # Install Mozilla Firefox and driver from xtradeb
 RUN \
-    apt-get update && apt-get  install -y firefox firefox-locale-zh-hans firefox-geckodriver
+    apt-get update && apt-get  install -y firefox-esr firefox-esr-l10n-zh-cn
 
 # Install Microsoft Edge and driver
 RUN \
