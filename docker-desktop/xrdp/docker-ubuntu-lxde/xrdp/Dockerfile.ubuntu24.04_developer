@@ -24,7 +24,11 @@ RUN apt-get update -y             \
        xorg-dev              \
        mesa-common-dev       \
        webp                  \
-       build-essential       \
+       nmap                  \
+       tcpdump               \
+       apache2-utils         \
+       siege                 \
+       dnsutils              \
        redis                 \
        mysql-client          \
        postgresql-client     \

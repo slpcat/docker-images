@@ -9,6 +9,9 @@ set -x -e
 #XOWA is the free, open-source application that lets you download Wikipedia to your computer.
 #http://xowa.org/
 
+#davinciresolve
+#http://www.blackmagicdesign.com/cn/products/davinciresolve
+
 # OpenShot Editor
 # flatpak install -y flathub org.openshot.OpenShot
 # Shotcut Editor

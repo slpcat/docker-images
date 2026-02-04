@@ -4,3 +4,11 @@ QT_IM_MODULE=fcitx5
 XMODIFIERS=@im=fcitx5
 SDL_IM_MODULE=fcitx5
 GLFW_IM_MODULE=ibus
+
+https_proxy=http://127.0.0.1:7897
+http_proxy=http://127.0.0.1:7897
+all_proxy=socks5://127.0.0.1:7897
+
+#禁止OpenGL硬件加速
+#LIBGL_ALWAYS_SOFTWARE=1
+#GALLIUM_DRIVER=llvmpipe
