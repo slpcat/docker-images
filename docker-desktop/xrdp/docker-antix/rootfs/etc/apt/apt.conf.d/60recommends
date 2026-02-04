@@ -1,0 +1,2 @@
+APT::Install-Recommends "true";
+APT::Install-Suggests   "false";
