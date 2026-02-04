@@ -37,7 +37,7 @@ RUN apt-get update && apt-get install -y locales && rm -rf /var/lib/apt/lists/* 
 # Set timezone and locales
 RUN \
     apt-get update -q \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -yq apt-utils dialog tzdata language-pack-zh-hans language-pack-zh-hans-base \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -yq apt-utils dialog tzdata \
     && echo "$LANG UTF-8" > /etc/locale.gen \
     && update-locale LANG=$LANG \
     && locale-gen $LANG zh_CN.UTF-8
