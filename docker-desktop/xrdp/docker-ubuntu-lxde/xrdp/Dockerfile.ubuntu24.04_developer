@@ -18,6 +18,7 @@ RUN apt-get update -y             \
        gstreamer1.0-tools gstreamer1.0-plugins-base gstreamer1.0-plugins-good \
        cmake libopencv-dev   \
        neovim                \
+       openjdk-21-jre        \
        golang                \
        nodejs yarn           \
        xorg-dev              \
@@ -137,6 +138,28 @@ RUN \
 #grype scanner
 RUN \
     curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b /usr/local/bin
+
+#allure report depends on java8-runtime
+#RUN \
+#    wget https://github.com/allure-framework/allure2/releases/download/2.17.2/allure_2.17.2-1_all.deb \
+#    &&dpkg -i allure_2.17.2-1_all.deb \
+#    && rm allure_2.17.2-1_all.deb
+
+RUN \
+    wget https://github.com/allure-framework/allure2/releases/download/2.33.0/allure-2.33.0.tgz \
+    && tar zxf allure-2.33.0.tgz -C /usr/local/ \
+    &&  ln -s /usr/local/allure-2.33.0/bin/allure  /usr/local/bin/allure \
+    && rm allure-2.33.0.tgz
+
+# jenkins agent
+ARG VERSION=3355.v388858a_47b_33
+ARG AGENT_WORKDIR=/home/jenkins/agent
+
+RUN curl --create-dirs -sSLo /usr/share/jenkins/agent.jar https://repo.jenkins-ci.org/public/org/jenkins-ci/main/remoting/${VERSION}/remoting-${VERSION}.jar \
+  && chmod 755 /usr/share/jenkins \
+  && chmod 644 /usr/share/jenkins/agent.jar
+
+###############################
 
 # redis-ui
 RUN \

@@ -6,6 +6,9 @@ set -x -e
 #https://download.kiwix.org/release/kiwix-desktop/kiwix-desktop_x86_64.appimage
 #https://download.kiwix.org/zim/wikipedia/
 
+#XOWA is the free, open-source application that lets you download Wikipedia to your computer.
+#http://xowa.org/
+
 # OpenShot Editor
 # flatpak install -y flathub org.openshot.OpenShot
 # Shotcut Editor

@@ -1,6 +1,14 @@
 #!/bin/bash
 set -x -e
 
+# jenkins agent
+# /usr/share/jenkins/agent.jar
+# $HOME/.icewm/startup
+# java -jar /usr/share/jenkins/agent.jar \
+#  -jnlpUrl http://your-jenkins-server:8080/computer/your-node-name/slave-agent.jnlp \
+#  -secret your-secret-key \
+#  -workDir ~/jenkins-agent
+
 #pyenv
 #git clone https://gitcode.com/GitHub_Trending/py/pyenv.git ~/.pyenv
 #export PYENV_ROOT="$HOME/.pyenv"
@@ -41,6 +49,8 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 # https://github.com/marler8997/zigup
 curl -L https://github.com/marler8997/zigup/releases/latest/download/zigup-x86_64-linux.tar.gz | tar xz
 
+#IntelliJ IDEA
+
 # redroid (Remote anDroid) is a GPU accelerated AIC (Android In Cloud) solution.
 #https://github.com/remote-android/redroid-doc
 
@@ -51,6 +61,7 @@ curl -L https://github.com/marler8997/zigup/releases/latest/download/zigup-x86_6
 # https://developer.android.com/studio/emulator_archive
 
 # android studio
+# flatpak install -y flathub com.google.AndroidStudio
 # https://developer.android.com/studio/archive
 # https://edgedl.me.gvt1.com/android/studio/ide-zips/2025.2.3.9/android-studio-2025.2.3.9-linux.tar.gz
 
@@ -66,8 +77,8 @@ curl -L https://github.com/marler8997/zigup/releases/latest/download/zigup-x86_6
 #echo 'export PATH="$PATH:/usr/lib/dart/bin"' >> ~/.bashrc
 #source ~/.bashrc
 
-# fvm
-#curl（curl -sL https://install.fvm.sh |bash
+# fvm Easy, powerful and flexible tool to manage multiple Flutter SDK versions.
+# curl -fsSL https://fvm.app/install.sh | bash
 
 # HarmonyOS SDK
 # DevEco Studio
@@ -77,6 +88,9 @@ curl -L https://github.com/marler8997/zigup/releases/latest/download/zigup-x86_6
 #wget https://downloads.arduino.cc/arduino-ide/arduino-ide_2.3.7_Linux_64bit.zip
 
 # sonar-scanner-cli
+
+#Robot Framework is a generic open source automation framework.
+#    pip3 install robotframework
 
 # selenium
 npm install -g selenium-side-runner
@@ -92,9 +106,9 @@ pip3 install playwright
 playwright install
 
 # appium
-#npm install -g appium-doctor
-#npm install -g appium
-#npm install -g appium-android-driver
+#npm install appium-doctor --location=global
+#npm install appium --location=global
+#npm install appium-android-driver --location=global
 
 # vscode extensions
 # Install default supported themes

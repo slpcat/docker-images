@@ -27,7 +27,7 @@ LABEL org.opencontainers.image.authors="slpcat@qq.com"
 
 # For slim:
 #   --build-arg ADDITIONAL_APT_GET_OPTS=--no-install-recommends
-ARG ADDITIONAL_APT_GET_OPTS=""
+ARG ADDITIONAL_APT_GET_OPTS="--install-recommends"
 
 RUN \
     apt-get update \

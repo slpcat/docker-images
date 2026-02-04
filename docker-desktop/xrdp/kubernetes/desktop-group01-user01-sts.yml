@@ -153,10 +153,10 @@ spec:
             - name: cgroup
               mountPath: /sys/fs/cgroup
               readOnly: true
-            #- name: dockersock
-            #  mountPath: /var/run/docker.sock
-            - name: containerdsock
-              mountPath: /run/containerd/containerd.sock
+            - name: dockersock
+              mountPath: /var/run/docker.sock
+            - name: containerd
+              mountPath: /run/containerd
             - name: devdri
               mountPath: /dev/dri
             - name: devfuse
@@ -172,14 +172,14 @@ spec:
           hostPath:
             path: /sys/fs/cgroup
             type: Directory
-        #- name: dockersock
-        #  hostPath:
-        #    path: /var/run/docker.sock
-        #    type: Socket
-        - name: containerdsock
+        - name: dockersock
           hostPath:
-            path: /run/containerd/containerd.sock
+            path: /var/run/docker.sock
             type: Socket
+        - name: containerd
+          hostPath:
+            path: /run/containerd
+            type: Directory
         - name: devdri
           hostPath:
             path: /dev/dri

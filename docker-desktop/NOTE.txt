@@ -59,6 +59,18 @@ kasm workspace
 https://railway.com/
 https://render.com/
 
+通过Neko虚拟浏览器的资源隔离技术，您可以轻松构建稳定、安全的多用户浏览环境，确保每个会话都能获得公平的资源分配和优质的使用体验。
+docker run -d --rm \
+  -p 8080:8080 \
+  -p 56000-56100:56000-56100/udp \
+  -e NEKO_WEBRTC_EPR=56000-56100 \
+  -e NEKO_WEBRTC_NAT1TO1=127.0.0.1 \
+  -e NEKO_MEMBER_MULTIUSER_USER_PASSWORD=neko \
+  -e NEKO_MEMBER_MULTIUSER_ADMIN_PASSWORD=admin \
+  ghcr.io/m1k1o/neko/firefox:latest
+
+https://neko.m1k1o.net/docs/v3/installation/docker-images
+
 docker-webtop远程桌面
 linuxserver/webtop
 
@@ -139,6 +151,7 @@ docker run -d \
    --ipc=host \
    --device /dev/fuse:/dev/fuse `#optional` \
    --device /dev/dri:/dev/dri `#optional` \
+   --device /dev/kvm:/dev/kvm `#optional` \
    -p 3389:3389 \
    -p 7070:7070 `#optional anydesk`\
    -p 47984-47990:47984-47990/tcp `#sunshine`\
@@ -150,7 +163,7 @@ docker run -d \
    -v /sys/fs/cgroup:/sys/fs/cgroup:ro \
    -v /var/run/docker.sock:/var/run/docker.sock `#optional` \
    -v /data/ubuntu2404-home:/home \
-   slpcat/docker-ubuntu-lxde:24.04-xrdp_full
+   slpcat/docker-ubuntu-lxde:24.04-xrdp_ai_workspace
    slpcat/docker-ubuntu-lxqt:24.04-xrdp_full
    slpcat/docker-ubuntu-lxqt:24.04-xrdp_audio
    slpcat/docker-antix-icewm:23.2-xrdp_full
@@ -177,6 +190,7 @@ docker run -d \
    --ipc=host \
    --device /dev/fuse:/dev/fuse `#optional` \
    --device /dev/dri:/dev/dri `#optional` \
+   --device /dev/kvm:/dev/kvm `#optional` \
    --device /dev/uinput:/dev/uinput \
    -p 3390:3389 \
    -p 7070:7070 `#optional anydesk`\
