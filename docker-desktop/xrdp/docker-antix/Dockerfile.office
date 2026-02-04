@@ -82,7 +82,7 @@ RUN apt-get update -y             \
        tigervnc-viewer      \
        python3              \
        python3-pip          \
-       python3-all-venv     \
+       python3-venv     \
        pipx                 \
        xvfb
 
