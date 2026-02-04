@@ -25,6 +25,27 @@ RUN curl -s -L https://github.com/ncopa/su-exec/archive/v0.2.tar.gz | tar zx -C 
 FROM slpcat/antix:core-23.2
 LABEL org.opencontainers.image.authors="slpcat@qq.com"
 
+ENV \
+    TERM="xterm-256color" \
+    LANG="en_US.UTF-8" \
+    LANGUAGE="en_US:en" \
+    LC_ALL="en_US.UTF-8"
+
+RUN apt-get update && apt-get install -y locales && rm -rf /var/lib/apt/lists/* \
+    && localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
+
+# Set timezone and locales
+RUN \
+    apt-get update -q \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -yq apt-utils dialog tzdata language-pack-zh-hans language-pack-zh-hans-base \
+    && echo "$LANG UTF-8" > /etc/locale.gen \
+    && update-locale LANG=$LANG \
+    && locale-gen $LANG zh_CN.UTF-8
+
+#RUN locale-gen $LANG \
+#    && echo "LC_ALL=$LANG" > /etc/default/locale \
+#    && echo "LANG=$LANG" >> /etc/default/locale
+
 # For slim:
 #   --build-arg ADDITIONAL_APT_GET_OPTS=--no-install-recommends
 ARG ADDITIONAL_APT_GET_OPTS="--install-recommends"
@@ -33,10 +54,15 @@ RUN \
     apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y $ADDITIONAL_APT_GET_OPTS \
       vim-tiny \
+      wget     \
       dbus-x11 \
       fonts-noto-cjk \
+      fonts-noto-color-emoji \
+      fonts-symbola \
+      ttf-ancient-fonts \
       fcitx5 \
-      fcitx5-frontend-all \
+      fcitx5-rime \
+      fcitx5-table-emoji \
       fcitx5-chinese-addons \
       fcitx5-material-color \
       im-config \
@@ -61,7 +87,7 @@ RUN \
       #xorg \
       xorgxrdp \
       xrdp \
-    && apt-get remove --purge -y at-spi2-core system-config-printer* cups* pm-utils xscreensaver* ibus* upower udisks2 network-manager && apt-get autoremove --purge -y \
+    && apt-get remove --purge -y xscreensaver* && apt-get autoremove --purge -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -71,25 +97,6 @@ COPY --from=build \
 #COPY --from=build \
 #    /home/debian/Downloads/xrdp/xrdp_0.10.4.1-1_amd64.deb /tmp/
 #   xorg-xrdp pulse-audio
-
-RUN apt-get update && apt-get install -y locales && rm -rf /var/lib/apt/lists/* \
-    && localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
-
-ENV \
-    TERM="xterm-256color" \
-    LANG="en_US.UTF-8" \
-    LANGUAGE="en_US.UTF-8" \
-    LC_ALL="en_US.UTF-8"
-
-# Set timezone and locales
-RUN \
-    echo "$LANG UTF-8" > /etc/locale.gen \
-    && apt-get update -q \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -yq apt-utils dialog tzdata \
-    && update-locale LANG=$LANG \
-    && locale-gen $LANG \
-    && DEBIAN_FRONTEND=noninteractive dpkg-reconfigure locales
-
 
 # Set default vars
 ENV DEFAULT_USER=developer \
@@ -101,6 +108,12 @@ RUN echo "ALL ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/ALL
 # Change permission so that non-root user can add users and groups
 RUN chmod u+s /usr/sbin/useradd \
     && chmod u+s /usr/sbin/groupadd
+
+RUN \
+    apt-get install -y fluxbox fbpager fbautostart xfonts-terminus-oblique yudit-doc yudit \
+            xcompmgr dmenu lxappearance language-selector-gnome \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 # Expose RDP port
 EXPOSE 3389
