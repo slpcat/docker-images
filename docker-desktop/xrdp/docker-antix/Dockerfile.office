@@ -58,7 +58,7 @@ RUN apt-get update -y             \
        clamav               \
        clamav-freshclam     \
        leafpad              \
-       wireshark            \
+       #wireshark            \
        qpdfview             \
        audacious            \
        audacious-plugins    \
