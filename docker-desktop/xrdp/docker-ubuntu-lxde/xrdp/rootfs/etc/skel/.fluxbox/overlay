@@ -1,0 +1,12 @@
+## Sample file - antiX ##
+# add rounded corners to the menu
+#menu.roundCorners: TopRight TopLeft BottomRight BottomLeft
+
+# add rounded corners to the windows
+#window.roundCorners: TopRight TopLeft BottomRight BottomLeft
+
+# add rounded corners to the toolbar (only applies to the top corners)
+#toolbar.shaped: true
+
+#background: fullscreen
+#background.pixmap: /usr/share/fluxbox/styles/sleek2flux/sleek-antix.png

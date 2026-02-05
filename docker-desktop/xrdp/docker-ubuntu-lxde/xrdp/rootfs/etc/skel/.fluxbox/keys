@@ -1,0 +1,198 @@
+! fluxbox-update_configs added '(workspace=[current])' to (Next|Prev)(Window|Group)
+! check lines marked by 'FBCV13' if they are correctly updated
+!mouse actions added by fluxbox-update_configs
+OnTitlebar Mouse1 :MacroCmd {Focus} {Raise} {ActivateTab}
+!mouse actions added by fluxbox-update_configs
+OnTitlebar Move1 :StartMoving
+OnLeftGrip Move1 :StartResizing bottomleft
+OnRightGrip Move1 :StartResizing bottomright
+OnWindowBorder Move1 :StartMoving
+
+!!!Sample fluxbox hotkeys file for antiX!!!
+! click on the desktop to get menus
+OnDesktop Mouse1 :HideMenus
+OnDesktop Mouse2 :WorkspaceMenu
+OnDesktop Mouse3 :RootMenu
+
+! Control Alt left and right change workspaces
+Control Mod1 Left :PrevWorkspace
+Control Mod1 Right :NextWorkspace
+
+! scroll on the desktop to change workspaces
+OnDesktop Mouse4 :PrevWorkspace
+OnDesktop Mouse5 :NextWorkspace
+
+! scroll on the toolbar to change workspaces
+OnToolbar Mouse4 :PrevWorkspace
+OnToolbar Mouse5 :NextWorkspace
+
+! alt + left/right click to move/resize a window
+OnWindow Mod1 Mouse1 :MacroCmd {Raise} {Focus} {StartMoving}
+OnWindow Mod1 Mouse3 :MacroCmd {Raise} {Focus} {StartResizing NearestCorner}
+
+! middle click a window's titlebar and drag to attach windows
+OnTitlebar Mouse2 :StartTabbing
+
+! double click on the titlebar to shade
+OnTitlebar Double Mouse1 :Shade
+
+! right click on the titlebar for a menu of options
+OnTitlebar Mouse3 :WindowMenu
+
+! alt-tab
+Mod1 Tab :NextWindow {groups} (workspace=[current])  (workspace=[current])  (workspace=[current])  (workspace=[current])  !! FBCV13 !! !! FBCV13 !! !! FBCV13 !! !! FBCV13 !!
+Mod1 Shift Tab :PrevWindow {groups} (workspace=[current])  (workspace=[current])  (workspace=[current])  (workspace=[current])  !! FBCV13 !! !! FBCV13 !! !! FBCV13 !! !! FBCV13 !!
+
+! cycle through tabs in the current window
+Mod4 Tab :NextTab
+Mod4 Shift Tab :PrevTab
+
+! go to a specific tab in the current window
+Mod4 1 :Tab 1
+Mod4 2 :Tab 2
+Mod4 3 :Tab 3
+Mod4 4 :Tab 4
+Mod4 5 :Tab 5
+Mod4 6 :Tab 6
+Mod4 7 :Tab 7
+Mod4 8 :Tab 8
+Mod4 9 :Tab 9
+
+! F* keys examples
+!F1 :Exec desktop-defaults-run -t	! Open a terminal
+!F2 :Exec gexec				! Open a dialog to run programs
+!F3 :Exec desktop-defaults-run -fm	! Open file manager
+!F4 :Exec desktop-defaults-run -b	! Open browser
+!F5 :Exec antixcc.sh			! Open antiX control centre
+!F6 :Exec antixscreenshot.sh		! Take a screenshot 
+!F11 :Exec sudo p-suspend		! Suspend  
+
+! volume settings, using common keycodes
+! if these don't work, use xev to find out your real keycodes
+XF86AudioLowerVolume :ExecCommand amixer sset Master,0 5%-
+XF86AudioRaiseVolume :ExecCommand amixer sset Master,0 5%+
+XF86AudioMute :ExecCommand amixer sset Master,0 toggle
+
+! Brightness keys
+XF86MonBrightnessDown :ExecCommand backlight-brightness -5
+XF86MonBrightnessUp :ExecCommand backlight-brightness +5
+
+! current window commands
+Mod1 F4 :Close
+Mod1 F9 :Minimize
+Mod1 F10 :Maximize
+Mod1 F11 :Fullscreen
+
+! open the window menu
+Mod1 space :WindowMenu
+
+! change to a specific workspace
+Control F1 :Workspace 1
+Control F2 :Workspace 2
+Control F3 :Workspace 3
+Control F4 :Workspace 4
+Control F5 :Workspace 5
+Control F6 :Workspace 6
+Control F7 :Workspace 7
+Control F8 :Workspace 8
+Control F9 :Workspace 9
+Control F10 :Workspace 10
+Control F11 :Workspace 11
+Control F12 :Workspace 12
+
+! send the current window to a specific workspace
+Mod4 F1 :SendToWorkspace 1
+Mod4 F2 :SendToWorkspace 2
+Mod4 F3 :SendToWorkspace 3
+Mod4 F4 :SendToWorkspace 4
+Mod4 F5 :SendToWorkspace 5
+Mod4 F6 :SendToWorkspace 6
+Mod4 F7 :SendToWorkspace 7
+Mod4 F8 :SendToWorkspace 8
+Mod4 F9 :SendToWorkspace 9
+Mod4 F10 :SendToWorkspace 10
+Mod4 F11 :SendToWorkspace 11
+Mod4 F12 :SendToWorkspace 12
+
+! send the current window and change to a specific workspace
+Control Mod4 F1 :TakeToWorkspace 1
+Control Mod4 F2 :TakeToWorkspace 2
+Control Mod4 F3 :TakeToWorkspace 3
+Control Mod4 F4 :TakeToWorkspace 4
+Control Mod4 F5 :TakeToWorkspace 5
+Control Mod4 F6 :TakeToWorkspace 6
+Control Mod4 F7 :TakeToWorkspace 7
+Control Mod4 F8 :TakeToWorkspace 8
+Control Mod4 F9 :TakeToWorkspace 9
+Control Mod4 F10 :TakeToWorkspace 10
+Control Mod4 F11 :TakeToWorkspace 11
+Control Mod4 F12 :TakeToWorkspace 12
+
+! Apps to keys - suggested
+Alt F2 :ExecCommand app-select
+Print :Exec antixscreenshot.sh
+
+! Activate the calculator key with the galculator program - using common keycodes
+! if these don't work, use xev in a terminal to find out your real keycodes and replace number 148
+! 148 :Exec galculator
+
+
+!Control Mod1 e :ExecCommand desktop-defaults-run -e
+!Control Mod1 t :ExecCommand desktop-defaults-run -t
+!Control Mod4 t :ExecCommand desktop-defaults-run -r -t
+!Control Mod1 u :ExecCommand gftp
+!Control Mod1 i :ExecCommand desktop-defaults-run -i
+!Control Mod1 o :ExecCommand libreoffice
+!Control Mod1 p :ExecCommand desktop-defaults-run -t htop
+!Control Mod4 p :ExecCommand desktop-defaults-run -r -t htop
+!Control Mod1 a :ExecCommand desktop-defaults-run -a
+!Control Mod1 s :ExecCommand antixscreenshot.sh
+!Control Mod1 d :ExecCommand gksu synaptic
+!Control Mod1 f :ExecCommand desktop-defaults-run -fm
+!Control Mod4 f :ExecCommand desktop-defaults-run -r -fm
+!Control Mod1 g :ExecCommand desktop-defaults-run -te
+!Control Mod4 g :ExecCommand desktop-defaults-run -r -te
+!Control Mod1 h :ExecCommand desktop-defaults-run -b file:/usr/share/antiX/FAQ/index.html
+!Control Mod1 k :ExecCommand desktop-session-exit
+!Control Mod1 l :ExecCommand xlock
+!Control Mod1 z :ExecCommand grsync
+!Control Mod1 x :ExecCommand xkill
+!Control Mod1 c :ExecCommand antixcc.sh
+!Control Mod1 v :ExecCommand desktop-defaults-run -v
+!Control Mod1 b :ExecCommand desktop-defaults-run -b
+!Control Mod1 Return :Maximize
+!Control Mod1 Backspace :Minimize
+!Control Mod1 Delete :ExecCommand desktop-session-exit
+Mod1 k :KillWindow
+Mod1 r :RootMenu 
+
+!Set Volume
+OnDesktop Mod1 Mouse4 :ExecCommand amixer -q set PCM 5+  !Increase volume
+OnDesktop Mod1 Mouse5 :ExecCommand amixer -q set PCM 5-  !Decrease volume 
+
+!!dmenu
+Mod4 Mod1 P :ExecCommand $(ls -lL `echo $PATH | tr : ' '` 2>/dev/null | awk 'NF>2 && $1 ~ /^[^d].*x/ {print $NF}' | sort -u | dmenu -b -fn 10x20 -nb black -nf white -sb grey -sf black)
+
+!wingrid
+Control 1 :ExecCommand wingrid-left.sh
+Control 2 :ExecCommand wingrid-right.sh
+Control 3 :ExecCommand wingrid-top.sh
+Control 4 :ExecCommand wingrid-bottom.sh
+Control 5 :ExecCommand wingrid-topleft.sh
+Control 6 :ExecCommand wingrid-topright.sh
+Control 7 :ExecCommand wingrid-bottomleft.sh
+Control 8 :ExecCommand wingrid-bottomright.sh
+Control 9 :ExecCommand wingrid-maximize.sh
+Control 0 :ExecCommand wingrid-close.sh
+
+!Move a window vertically or horizontally with multi screen installation
+!Use the logo key + arrow key
+Mod4 111 :MacroCmd {ResizeTo 100% 50%} {MoveTo 00 00 Up}
+Mod4 113 :MacroCmd {ResizeTo 50% 100%} {MoveTo 00 00 Left}
+Mod4 114 :MacroCmd {ResizeTo 50% 100%} {MoveTo 00 00 Right}
+Mod4 116 :MacroCmd {ResizeTo 100% 50%} {MoveTo 00 00 Bottom}
+
+
+
+
+

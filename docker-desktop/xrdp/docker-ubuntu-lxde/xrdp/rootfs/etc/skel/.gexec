@@ -1,0 +1,3 @@
+cmd_termemu=lxterminal -e %s
+cmd_su=sudo -E "%s"
+history_max=20

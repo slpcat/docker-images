@@ -130,3 +130,8 @@ npm install -g cline
 
 # https://github.com/sickcodes/Docker-OSX
 # https://github.com/sickcodes/Docker-eyeOS
+
+#######################################################
+
+#Label Studio is an open source data labeling tool. 
+#https://github.com/HumanSignal/label-studio

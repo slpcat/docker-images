@@ -63,6 +63,8 @@ RUN apt-get update -y             \
        gpicview             \
        seahorse             \
        audacity             \
+       handbrake            \
+       handbrake-cli        \
        gimp                 \
        shotcut              \
        flowblade            \
@@ -248,8 +250,8 @@ RUN \
 
 # handbrake: Open Source Video Transcoder
 # flatpak install -y flathub fr.handbrake.ghb
-RUN \
-    apt-get install -y handbrake handbrake-cli
+#RUN \
+#    apt-get install -y handbrake handbrake-cli
 
 # kodi
 RUN \

@@ -1,0 +1,4 @@
+#!/bin/bash
+
+[ -e /etc/live/config/persist-root -o -e /live/config/persist-root ] || exit
+echo "Persist Root Enabled"

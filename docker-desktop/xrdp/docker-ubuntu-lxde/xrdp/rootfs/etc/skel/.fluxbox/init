@@ -1,0 +1,120 @@
+session.screen0.tab.width:	64
+session.screen0.tab.height:	20
+session.screen0.tab.alignment:	Left
+session.screen0.tab.rotatevertical:	True
+session.screen0.tab.placement:	BottomLeft
+session.screen0.menu.alpha:	240
+session.screen0.iconbar.iconWidth:	70
+session.screen0.iconbar.iconTextPadding:	10
+session.screen0.iconbar.mode:	{static groups} (workspace)
+session.screen0.iconbar.deiconifyMode:	Follow
+session.screen0.iconbar.wheelMode:	Screen
+session.screen0.iconbar.alignment:	Relative
+session.screen0.iconbar.usePixmap:	true
+session.screen0.slit.autoHide:	false
+session.screen0.slit.onhead:	0
+session.screen0.slit.placement:	RightTop
+session.screen0.slit.layer:	Desktop
+session.screen0.slit.acceptKdeDockapps:	true
+session.screen0.slit.maxOver:	true
+session.screen0.slit.onTop:	false
+session.screen0.slit.alpha:	255
+session.screen0.slit.direction:	Vertical
+session.screen0.overlay.lineWidth:	1
+session.screen0.overlay.lineStyle:	LineSolid
+session.screen0.overlay.joinStyle:	JoinMiter
+session.screen0.overlay.capStyle:	CapNotLast
+session.screen0.tabs.intitlebar:	true
+session.screen0.tabs.maxOver:	false
+session.screen0.tabs.usePixmap:	false
+session.screen0.toolbar.onhead:	0
+session.screen0.toolbar.widthPercent:	98
+session.screen0.toolbar.autoHide:	false
+session.screen0.toolbar.layer:	AboveDock
+session.screen0.toolbar.visible:	true
+session.screen0.toolbar.placement:	BottomCenter
+session.screen0.toolbar.onTop:	false
+session.screen0.toolbar.maxOver:	false
+session.screen0.toolbar.alpha:	255
+session.screen0.toolbar.tools:	button.homenu, button.togshowdesk, workspacename, prevworkspace, nextworkspace, iconbar, systemtray, prevwindow, nextwindow, clock
+session.screen0.toolbar.height:	
+session.screen0.clientMenu.usePixmap:	true
+session.screen0.titlebar.left:	Stick 
+session.screen0.titlebar.right:	Minimize Maximize Close 
+session.screen0.window.focus.alpha:	255
+session.screen0.window.unfocus.alpha:	248
+session.screen0.maxIgnoreIncrement:	true
+session.screen0.clickRaises:	true
+session.screen0.userFollowModel:	Follow
+session.screen0.opaqueMove:	false
+session.screen0.desktopwheeling:	true
+session.screen0.workspacewarping:	true
+session.screen0.antialias:	true
+session.screen0.workspaces:	2
+session.screen0.menuAlpha:	225
+session.screen0.focusModel:	ClickFocus
+session.screen0.windowPlacement:	RowSmartPlacement
+session.screen0.defaultDeco:	NORMAL
+session.screen0.fullMaximization:	false
+session.screen0.autoRaise:	false
+session.screen0.strftimeFormat:	%a %d %b   %l:%M
+session.screen0.decorateTransient:	false
+session.screen0.rowPlacementDirection:	LeftToRight
+session.screen0.edgeSnapThreshold:	8
+session.screen0.demandsAttentionTimeout:	500
+session.screen0.tabFocusModel:	ClickToTabFocus
+session.screen0.menuDelay:	0
+session.screen0.focusSameHead:	false
+session.screen0.windowMenu:	
+session.screen0.colPlacementDirection:	TopToBottom
+session.screen0.imageDither:	false
+session.screen0.focusNewWindows:	true
+session.screen0.maxDisableResize:	false
+session.screen0.tooltipDelay:	500
+session.screen0.allowRemoteActions:	false
+session.screen0.showwindowposition:	true
+session.screen0.resizeMode:	Bottom
+session.screen0.menuMode:	Delay
+session.screen0.windowScrollReverse:	false
+session.screen0.menuDelayClose:	0
+session.screen0.windowScrollAction:	
+session.screen0.workspaceNames:	Workspace Alpha,Workspace Beta,
+session.screen0.focusLastWindow:	true
+session.screen0.reversewheeling:	false
+session.screen0.sloppywindowgrouping:	true
+session.screen0.noFocusWhileTypingDelay:	0
+session.screen0.followModel:	Ignore
+session.screen0.maxDisableMove:	false
+session.screen0.rootCommand:	
+session.titlebar.left:	Stick 
+session.titlebar.right:	Minimize Maximize Close 
+session.styleFile:	/usr/share/fluxbox/styles/ModernBlueFlux-Medium
+session.menuFile:	~/.fluxbox/menu
+session.groupFile:	
+session.iconbar:	true
+session.updateDelayTime:	5
+session.useMod1:	true
+session.imageDither:	True
+session.forcePseudoTransparency:	false
+session.opaqueMove:	false
+session.slitlistFile:	~/.fluxbox/slitlist
+session.tabsAttachArea:	Window
+session.appsFile:	~/.fluxbox/apps
+session.tabs:	true
+session.cacheMax:	200
+session.cacheLife:	5
+session.styleOverlay:	~/.fluxbox/overlay
+session.colorsPerChannel:	4
+session.keyFile:	~/.fluxbox/keys
+session.configVersion:	13
+session.ignoreBorder:	false
+session.autoRaiseDelay:	250
+session.modKey:	Mod1
+session.doubleClickInterval:	250
+session.numLayers:	13
+session.tabPadding:	0
+session.focusTabMinWidth:	0
+session.screen0.toolbar.button.togshowdesk.commands: ToggleCmd {ShowDesktop (Title!=Conky*)} {exec DeIconify all}
+session.screen0.toolbar.button.togshowdesk.label: _
+session.screen0.toolbar.button.homenu.commands: Rootmenu
+session.screen0.toolbar.button.homenu.label: Menu

@@ -1,0 +1,43 @@
+[begin] (--antiX--)
+    [exec] (App Select) {/usr/local/bin/app-select} </usr/share/icons/papirus-antix/48x48/apps/gnome-searchtool.png>    
+    [exec] (Terminal) {desktop-defaults-run -t} </usr/share/icons/papirus-antix/48x48/apps/terminal.png>
+    [exec] (File Manager) {desktop-defaults-run -fm} </usr/share/icons/papirus-antix/48x48/apps/file-manager.png>
+    [exec] (Web Browser) {desktop-defaults-run -b} </usr/share/icons/papirus-antix/48x48/apps/web-browser.png>
+    [exec] (Editor) {desktop-defaults-run -te} </usr/share/icons/papirus-antix/48x48/apps/text-editor.png>
+    [separator]
+    [submenu] (Personal) </usr/share/icons/papirus-antix/48x48/apps/preferences-desktop-user.png>
+        [begin] (Personal)
+        [include] (~/.fluxbox/personal)
+    [end]
+    [submenu] (Applications) </usr/share/icons/papirus-antix/48x48/apps/applications.png>
+        [begin] (Applications)
+        [include] (~/.fluxbox/menu-applications)
+    [end]
+    [exec] (Refresh Menu) {desktop-menu --write-out-global} </usr/share/icons/papirus-antix/48x48/apps/update-manager.png>
+    [separator]
+    [submenu] (Desktop) </usr/share/icons/papirus-antix/48x48/apps/user-desktop.png>
+        [submenu] (Other Desktops) </usr/share/icons/papirus-antix/48x48/apps/user-desktop.png>
+            [begin] (Other Desktops)
+            [include] (/usr/share/desktop-session/wm-menus/fluxbox-wm-menu)
+        [end]
+        [exec] (RoxPanel on/off) {paneltoggle.sh} </usr/share/icons/papirus-antix/48x48/apps/rox-panel.png>
+        [exec] (Conky on/off) {conkytoggle.sh} </usr/share/icons/papirus-antix/48x48/apps/conky-on-off.png>
+    [end]
+    [separator]
+    [exec] (App Killer) {xkill} </usr/share/icons/papirus-antix/48x48/apps/appkill.png>
+    [exec] (Control Centre) {antixcc.sh} </usr/share/icons/papirus-antix/48x48/apps/control-center2.png>
+    [exec] (Run) {gexec} </usr/share/icons/papirus-antix/48x48/apps/gnome-run.png>
+    [separator]
+    [submenu] (Fluxbox Settings) </usr/share/icons/papirus-antix/48x48/apps/applications-system.png>
+        [config] (Configuration)
+        [submenu] (Styles)
+            [stylesdir] (~/.fluxbox/styles)
+            [stylesmenu] (Fluxbox Styles) {/usr/share/fluxbox/styles}
+        [end]
+        [workspaces] (Workspaces)
+        [separator]
+        [reconfig] (Reconfigure)
+        [restart] (Restart)
+    [end]
+    [exec] (Exit) {desktop-session-exit} </usr/share/icons/papirus-antix/48x48/apps/application-exit.png>
+[end]
