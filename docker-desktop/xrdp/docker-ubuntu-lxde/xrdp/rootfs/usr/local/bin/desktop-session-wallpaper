@@ -1,0 +1,193 @@
+#!/bin/bash
+# Dependencies: feh, rox (pinboard), spacefm, zzzfm, xset-root, sed
+# File Name: desktop-session-wallpaper
+# Version: 3.1
+# Purpose: Sets the wallpaper as configured in ~/.desktop-session/wallpaper.conf
+#          and using the wallpaper specified in ~/.desktop-session/wallpaper-list.conf
+#          These config files can be set manually or via the antix wallpaper app
+#          Wallpapers are chosen based off recorded desktop code in $DESKTOP_CODE or 
+#          ~/.desktop-session/desktop-code.[0-9].
+# Authors: Dave (david@daveserver.info)
+
+# Copyright (C) antiXCommunity http://antixforums.com
+# License: gplv2
+# This file is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+################################################################################
+#################################################################
+
+conf_dir="$HOME/.desktop-session"
+wallpaper_pid_file="$conf_dir/wallpaper.pid"
+wallpaper_conf="$conf_dir/wallpaper.conf"
+wallpaper_list_conf="$conf_dir/wallpaper-list.conf"
+wallpaper_conf_pkgd="/usr/share/desktop-session/desktop-session-wallpaper/wallpaper.conf"
+wallpaper_list_conf_pkgd="/usr/share/desktop-session/desktop-session-wallpaper/wallpaper-list.conf"
+mime_array=("image/png" "image/jpeg" "image/gif" "image/bmp" "image/tiff" "image/x-icon" "image/x-xbitmap" "image/x-xpixmap")
+
+hex2rgb() {
+  # Credit for function to mattmc3 on stackoverflow
+  set -- "$(echo "$1" | tr -d '#' | tr '[:lower:]' '[:upper:]')"
+  START=0
+  STR=
+  while (( START < ${#1} )); do
+    if (( ${#1} < 6 )); then
+      STR="$(printf "${1:${START}:1}%.0s" 1 2)"
+      (( START += 1 ))
+    else
+      STR="${1:${START}:2}"
+      (( START += 2 ))
+    fi
+    #modified original hex2rgb function to accommodate gtk rgb colour values
+    RGBvalue=$(("`echo "ibase=16; ${STR}" | bc`" * $(( 65535/255 )) ))
+    RGB=${RGB}$RGBvalue","
+  done
+  echo ${RGB::-1}
+  unset START STR RGB RGBvalue
+}
+
+random_select() {
+    wallpaper_folder="$(cat $wallpaper_conf | grep '^FOLDER' |cut -d '=' -f2 |cut -d " " -f2)";
+    alist=( $(find $wallpaper_folder -type f ) );
+    range=${#alist[*]};
+    loop=0
+    while : ; do
+        show=$(( $RANDOM % $range ));
+        file=""$wallpapers/${alist[$show]}"";
+        mime_file=$(file -b --mime-type $file)
+        if [[ " ${mime_array[@]} " =~ " $mime_file " ]]; then
+            loop=0            
+            wallpaper=""$file"";
+            sedfile=${wallpaper//\//\\\/};
+            sed -i "s/^$code=.*/$code=$sedfile/" $wallpaper_list_conf;
+            break;
+        fi
+        if [ "$loop" -gt "20" ]; then
+            echo "Exit: Stuck in a loop looking for image files"
+            exit
+        fi
+        loop=$((loop+1))
+    done
+}
+
+wallpaper_set() {
+    
+    wallpaper=${wallpaper:-$(cat $wallpaper_list_conf | grep "^$code" |cut -d '=' -f2 )} #|sed "s/\ /\\\ /ig")}
+    
+    if [ ! -f "$wallpaper" ]; then
+        echo "Exit: The configured wallpaper is either not a file or does not exist.";
+        echo "configured wallpaper: $wallpaper";
+        exit
+    fi
+    
+    case $im in
+        rox)
+            Rox-Wallpaper "$wallpaper" &
+            feh --bg-$style "$wallpaper" &
+            ;;
+        space)
+            spacefm --set-wallpaper "$wallpaper" &
+            feh --bg-$style "$wallpaper" &
+            ;;
+        zzz)
+            zzzfm --set-wallpaper "$wallpaper" &
+            feh --bg-$style "$wallpaper" &
+            ;;
+        *)
+            feh --bg-$style "$wallpaper" &
+            ;;
+    esac
+}
+
+colour_set() {
+    imported_colour=$(cat $wallpaper_conf | grep '^COLOR' |cut -d '=' -f2 |cut -d ' ' -f2)
+    
+    case $im in
+        rox)
+            Rox-Wallpaper --background-colour $imported_colour &
+            xsetroot -solid "#$imported_colour" &
+            ;;
+        space)
+            RGB=`hex2rgb $imported_colour`
+            sed -i 's/^.*bg1=.*/bg1='$RGB'/' $HOME/.config/spacefm/session;
+            sed -i 's/^.*show_wallpaper=.*/show_wallpaper=0/' $HOME/.config/spacefm/session;
+            spacefmPID=$(pgrep -U `whoami` -f "spacefm --desktop");
+            if [ -n "$spacefmPID" ]; then kill -15 "$spacefmPID"; fi
+            spacefm --desktop &
+            xsetroot -solid "#$imported_colour" &
+            ;;
+        zzz)
+            RGB=`hex2rgb $imported_colour`
+            sed -i 's/^.*bg1=.*/bg1='$RGB'/' $HOME/.config/zzzfm/session;
+            sed -i 's/^.*show_wallpaper=.*/show_wallpaper=0/' $HOME/.config/zzzfm/session;
+            zzzfmPID=$(pgrep -U `whoami` -f "zzzfm --desktop");
+            if [ -n "$zzzfmPID" ]; then kill -15 "$zzzfmPID"; fi
+            zzzfm --desktop &
+            xsetroot -solid "#$imported_colour" &
+            ;;
+        *)
+            xsetroot -solid "#$imported_colour" &
+            ;;
+    esac 
+}
+
+#######START########
+IFS='
+'
+disp=${DISPLAY#:}
+disp=${disp%.[0-9]}
+if [ ! -f "$wallpaper_conf" ]; then
+    cp "$wallpaper_conf_pkgd" "$wallpaper_conf";
+fi
+if [ ! -f "$wallpaper_list_conf" ]; then
+    cp "$wallpaper_list_conf_pkgd" "$wallpaper_list_conf";
+fi
+type="$(cat $wallpaper_conf | grep '^TYPE' |cut -d '=' -f2 |cut -d ' ' -f2)"
+style="$(cat $wallpaper_conf | grep '^STYLE' |cut -d '=' -f2 |cut -d ' ' -f2)"
+code=${1:-$(cat $conf_dir/desktop-code.$disp)}
+wm=${code#*-}
+im=${code%-$wm}
+
+case "$type" in
+    random)
+        random_select
+        wallpaper_set 
+        ;;
+        
+    random-time)
+        if [ ! -f "$wallpaper_pid_file" ] || [ ! -f "/proc/$(head -1 $wallpaper_pid_file)/exe" ]; then
+            echo "$$" > $wallpaper_pid_file
+            until [ "$(cat $wallpaper_conf | grep '^TYPE' |cut -d '=' -f2 |cut -d ' ' -f2)" != "random-time" ]
+            do
+                delay="$(cat $wallpaper_conf | grep '^DELAY' |cut -d '=' -f2 |cut -d ' ' -f2)"
+                random_select
+                wallpaper_set 
+                sleep $delay
+            done
+            rm "$wallpaper_pid_file"
+        fi
+        ;;
+        
+    static)
+        wallpaper_set; 
+        ;;
+        
+    color)
+        colour_set;
+        ;;
+
+    *)
+        echo "There was no valid style for wallpaper setting found, defaulting to grey background";
+        xsetroot -solid "#8a8a8a";
+        ;;
+esac

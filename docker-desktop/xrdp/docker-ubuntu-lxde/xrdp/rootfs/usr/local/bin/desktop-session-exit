@@ -1,0 +1,120 @@
+#!/bin/bash
+#exit  antix bash backend
+. /usr/local/lib/desktop-session/desktop-session-file-locations.sh
+
+declare -A OPTION
+OPTION[1]='-l | l | --logout'
+OPTION[2]='-L | L | --lock'
+OPTION[3]='-H | H | --hibernate'
+OPTION[4]='-s | s | --shutdown'
+OPTION[5]='-S | S | --suspend'
+OPTION[6]='-r | r | --reboot'
+OPTION[7]='-R | R | --restart'
+OPTION[8]='-t | t | --tui'
+OPTION[9]='-h | h | --help'
+OPTION[10]=''
+
+declare -A TXT
+TXT[1]='Logout of the current session'
+TXT[2]='Lock the current session'
+TXT[3]='Set the machine into hibernate'
+TXT[4]='Shutdown your machine'
+TXT[5]='Set the machine into suspend'
+TXT[6]='Reboot your machine'
+TXT[7]='Restart the session'
+TXT[8]='Display text user interface'
+TXT[9]='help'
+TXT[10]='script exit'
+
+tui() {
+    #Colours green, blue, yellow, lcyan, normal
+    COLOURS=('\033[32m' '\033[01;34m' '\e[1;33m' '\033[1;36m' '\e[0m')
+    
+    list=()
+    for ((i=1; i<=${#TXT[@]}; i++)); do
+        formatted_line=$(printf "%b %-31b %b\n" "${COLOURS[3]}$((i))." "${COLOURS[2]}${OPTION[$i]}" "${COLOURS[3]}${TXT[$i]}${NORMAL}")
+        list+=("$formatted_line")
+    done
+
+    if command -v fzf >/dev/null 2>&1 ; then
+        HEADER="Select the desired option or enter number:"
+        CHOICE=$(printf "%b\n" "${list[@]}" | fzf --header="$HEADER" --header-first --no-info --no-multi --ansi --reverse --cycle)
+        CHOICE=${CHOICE%\.*}
+    else
+        for item in "${list[@]}" ; do
+            echo "$item"
+        done
+        read -p "$(echo -e ${COLOURS[0]}Enter number:${COLOURS[4]} )" CHOICE
+    fi
+
+    main "$CHOICE"
+}
+
+help() {
+    echo "Usage:"
+    #Itterate through Option array skipping the last one used for tui interface
+    for (( i=1; i<=$(( ${#OPTION[@]} - 1 )); i++ )); do
+        printf "%-30s %s\n" "${OPTION[$i]}" "${TXT[$i]}"
+    done
+}
+    
+main() {
+    case $1 in
+        1 | -l | l | --logout)
+            $desktop_session_logout
+            ;;
+        2 | -L | L | --lock)
+            xlock
+            ;;
+        3 | -H | H |--hibernate)
+            sudo pm-hibernate
+            ;;
+        4 | -s | s | --shutdown)
+            if [ -e /etc/live/config/save-persist -o -e /live/config/persist-save.conf ] && which persist-config &> /dev/null; then
+                sudo persist-config --shutdown --command poweroff
+            else
+                sync
+                #sudo chvt 1#this causes exit to reappear on halt
+                sudo poweroff
+            fi
+            ;;
+        5 | -S | S | --suspend)
+            sudo pm-suspend
+            ;;
+        6 | -r | r | --reboot)
+            if [ -e /etc/live/config/save-persist -o -e /live/config/persist-save.conf ] && which persist-config &> /dev/null; then
+                sudo persist-config --shutdown --command reboot
+            else
+                sync
+                #sudo chvt 1#this causes exit to reappear on reboot
+                sudo reboot
+            fi
+            ;;
+        7 | -R | R | --Restart)
+            $desktop_session_restart
+            ;;
+        8 | -t | t | --tui)
+            tui
+            return
+            ;;
+        9 | -h | h | --help)
+            help
+            ;;
+        10)
+            exit
+            ;;
+        *)
+            if [ -n "$1" ]; then
+                echo "$1 Not an option"
+                help;
+            elif [ "$DISPLAY" ]; then
+                $desktop_session_exit_gui &
+                exit
+            else
+                tui;
+            fi
+            ;;
+    esac
+}
+
+main "$@"

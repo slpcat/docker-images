@@ -1,0 +1,2 @@
+APT::Update::Post-Invoke {"/usr/local/bin/fbxdgmenu.py /etc/xdg/menus/lxde-applications.menu > /etc/X11/fluxbox/fluxbox-menu || true";};
+APT::Get::Post-Invoke {"/usr/local/bin/fbxdgmenu.py /etc/xdg/menus/lxde-applications.menu > /etc/X11/fluxbox/fluxbox-menu || true";};

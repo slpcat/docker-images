@@ -1,0 +1,396 @@
+#!/bin/bash
+#Name: desktop-defaults-set
+#Version: 1.3-test
+#Depends: bash, yad
+#Author: Dave (david@daveserver.info)
+# mods by BobC 10/24/22 to include recursive lists of default values, local apps and system apps, 
+# and only list apps possibly appropriate based on Categories and mime types
+# If user wants to select a desktop file that isn't listed, they can use Robins Free Choice option to select it manually  
+# Translation code for app name by PPC from icewm-toolbar-icon-manager.sh plus :FL fix
+#  Dual combo box list with translated name and .desktop filename both displayed
+#  Categories = Values in .desktop files used to select.  Any entries including NoDefault will be excluded
+#    Terminal - TerminalEmulator (excluding root entries thanks to PPC)
+#    Web Browser - WebBrowser or Browser, Seamonkey, but not web-browser.desktop
+#    File Manager - FileManager or rox-filer
+#    Email Client - Email
+#    Text Editor - TextEditor or Geany
+#    Image Viewer - GraphicsViewer or Grapics and Viewer (must include mime type image/jpeg)
+#    Video Player - VideoPlayer or Video and Player
+#    Audio Player - AudioPlayer or Audio and Player
+# some mods by Robin 29.10.2022 to restore free choice dialog from original version as an additional "free choice" menu
+#Purpose: Set default app selection for use in desktop-defaults-run from
+# within the antix apps / menu.
+#License: gplv3
+
+TEXTDOMAINDIR=/usr/share/locale
+TEXTDOMAIN=desktop-defaults-set
+
+verbose=false   # false; set to true to see verbose console output
+if [ "$1" == "-v" ] || [ "$1" == "--verbose" ]; then verbose=true; fi
+
+
+GetInformation() {
+    CANOK=3 # set default startup
+    while [ $CANOK -gt 0 ]; do
+        $verbose && echo "Dialog User selection exit code:" $CANOK
+        if [ $CANOK -eq 3 ]; then    # this means "Back" was pressed or we are on startup. Show default selection dialog.
+            GetDefaultsInformation
+        elif [ $CANOK -eq 2 ]; then  # this means "Advanced settings" was pressed. Show free selection dialog
+            GetDefaultsInformation2
+        elif [ $CANOK -eq 0 ]; then  # this means "Apply" was pressed. Return to where function was called from and proceed with processing
+            return
+        elif [ $CANOK -eq 1 ] || [ $CANOK -gt 3 ]; then  # this means "Abort" was clicked or x from window border, or Esc was pressed (actual Exit code 252). Simply Exit.
+            cd "$pwd_save"
+            $verbose && echo "exit"
+            exit 0
+        fi
+    done
+}
+
+GetDefaultsInformation() {
+    # current default 1st, custom user 2nd, system provided 3rd
+    app_dirl="$HOME/.local/share/applications"
+    app_dirm="/usr/share/applications"
+    app_dir="$HOME/.local/share/desktop-defaults"
+    # clear out previous workfiles
+    rm -rf "$HOME/.local/share/desktop-defaults-set"
+    mkdir "$HOME/.local/share/desktop-defaults-set"
+
+    # get the best tranlated names (most accurate one should be last)
+    lang=$(locale | grep LANG | cut -d= -f2 | cut -d. -f1)
+    l1=$(echo $lang |cut -d_ -f1)
+    l2=$(echo $lang |cut -d_ -f2)
+    l2_converted=$(echo "${l2,,}")
+    if [ $l1 = $l2_converted ]; then lang=$l1; fi
+    #To test localization to another language, like french, use: lang=fr
+    ###lang=fr
+    $verbose && echo "lang=$lang"
+    
+    # build a list of valid app desktops with categories, mimetype and relevant name lines for .desktops in each category group 
+    # excluding all non .desktop files and the current default value
+    grep -irH "Categories=\|MimeType" "$app_dirl" | grep -iv "/web-browser.desktop" | sort > "$HOME/.local/share/desktop-defaults-set/categoriesw.lst"
+    grep -irH "Categories=\|MimeType" "$app_dirm" | grep -iv "/web-browser.desktop" | sort >> "$HOME/.local/share/desktop-defaults-set/categoriesw.lst"
+    grep -i ".desktop:" "$HOME/.local/share/desktop-defaults-set/categoriesw.lst" > "$HOME/.local/share/desktop-defaults-set/categoriesm.lst"
+
+    # each group list begins with the current default value.  Always include standard programs
+
+    file_manager=${file_manager:-$app_dir}
+    if [ -z "$file_manager" ]; then printf "\n" > "$HOME/.local/share/desktop-defaults-set/FileManager.lst"; else printf "$file_manager\n" > "$HOME/.local/share/desktop-defaults-set/FileManager.lst"; fi
+    grep -i "FileManager\|rox-filer.desktop:Categories" "$HOME/.local/share/desktop-defaults-set/categoriesm.lst" \
+      | grep -iv "NoDefault" \
+      | awk -F ':' '{print $1}' > "$HOME/.local/share/desktop-defaults-set/FileManagerM.lst"
+    grep -v "$file_manager" "$HOME/.local/share/desktop-defaults-set/FileManagerM.lst" >> "$HOME/.local/share/desktop-defaults-set/FileManager.lst"
+    cp "$HOME/.local/share/desktop-defaults-set/FileManager.lst" "$HOME/.local/share/desktop-defaults-set/AppList.lst"
+    GetLocaleName
+    FileManager=`printf "^" && cat "$HOME/.local/share/desktop-defaults-set/AppList.lst" | tr '\n' '|'`
+    FileManager=`echo $FileManager | sed 's/.$//'`
+    $verbose && echo "FileManager: $FileManager"
+
+    terminal=${terminal:-$app_dir}
+    if [ -z "$terminal" ]; then printf "\n" > "$HOME/.local/share/desktop-defaults-set/TerminalEmulator.lst"; else printf "$terminal\n" > "$HOME/.local/share/desktop-defaults-set/TerminalEmulator.lst"; fi
+    grep -i "TerminalEmulator" "$HOME/.local/share/desktop-defaults-set/categoriesm.lst" \
+      | grep -iv "NoDefault" \
+      | awk -F ':' '{print $1}' |sed '/gksu.desktop/d' > "$HOME/.local/share/desktop-defaults-set/TerminalEmulatorM.lst"
+    grep -v "$terminal" "$HOME/.local/share/desktop-defaults-set/TerminalEmulatorM.lst" >> "$HOME/.local/share/desktop-defaults-set/TerminalEmulator.lst"
+    cp "$HOME/.local/share/desktop-defaults-set/TerminalEmulator.lst" "$HOME/.local/share/desktop-defaults-set/AppList.lst"
+    GetLocaleName
+    TerminalEmulator=`echo "^" && cat "$HOME/.local/share/desktop-defaults-set/AppList.lst" | tr '\n' '|'`
+    TerminalEmulator=`echo $TerminalEmulator | sed 's/.$//'`
+    $verbose && echo "TerminalEmulator: $TerminalEmulator"
+
+    email=${email:-$app_dir}
+    if [ -z "$email" ]; then printf "\n" > "$HOME/.local/share/desktop-defaults-set/Email.lst"; else printf "$email\n" > "$HOME/.local/share/desktop-defaults-set/Email.lst"; fi
+    grep -i "Email" "$HOME/.local/share/desktop-defaults-set/categoriesm.lst" \
+      | grep -iv "NoDefault" \
+      | awk -F ':' '{print $1}' > "$HOME/.local/share/desktop-defaults-set/EmailM.lst"
+    grep -v "$email" "$HOME/.local/share/desktop-defaults-set/EmailM.lst" >> "$HOME/.local/share/desktop-defaults-set/Email.lst"
+    cp "$HOME/.local/share/desktop-defaults-set/Email.lst" "$HOME/.local/share/desktop-defaults-set/AppList.lst"
+    GetLocaleName
+    Email=`echo "^" && cat "$HOME/.local/share/desktop-defaults-set/AppList.lst" | tr '\n' '|'`
+    Email=`echo $Email | sed 's/.$//'`
+    $verbose && echo "Email: $Email"
+
+    text_editor=${text_editor:-$app_dir}
+    if [ -z "$text_editor" ]; then printf "\n" > "$HOME/.local/share/desktop-defaults-set/TextEditor.lst"; else printf "$text_editor\n" > "$HOME/.local/share/desktop-defaults-set/TextEditor.lst"; fi
+    grep -i "TextEditor\|geany.desktop:Categories" "$HOME/.local/share/desktop-defaults-set/categoriesm.lst" \
+      | grep -iv "NoDefault" \
+      | awk -F ':' '{print $1}' > "$HOME/.local/share/desktop-defaults-set/TextEditorM.lst"
+    grep -v "$text_editor" "$HOME/.local/share/desktop-defaults-set/TextEditorM.lst" >> "$HOME/.local/share/desktop-defaults-set/TextEditor.lst"
+    cp "$HOME/.local/share/desktop-defaults-set/TextEditor.lst" "$HOME/.local/share/desktop-defaults-set/AppList.lst"
+    GetLocaleName
+    TextEditor=`echo "^" && cat "$HOME/.local/share/desktop-defaults-set/AppList.lst" | tr '\n' '|'`
+    TextEditor=`echo $TextEditor | sed 's/.$//'`
+    $verbose && echo "TextEditor: $TextEditor"
+
+    web_browser=${web_browser:-$app_dir}
+    if [ -z "$web_browser" ]; then printf "\n" > "$HOME/.local/share/desktop-defaults-set/WebBrowser.lst"; else printf "$web_browser\n" > "$HOME/.local/share/desktop-defaults-set/WebBrowser.lst"; fi
+    grep -i "WebBrowser\|:Categories=*browser\|seamonkey-mozillabinaries.desktop:Categories" "$HOME/.local/share/desktop-defaults-set/categoriesm.lst" \
+      | grep -iv "NoDefault" | grep -iv "/usr/share/applications/web-browser.desktop" \
+      | awk -F ':' '{print $1}' > "$HOME/.local/share/desktop-defaults-set/WebBrowserM.lst"
+    grep -v "$web_browser" "$HOME/.local/share/desktop-defaults-set/WebBrowserM.lst" >> "$HOME/.local/share/desktop-defaults-set/WebBrowser.lst"
+    cp "$HOME/.local/share/desktop-defaults-set/WebBrowser.lst" "$HOME/.local/share/desktop-defaults-set/AppList.lst"
+    GetLocaleName
+    WebBrowser=`echo "^" && cat "$HOME/.local/share/desktop-defaults-set/AppList.lst" | tr '\n' '|'`
+    WebBrowser=`echo $WebBrowser | sed 's/.$//'`
+    $verbose && echo "WebBrowser: $WebBrowser"
+
+    image_viewer=${image_viewer:-$app_dir}
+    if [ -z "$image_viewer" ]; then printf "\n" > "$HOME/.local/share/desktop-defaults-set/GraphicsViewer.lst"; else printf "$image_viewer\n" > "$HOME/.local/share/desktop-defaults-set/GraphicsViewer.lst"; fi
+    grep -i "Graphics" "$HOME/.local/share/desktop-defaults-set/categoriesm.lst" \
+      | grep -i "Viewer" \
+      | grep -iv "NoDefault" \
+      | awk -F ':' '{print $1}' > "$HOME/.local/share/desktop-defaults-set/GraphicsViewerW.lst"
+    while IFS= read -r line || [[ -n $line ]]; do 
+        MimeType=$(grep "MimeType" "$line")
+        $verbose && echo "line: $line MimeType: $MimeType"
+        if [[ -z "$MimeType" ]]; then
+            echo "$line" >> "$HOME/.local/share/desktop-defaults-set/GraphicsViewerM.lst"
+        elif [[ "$MimeType" == *"MimeType"* ]]; then
+            if [[ "$MimeType" == *"image"* ]]; then
+                $verbose && echo "MimeType included image\n"
+                echo "$line" >> "$HOME/.local/share/desktop-defaults-set/GraphicsViewerM.lst"
+            fi
+        fi
+    done <"$HOME/.local/share/desktop-defaults-set/GraphicsViewerW.lst"
+    grep -v "$image_viewer" "$HOME/.local/share/desktop-defaults-set/GraphicsViewerM.lst" >> "$HOME/.local/share/desktop-defaults-set/GraphicsViewer.lst"
+    cp "$HOME/.local/share/desktop-defaults-set/GraphicsViewer.lst" "$HOME/.local/share/desktop-defaults-set/AppList.lst"
+    GetLocaleName
+    GraphicsViewer=`echo "^" && cat "$HOME/.local/share/desktop-defaults-set/AppList.lst" | tr '\n' '|'`
+    GraphicsViewer=`echo $GraphicsViewer | sed 's/.$//'`
+    $verbose && echo "GraphicsViewer: $GraphicsViewer"
+
+    video_player=${video_player:-$app_dir}
+    if [ -z "$video_player" ]; then printf "\n" > "$HOME/.local/share/desktop-defaults-set/VideoPlayer.lst"; else printf "$video_player\n" > "$HOME/.local/share/desktop-defaults-set/VideoPlayer.lst"; fi
+    grep -i "=Video;\|;Video;\|;Video$" "$HOME/.local/share/desktop-defaults-set/categoriesm.lst" \
+      | grep -i "Player" \
+      | grep -iv "NoDefault" \
+      | awk -F ':' '{print $1}' > "$HOME/.local/share/desktop-defaults-set/VideoPlayerW.lst"
+    while IFS= read -r line || [[ -n $line ]]; do 
+        MimeType=$(grep "MimeType" "$line")
+        $verbose && echo "line: $line MimeType: $MimeType"
+        if [[ -z "$MimeType" ]]; then
+            echo "$line" >> "$HOME/.local/share/desktop-defaults-set/VideoPlayerM.lst"
+        elif [[ "$MimeType" == *"MimeType"* ]]; then
+            if [[ "$MimeType" == *"video"* ]]; then
+                $verbose && echo "MimeType included video\n"
+                echo "$line" >> "$HOME/.local/share/desktop-defaults-set/VideoPlayerM.lst"
+            fi
+        fi
+    done <"$HOME/.local/share/desktop-defaults-set/VideoPlayerW.lst"
+    grep -v "$video_player" "$HOME/.local/share/desktop-defaults-set/VideoPlayerM.lst" >> "$HOME/.local/share/desktop-defaults-set/VideoPlayer.lst"
+    cp "$HOME/.local/share/desktop-defaults-set/VideoPlayer.lst" "$HOME/.local/share/desktop-defaults-set/AppList.lst"
+    GetLocaleName
+    VideoPlayer=`echo "^" && cat "$HOME/.local/share/desktop-defaults-set/AppList.lst" | tr '\n' '|'`
+    VideoPlayer=`echo $VideoPlayer | sed 's/.$//'`
+    $verbose && echo "VideoPlayer: $VideoPlayer"
+
+    audio_player=${audio_player:-$app_dir}
+	if [ -z "$audio_player" ]; then printf "\n" > "$HOME/.local/share/desktop-defaults-set/AudioPlayer.lst"; else printf "$audio_player\n" > "$HOME/.local/share/desktop-defaults-set/AudioPlayer.lst"; fi
+    grep -i "=Audio;\|;Audio;\|;Audio$" "$HOME/.local/share/desktop-defaults-set/categoriesm.lst" \
+      | grep -i "Player" \
+      | grep -iv "NoDefault" \
+      | awk -F ':' '{print $1}' > "$HOME/.local/share/desktop-defaults-set/AudioPlayerW.lst"
+    while IFS= read -r line || [[ -n $line ]]; do 
+        MimeType=$(grep "MimeType" "$line")
+        $verbose && echo "line: $line MimeType: $MimeType"
+        if [[ -z "$MimeType" ]]; then
+            echo "$line" >> "$HOME/.local/share/desktop-defaults-set/AudioPlayerM.lst"
+        elif [[ "$MimeType" == *"MimeType"* ]]; then
+            if [[ "$MimeType" == *"audio"* ]]; then
+                $verbose && echo "MimeType included audio\n"
+                echo "$line" >> "$HOME/.local/share/desktop-defaults-set/AudioPlayerM.lst"
+            fi
+        fi
+    done <"$HOME/.local/share/desktop-defaults-set/AudioPlayerW.lst"
+    grep -v "$audio_player" "$HOME/.local/share/desktop-defaults-set/AudioPlayerM.lst" >> "$HOME/.local/share/desktop-defaults-set/AudioPlayer.lst"
+    cp "$HOME/.local/share/desktop-defaults-set/AudioPlayer.lst" "$HOME/.local/share/desktop-defaults-set/AppList.lst"
+    GetLocaleName
+    AudioPlayer=`echo "^" && cat "$HOME/.local/share/desktop-defaults-set/AppList.lst" | tr '\n' '|'`
+    AudioPlayer=`echo $AudioPlayer | sed 's/.$//'`
+    
+    # put up YAD select form with all the category groups
+    app_info=$(yad --form --posx=75 --posy=100 -item-separator="|" \
+    --field=$"Terminal":CB "$TerminalEmulator" \
+    --field=$"Web Browser":CB "$WebBrowser" \
+    --field=$"File Manager":CB "$FileManager" \
+    --field=$"Email Client":CB "$Email" \
+    --field=$"Text Editor":CB "$TextEditor" \
+    --field=$"Image Viewer":CB "$GraphicsViewer" \
+    --field=$"Video Player":CB "$VideoPlayer" \
+    --field=$"Audio Player":CB "$AudioPlayer" \
+    --button=$"Free Choice":2 \
+    --button=gtk-cancel:1 \
+    --button=gtk-apply:0 \
+    --window-icon=preferences-system \
+    --title=$"Set Default Applications" --item-separator="|" --width="700");
+    CANOK=$?;
+}
+
+GetDefaultsInformation2() {
+    app_dir="/usr/share/applications/*"
+    file_manager=${file_manager:-$app_dir}
+    terminal=${terminal:-$app_dir}
+    email=${email:-$app_dir}
+    text_editor=${text_editor:-$app_dir}
+    web_browser=${web_browser:-$app_dir}
+    image_viewer=${image_viewer:-$app_dir}
+    video_player=${video_player:-$app_dir}
+    audio_player=${audio_player:-$app_dir}
+    # put up YAD select form with all the category groups
+    app_info=$(yad --form --posx=75 --posy=100 -item-separator="|" \
+    --field=$"Terminal":FL "$terminal" \
+    --field=$"Web Browser":FL "$web_browser" \
+    --field=$"File Manager":FL "$file_manager" \
+    --field=$"Email Client":FL "$email" \
+    --field=$"Text Editor":FL "$text_editor" \
+    --field=$"Image Viewer":FL "$image_viewer" \
+    --field=$"Video Player":FL "$video_player" \
+    --field=$"Audio Player":FL "$audio_player" \
+    --button=$"Back":3 \
+    --button=gtk-cancel:1 \
+    --button=gtk-apply:0 \
+    --window-icon=preferences-system \
+    --title=$"Set Default Applications"" – "$"Free Choice" --item-separator="|" --width="600");
+    CANOK=$?;
+}
+
+GetLocaleName() {
+    #process list of desktop file names to be displayed and prefix each with its translated name value
+    NameAppList=""
+    rm -f "$HOME/.local/share/desktop-defaults-set/NameAppList.lst"
+    touch "$HOME/.local/share/desktop-defaults-set/NameAppList.lst"
+
+    while IFS= read -r AppFile; do
+        $verbose && echo "AppFile: $AppFile"
+        name1=$(grep -o -m 1 '^Name=.*' $AppFile)
+        $verbose && echo "name1: $name1"
+        ### localized menu entries generator (slows the script down, but produces nearly perfectly localized menus):
+        name2=$name1
+        $verbose && echo "name2-1: $name2"
+        translated_name1=$(grep -o -m 1 "^Name\[$lang\]=.*" $AppFile)
+        $verbose && echo "translated_name1: $translated_name1"
+        [ -z "$translated_name1" ] && note=$"No localized name found, using the original one" || name2=$translated_name1
+        $verbose && echo "name2-2: $name2"
+        #if the desktop file has the string "Desktop Action" simply use the original untranslated name, to avoid risking using a translation that's not the name of the app
+        grep -q "Desktop Action" $AppFile && name2=$name1
+        $verbose && echo "name2-3: $name2"
+        name1=$name2
+        $verbose && echo "name1-2: $name1"
+        ### end of localized menu entries generator
+        name=$(echo $name1|sed 's/.*\=//') 
+        NameApp=$(printf "$name -- $AppFile")
+        $verbose && echo "NameApp: $NameApp"
+        printf "$NameApp\n" >> "$HOME/.local/share/desktop-defaults-set/NameAppList.lst"
+    done < "$HOME/.local/share/desktop-defaults-set/AppList.lst"
+    $verbose && echo "NameAppList below:"
+    $verbose && cat "$HOME/.local/share/desktop-defaults-set/NameAppList.lst"
+    cp "$HOME/.local/share/desktop-defaults-set/NameAppList.lst" "$HOME/.local/share/desktop-defaults-set/AppList.lst"
+}
+
+GetLink() {
+   	if [ -L "$Desktop_Prefix$1" ]; then
+        LINK="$(readlink $Desktop_Prefix"$1")"
+	else 
+		LINK="$Desktop_Prefix$1";
+	fi
+	$verbose && echo "Link: $LINK"
+}
+
+GetOldDefaults() {
+    if [ -d ~/.local/share/desktop-defaults/ ]; then
+        Desktop_Prefix="$HOME/.local/share/desktop-defaults/"
+    else
+        Desktop_Prefix="/usr/share/desktop-defaults/"
+    fi
+    GetLink 'file-manager.desktop'
+    file_manager=$LINK;
+    GetLink 'terminal.desktop'
+    terminal=$LINK;
+    GetLink 'email.desktop'
+    email=$LINK;
+    GetLink 'editor.desktop'
+    text_editor=$LINK;
+    GetLink 'web-browser.desktop'
+    web_browser=$LINK;
+    GetLink 'image-viewer.desktop'
+    image_viewer=$LINK
+    GetLink 'video-player.desktop'
+    video_player=$LINK;
+    GetLink 'audio-player.desktop'
+    audio_player=$LINK;
+}
+
+UpdateMime() {
+    FilePath="$1"
+    BaseName=${FilePath##*/}
+
+    for line in $(cat $local_mime_file | grep "$BaseName" |grep -v "=$BaseName")
+    do
+        begining=$(echo "$line" | cut -d "=" -f1)
+        end=$(echo "$line" | cut -d "=" -f2 | sed "s/$BaseName;//ig")
+        end="$BaseName;$end"
+        new_line="$begining=$end"
+        new_line="$(echo "$new_line" |tr ';' '\;')"
+        sed -i -e "s#^${begining}.*#${new_line}#g" $local_mime_file
+    done
+}
+    
+MakeLinks() {
+    $verbose && echo "MakeLinks $1 app_info: $app_info"
+    NameAppLine="$(echo $app_info |cut -d "|" -f"$1")"
+    token="${NameAppLine##* -- }"   # Remove the left part.
+    $verbose && echo "token: $token"
+    AppLine=$token
+    $verbose && echo "AppLine: $AppLine"
+    LinkFrom="$(echo $AppLine |cut -d "|" -f"$1")"
+    LinkTo="$Desktop_Prefix$2"
+    if [ ! -z "$LinkFrom" ] && [ "$LinkFrom" != "$LinkTo" ]; then
+        if [ -L "$LinkTo" ]; then
+            echo "unlink $LinkTo"
+            unlink "$LinkTo"
+        elif [ -f "$LinkTo" ]; then
+            echo "unlink $LinkTo"
+            rm -f "$LinkTo"
+        fi
+        echo "ln -s $LinkFrom $LinkTo"
+        ln -s "$LinkFrom" "$LinkTo" 2>/dev/null
+        $verbose && echo "running UpdateMime $LinkFrom"
+        UpdateMime "$LinkFrom"
+    fi
+}
+
+SetDefaults() {
+    Desktop_Prefix="$HOME/.local/share/desktop-defaults/"
+    if [ ! -d "$Desktop_Prefix" ]; then
+        mkdir -p $Desktop_Prefix 2>/dev/null;
+    fi
+    
+    global_mime_file="/usr/share/applications/mimeinfo.cache"
+    local_mime_file="$HOME/.local/share/applications/mimeinfo.cache"
+    if [ ! -d "$local_mime_file" ]; then
+        mkdir -p ${local_mime_file%/*}
+    fi
+    cp $global_mime_file $local_mime_file
+    
+    #Ordered so that we do not set the default applications on top of each other
+    #Example iceweasel can view images therefor it is an application in image/* mime types
+    #However in that case we would like the image viewer we choose to be default
+    #So it must be set after the web browser
+    #The number corresponds to the order in the yad dialog
+    MakeLinks 1 "terminal.desktop" 
+    MakeLinks 2 "web-browser.desktop" #Web browser before can display files / emails / text / images therefore it must be before
+    MakeLinks 3 "file-manager.desktop" 
+    MakeLinks 4 "email.desktop"
+    MakeLinks 5 "editor.desktop"
+    MakeLinks 6 "image-viewer.desktop"
+    MakeLinks 7 "video-player.desktop" #Most video players can play simple audio files therefor the video player must be set before the audio player
+    MakeLinks 8 "audio-player.desktop"
+}
+
+pwd_save="$(pwd)"
+GetOldDefaults;
+cd "$Desktop_Prefix"
+GetInformation;
+echo "app_info=$app_info"
+cd "$pwd_save"
+SetDefaults;

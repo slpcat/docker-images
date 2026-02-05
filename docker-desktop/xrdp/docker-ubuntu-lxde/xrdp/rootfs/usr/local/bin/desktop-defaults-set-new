@@ -1,0 +1,85 @@
+#!/usr/bin/env python3
+
+import gi
+gi.require_version('Gtk', '3.0')
+from gi.repository import Gtk
+from gi.repository.GdkPixbuf import Pixbuf
+import os
+from subprocess import PIPE, Popen
+import re
+import sys
+import xdg.IconTheme
+
+class IconViewWindow(Gtk.Window):
+    def cmdline(self,command):
+        process = Popen(
+            args=command,
+            stdout=PIPE,
+            shell=True
+        )
+        return process.communicate()[0]
+
+    def get_icon(self, name):
+        theme = Gtk.IconTheme.get_default()
+        return theme.load_icon(name, 36, 0)
+        
+
+    def __init__(self):
+        Gtk.Window.__init__(self)
+        self.set_default_size(200, 200)
+
+        liststore = Gtk.ListStore(Pixbuf, str)
+ 
+        iconview = Gtk.IconView.new()
+        iconview.set_model(liststore)
+        iconview.set_pixbuf_column(0)
+        iconview.set_text_column(1)
+        
+        sw = Gtk.ScrolledWindow()
+        self.add(sw)
+        sw.add(iconview)
+        
+        current_directory = '/usr/share/applications/' 
+        self.fileIcon = self.get_icon(Gtk.STOCK_FILE)
+        path = [ current_directory, current_directory+"antix/" ]
+        for dir in path:
+            print(" ")
+            print(dir)
+            print(" ")
+            for fl in os.listdir(dir):
+                pieces = fl.split('.')
+                name=(pieces[0])
+                print(name)
+            
+                if os.path.isfile(os.path.join(dir, fl)):
+                    try:
+                        liststore.append([self.get_icon(name), name]) 
+                    except:
+                        fullpath=(dir+fl)
+                        for line in open(fullpath, "r").readlines():
+                            if re.search(r'^Icon=', line):
+                                pieces = line.split('=')
+                                icon = pieces[1]
+                                icon = re.sub(r'\n','', icon)
+                        try: 
+                            liststore.append([self.get_icon(icon), name])
+                        except:
+                            file = self.cmdline("locate /usr/share/pixmaps/"+icon+"*")
+                            file = file.decode('utf-8')
+                            file = re.sub(r'\n','', file)
+    
+                            if os.path.isfile(file):
+                                print('file')
+                                print(file)
+                                image = Gtk.Image.new_from_file(file)
+                                pixbuf = image.get_pixbuf()
+                                liststore.append([pixbuf, name]) 
+                            else:
+                                print('not file')
+                                liststore.append([self.fileIcon, name]) 
+
+win = IconViewWindow()
+
+win.connect("delete-event", Gtk.main_quit)
+win.show_all()
+Gtk.main()

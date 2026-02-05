@@ -1,6 +1,6 @@
 conky.config = {
     -- Use double buffering (eliminates flickering)
-    double_buffer = false,
+    double_buffer = true,
  
    -- Update interval in seconds
     update_interval = 1,

@@ -42,7 +42,7 @@ xftalpha 1.0
 update_interval 1
 
 # Use double buffering (reduces flicker, may not work for everyone)
-double_buffer no
+double_buffer yes
 
 # Minimum size of text area
 minimum_size 55

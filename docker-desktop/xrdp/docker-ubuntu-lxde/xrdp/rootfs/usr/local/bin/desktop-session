@@ -1,0 +1,529 @@
+#!/bin/bash
+
+# desktop-session desktop-code [wm executable]
+#
+# Launch icon manager from desktop-code.  Then launch
+# the for the desktop-code in the foreground.
+
+#Load file mapings
+. /usr/local/lib/desktop-session/desktop-session-file-locations.sh
+#Load Library File
+. $lib_desktop_session
+#Load yad popup library
+. $lib_popup
+
+#source locales
+. /usr/local/lib/desktop-session/desktop-session-load-locales
+
+#ME=${0##*/}
+
+#Rotate log file
+log_rotate;
+
+#Check sys configuration and load user overrides
+echo_cmd $desktop_session_config_check;
+for config in $main_config $user_config; do
+    test -r $config || continue
+    if ! /bin/bash -n $config; then
+        shout "Errors in $config, cannot load $config."
+        shout "desktop-session may crash"
+        shout "Fix error or copy default configuration file from $main_config"
+        popup_error "Errors in $config, cannot load $config.\ndesktop-session may crash!\nFix error or copy default configuration file from $main_config"
+        continue
+    fi
+    . $config
+done
+
+main() {
+    local raw_code="$@"
+    log "Raw code passed '$raw_code'"
+    local code=$(echo ${raw_code#desktop-session} |sed "s/\ //ig")
+    
+    rm -f $signal_files
+
+    trap on_exit EXIT
+
+    unset RESTART_CODE 
+    while true; do
+        load_locale
+        launch_wm "$code"
+        get_restart_code $restart_file || break
+        wm_exec=
+        code=$RESTART_CODE 
+        say "restart $code"
+    done
+}
+
+launch_wm() {
+    local im wm valid_wm  code=${1:-@default}
+
+    say "launch $* @ $(cut  -d" " -f22 /proc/self/stat)"
+    command shift 1
+
+    [ $code = @default ] && code=$(get_default_desktop $default_desktop_file)
+
+    # Convert code to lower case and change spaces to underscores
+    code=$(echo "$code" | tr "[A-Z ]" "[a-z_]")
+
+    # Strip off the optional icon manager from the front of the code
+    case $code in
+        space-*)   wm=${code#space-};   im=space; valid_wm=$space_enabled;;
+        zzz-*)     wm=${code#zzz-};     im=zzz;   valid_wm=$zzz_enabled;;
+        rox-*)     wm=${code#rox-};     im=rox;   valid_wm=$rox_enabled;;
+        none-*)    wm=${code#none-};    im=none;;  
+        min-*)     wm=${code#min-};     im=min;;           
+        minimal-*) wm=${code#minimal-}; im=minimal;;
+        *)         wm=$code;            im=none;;
+    esac
+    
+    say "$wm"
+    case ,$menu_wms, in 
+        ,,) display_altdesktop_window="false"; say "display_alt_desktop_window=false";;
+        *,$wm,*) display_altdesktop_window="false"; say "display_alt_desktop_window=false";;
+        *)  display_altdesktop_window="true"; say "display_alt_desktop_window=true";;
+    esac
+
+    # Make sure wm is in list of valid WMs for the icon manager.
+    # An empty $valid_wm will match the first clause.  A valid wm
+    # will cause the second clause to match.
+    case ,$valid_wm, in
+        ,,)      
+            ;;
+        *,$wm,*) 
+            ;;
+        *)       
+            warn "Window manager $wm is not compatiable with $im icons"
+            warn "Disabling icon manager"
+            im=none 
+            ;;
+    esac
+
+    get_wm_exec "$wm" || fatal "No executable found for $wm"
+
+
+    say "save desktop code: $code"
+    echo $$    > $ppid_file
+    echo $code > $desktop_file
+    
+    say "Exporting desktop Variables:"
+    echo_variable DESKTOP_SESSION_CODE="$code"
+    echo_variable DESKTOP_SESSION_WM="$wm"
+    echo_variable DESKTOP_SESSION_IM="$im"
+    
+    #Load XDG directory compliance
+    . $lib_xdg_dirs
+    
+    #Line from BitJam to merge xresources into the database
+    if [[ -z $(xrdb -query ) ]]; then
+        [ -r "$xresources_config" ] && xrdb -merge "$xresources_config" &
+    fi
+    #end
+    
+    #Run xmodmap changes if existing
+    if [ -f "$xmodmap_config" ]; then
+        echo_cmd xmodmap "$xmodmap_config"
+    fi
+    
+    # Always save the lastest choice as the default
+    echo $code > $default_desktop_file
+    
+    min_check
+    echo_cmd $WM_EXEC
+    rm -f $desktop_file
+}
+
+#ADDED BY DAVE
+####FROM START####
+min_check() {
+    #Check if icon manager code is not a minimal session
+    if [ "$im" != "min" ] && [ "$im" != "minimal" ]; then
+        #Enable window manager startup file if previously disabled
+        if [ -f "$HOME/.$wm/startup.disabled" ]; then
+            echo_cmd mv $HOME/.$wm/startup.disabled $HOME/.$wm/startup
+        fi
+        #Start session stuff handled by desktop-session
+        launch_desktop & launch_desktop_pid=$! ;
+
+        #Add dbus session syntax to window manager exec string to tie dbus to the window manager pid if enabled in desktop-session.conf
+        if [ "$DBUS_SESSION_LAUNCH" = 'true' ] && [ -x /usr/bin/dbus-launch ]; then
+            DBUS_COMMAND="dbus-launch --sh-syntax --exit-with-session"
+            #~ [ -x /usr/bin/dbus-run-session ] && DBUS_COMMAND="dbus-run-session"
+            WM_EXEC="$DBUS_COMMAND $WM_EXEC"
+        fi
+        # Start desktop-session inside its own ConsoleKit session
+        if [ "$CONSOLEKIT_SESSION_LAUNCH" = 'true' ] && [ -x /usr/bin/ck-launch-session ]; then
+            WM_EXEC="ck-launch-session $WM_EXEC"
+        fi
+    else
+        #Disable window manager startup by renaming the startup file if a minimal session was chosen.
+        if [ -f "$HOME/.$wm/startup" ]; then
+            echo_cmd mv $HOME/.$wm/startup $HOME/.$wm/startup.disabled
+        fi
+    fi
+}
+startup_dialog() {
+    if [ "$display_altdesktop_window" = "true" -a "$OTHER_DESKTOPS_WINDOW" = "true" ]; then
+        echo_bg_cmd $desktop_session_menu_window;
+    fi
+        
+    if [ ! -f "$user_dts_dir/finished-login-run" ] && [ "$STARTUP_DIALOG" = "true" ]; then
+        echo_cmd touch "$user_dts_dir/finished-login-run"
+        eval "$STARTUP_DIALOG_CMD" & startup_dialog_pid=$!;
+    fi
+}
+close_startup_notification() {
+    loop=0
+    while [ "$(ps -p $launch_desktop_pid -o pid --no-headers)" != "" ]; do
+        if [ "$loop" = 30 ]; then
+            say "For some reason launch_desktop has not completed in over 30 seconds.... force killing startup screen";
+            break;
+        fi
+        sleep 1
+        loop=`expr $loop + 1`
+    done
+    kill $startup_notification_pid
+    }
+    
+is_first_run() {
+    #Run though the first run script
+    if [ -f "$first_run_script" ]; then
+        say "Running first time run script"
+        echo_bg_cmd $first_run_script;
+    fi
+}
+
+launch_desktop() {
+    #Set Sound Volume to specified amount in desktop-session.conf and play the startup sound file if enabled and available.
+    if [ "$STARTUP_SOUND" = 'true' ]; then
+        echo_cmd amixer sset 'Master' -M $STARTUP_SOUND_LEVEL
+        if [ -f "$STARTUP_SOUND_FILE" ]; then
+            echo_bg_cmd play "$STARTUP_SOUND_FILE"
+        fi
+    fi
+
+    
+    if [ "$NOTIFICATION_DIALOG" = 'true' ]; then
+        #Determine startup notification text, either  via program return or text.
+        #CLEAN_NOTIFICATION_TEXT=$(echo $NOTIFICATION_TEXT |sed "s/\"//ig"|sed "s/'//ig" )
+        #if [ -x "$CLEAN_NOTIFICATION_TEXT" ]; then 
+        if [ -x "$NOTIFICATION_TEXT" ]; then
+            text=$(eval $NOTIFICATION_TEXT);
+        else 
+            text="$NOTIFICATION_TEXT"; 
+        fi; 
+    
+        if [ "$text" ]; then
+            #Display startup notification, and start session (if not in min mode)
+            popup_splash_notification "$text" & startup_notification_pid=$! ;
+            close_startup_notification &
+        fi
+    fi
+
+    #Poll for the window manager startup to find when the window manager has started
+    say "Checking for running window manager @ $(cut -d " " -f22 /proc/self/stat)";
+    for x in $(seq 1 $TIMES_TO_CHECK); do
+        sleep 0.5;
+        wm_started=$(pgrep -P $$ -fx $WM_EXEC) && break;
+        wm_started=${wm_started:-$(pgrep -P $$ -f $wm)} && break;
+    done
+    
+    #When the window manager is found to be running start the desktop or startup is forced in desktop-sesssion.conf
+    if [ "$wm_started" ] || [ "$FORCE_LOAD" = "true" ]; then 
+        say "Window manager running or setup forced, setting up desktop @ $(cut -d " " -f22 /proc/self/stat)";
+        
+        # Only build desktop-menu if we need to when language selected is different than default
+        local new_lang_file=/etc/live/config/lang
+        if test -e $new_lang_file; then
+            local lang_file=$HOME/.desktop-session/lang old_lang=en
+            read old_lang 2>/dev/null < $lang_file
+            local new_lang=$(sed -nr 's/^WM_LANG="([^"]+)".*/\1/p' $new_lang_file)
+            if [ "$old_lang" != "$new_lang" ]; then
+                echo_bg_cmd desktop-menu --write-out-global
+                echo $new_lang > $lang_file
+            fi
+        fi
+        
+        #Delay session startup by the amount the user finds fitting as set in desktop-session.conf to give the window manager time to fully start
+        say "Delaying session startup by $STARTUP_DELAY seconds";
+        sleep $STARTUP_DELAY;
+        
+        ## fix HiDPI screen if necessary.
+        ## Not needed if there is no HiDPI screen 
+        if [ "$AUTOSCALE_ENABLE" = "true" ]; then
+            echo_cmd autoscale-antix;
+        fi
+        
+        #Start icon manager based on session code
+        case $im in
+            rox)   echo_bg_cmd rox --pinboard=antiX-$wm  ;;
+            space) echo_bg_cmd spacefm --desktop         ;;
+            zzz)   echo_bg_cmd zzzfm --desktop           ;;
+            none)                                        ;;
+            *)     warn "Unknown icon-manager: $im"      ;;
+        esac
+        
+        #Set wallpaper if enabled
+        if [ "$LOAD_WALLPAPER" = "true" ]; then
+            #Check if an icon manager is used and allow time for the icon manager to start 
+            if [[ "$icon_managers" =~ ${im,,} ]] && [ -n "$im" ]; then sleep $STARTUP_DELAY; fi
+            echo_bg_cmd desktop-session-wallpaper
+        fi
+        
+        #Check if the user would prefer their files not to be updated, if not protected... update or ask to update
+        if [ "$SESSION_PROTECT" != "true" ]; then
+        say "Comparing files found in $main_compare_file for updated config files."
+        local line_number=1;
+        while read line
+        do
+            if expr match "$line" "^$wm\|^global" &>/dev/null ; then
+                source=$(eval "echo $(echo $line | cut -d "|" -f2)");
+                destination=$(eval "echo $(echo $line | cut -d "|" -f3)");
+                if [ ! -f "$destination" ] || [ "$source" -nt "$destination" ] ; then
+                    if [ "$SESSION_PROTECT" = "ask" ]; then
+                        popup_yes_no "Would you like to update:\n$destination\nwith:\n$source?"; CANOK="$?";
+                        if [ "$CANOK" = "0" ]; then
+                           say "Source file newer than Destination file. Copying.....";
+                           echo_cmd cp $source $destination;
+                        else
+                           say "Source file newer than Destination file, but user does not want to update.";
+                           sed -i "$line_number"' s/^/#/' $main_compare_file
+                        fi
+                    else
+                        say "Source file newer than Destination file. Copying.....";
+                        echo_cmd cp $source $destination;
+                    fi
+                else
+                    say "Destination file is newer than the Source file.";
+                fi
+            fi
+            ((line_number+=1));
+        done < $main_compare_file
+        else
+            say "User in protected mode.";
+            say "Set USER_PROTECT in desktop-session.conf to false or ask";
+        fi
+        
+        #Check array to see if the window manager supports the standard xdg autostart directories.
+        #If the window manager does not support it (it is in the array) and the user wants to 
+        #support it, we will support it here.
+        wm_non_autostart=$(echo "$non_autostart" | grep -o "$wm")
+        if [ "$wm" = "$wm_non_autostart" ] && [ "$LOAD_XDG_AUTOSTART" = "true" ]; then
+            if [ ! -d $user_xdg_autostart ]; then
+                mkdir -p "$user_xdg_autostart" ;
+            fi
+            for files in $(diff $main_xdg_autostart $user_xdg_autostart -nq --unidirectional-new-file |grep "Only in "|cut -d ":" -f2 |sed "s/\ //ig")
+            do
+                #Check for Hidden/NoDisplay and stop exec if anything other than false is set otherwise if set to false or does not exist run in startup
+                NoExec=$(cat $main_xdg_autostart/$files | grep -E '(NoDisplay=|Hidden=)' |head -1 | cut -d "=" -f2 |tr -d ' ')
+                exec=$(cat $main_xdg_autostart/$files | grep "Exec=" |cut -d "=" -f2)
+                if [[ "false" != ${NoExec,,} ]] && [ -n "$NoExec" ]; then 
+                    say "Not starting $files as vaguely stated not to."; 
+                else
+                    echo_eval_cmd $exec & 
+                fi
+            done
+            for files in $(ls $user_xdg_autostart)
+            do
+                #Check for Hidden/NoDisplay and stop exec if anything other than false is set otherwise if set to false or does not exist run in startup
+                NoExec=$(cat $user_xdg_autostart/$files | grep -E '(NoDisplay=|Hidden=)' |head -1 | cut -d "=" -f2 |tr -d ' ')
+                exec $(cat $user_xdg_autostart/$files | grep "Exec=" |cut -d "=" -f2)
+                if [[ "false" != ${NoExec,,} ]] && [ -n "$NoExec" ]; then 
+                    say "Not starting $files as vaguely stated not to."; 
+                else
+                    echo_eval_cmd $exec & 
+                fi
+            done
+        fi
+
+        #Maybe we do not want to use the autostart directory, but we would like to add something to the session startup.
+        #Then we will read /etc/desktop-session/startup file.
+        if [ "$LOAD_STARTUP_FILE" = "true" ]; then
+            if [ -f "$user_startup_file" ]; then
+                echo_bg_cmd $user_startup_file;
+            else
+            echo_bg_cmd $main_startup_file;
+        fi
+        fi
+        
+        #Check if the user would like to run the session specific conky or not.
+        if [ "$LOAD_CONKY" = "true" ]; then
+            if [ -f "$conky_dir/conky-save.sh" ]; then
+                echo_cmd $conky_dir/conky-save.sh
+            elif [ -f "$conky_dir/$wm-conkyrc" ]; then
+                echo_cmd conky -c $conky_dir/$wm-conkyrc
+            else
+                echo_cmd conky
+            fi
+            echo_cmd wmctrl -F -r "Conky ($(hostname))" -b add,below &
+        fi
+        
+        #Finally Set the screen blank time / screen saver
+        if [ "$SCREEN_BLANK_TIME" = "0" ]; then
+            echo_cmd xset -dpms; 
+            echo_cmd xset s off; 
+            echo_cmd xset s noexpose;
+            echo_cmd xset dpms $SCREEN_BLANK_TIME $SCREEN_BLANK_TIME $SCREEN_BLANK_TIME s $SCREEN_BLANK_TIME $SCREEN_BLANK_TIME;
+        else
+            echo_cmd xset +dpms; 
+            echo_cmd xset s on; 
+            echo_cmd xset s expose; 
+            echo_cmd xset dpms $SCREEN_BLANK_TIME $SCREEN_BLANK_TIME $SCREEN_BLANK_TIME s $SCREEN_BLANK_TIME $SCREEN_BLANK_TIME;
+        fi
+        
+    else 
+        shout "Window Manager not found to be running after $TIMES_TO_CHECK checks";
+        shout "Currently the desktop environment will not start :P";
+        shout "Give Up Time:$(cut -d " " -f22 /proc/self/stat)";
+        popup_error "Window Manager not found to be running after $TIMES_TO_CHECK checks.\nCurrently the desktop environment will not start :P\nGive Up Time: $(cut -d ' ' -f22 /proc/self/stat)"
+    fi
+    
+    #Run and mark first run as being finished.
+    if [ ! -f "$user_dts_dir/finished-first-run" ]; then
+        is_first_run ;
+        touch "$user_dts_dir/finished-first-run"
+    fi
+    startup_dialog
+}
+####TO END####
+
+get_default_desktop() {
+    local code file=$1
+    [ -r $file ] && code=$(cat $file 2>/dev/null)
+    if [ -z "$code" ]; then
+        code=$fallback_desktop
+        log "Empty or missing default desktop file: $file"
+        log "using fallback desktop: $code"
+    fi
+    echo $code
+    [ "$code" ]
+    return $?
+}
+
+get_restart_code() {
+    local file=$1
+    unset RESTART_CODE 
+    [ -r $file ] || return 1
+
+    if is_stale $file $stale_time; then
+        warn "Ignoring stale restart file: $file"
+        rm -f $file
+        return 1
+    fi
+
+    local restart=$(cat $file 2>/dev/null)
+    rm -f $file
+    RESTART_CODE=$restart
+
+    [ "$RESTART_CODE" ] && return 0
+
+    warn "Empty restart file: $file"
+    return 1
+}
+
+is_stale() {
+    local file=$1 time=$2
+
+    # Return early if parameter missing but don't claim file was stale
+    [ -n "$file" -a -n "$time" ] || return 1
+    local now=$(date +%s)  ftime=$(stat --format %Y $file)
+    [ $((now - ftime)) -gt $time ]
+    return $?
+}
+
+get_wm_exec() {
+    unset WM_EXEC
+    local wm_exec  code=$1
+    if [ -n "$code" -a -z "${code##/*}" ]; then
+        wm_exec=$code
+    else
+        wm_exec=$(find_wm_exec "$code")
+    fi
+
+    if ! [ -n "$wm_exec" -a -z "${wm_exec##/*}" ]; then
+        local full=$(which $wm_exec 2>/dev/null)
+        [ -z "$full" ] && fatal "Could not find \"$wm_exec\" on path $PATH"
+        wm_exec=$full
+    fi
+
+    if [ -x $wm_exec ]; then
+        WM_EXEC=$wm_exec
+        return 0
+    fi
+
+    warn "$wm_exec either not found or not executable"
+
+    [ "$fallback_wmx" ] || return 1
+
+    warn "trying fallbacks: $fallback_wmx"
+
+    for wm_exec in $fallback_wmx; do
+        [ -x $wm_exec ] && break
+    done
+
+    [ -x $wm_exec ] || return 1
+    WM_EXEC=$wm_exec
+    return 0
+}
+
+#------------------------------------------------------------------------------
+# Function: find_wm_exec <wm-code>
+#
+# Find the executable associated with <wm-code>.  First look it up in a case
+# statement.  If it was not found in the case statement or if the executable
+# found in the case statement is non-existant or not executable then we fall
+# back to looking in /usr/share/xsession/*.desktop via find_xsessions_exec().
+#------------------------------------------------------------------------------
+find_wm_exec() {
+    local wm_exec wm_code=$1
+
+    log "look up executable for $wm_code"
+
+    case $wm_code in
+          icewm) wm_exec=/usr/bin/icewm-session ;;
+        fluxbox) wm_exec=/usr/bin/startfluxbox  ;;
+            jwm) wm_exec=/usr/bin/jwm           ;;
+           wmii) wm_exec=/usr/bin/wmii          ;;
+    esac
+
+    if [ -x "$wm_exec" ]; then
+        echo "$wm_exec"
+    else
+        [ "$wm_exec" ] && log "$wm_exec either not found or not executable"
+        find_xsessions_exec "$wm_code"
+    fi
+}
+
+find_xsessions_exec() {
+    local wm=$1
+
+    log "search $xs_dir and $ws_dir for executable for $wm"
+    
+    local file=$(grep -i -l "^Name=$wm$" $xs_dir/*.desktop $ws_dir/*.desktop | head -n 1)
+    [ "$file" ] || file=$(grep -i -l "^Name=$wm desktop$" $xs_dir/*.desktop $ws_dir/*.desktop | head -n 1)
+    [ "$file" ] || file=$(grep -i -l "^Name=$wm session$" $xs_dir/*.desktop $ws_dir/*.desktop | head -n 1)
+    [ "$file" ] || file=$(grep -i -l "^Exec=$wm" $xs_dir/*.desktop $ws_dir/*.desktop| head -n 1)
+    [ "$file" ] || return
+    grep ^Exec= "$file" | cut -d= -f2
+}
+
+on_exit() {
+    log "running on_exit code"
+    #log "kill children of $$"
+    #desktop-session-kill children $(pgrep --parent $$)
+    #log "kill remaining windows in display $DISPLAY"
+    #local list=$(wmctrl -lp | awk '{print $3}' | grep -v "^0")
+    #desktop-session-kill family $(prune_pids $list)
+    rm -f $signal_files
+    rm -f $user_dts_dir/finished-login-run
+}
+
+
+mkdir -p $user_dts_dir
+start_time=$(cut -d" " -f22 /proc/$$/stat | sed -r 's/(..)$/.\1/')
+shout "started $(date) start_time: $start_time"
+shout "pid: $$"
+shout "logging to: $log_file"
+
+main "$@" >> $log_file 2>&1
+
+shout "exiting normally"
