@@ -9,10 +9,7 @@
         [begin] (Personal)
         [include] (~/.fluxbox/personal)
     [end]
-    [submenu] (Applications) </usr/share/icons/nuoveXT2/48x48/apps/applications.png>
-        [begin] (Applications)
-        [include] (~/.fluxbox/menu-applications)
-    [end]
+    [include] (~/.fluxbox/menu-applications)
     [exec] (Refresh Menu) {desktop-menu --write-out-global} </usr/share/icons/nuoveXT2/48x48/apps/update-manager.png>
     [separator]
     [submenu] (Desktop) </usr/share/icons/nuoveXT2/48x48/apps/user-desktop.png>
