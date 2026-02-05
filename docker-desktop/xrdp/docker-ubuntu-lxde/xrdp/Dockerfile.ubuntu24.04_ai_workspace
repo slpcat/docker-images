@@ -94,7 +94,15 @@ RUN \
     wget https://releases.warp.dev/stable/v0.2026.01.21.08.14.stable_03/warp-terminal_0.2026.01.21.08.14.stable.03_amd64.deb && \
     apt-get install -y ./warp-terminal_0.2026.01.21.08.14.stable.03_amd64.deb && rm -f warp-terminal_0.2026.01.21.08.14.stable.03_amd64.deb
 
-# Wave Termianl
+# Wave Terminal
+# https://docs.waveterm.dev/gettingstarted
+RUN \
+    wget https://dl.waveterm.dev/releases-w2/waveterm-linux-amd64-0.13.1.deb \
+    && apt-get install -y ./waveterm-linux-amd64-0.13.1.deb && rm -f waveterm-linux-amd64-0.13.1.deb
+
+#ghosty + claude
+RUN \
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/mkasberg/ghostty-ubuntu/HEAD/install.sh)"
 
 # Clawdbot/moltbot/openclaw
 #https://github.com/openclaw/openclaw
@@ -115,7 +123,7 @@ RUN \
 #turix cua
 #sima打游戏
 #agent browser
-#ghosty + claude
+
 #newwelle
 #cowork
 
