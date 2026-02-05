@@ -18,7 +18,7 @@ RUN apt-get update -y             \
        gstreamer1.0-tools gstreamer1.0-plugins-base gstreamer1.0-plugins-good \
        cmake libopencv-dev   \
        neovim                \
-       openjdk-21-jre        \
+       openjdk-17-jre        \
        golang                \
        nodejs yarn           \
        xorg-dev              \
