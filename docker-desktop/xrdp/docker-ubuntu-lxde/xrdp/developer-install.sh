@@ -113,6 +113,8 @@ playwright install
 # vscode extensions
 # Install default supported themes
 code --install-extension enkia.tokyo-night
+# https://www.continue.dev/
+code --install-extension continue.continue
 
 # Install AI coding/Vibe coding tools
 

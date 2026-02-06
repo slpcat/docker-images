@@ -1,5 +1,13 @@
 FROM slpcat/docker-ubuntu-lxde:24.04-xrdp_developer
 
+# AI-OS
+#Makulu Develops Linux distributions and Tools with unconventional and outside of the box thinking.
+#https://www.makululinux.com/
+#Gnoppix AI Linux
+#https://www.gnoppix.org/
+#https://www.opendan.ai/
+# https://github.com/fiatrete/OpenDAN-Personal-AI-OS
+
 #kubectl-ai
 RUN \
     wget https://github.com/GoogleCloudPlatform/kubectl-ai/releases/download/v0.0.29/kubectl-ai_Linux_x86_64.tar.gz \
@@ -12,6 +20,12 @@ RUN \
 RUN \
     wget https://github.com/k8sgpt-ai/k8sgpt/releases/download/v0.4.27/k8sgpt_amd64.deb \
     && apt-get install -y ./k8sgpt_amd64.deb && rm -f k8sgpt_amd64.deb
+
+# Clippy lets you run a variety of large language models (LLMs) locally on your computer while sticking with a user interface of the 1990s
+# https://felixrieseberg.github.io/clippy/
+RUN \
+    wget https://github.com/felixrieseberg/clippy/releases/download/v0.4.3/clippy_0.4.3_amd64.deb \
+    && apt-get install -y ./clippy_0.4.3_amd64.deb && rm -f clippy_0.4.3_amd64.deb
 
 #claude
 #openai codex
@@ -121,8 +135,12 @@ RUN \
 #微软magentic ui
 #iflow
 #turix cua
+#TuriX
 #sima打游戏
 #agent browser
+
+#Aider lets you pair program with LLMs to start a new project or build on your existing codebase.
+#https://aider.chat/
 
 #newwelle
 #cowork
