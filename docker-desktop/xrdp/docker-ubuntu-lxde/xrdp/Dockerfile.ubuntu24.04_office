@@ -55,6 +55,7 @@ RUN apt-get update -y             \
        xfonts-wqy           \
        clamav               \
        clamav-freshclam     \
+       fscrypt              \
        l3afpad              \
        #wireshark            \
        qpdfview             \
@@ -218,6 +219,16 @@ RUN \
 # Install peazip nextcloud-desktop from xtradeb
 RUN \
     apt-get install -y peazip nextcloud-desktop
+
+#VeraCrypt
+RUN \
+    wget https://launchpad.net/veracrypt/trunk/1.26.24/+download/veracrypt-1.26.24-Ubuntu-24.04-amd64.deb \
+    && apt-get install -y ./veracrypt-1.26.24-Ubuntu-24.04-amd64.deb && rm -f veracrypt-1.26.24-Ubuntu-24.04-amd64.deb
+
+#Cryptomator
+RUN \
+    flatpak install -y flathub org.cryptomator.Cryptomator
+#fscrypt
 
 # tailscale
 RUN \
