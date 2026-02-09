@@ -94,8 +94,8 @@ RUN \
 
 #Cursor is the best way to code with AI.
 RUN \
-    wget https://downloads.cursor.com/production/618c607a249dd7fd2ffc662c6531143833bebd44/linux/x64/deb/amd64/deb/cursor_2.4.22_amd64.deb \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -y ./cursor_2.4.22_amd64.deb && rm -f cursor_2.4.22_amd64.deb
+    wget https://downloads.cursor.com/production/3578107fdf149b00059ddad37048220e4168100f/linux/x64/deb/amd64/deb/cursor_2.4.31_amd64.deb \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y ./cursor_2.4.31_amd64.deb && rm -f cursor_2.4.31_amd64.deb
 
 # windsurf The best AI for Coding
 RUN \
@@ -145,3 +145,5 @@ RUN \
 #newwelle
 #cowork
 
+#Shannon is your fully autonomous AI pentester.
+#https://github.com/KeygraphHQ/shannon

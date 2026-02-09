@@ -137,3 +137,14 @@ npm install -g cline
 
 #Label Studio is an open source data labeling tool. 
 #https://github.com/HumanSignal/label-studio
+
+
+
+###############
+#IndexTTS-2
+#VibeVoice-TTS
+#Coqui-TTS
+#BERT-VITS2
+#Fish-Speech
+#Parler-TTS
+
