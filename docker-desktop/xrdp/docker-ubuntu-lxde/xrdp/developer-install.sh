@@ -115,6 +115,9 @@ playwright install
 code --install-extension enkia.tokyo-night
 # https://www.continue.dev/
 code --install-extension continue.continue
+# https://opencode.ai/
+code --install-extension sst-dev.opencode
+
 
 # Install AI coding/Vibe coding tools
 
@@ -125,6 +128,7 @@ npm install -g @anthropic-ai/claude-code
 npm install -g @openai/codex
 npm install -g @google/gemini-cli
 npm install -g cline
+npm install -g opencode-ai
 
 # flatpak
 

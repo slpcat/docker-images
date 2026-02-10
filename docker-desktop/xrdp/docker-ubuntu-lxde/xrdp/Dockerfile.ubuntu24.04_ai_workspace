@@ -31,6 +31,14 @@ RUN \
 #openai codex
 #gemini
 #cline
+
+#google Antigravity
+#https://antigravity.google/
+RUN \
+    curl -fsSL https://us-central1-apt.pkg.dev/doc/repo-signing-key.gpg | gpg --dearmor --yes -o /usr/share/keyrings/antigravity-repo-key.gpg \
+    && echo "deb [signed-by=//usr/share/keyrings/antigravity-repo-key.gpg] https://us-central1-apt.pkg.dev/projects/antigravity-auto-updater-dev/ antigravity-debian main" | tee /etc/apt/sources.list.d/antigravity.list > /dev/null \
+    && apt-get update && apt-get install -y antigravity
+
 #opencode
 #n8n
 #dash0/Agent0 https://www.dash0.com/
@@ -50,6 +58,8 @@ RUN \
 
 
 #trae ai编程工具 https://www.trae.ai/
+#快手CodeFlicker
+#https://www.codeflicker.ai
 
 #Qoder, Agentic Coding Platform for Real Software
 #https://qoder.com/

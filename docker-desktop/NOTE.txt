@@ -141,6 +141,7 @@ docker run -d \
   ayushkhaire/remote-desktop-rdp-xfce-audio-firefox
 
 docker run -d \
+   --restart=always \
    --name ubuntu2404-lxde-xrdp-user01 \
    --privileged `#for flatpak` \
    --cap-add=SYS_ADMIN \
@@ -173,6 +174,7 @@ docker run -d \
 
 #with GPU and sunshine
 docker run -d \
+   --restart=always \
    --name ubuntu2404-lxde-xrdp-user01 \
    --privileged `#for flatpak` \
    --gpus all \
