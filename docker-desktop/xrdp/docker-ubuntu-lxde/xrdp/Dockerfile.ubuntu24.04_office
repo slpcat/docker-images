@@ -212,13 +212,18 @@ RUN \
     wget https://github.com/ferdium/ferdium-app/releases/download/v7.1.1/Ferdium-linux-7.1.1-amd64.deb \
     && apt-get install -y ./Ferdium-linux-7.1.1-amd64.deb && rm -f Ferdium-linux-7.1.1-amd64.deb
 
+#GPU benchmark
+#furmark
+#glmark2
+
 #Thunderbird Mail
 RUN \
-    flatpak install -y flathub org.mozilla.Thunderbird
+    flatpak install -y flathub org.mozilla.Thunderbird \
+    && flatpak install -y flathub com.geeks3d.furmark
 
 # Install peazip nextcloud-desktop from xtradeb
 RUN \
-    apt-get install -y peazip nextcloud-desktop
+    apt-get install -y peazip nextcloud-desktop glmark2
 
 #VeraCrypt
 RUN \
