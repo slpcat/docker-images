@@ -483,7 +483,7 @@ RUN \
 
 #DeaDBeeF is a modular cross-platform audio player
 #https://deadbeef.sourceforge.io/
-COPY deadbeef-static_1.10.0-1_amd64.deb
+COPY deadbeef-static_1.10.0-1_amd64.deb /
 RUN \
     apt-get install -y ./deadbeef-static_1.10.0-1_amd64.deb && rm -f deadbeef-static_1.10.0-1_amd64.deb
 
