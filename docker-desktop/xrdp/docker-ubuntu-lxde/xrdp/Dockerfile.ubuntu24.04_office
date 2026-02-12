@@ -454,8 +454,8 @@ RUN \
 # QQ
 # flatpak install -y flathub com.qq.QQ
 RUN \
-    wget https://dldir1v6.qq.com/qqfile/qq/QQNT/Linux/QQ_3.2.23_260108_amd64_01.deb \
-    && apt-get install -y ./QQ_3.2.23_260108_amd64_01.deb && rm -f QQ_3.2.23_260108_amd64_01.deb
+    wget https://dldir1v6.qq.com/qqfile/qq/QQNT/Linux/QQ_3.2.25_260205_amd64_01.deb
+    && apt-get install -y ./QQ_3.2.25_260205_amd64_01.deb && rm -f QQ_3.2.25_260205_amd64_01.deb
 
 # Stream music using https://spotify.com
 #flatpak install -y flathub com.spotify.Client
