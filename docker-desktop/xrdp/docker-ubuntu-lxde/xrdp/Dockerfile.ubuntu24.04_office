@@ -513,7 +513,8 @@ RUN \
     apt-get install -y ./Lark-linux_x64-7.59.12.deb && rm -f Lark-linux_x64-7.59.12.deb
 
 # dingtalk
-RUN \
+# syntax=docker/dockerfile:1.3-labs
+RUN --security=insecure \
     flatpak install -y flathub com.dingtalk.DingTalk
 #RUN \
 #    wget https://dtapp-pub.dingtalk.com/dingtalk-desktop/xc_dingtalk_update/linux_deb/Release/com.alibabainc.dingtalk_8.1.0.6011301_amd64.deb \
