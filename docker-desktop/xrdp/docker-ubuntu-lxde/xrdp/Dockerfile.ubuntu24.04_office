@@ -277,6 +277,11 @@ RUN \
 
 # PotPlayer
 # LosslessCut aims to be the ultimate cross platform FFmpeg GUI for extremely fast and lossless operations on video, audio, subtitle and other related media files.
+# flatpak install -y flathub no.mifi.losslesscut
+RUN \
+    wget https://github.com/mifi/lossless-cut/releases/download/v3.68.0/LosslessCut-linux-x64.tar.bz2 \
+    && tar -xjf LosslessCut-linux-x64.tar.bz2 -C /usr/local && rm -f LosslessCut-linux-x64.tar.bz2 \
+    && ln -s /usr/local/LosslessCut-linux-x64/losslesscut /usr/local/bin/losslesscut
 
 # handbrake: Open Source Video Transcoder
 # flatpak install -y flathub fr.handbrake.ghb
@@ -285,8 +290,7 @@ RUN \
 
 # kodi
 RUN \
-    flatpak install -y tv.kodi.Kodi \
-    && flatpak install -y flathub no.mifi.losslesscut
+    flatpak install -y tv.kodi.Kodi
 
 #RUN \
 #    add-apt-repository ppa:team-xbmc/ppa && \
@@ -570,6 +574,7 @@ RUN \
 #wget https://cdn.akamai.steamstatic.com/client/installer/steam.deb
 #sudo apt install -y ./steam.deb
 #rm steam.deb
+#flatpak install flathub com.valvesoftware.SteamLink
 
 # epic games
 # ubisoft
