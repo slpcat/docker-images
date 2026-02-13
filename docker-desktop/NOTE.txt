@@ -166,7 +166,7 @@ docker run -d \
    -v /data/ubuntu2404-home:/home \
    slpcat/docker-ubuntu-lxde:24.04-xrdp_ai_workspace
    slpcat/docker-ubuntu-lxqt:24.04-xrdp_full
-   slpcat/docker-ubuntu-lxqt:24.04-xrdp_audio
+   slpcat/docker-ubuntu-lxqt:24.04-xrdp_media
    slpcat/docker-antix-icewm:23.2-xrdp_full
    slpcat/docker-ubuntu-lxde:24.04-xrdp_office
    slpcat/docker-ubuntu-lxde:24.04-xrdp_developer

@@ -27,7 +27,8 @@ ipvlan需要内核版本>=4.19
 代码品质管理: SonarQube(荐),revive,FindBugs,spotBugs,CodeQL,ShiftLeft inspect
 代码安全扫描: Fortify SCA(Source Code Analysis),FindBugs Security Audit，Checkmarx CxSuite，Armonize CodeSecure，Flawfinder，CodeSonar，HP DevInspect，SecurityReview，腾讯TscanCode,Alerta,Contrast Assess,CodeAI,Parasoft,Veracode,IriusRisk,ThreatModeler,OWASP Threat Dragon,BDD-Security,Chef InSpec,Gauntlt,Synopsys,Aqua Security(荐),TwistLock,Dome9 Arc,RedLock,SD Elements,WhiteHat Sentinel ,WhiteSource,snyk.io,dagda,KubeXray,Falco,StackRox,Apcera
 低代码开发: ivx.cn,wuyuan.io,Outsystems,Mendix,
-
+邮件:Open-Xchange
+https://www.open-xchange.com/
 Docker容器安全扫描:Grype,Trivy,
 Phaistos KMS是一种非常易于操作，高性能，无状态的密钥和机密管理服务。
 kubesec：Kubernetes的安全秘密管理（具有gpg，Google Cloud KMS和AWS KMS后端）

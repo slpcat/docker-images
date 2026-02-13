@@ -109,6 +109,10 @@ RUN \
     --env=SDL_IM_MODULE=fcitx5 \
     --env=GLFW_IM_MODULE=ibus
 
+# ffmpeg full support
+RUN \
+    flatpak install org.freedesktop.Platform.ffmpeg-full//24.08
+
 # Install appimagemanager
 RUN \
     wget https://github.com/tunjayoff/appimagemanager/releases/download/v1.0.4/appimagemanager_1.0.4_amd64.deb && \
@@ -272,6 +276,7 @@ RUN \
 #https://github.com/linuxmint/timeshift
 
 # PotPlayer
+# LosslessCut aims to be the ultimate cross platform FFmpeg GUI for extremely fast and lossless operations on video, audio, subtitle and other related media files.
 
 # handbrake: Open Source Video Transcoder
 # flatpak install -y flathub fr.handbrake.ghb
@@ -280,7 +285,8 @@ RUN \
 
 # kodi
 RUN \
-    flatpak install -y tv.kodi.Kodi
+    flatpak install -y tv.kodi.Kodi \
+    && flatpak install -y flathub no.mifi.losslesscut
 
 #RUN \
 #    add-apt-repository ppa:team-xbmc/ppa && \

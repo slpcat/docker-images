@@ -67,6 +67,7 @@ RUN \
     wget https://download.qoder.com/release/latest/qoder_amd64.deb \
     && apt-get install -y ./qoder_amd64.deb && rm -f qoder_amd64.deb
 
+#https://www.qoderwork.org/
 #
 #dify
 #ollama
@@ -154,6 +155,7 @@ RUN \
 
 #newwelle
 #cowork
+#https://yuanqiai.net/ 
 
 #Shannon is your fully autonomous AI pentester.
 #https://github.com/KeygraphHQ/shannon

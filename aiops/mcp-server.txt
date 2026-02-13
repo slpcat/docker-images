@@ -54,6 +54,7 @@ Google MCP Toolbox
 Google MCP Toolbox是一个开源的MCP服务器，旨在简化应用程序和AI代理与数据库之间的安全高效交互。该项目以前被称为“GenAI Toolbox for Databases”，在完全兼容Model Context Protocol[6]（MCP）后改名。其目的是通过处理连接池、身份验证、可观察性及其他操作性问题，来消除传统上连接代理与数据库时的繁重工作。
 https://github.com/googleapis/genai-toolbox
 
+Ansible MCP server
 
 Docker Hub MCP server
 

@@ -31,7 +31,6 @@ RUN \
 #sudo apt install nvidia-driver-xxx  # 替换为合适的版本
 #sudo apt install libnvidia-encode-xxx libnvidia-decode-xxx
 
-#change .xsession
 #export LIBVA_DRIVER_NAME=iHD      # Intel
 #export LIBVA_DRIVER_NAME=radeonsi # AMD
 #export LIBVA_DRIVER_NAME=nvidia   # NVIDIA
@@ -60,6 +59,7 @@ RUN apt-get install -y \
     xserver-xorg-video-radeon \
     libdrm-amdgpu1
 
+#For NVIDIA GPUs, don't use VA-API. Use NVDEC directly:
 # NVIDIA 必须安装宿主机的驱动版本
 #RUN apt-get install -y \
 #    mesa-utils \
@@ -67,3 +67,8 @@ RUN apt-get install -y \
 #    # 从 NVIDIA 官方仓库安装
 #    nvidia-driver-XXX \
 #    libnvidia-gl-XXX
+
+# OpenGL强制使用 NVIDIA
+#export __GLX_VENDOR_LIBRARY_NAME=nvidia
+#export __NV_PRIME_RENDER_OFFLOAD=1
+#export __VK_LAYER_NV_optimus=NVIDIA_only
