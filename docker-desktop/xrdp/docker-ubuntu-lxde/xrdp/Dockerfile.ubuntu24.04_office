@@ -111,7 +111,7 @@ RUN \
 
 # ffmpeg full support
 RUN \
-    flatpak install org.freedesktop.Platform.ffmpeg-full//24.08
+    flatpak install -y org.freedesktop.Platform.ffmpeg-full//24.08
 
 # Install appimagemanager
 RUN \
