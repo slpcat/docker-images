@@ -1,0 +1,116 @@
+apiVersion: k0sctl.k0sproject.io/v1beta1
+kind: Cluster
+metadata:
+  name: k0s-cluster
+spec:
+  hosts:
+  - ssh:
+      address: 10.52.8.27
+      user: root
+      port: 22
+    #  keyPath: /root/.ssh/id_rsa
+    #role: controller
+    role: controller+worker
+    # 从本地 上传 k0s bin 文件，不要在目标机器下载
+    #uploadBinary: true
+    #k0sBinaryPath: /path/tmp/k0s
+   # files:
+   #   - name: bundle-file
+   #     src: /root/k0s-airgap-bundle-v1.23.1+k0s.1-amd64
+   #     dstDir: /var/lib/k0s/images/
+   #     perm: 0755
+  - ssh:
+      address: 10.52.8.28
+      user: root
+      port: 22
+    #  keyPath: /root/.ssh/id_rsa
+    #role: controller
+    role: worker
+
+  - ssh:
+      address: 10.52.8.29
+      user: root
+      port: 22
+    #  keyPath: /root/.ssh/id_rsa
+    #role: controller
+    role: worker
+#  - ssh:
+#      address: 10.0.0.2
+#      user: root
+#      port: 22
+#      keyPath: /root/.ssh/id_rsa
+#    role: worker
+  k0s:
+    version: 1.23.1+k0s.1
+    config:
+      apiVersion: k0s.k0sproject.io/v1beta1
+      kind: Cluster
+      metadata:
+        name: k0s
+      spec:
+        api:
+          k0sApiPort: 9443
+          port: 6443
+        images:
+          calico:
+            cni:
+              image: docker.io/calico/cni
+              version: v3.18.1
+            kubecontrollers:
+              image: docker.io/calico/kube-controllers
+              version: v3.18.1
+            node:
+              image: docker.io/calico/node
+              version: v3.18.1
+          coredns:
+            image: docker.io/coredns/coredns
+            version: 1.7.0
+          default_pull_policy: IfNotPresent
+          #default_pull_policy: Never
+          konnectivity:
+            image: slpcat/proxy-agent
+            version: v0.0.24
+          kubeproxy:
+            image: slpcat/kube-proxy
+            version: v1.22.1
+          kuberouter:
+            cni:
+              image: docker.io/cloudnativelabs/kube-router
+              version: v1.2.1
+            cniInstaller:
+              image: quay.io/k0sproject/cni-node
+              version: 0.1.0
+          metricsserver:
+            image: slpcat/metrics-server
+            version: v0.5.0
+        installConfig:
+          users:
+            etcdUser: etcd
+            kineUser: kube-apiserver
+            konnectivityUser: konnectivity-server
+            kubeAPIserverUser: kube-apiserver
+            kubeSchedulerUser: kube-scheduler
+        konnectivity:
+          adminPort: 8133
+          agentPort: 8132
+        network:
+          kubeProxy:
+            disabled: false
+            mode: iptables
+          kuberouter:
+            autoMTU: true
+            mtu: 0
+            peerRouterASNs: ""
+            peerRouterIPs: ""
+          podCIDR: 10.244.0.0/16
+          provider: kuberouter
+          serviceCIDR: 10.96.0.0/12
+        podSecurityPolicy:
+          defaultPolicy: 00-k0s-privileged
+        storage:
+          type: etcd
+          #type: kine
+          #  kine:
+          #    dataSource: "sqlite:///var/lib/k0s/db/state.db?more=rwc&_journal=WAL&cache=shared"
+        telemetry:
+          enabled: true
