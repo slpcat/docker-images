@@ -32,6 +32,7 @@ RUN apt-get update -y             \
        redis                 \
        mysql-client          \
        postgresql-client     \
+       qemu-system           \
        scrcpy                \
        scrcpy-server
 

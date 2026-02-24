@@ -1,5 +1,0 @@
-#!/bin/sh
-exec 2>&1
-
-ulimit -n 100000
-exec /usr/bin/anydesk --service
