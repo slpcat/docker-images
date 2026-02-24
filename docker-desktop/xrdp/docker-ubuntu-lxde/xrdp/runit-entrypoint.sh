@@ -45,7 +45,7 @@ if (( $# == 0 )); then
 
     if [[ $USER_ID != "0" ]]; then
           [[ ! -e /usr/local/bin/_alt-su ]] && \
-          sudo install -g $GROUP_ID -m 4750 $(which gosu || which su-exec) /usr/local/bin/_alt-su
+          sudo install -g root -m 4750 $(which gosu || which su-exec) /usr/local/bin/_alt-su
           exec /usr/local/bin/_alt-su root runsvdir -P /etc/service
     else
         exec runsvdir -P /etc/service
