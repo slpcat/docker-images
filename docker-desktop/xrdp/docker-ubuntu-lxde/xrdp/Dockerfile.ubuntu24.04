@@ -1,9 +1,9 @@
-FROM ubuntu:24.04 as build
+FROM ubuntu:24.04 AS build
 
 RUN apt-get update \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -y curl make gcc
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y curl make gcc libc6-dev
 
-RUN curl -s -L https://github.com/ncopa/su-exec/archive/v0.2.tar.gz | tar zx -C /opt/ \
+RUN curl -s -L https://github.com/ncopa/su-exec/archive/v0.3.tar.gz | tar zx -C /opt/ \
     && mv /opt/su-exec* /opt/su-exec \
     && cd /opt/su-exec \
     && make
