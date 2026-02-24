@@ -65,7 +65,7 @@ RUN \
       lxde-core \
       #lxpanel can not work
       icewm \
-      gexec \
+      #gexec \
       lxterminal \
       xfe \
       sudo \
