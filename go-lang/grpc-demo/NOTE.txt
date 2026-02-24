@@ -1,0 +1,68 @@
+grpc命令行工具grpcurl使用
+
+安装
+go get github.com/fullstorydev/grpcurl
+go install github.com/fullstorydev/grpcurl/cmd/grpcurl
+注册reflection服务
+grpcurl对于其他grpc服务的感知皆来自reflection服务，所以在注册自己的服务之前需要先注册reflection服务，否则会提示
+
+$ grpcurl -plaintext localhost:8888 list
+Failed to list services: server does not support the reflection API
+package main
+
+import (
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
+	proto "let_me_go/protobuf"
+	"log"
+	"net"
+)
+
+func main() {
+	grpcServer := grpc.NewServer()
+	// 注册grpcurl的reflection服务
+	reflection.Register(grpcServer)
+	proto.RegisterHelloServiceServer(grpcServer, new(proto.HelloServiceImpl))
+
+	listen, e := net.Listen("tcp", "localhost:8888")
+
+	if e != nil {
+		log.Fatal(e)
+	}
+
+	grpcServer.Serve(listen)
+}
+
+grpcurl使用
+查询服务列表
+
+➜  Desktop grpcurl -plaintext  localhost:8888 list
+grpc.reflection.v1alpha.ServerReflection
+
+➜  Desktop grpcurl -plaintext  localhost:8888 list proto.HelloService
+proto.HelloService.Channel
+proto.HelloService.Hello
+查看更详细的描述
+
+➜  Desktop grpcurl -plaintext  localhost:8888 describe proto.HelloService
+proto.HelloService is a service:
+service HelloService {
+  rpc Channel ( stream .proto.String ) returns ( stream .proto.String );
+  rpc Hello ( .proto.String ) returns ( .proto.String );
+}
+
+获取类型信息
+
+➜  Desktop grpcurl -plaintext  localhost:8888 describe proto.String
+proto.String is a message:
+message String {
+  string value = 1;
+}
+
+调用服务方法
+
+➜  Desktop grpcurl -plaintext -d '{"value":"grpcurl"}' localhost:8888 proto.HelloService/Hello
+{
+  "value": "hello grpc"
+}
+
