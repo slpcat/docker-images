@@ -85,6 +85,7 @@ RUN apt-get update -y             \
        #rdesktop             \
        remmina              \
        tigervnc-viewer      \
+       keepassxc-full       \
        python3              \
        python3-pip          \
        python3-all-venv     \

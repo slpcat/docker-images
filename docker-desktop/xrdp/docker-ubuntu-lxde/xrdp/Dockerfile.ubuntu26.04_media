@@ -1,0 +1,74 @@
+FROM slpcat/docker-ubuntu-lxde:26.04-xrdp
+
+RUN \
+    apt-get update \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y pasystray pipewire pipewire-alsa pipewire-pulse wireplumber
+
+
+RUN \
+    # Disable unavailable pipewire features
+    sed -i -r 's/^( *module.jackdbus-detect = )true$/\1false/' /usr/share/pipewire/pipewire.conf \
+    # Launch the audio server before starting LXDE session
+    && sed -i \
+      -e "/icewm-session/iDISABLE_RTKIT=true PIPEWIRE_LOG_SYSTEMD=false pipewire &" \
+      -e "/icewm-session/iDISABLE_RTKIT=true PIPEWIRE_LOG_SYSTEMD=false pipewire-pulse &" \
+      -e "/icewm-session/iDISABLE_RTKIT=true PIPEWIRE_LOG_SYSTEMD=false wireplumber &" \
+      /etc/skel/.xsession
+
+#Video Acceleration
+#Intel GPU
+#安装 oneVPL 运行时和开发包,安装 VA-API 驱动（oneVPL 依赖硬件加速）
+RUN \
+    apt install -y libvpl2 libvpl-dev \
+        intel-media-va-driver-non-free vainfo \
+
+#AMD GPU
+        mesa-va-drivers
+
+#NVIDIA GPU 
+# install same version with Host
+# 需要专有驱动
+#sudo apt install nvidia-driver-xxx  # 替换为合适的版本
+#sudo apt install libnvidia-encode-xxx libnvidia-decode-xxx
+
+#export LIBVA_DRIVER_NAME=iHD      # Intel
+#export LIBVA_DRIVER_NAME=radeonsi # AMD
+#export LIBVA_DRIVER_NAME=nvidia   # NVIDIA
+
+#OpenGL/vulkan
+
+# Intel GPU
+RUN apt-get update && apt-get install -y \
+    # Mesa OpenGL 驱动
+    mesa-utils \
+    libgl1-mesa-dri \
+    libglx-mesa0 \
+    # Xorg 驱动
+    xserver-xorg-video-intel \
+    # 通用驱动（备用）
+    xserver-xorg-video-vesa \
+    xserver-xorg-video-fbdev \
+    # DRI 和 DRM 支持
+    libdrm-intel1
+
+#AMD GPU
+RUN apt-get install -y \
+    mesa-utils \
+    libgl1-mesa-dri \
+    xserver-xorg-video-amdgpu \
+    xserver-xorg-video-radeon \
+    libdrm-amdgpu1
+
+#For NVIDIA GPUs, don't use VA-API. Use NVDEC directly:
+# NVIDIA 必须安装宿主机的驱动版本
+#RUN apt-get install -y \
+#    mesa-utils \
+#    libgl1-mesa-glx \
+#    # 从 NVIDIA 官方仓库安装
+#    nvidia-driver-XXX \
+#    libnvidia-gl-XXX
+
+# OpenGL强制使用 NVIDIA
+#export __GLX_VENDOR_LIBRARY_NAME=nvidia
+#export __NV_PRIME_RENDER_OFFLOAD=1
+#export __VK_LAYER_NV_optimus=NVIDIA_only
