@@ -12,7 +12,7 @@ RUN curl -s -L https://github.com/ncopa/su-exec/archive/v0.2.tar.gz | tar zx -C 
 FROM ubuntu:26.04
 
 # Deploy ubuntu container without minimized packages
-RUN yes | unminimize
+#RUN yes | unminimize
 
 ENV \
     TERM="xterm-256color" \
