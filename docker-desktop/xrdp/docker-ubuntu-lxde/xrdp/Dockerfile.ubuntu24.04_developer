@@ -33,6 +33,8 @@ RUN apt-get update -y             \
        mysql-client          \
        postgresql-client     \
        qemu-system           \
+       ansible               \
+       ansible-mitogen       \
        scrcpy                \
        scrcpy-server
 
@@ -51,10 +53,10 @@ RUN \
       "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
        tee /etc/apt/sources.list.d/docker.list > /dev/null && \
     apt-get update && \
-    apt-get install -y docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+    apt-get install -y docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin && \
 
 #nerdctl
-RUN \
+#RUN \
     wget https://github.com/containerd/nerdctl/releases/download/v2.2.1/nerdctl-2.2.1-linux-amd64.tar.gz && \
     tar Cxzvvf /usr/local/bin nerdctl-2.2.1-linux-amd64.tar.gz && rm -f nerdctl-2.2.1-linux-amd64.tar.gz
 
@@ -68,27 +70,27 @@ RUN \
 #    npm install -g selenium-side-runner
 
 #install ansible
-RUN \
-    apt-get install -y ansible ansible-mitogen
+#RUN \
+#    apt-get install -y ansible ansible-mitogen
 
 # Environment variables substitution for Go
 RUN \
     curl -L https://github.com/a8m/envsubst/releases/download/v1.4.3/envsubst-`uname -s`-`uname -m` -o envsubst && \
     chmod +x envsubst && \
-    mv envsubst /usr/local/bin
+    mv envsubst /usr/local/bin && \
 
 #kubectl
-RUN \
+#RUN \
     curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" \
     && chmod +x kubectl \
-    && mv kubectl /usr/local/bin/
+    && mv kubectl /usr/local/bin/ && \
 
 #k9s
-RUN \
+#RUN \
     wget https://github.com/derailed/k9s/releases/download/v0.50.18/k9s_linux_amd64.deb && \
-    apt-get install -y ./k9s_linux_amd64.deb && rm -f k9s_linux_amd64.deb
+    apt-get install -y ./k9s_linux_amd64.deb && rm -f k9s_linux_amd64.deb && \
 #openlens
-RUN \
+#RUN \
     wget https://github.com/MuhammedKalkan/OpenLens/releases/download/v6.5.2-366/OpenLens-6.5.2-366.amd64.deb && \
     apt-get install -y ./OpenLens-6.5.2-366.amd64.deb && rm -f OpenLens-6.5.2-366.amd64.deb
 
@@ -113,10 +115,10 @@ ARG ISTIO_VERSION=1.28.0
 RUN \
     curl -L https://istio.io/downloadIstio | sh - \
     && mv istio-${ISTIO_VERSION}/bin/istioctl /usr/local/bin \
-    && rm -rf  istio-${ISTIO_VERSION}
+    && rm -rf  istio-${ISTIO_VERSION} \
 
-RUN \
-    wget -O - https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg \
+#RUN \
+    && wget -O - https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg \
     && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(grep -oP '(?<=UBUNTU_CODENAME=).*' /etc/os-release || lsb_release -cs) main" | tee /etc/apt/sources.list.d/hashicorp.list \
     && apt-get update && apt-get install -y packer terraform consul
 
@@ -133,16 +135,16 @@ RUN \
     wget https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip \
     && unzip awscli-exe-linux-x86_64.zip \
     && ./aws/install \
-    && rm -rf aws*
+    && rm -rf aws* \
 
 #eksctl
-RUN \
-    curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp && \
-    mv /tmp/eksctl /usr/local/bin
+#RUN \
+    && curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp && \
+    mv /tmp/eksctl /usr/local/bin \
 
 #grype scanner
-RUN \
-    curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b /usr/local/bin
+#RUN \
+    && curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b /usr/local/bin \
 
 #allure report depends on java8-runtime
 #RUN \
@@ -150,8 +152,8 @@ RUN \
 #    &&dpkg -i allure_2.17.2-1_all.deb \
 #    && rm allure_2.17.2-1_all.deb
 
-RUN \
-    wget https://github.com/allure-framework/allure2/releases/download/2.33.0/allure-2.33.0.tgz \
+#RUN \
+    && wget https://github.com/allure-framework/allure2/releases/download/2.33.0/allure-2.33.0.tgz \
     && tar zxf allure-2.33.0.tgz -C /usr/local/ \
     && ln -s /usr/local/allure-2.33.0/bin/allure  /usr/local/bin/allure \
     && rm allure-2.33.0.tgz
@@ -169,17 +171,17 @@ RUN curl --create-dirs -sSLo /usr/share/jenkins/agent.jar https://repo.jenkins-c
 # redis-ui
 RUN \
     wget https://github.com/patrikx3/redis-ui/releases/download/v2025.10.110/p3x-redis-ui_2025.10.110_amd64.deb && \
-    apt-get install -y ./p3x-redis-ui_2025.10.110_amd64.deb &&  rm -f p3x-redis-ui_2025.10.110_amd64.deb
+    apt-get install -y ./p3x-redis-ui_2025.10.110_amd64.deb &&  rm -f p3x-redis-ui_2025.10.110_amd64.deb \
 
 # mongodb compass
-RUN \
-    wget https://downloads.mongodb.com/compass/mongodb-compass_1.49.0_amd64.deb && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y ./mongodb-compass_1.49.0_amd64.deb && rm -f mongodb-compass_1.49.0_amd64.deb
+#RUN \
+    && wget https://downloads.mongodb.com/compass/mongodb-compass_1.49.0_amd64.deb && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y ./mongodb-compass_1.49.0_amd64.deb && rm -f mongodb-compass_1.49.0_amd64.deb \
 
 # dbeaver
 # flatpak install -y flathub io.dbeaver.DBeaverCommunity
-RUN \
-    wget -O /usr/share/keyrings/dbeaver.gpg.key https://dbeaver.io/debs/dbeaver.gpg.key && \
+#RUN \
+    && wget -O /usr/share/keyrings/dbeaver.gpg.key https://dbeaver.io/debs/dbeaver.gpg.key && \
     echo "deb [signed-by=/usr/share/keyrings/dbeaver.gpg.key] https://dbeaver.io/debs/dbeaver-ce /" | tee /etc/apt/sources.list.d/dbeaver.list && \
     apt-get update && sudo apt-get install -y dbeaver-ce
 
@@ -191,7 +193,7 @@ RUN \
     && apt-get update \
     && apt-get install -y code \
     && apt-get clean \
-    && rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/*
+    && rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/* \
 #mkdir -p ~/.config/Code/User
 #cp ~/.local/share/omakub/configs/vscode.json ~/.config/Code/User/settings.json
 
@@ -200,8 +202,8 @@ RUN \
 
 #VSCodium Free/Libre Open Source Software Binaries of VS Code
 #https://vscodium.com/
-RUN \
-    flatpak install -y flathub com.vscodium.codium
+#RUN \
+    && flatpak install -y flathub com.vscodium.codium
 
 # intellij-idea-community pycharm-community from xtradeb
 # Postman
@@ -210,11 +212,11 @@ RUN \
     && tar -xzf postman.tar.gz \
     && mv Postman /opt \
     && ln -s /opt/Postman/Postman /usr/local/bin/postman \
-    && rm -rf postman.tar.gz
+    && rm -rf postman.tar.gz \
 
 # sublime
-RUN \
-    wget -qO - https://download.sublimetext.com/sublimehq-pub.gpg | tee /etc/apt/keyrings/sublimehq-pub.asc > /dev/null \
+#RUN \
+    && wget -qO - https://download.sublimetext.com/sublimehq-pub.gpg | tee /etc/apt/keyrings/sublimehq-pub.asc > /dev/null \
     && echo 'Types: deb\nURIs: https://download.sublimetext.com/\nSuites: apt/stable/\nSigned-By: /etc/apt/keyrings/sublimehq-pub.asc' | tee /etc/apt/sources.list.d/sublime-text.sources \
     &&  apt-get update &&  apt-get install -y sublime-text
 

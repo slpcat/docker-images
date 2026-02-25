@@ -14,18 +14,18 @@ RUN \
     && tar -xzf kubectl-ai_Linux_x86_64.tar.gz \
     && chmod +x kubectl-ai \
     && mv kubectl-ai /usr/local/bin \
-    && rm -f kubectl-ai_Linux_x86_64.tar.gz LICENSE README.md
+    && rm -f kubectl-ai_Linux_x86_64.tar.gz LICENSE README.md \
 
 #k8sgpt
-RUN \
-    wget https://github.com/k8sgpt-ai/k8sgpt/releases/download/v0.4.27/k8sgpt_amd64.deb \
-    && apt-get install -y ./k8sgpt_amd64.deb && rm -f k8sgpt_amd64.deb
+#RUN \
+    && wget https://github.com/k8sgpt-ai/k8sgpt/releases/download/v0.4.27/k8sgpt_amd64.deb \
+    && apt-get install -y ./k8sgpt_amd64.deb && rm -f k8sgpt_amd64.deb \
 
 # Clippy lets you run a variety of large language models (LLMs) locally on your computer while sticking with a user interface of the 1990s
 # https://felixrieseberg.github.io/clippy/
-RUN \
-    wget https://github.com/felixrieseberg/clippy/releases/download/v0.4.3/clippy_0.4.3_amd64.deb \
-    && apt-get install -y ./clippy_0.4.3_amd64.deb && rm -f clippy_0.4.3_amd64.deb
+#RUN \
+    && wget https://github.com/felixrieseberg/clippy/releases/download/v0.4.3/clippy_0.4.3_amd64.deb \
+    && apt-get install -y ./clippy_0.4.3_amd64.deb && rm -f clippy_0.4.3_amd64.deb \
 
 #claude
 #openai codex
@@ -34,8 +34,8 @@ RUN \
 
 #google Antigravity
 #https://antigravity.google/
-RUN \
-    curl -fsSL https://us-central1-apt.pkg.dev/doc/repo-signing-key.gpg | gpg --dearmor --yes -o /usr/share/keyrings/antigravity-repo-key.gpg \
+#RUN \
+    && curl -fsSL https://us-central1-apt.pkg.dev/doc/repo-signing-key.gpg | gpg --dearmor --yes -o /usr/share/keyrings/antigravity-repo-key.gpg \
     && echo "deb [signed-by=//usr/share/keyrings/antigravity-repo-key.gpg] https://us-central1-apt.pkg.dev/projects/antigravity-auto-updater-dev/ antigravity-debian main" | tee /etc/apt/sources.list.d/antigravity.list > /dev/null \
     && apt-get update && apt-get install -y antigravity
 
@@ -108,33 +108,33 @@ RUN \
 #Cursor is the best way to code with AI.
 RUN \
     wget https://downloads.cursor.com/production/3578107fdf149b00059ddad37048220e4168100f/linux/x64/deb/amd64/deb/cursor_2.4.31_amd64.deb \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -y ./cursor_2.4.31_amd64.deb && rm -f cursor_2.4.31_amd64.deb
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y ./cursor_2.4.31_amd64.deb && rm -f cursor_2.4.31_amd64.deb \
 
 # windsurf The best AI for Coding
-RUN \
-    curl -fsSL "https://windsurf-stable.codeiumdata.com/wVxQEIWkwPUEAGf3/windsurf.gpg" | gpg --dearmor -o /usr/share/keyrings/windsurf-stable-archive-keyring.gpg \
+#RUN \
+    && curl -fsSL "https://windsurf-stable.codeiumdata.com/wVxQEIWkwPUEAGf3/windsurf.gpg" | gpg --dearmor -o /usr/share/keyrings/windsurf-stable-archive-keyring.gpg \
     && echo "deb [signed-by=/usr/share/keyrings/windsurf-stable-archive-keyring.gpg arch=amd64] https://windsurf-stable.codeiumdata.com/wVxQEIWkwPUEAGf3/apt stable main" | tee /etc/apt/sources.list.d/windsurf.list >/dev/null \
-    && apt-get update && apt-get install -y windsurf
+    && apt-get update && apt-get install -y windsurf \
 
 # Warp Terminal
-RUN \
-    wget https://releases.warp.dev/stable/v0.2026.02.18.08.22.stable_02/warp-terminal_0.2026.02.18.08.22.stable.02_amd64.deb && \
-    apt-get install -y ./warp-terminal_0.2026.02.18.08.22.stable.02_amd64.deb && rm -f warp-terminal*
+#RUN \
+    && wget https://releases.warp.dev/stable/v0.2026.02.18.08.22.stable_02/warp-terminal_0.2026.02.18.08.22.stable.02_amd64.deb && \
+    apt-get install -y ./warp-terminal_0.2026.02.18.08.22.stable.02_amd64.deb && rm -f warp-terminal* \
 
 # Wave Terminal
 # https://docs.waveterm.dev/gettingstarted
-RUN \
-    wget https://dl.waveterm.dev/releases-w2/waveterm-linux-amd64-0.13.1.deb \
-    && apt-get install -y ./waveterm-linux-amd64-0.13.1.deb && rm -f waveterm-linux-amd64-0.13.1.deb
+#RUN \
+    && wget https://dl.waveterm.dev/releases-w2/waveterm-linux-amd64-0.13.1.deb \
+    && apt-get install -y ./waveterm-linux-amd64-0.13.1.deb && rm -f waveterm-linux-amd64-0.13.1.deb \
 
 #ghosty + claude
-RUN \
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/mkasberg/ghostty-ubuntu/HEAD/install.sh)"
+#RUN \
+    && /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/mkasberg/ghostty-ubuntu/HEAD/install.sh)" \
 
 #WezTerm Terminal
 #https://wezterm.org/
-RUN \
-    curl -fsSL https://apt.fury.io/wez/gpg.key | gpg --yes --dearmor -o /usr/share/keyrings/wezterm-fury.gpg \
+#RUN \
+    && curl -fsSL https://apt.fury.io/wez/gpg.key | gpg --yes --dearmor -o /usr/share/keyrings/wezterm-fury.gpg \
     && echo 'deb [signed-by=/usr/share/keyrings/wezterm-fury.gpg] https://apt.fury.io/wez/ * *' | tee /etc/apt/sources.list.d/wezterm.list \
     && chmod 644 /usr/share/keyrings/wezterm-fury.gpg \
     && apt-get update && apt-get install -y wezterm alacritty kitty
