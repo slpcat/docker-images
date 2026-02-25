@@ -118,8 +118,8 @@ RUN \
 
 # Warp Terminal
 RUN \
-    wget https://releases.warp.dev/stable/v0.2026.01.21.08.14.stable_03/warp-terminal_0.2026.01.21.08.14.stable.03_amd64.deb && \
-    apt-get install -y ./warp-terminal_0.2026.01.21.08.14.stable.03_amd64.deb && rm -f warp-terminal_0.2026.01.21.08.14.stable.03_amd64.deb
+    wget https://releases.warp.dev/stable/v0.2026.02.18.08.22.stable_02/warp-terminal_0.2026.02.18.08.22.stable.02_amd64.deb && \
+    apt-get install -y ./warp-terminal_0.2026.02.18.08.22.stable.02_amd64.deb && rm -f warp-terminal*
 
 # Wave Terminal
 # https://docs.waveterm.dev/gettingstarted
