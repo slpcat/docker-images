@@ -131,6 +131,21 @@ RUN \
 RUN \
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/mkasberg/ghostty-ubuntu/HEAD/install.sh)"
 
+#WezTerm Terminal
+#https://wezterm.org/
+RUN \
+    curl -fsSL https://apt.fury.io/wez/gpg.key | gpg --yes --dearmor -o /usr/share/keyrings/wezterm-fury.gpg \
+    && echo 'deb [signed-by=/usr/share/keyrings/wezterm-fury.gpg] https://apt.fury.io/wez/ * *' | tee /etc/apt/sources.list.d/wezterm.list \
+    && chmod 644 /usr/share/keyrings/wezterm-fury.gpg \
+    && apt-get update && apt-get install -y wezterm alacritty kitty
+
+#Alacritty Terminal
+#https://alacritty.org/
+
+#Kitty Terminal
+#https://sw.kovidgoyal.net/kitty/
+#curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin
+
 # Clawdbot/moltbot/openclaw
 #https://github.com/openclaw/openclaw
 #AgenticSeek
