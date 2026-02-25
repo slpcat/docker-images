@@ -85,7 +85,6 @@ RUN apt-get update -y             \
        #rdesktop             \
        remmina              \
        tigervnc-viewer      \
-       keepassxc-full       \
        python3              \
        python3-pip          \
        python3-all-venv     \
@@ -226,9 +225,9 @@ RUN \
     flatpak install -y flathub org.mozilla.Thunderbird \
     && flatpak install -y flathub com.geeks3d.furmark
 
-# Install peazip nextcloud-desktop from xtradeb
+# Install peazip nextcloud-desktop glmark2 keepassxc from xtradeb
 RUN \
-    apt-get install -y peazip nextcloud-desktop glmark2
+    apt-get install -y peazip nextcloud-desktop glmark2 keepassxc-full
 
 #VeraCrypt
 RUN \

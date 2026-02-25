@@ -110,6 +110,11 @@ playwright install
 #npm install appium --location=global
 #npm install appium-android-driver --location=global
 
+#Code - OSS
+#https://github.com/microsoft/vscode
+#VSCodium
+#flatpak install flathub com.vscodium.codium
+
 # vscode extensions
 # Install default supported themes
 code --install-extension enkia.tokyo-night

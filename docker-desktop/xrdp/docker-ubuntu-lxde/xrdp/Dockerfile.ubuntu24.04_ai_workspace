@@ -39,7 +39,9 @@ RUN \
     && echo "deb [signed-by=//usr/share/keyrings/antigravity-repo-key.gpg] https://us-central1-apt.pkg.dev/projects/antigravity-auto-updater-dev/ antigravity-debian main" | tee /etc/apt/sources.list.d/antigravity.list > /dev/null \
     && apt-get update && apt-get install -y antigravity
 
-#opencode
+#OpenCode The open source AI coding agent
+#https://opencode.ai
+
 #n8n
 #dash0/Agent0 https://www.dash0.com/
 #Void开源AI代码编辑器 https://voideditor.com/ paused
