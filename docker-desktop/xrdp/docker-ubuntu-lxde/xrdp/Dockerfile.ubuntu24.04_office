@@ -377,9 +377,9 @@ RUN \
     && mv EmojiOne* /usr/share/fonts/truetype/AdobeEmojiOne \
 
 # AppleColorEmoji
-    && wget https://github.com/samuelngs/apple-emoji-linux/releases/latest/download/AppleColorEmoji.ttf \
+    && wget https://github.com/samuelngs/apple-emoji-linux/releases/latest/download/AppleColorEmoji-Linux.ttf \
     && mkdir /usr/share/fonts/truetype/AppleColorEmoji \
-    && mv AppleColorEmoji.ttf /usr/share/fonts/truetype/AppleColorEmoji \
+    && mv AppleColorEmoji-Linux.ttf /usr/share/fonts/truetype/AppleColorEmoji \
     && ln -s /usr/share/fontconfig/conf.avail/99-apple-emoji.conf /etc/fonts/conf.d/99-apple-emoji.conf \
 
 # Microsoft Emoji Pack
