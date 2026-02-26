@@ -1,6 +1,6 @@
 FROM ubuntu:24.04 AS build
 
-RUN apt-get update \
+RUN apt-get update && apt-get dist-upgrade -y \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y curl make gcc libc6-dev
 
 RUN curl -s -L https://github.com/ncopa/su-exec/archive/v0.3.tar.gz | tar zx -C /opt/ \
@@ -20,24 +20,31 @@ ENV \
     LANGUAGE="en_US:en" \
     LC_ALL="en_US.UTF-8"
 
-RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y locales && rm -rf /var/lib/apt/lists/* \
+RUN \
+    apt-get update && apt-get dist-upgrade -y \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y locales && rm -rf /var/lib/apt/lists/* \
     && echo "LANG=$LANG" > /etc/locale.conf \
     && echo "$LANG UTF-8" > /etc/locale.gen \
-    && localedef -i en_US -c -f UTF-8 en_US.UTF-8
+    && localedef -i en_US -c -f UTF-8 en_US.UTF-8 \
 
 # Set timezone and locales
-RUN \
-    apt-get update -q \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -yq apt-utils dialog tzdata language-pack-zh-hans language-pack-zh-hans-base \
+#RUN \
+    && apt-get update -q \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -yq \
+      apt-utils \
+      dialog \
+      tzdata \
+      language-pack-zh-hans \
+      language-pack-zh-hans-base \
     && update-locale LANG=$LANG \
-    && locale-gen $LANG zh_CN.UTF-8
+    && locale-gen $LANG zh_CN.UTF-8 \
 
 #RUN locale-gen $LANG \
 #    && echo "LC_ALL=$LANG" > /etc/default/locale \
 #    && echo "LANG=$LANG" >> /etc/default/locale
 
-RUN \
-    userdel -r ubuntu \
+#RUN \
+    && userdel -r ubuntu \
     && apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y runit \
     && ln -sf /usr/sbin/runit /sbin/init
@@ -73,7 +80,8 @@ RUN \
       xorg \
       xorgxrdp \
       xrdp \
-    && apt-get remove --purge -y xscreensaver* network-manager && apt-get autoremove --purge -y
+    && apt-get remove --purge -y xscreensaver* network-manager \
+    && apt-get autoremove --purge -y
 
 COPY --from=build \
     /opt/su-exec/su-exec /usr/sbin/su-exec
@@ -83,21 +91,32 @@ ENV DEFAULT_USER=developer \
     DEFAULT_PASSWD=xrdppasswd
 
 # Set sudoers for any user
-RUN echo "ALL ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/ALL
+RUN \
+    echo "ALL ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/ALL \
 
 # Change permission so that non-root user can add users and groups
-RUN chmod u+s /usr/sbin/useradd \
-    && chmod u+s /usr/sbin/groupadd
+    && chmod u+s /usr/sbin/useradd \
+    && chmod u+s /usr/sbin/groupadd \
+    && chmod u+s /usr/sbin/su-exec
 
 RUN \
-    apt-get install -y fluxbox fbpager fbautostart xfonts-terminus-oblique yudit-doc yudit \
-            xcompmgr dmenu lxappearance language-selector-gnome \
+    apt-get install -y \
+      fluxbox \
+      fbpager \
+      fbautostart \
+      xfonts-terminus-oblique \
+      yudit-doc \
+      yudit \
+      xcompmgr \
+      dmenu \
+      lxappearance \
+      language-selector-gnome \
     && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/* \
 
 #generates an applications menu for Fluxbox using the freedesktop.org (XDG) standard.
-RUN \
-    wget https://github.com/confluence/fbxdgmenu/raw/refs/heads/master/fbxdgmenu.py \
+#RUN \
+    && wget https://github.com/confluence/fbxdgmenu/raw/refs/heads/master/fbxdgmenu.py \
     && chmod +x fbxdgmenu.py && mv fbxdgmenu.py /usr/local/bin/
 
 # Setup
@@ -115,7 +134,10 @@ RUN { \
     && usermod -aG ssl-cert xrdp \
     && sed -i 's|\[Session\]|&\npolkit/command=|' /etc/xdg/lxsession/LXDE/desktop.conf
 
+# Copy entrypoint script
+COPY runit-entrypoint.sh /usr/local/bin/
 COPY rootfs/ /
+
 # Disable unavailable features
 RUN sed -i 's|.*pam_systemd.so|#&|g' /etc/pam.d/common-session \
 #    && rm -f /etc/xdg/autostart/geoclue-demo-agent.desktop \
@@ -123,20 +145,17 @@ RUN sed -i 's|.*pam_systemd.so|#&|g' /etc/pam.d/common-session \
 #    && rm -f /etc/xdg/autostart/parcellite-startup.desktop \
 #    && rm -f /etc/xdg/autostart/nm-applet.desktop \
     && rm -f /etc/xdg/autostart/org.gnome.Evolution-alarm-notify.desktop \
-    && rm -f /etc/xdg/autostart/org.gnome.SettingsDaemon.Power.desktop
+    && rm -f /etc/xdg/autostart/org.gnome.SettingsDaemon.Power.desktop \
 
 # runit config
-RUN \
-    ln -s /etc/sv/dbus /etc/service/dbus && \
-    ln -s /etc/sv/xrdp /etc/service/xrdp && \
-    ln -s /etc/sv/xrdp-sesman /etc/service/xrdp-sesman
+#RUN \
+    && ln -s /etc/sv/dbus /etc/service/dbus \
+    && ln -s /etc/sv/xrdp /etc/service/xrdp \
+    && ln -s /etc/sv/xrdp-sesman /etc/service/xrdp-sesman \
+    && chmod +x /etc/sv/*/run \
+    && chmod +x /usr/local/bin/runit-entrypoint.sh
 
 # Expose RDP port
 EXPOSE 3389
 
-# Copy entrypoint script
-COPY runit-entrypoint.sh /usr/local/bin/
-RUN \
-    chmod +x /etc/sv/*/run \
-    && chmod +x /usr/local/bin/runit-entrypoint.sh
 ENTRYPOINT ["runit-entrypoint.sh"]

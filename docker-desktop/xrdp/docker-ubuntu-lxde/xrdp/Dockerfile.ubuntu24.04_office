@@ -127,8 +127,10 @@ RUN \
 
 # Install XnView MP
 #RUN \
-    && wget https://download.xnview.com/XnViewMP-linux-x64.deb && \
-    apt-get install -y ./XnViewMP-linux-x64.deb && rm -f XnViewMP-linux-x64.deb \
+    && wget https://download.xnview.com/XnViewMP-linux-x64.deb \
+    && apt-get install -y ./XnViewMP-linux-x64.deb && rm -f XnViewMP-linux-x64.deb \
+    && wget https://download.xnview.com/XnConvert-linux-x64.deb \
+    && apt-get install -y ./XnConvert-linux-x64.deb && rm -f XnConvert-linux-x64.deb \
 
 # 屏幕录像工具
 #RUN \
@@ -168,7 +170,7 @@ RUN \
     && curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > /etc/apt/trusted.gpg.d/microsoft.gpg && \
     echo "deb [arch=amd64] https://packages.microsoft.com/repos/edge stable main" > /etc/apt/sources.list.d/microsoft-edge.list && \
     apt-get update && apt-get install -y microsoft-edge-stable && \
-    wget https://msedgedriver.microsoft.com/143.0.3650.139/edgedriver_linux64.zip && \
+    wget https://msedgedriver.microsoft.com/145.0.3800.70/edgedriver_linux64.zip && \
     unzip edgedriver_linux64.zip && \
     mv msedgedriver /usr/local/bin && \
     rm -rf edgedriver* Driver_Notes \

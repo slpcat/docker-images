@@ -23,6 +23,9 @@ set -x -e
 #davinciresolve
 #http://www.blackmagicdesign.com/cn/products/davinciresolve
 
+# topazlabs
+# Topaz Video AI Linux Beta
+
 # OpenShot Editor
 # flatpak install -y flathub org.openshot.OpenShot
 # Shotcut Editor
