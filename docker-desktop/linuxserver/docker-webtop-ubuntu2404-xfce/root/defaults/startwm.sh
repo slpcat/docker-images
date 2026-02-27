@@ -1,9 +1,12 @@
 #!/bin/bash
-export INPUT_METHOD=fcitx5
-export GTK_IM_MODULE=fcitx5
-export QT_IM_MODULE=fcitx5
-export XMODIFIERS=@im=fcitx5
-export SDL_IM_MODULE=fcitx5
+#禁用 AT-SPI 不需要无障碍功能
+export NO_AT_BRIDGE=1
+
+export INPUT_METHOD=fcitx
+export GTK_IM_MODULE=fcitx
+export QT_IM_MODULE=fcitx
+export XMODIFIERS=@im=fcitx
+export SDL_IM_MODULE=fcitx
 export GLFW_IM_MODULE=ibus
 
 #export https_proxy=http://127.0.0.1:7897

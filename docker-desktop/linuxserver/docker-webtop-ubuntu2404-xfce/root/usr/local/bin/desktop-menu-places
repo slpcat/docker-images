@@ -1,0 +1,44 @@
+#!/bin/bash
+
+disp=${DISPLAY#:}
+disp=${disp%.[0-9]}
+DESKTOP_CODE=$(cat $HOME/.desktop-session/desktop-code.$disp);
+WM=${DESKTOP_CODE#*-}
+MENU_TEMPLATE_DIR="/usr/share/desktop-menu/templates"
+
+function checkcancel {
+    CANOK="$?";
+    if [ "$CANOK" = "1" ]; then
+    exit;
+    fi
+}
+
+
+GetUrls() {
+    yad --text="Drag link / bookmark below" --dnd --width="250" --height="250" --on-top --command="$0"
+    checkcancel;
+}
+
+AddToMenu() {
+    File_Start=$(grep "^File_Start" $MENU_TEMPLATE_DIR/$WM.template | cut -d "=" -f2)
+    File_End=$(grep "^File_End" $MENU_TEMPLATE_DIR/$WM.template | cut -d "=" -f2)
+    Program=$(grep "^Program\ =" $MENU_TEMPLATE_DIR/$WM.template | cut -d "=" -f2)
+    Program_Sub_Order=$(grep "^Program_Sub_Order\ =" $MENU_TEMPLATE_DIR/$WM.template | cut -d "=" -f2)
+    Entry_Line={"$Program" "test1" "test2" "test3"}
+    yad --text "$Entry_Line $Program"
+    }
+
+if [ ! -n "$1" ]; then
+    GetUrls;
+fi
+
+url="$1"
+case $url in 
+    http:*|https:*)     handler="desktop-defaults-run -b"   ;;
+    file:*)             handler="desktop-defaults-run -fm"  ;;
+    *)                  yad --text="Not sure what $1 is? Cannot add this file type."
+                        exit ;;
+esac
+yad --text="Ok to add $1 to the places menu?"
+checkcancel;
+AddToMenu;

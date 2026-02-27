@@ -120,11 +120,11 @@ RUN \
     && flatpak install -y flathub org.fcitx.Fcitx5.Addon.Rime \
     && flatpak install -y flathub org.fcitx.Fcitx5.Addon.ChineseAddons \
     && flatpak override \
-    --env=INPUT_METHOD=fcitx5 \
-    --env=GTK_IM_MODULE=fcitx5 \
-    --env=QT_IM_MODULE=fcitx5 \
-    --env=XMODIFIERS=@im=fcitx5 \
-    --env=SDL_IM_MODULE=fcitx5 \
+    --env=INPUT_METHOD=fcitx \
+    --env=GTK_IM_MODULE=fcitx \
+    --env=QT_IM_MODULE=fcitx \
+    --env=XMODIFIERS=@im=fcitx \
+    --env=SDL_IM_MODULE=fcitx \
     --env=GLFW_IM_MODULE=ibus \
 
 # ffmpeg full support

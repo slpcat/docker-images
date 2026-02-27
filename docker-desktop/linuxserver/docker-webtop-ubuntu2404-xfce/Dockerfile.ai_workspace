@@ -1,0 +1,178 @@
+FROM slpcat/docker-ubuntu-xfce:24.04-webtop_developer
+
+# AI-OS
+#Makulu Develops Linux distributions and Tools with unconventional and outside of the box thinking.
+#https://www.makululinux.com/
+#Gnoppix AI Linux
+#https://www.gnoppix.org/
+#https://www.opendan.ai/
+# https://github.com/fiatrete/OpenDAN-Personal-AI-OS
+
+#kubectl-ai
+RUN \
+    wget https://github.com/GoogleCloudPlatform/kubectl-ai/releases/download/v0.0.29/kubectl-ai_Linux_x86_64.tar.gz \
+    && tar -xzf kubectl-ai_Linux_x86_64.tar.gz \
+    && chmod +x kubectl-ai \
+    && mv kubectl-ai /usr/local/bin \
+    && rm -f kubectl-ai_Linux_x86_64.tar.gz LICENSE README.md \
+
+#k8sgpt
+#RUN \
+    && wget https://github.com/k8sgpt-ai/k8sgpt/releases/download/v0.4.27/k8sgpt_amd64.deb \
+    && apt-get install -y ./k8sgpt_amd64.deb && rm -f k8sgpt_amd64.deb \
+
+# Clippy lets you run a variety of large language models (LLMs) locally on your computer while sticking with a user interface of the 1990s
+# https://felixrieseberg.github.io/clippy/
+#RUN \
+    && wget https://github.com/felixrieseberg/clippy/releases/download/v0.4.3/clippy_0.4.3_amd64.deb \
+    && apt-get install -y ./clippy_0.4.3_amd64.deb && rm -f clippy_0.4.3_amd64.deb \
+
+#claude
+#openai codex
+#gemini
+#cline
+
+#google Antigravity
+#https://antigravity.google/
+#RUN \
+    && curl -fsSL https://us-central1-apt.pkg.dev/doc/repo-signing-key.gpg | gpg --dearmor --yes -o /usr/share/keyrings/antigravity-repo-key.gpg \
+    && echo "deb [signed-by=//usr/share/keyrings/antigravity-repo-key.gpg] https://us-central1-apt.pkg.dev/projects/antigravity-auto-updater-dev/ antigravity-debian main" | tee /etc/apt/sources.list.d/antigravity.list > /dev/null \
+    && apt-get update && apt-get install -y antigravity
+
+#OpenCode The open source AI coding agent
+#https://opencode.ai
+
+#n8n
+#dash0/Agent0 https://www.dash0.com/
+#Void开源AI代码编辑器 https://voideditor.com/ paused
+#
+#splunk ai
+#elastic ai
+# https://www.moxo.com/
+#Operationalize every process.
+#Blend AI and human judgment
+#Adapt in real time.
+
+#AI meets human judgement
+#Cross-department orchestration
+#From diagrams to execution
+#Visibility and governance
+
+
+#trae ai编程工具 https://www.trae.ai/
+#快手CodeFlicker
+#https://www.codeflicker.ai
+
+#Qoder, Agentic Coding Platform for Real Software
+#https://qoder.com/
+RUN \
+    wget https://download.qoder.com/release/latest/qoder_amd64.deb \
+    && apt-get install -y ./qoder_amd64.deb && rm -f qoder_amd64.deb
+
+#https://www.qoderwork.org/
+#
+#dify
+#ollama
+#vLLM 推理服务
+#腾讯ima
+#Cherry Studio
+
+#Gnoppix AI Linux
+#AI Email Support
+#AI Vulnerability Scanning
+#AI Searching
+#AI Web Chat Agent
+#AI HR Agent
+#AI Webscraper
+
+# Install AI coding/Vibe coding tools
+# Claude Code , Cursor CLI, CodeX,Gemini CLI,cline
+    #curl https://cursor.com/install -fsS | bash \
+    #mv $HOME/.local/bin/cursor-agent /usr/local/bin/ \
+#RUN \
+#    npm install -g @anthropic-ai/claude-code && \
+#    npm install -g @openai/codex && \
+#    npm install -g @google/gemini-cli && \
+#    npm install -g cline && \
+#    rm -rf /root/.npm
+
+# zed.dev
+RUN \
+    flatpak install -y flathub dev.zed.Zed
+#    curl -f https://zed.dev/install.sh | sh
+#RUN \
+#    curl -sS https://debian.griffo.io/EA0F721D231FDD3A0A17B9AC7808B4DD62C41256.asc | gpg --dearmor --yes -o /etc/apt/trusted.gpg.d/debian.griffo.io.gpg && \
+#    echo "deb https://debian.griffo.io/apt $(lsb_release -sc 2>/dev/null) main" | tee /etc/apt/sources.list.d/debian.griffo.io.list && \
+#    apt-get update && apt-get install -y zig ghostty lazygit yazi eza uv fzf zoxide bun tigerbeetle
+
+#Cursor is the best way to code with AI.
+RUN \
+    wget https://downloads.cursor.com/production/3578107fdf149b00059ddad37048220e4168100f/linux/x64/deb/amd64/deb/cursor_2.4.31_amd64.deb \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y ./cursor_2.4.31_amd64.deb && rm -f cursor_2.4.31_amd64.deb \
+
+# windsurf The best AI for Coding
+#RUN \
+    && curl -fsSL "https://windsurf-stable.codeiumdata.com/wVxQEIWkwPUEAGf3/windsurf.gpg" | gpg --dearmor -o /usr/share/keyrings/windsurf-stable-archive-keyring.gpg \
+    && echo "deb [signed-by=/usr/share/keyrings/windsurf-stable-archive-keyring.gpg arch=amd64] https://windsurf-stable.codeiumdata.com/wVxQEIWkwPUEAGf3/apt stable main" | tee /etc/apt/sources.list.d/windsurf.list >/dev/null \
+    && apt-get update && apt-get install -y windsurf \
+
+# Warp Terminal
+#RUN \
+    && wget https://releases.warp.dev/stable/v0.2026.02.18.08.22.stable_02/warp-terminal_0.2026.02.18.08.22.stable.02_amd64.deb && \
+    apt-get install -y ./warp-terminal_0.2026.02.18.08.22.stable.02_amd64.deb && rm -f warp-terminal* \
+
+# Wave Terminal
+# https://docs.waveterm.dev/gettingstarted
+#RUN \
+    && wget https://dl.waveterm.dev/releases-w2/waveterm-linux-amd64-0.13.1.deb \
+    && apt-get install -y ./waveterm-linux-amd64-0.13.1.deb && rm -f waveterm-linux-amd64-0.13.1.deb \
+
+#ghosty + claude
+#RUN \
+    && /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/mkasberg/ghostty-ubuntu/HEAD/install.sh)" \
+
+#WezTerm Terminal
+#https://wezterm.org/
+#RUN \
+    && curl -fsSL https://apt.fury.io/wez/gpg.key | gpg --yes --dearmor -o /usr/share/keyrings/wezterm-fury.gpg \
+    && echo 'deb [signed-by=/usr/share/keyrings/wezterm-fury.gpg] https://apt.fury.io/wez/ * *' | tee /etc/apt/sources.list.d/wezterm.list \
+    && chmod 644 /usr/share/keyrings/wezterm-fury.gpg \
+    && apt-get update && apt-get install -y wezterm alacritty kitty
+
+#Alacritty Terminal
+#https://alacritty.org/
+
+#Kitty Terminal
+#https://sw.kovidgoyal.net/kitty/
+#curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin
+
+# Clawdbot/moltbot/openclaw
+#https://github.com/openclaw/openclaw
+#AgenticSeek
+#Bytebot GUI
+#https://github.com/bytebot-ai/bytebot.git
+#everywhere 桌面智能
+#https://github.com/DearVa/Everywhere
+#open agent
+#omniparser
+#os-copilot
+#appagent
+#腾讯youtu-agent
+#字节ui-tars-desktop
+#ssh-mcp
+#微软magentic ui
+#iflow
+#turix cua
+#TuriX
+#sima打游戏
+#agent browser
+
+#Aider lets you pair program with LLMs to start a new project or build on your existing codebase.
+#https://aider.chat/
+
+#newwelle
+#cowork
+#https://yuanqiai.net/ 
+
+#Shannon is your fully autonomous AI pentester.
+#https://github.com/KeygraphHQ/shannon

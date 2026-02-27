@@ -43,24 +43,31 @@ RUN \
   add-apt-repository ppa:xtradeb/apps && \
   apt-get update && \
   DEBIAN_FRONTEND=noninteractive \
-  apt-get install --no-install-recommends -y \
+  apt-get install -y \
     vim-tiny \
     wget     \
     fonts-noto-cjk \
     fonts-noto-color-emoji \
     fonts-symbola \
     ttf-ancient-fonts \
+    im-config \
     fcitx5 \
+    fcitx5-configtool \
     fcitx5-rime \
     fcitx5-table-emoji \
     fcitx5-chinese-addons \
     fcitx5-material-color \
+    fcitx5-frontend-gtk4 \
+    fcitx5-frontend-gtk3 \
+    fcitx5-frontend-gtk2 \
+    language-selector-gnome \
     chromium \
     mousepad \
     xfce4-terminal \
     xfce4 \
     xubuntu-default-settings \
     xubuntu-icon-theme && \
+    sed -i 's/^worker_processes.*$/worker_processes\ 2\;/' /etc/nginx/nginx.conf && \
   echo "**** xfce tweaks ****" && \
   sed -i \
     's#^Exec=.*#Exec=/usr/local/bin/wrapped-chromium#g' \

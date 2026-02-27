@@ -1,0 +1,697 @@
+#!/usr/bin/python3
+#Version: 3.33
+#This script generates FreeDesktop application menu for any window manager with a template.
+#Original copy Written by Konstantin Korikov <lostclus@ua.fm>, put in the public domain
+#adapted to use for fluxbox by anticapitalista <antiX@operamail.com>
+#adapted to use for jwm by Dave <david@daveserver.info>
+#adapted to auto-detect or specify the session and use the resulting template by Dave <david@daveserver.info>
+#adapted to use the gtk theme with --use-gtk by Dave <david@daveserver.info>
+#adapted to utilize the xdg separator key by Dave <david@daveserver.info>
+#adapted to have no icons by Dave <david@daveserver.info>
+#adapted to write out to the applications file directly by Dave <david@daveserver.info>
+#adapted to detect when the file has very little to no contents and adds a retry button by Dave <david@daveserver.info>
+#updated to python3
+#fix for fluxbox bug (menu doesn't work if enty contains a closing bracket)
+#added processing for antiX specific .desktop files
+#improved antiX specific .desktop files processing for non-root accounts, asking for sudo permissions if needed.
+#checking chroot environment for antiX ISO building
+#fixed escape characters for updated python3 syntax requirements
+
+#Requires pyxdg http://cvs.freedesktop.org/cgi-bin/viewcvs.cgi/pyxdg/
+
+#USAGE EXAMPLE FOR antiX 
+#desktop-menu > ~/.WM/applications
+#Then link your main WM menu to this application menu.
+
+#To Do:
+#Preliminary testing then Rewrite / Clean the code
+
+import sys
+import locale
+import getopt
+import re
+import os
+import shlex
+from subprocess import Popen, PIPE
+import xdg.Menu
+import xdg.DesktopEntry
+import xdg.IconTheme
+import xdg.Config
+import gi
+gi.require_version('Gtk', '3.0')
+from gi.repository import Gtk
+import pwd
+import grp
+import subprocess
+import apt
+import shutil
+
+
+version = "3.33"
+
+
+def print_usage(exit_code = 1):
+  print("""Usage: %s [options]
+Options:
+  Locale:
+  --locale=locale               set output language and encoding
+                                (This uses your session locale as the default)
+  
+  Filtering:
+  --root-folder folder          folder to generate (for example: /Games)
+  --menu-programs               Make a list of menu program links
+  
+  Specify Menu Type:
+  --menu-file                   Specify the menu file to use
+  --desktop-code                Specify which WM you are using 
+                                (for example: icewm, fluxbox, jwm, etc...)
+                                (Requires matching template!)
+  --names                       Add the Name from the desktop files
+                                (Enabled by default unless --generic-names or --comments is used)
+  --generic-names               Add the Generic Names from the desktop files if present
+  --comments                    Add the Comments from the desktop files if present
+  --category-filter             Apply filter to the menu categories.
+                                Default is n. 
+                                Values:
+                                    n = Names
+                                    g = Generic Names
+                                    c = Comments
+  --order                       Specify the order to write the text
+                                Note: Requires specifying --generic-names or --comments
+                                or both
+                                Values: ng[c] -> Name - Generic Name - [Comment]
+                                        nc[g] -> Name - Comment - [Generic Name]
+                                        cn[g] -> Comment - Name - [Generic Name]
+                                        cg[n] -> Comment - Generic Name - [Name]
+                                        gn[c] -> Generic Name - Name - [Comment]
+                                        gc[n] -> Generic Name - Comment - [Name]
+  --pattern                     Specify the style of separator between Name,
+                                Generic Name and Comment. This can either be 
+                                separating or encapsulating.
+                                Examples: 
+                                --pattern="|" -> Name | Generic Name | Comment
+                                --pattern="." -> Name . Generic Name . Comment
+                                --pattern="[]" -> Name [ Generic Name ] [ Comment ]
+                                --pattern="{}" -> Name { Generic Name } { Comment }
+                                
+  Utilities:
+  --terminal command            set terminal emulator command 
+                                (default: desktop-defaults-run -t %%s)
+  --write-out                   Write the output to the applications
+                                file from the appropriate template
+  --write-out-file              Specify the name of the file rather than 
+                                using the template.
+  
+  Icon Setting:
+  --no-gtk                      turn off using gtk to find the menu icons
+                                (includes --with-theme-paths function)
+  --theme theme                 set icon theme 
+                                (Disables gtk theme)
+  --with-theme-paths            convert icon base names to icon absolute paths
+                                using specified icon theme
+  --icon-size                   set default icon size
+                                (This is 16 by default)
+  --default-folder-icon icon    icon for folders that not provide Icon option
+                                (This is blank by default)
+  --default-entry-icon icon     icon for entries that not provide Icon option
+                                (This is blank by default)
+  --no-icons                    Turns off Icons
+  --icons-only                  Only use icons, no text for the menu entries
+  --theme-only                  Do not search all themes for icon files.
+                                Use icons only from the gtk theme in use and those set in
+                                /usr/share/pixmaps/ or /usr/share/icons/hicolor
+  
+  Help and Information:
+  --help                        print this help and exit
+  --version                     print version and exit
+""" % sys.argv[0])
+  sys.exit(exit_code)
+  
+def print_version():
+  print("%s version %s" % (os.path.basename(sys.argv[0]), version))
+  sys.exit(0)
+
+def get_true_user(): 
+    for name in ('SUDO_USER', 'LOGNAME', 'USER', 'LNAME', 'USERNAME'):
+        user = os.environ.get(name)
+        if user:
+            return user
+    try: 
+        return os.getlogin()
+    except:
+        # If this fails, the exception will "explain" why
+        import pwd
+        return pwd.getpwuid(os.getuid())[0]
+
+def get_users():
+    with os.scandir("/home") as user_homes:
+        for entry in user_homes:
+            if not entry.name.startswith('.') and entry.is_dir():
+                users_list.append(entry.name)
+    return(users_list)
+  
+def write_to_file(STRING,currentfile):
+    text = open((currentfile), "a")
+    text.write (str(STRING)+"\n")
+    text.close()
+
+def get_icon_theme(userhome):
+    settings_files = [
+        os.path.join(userhome, '.config', 'gtk-3.0', 'settings.ini'),
+        os.path.join(userhome, '.config', 'gtk-4.0', 'settings.ini')
+    ]
+    for settings_file in settings_files:
+        if os.path.exists(settings_file):
+            with open(settings_file, 'r') as f:
+                content = f.read()
+                
+            # Using regular expressions to find the gtk-icon-theme-name setting
+            match = re.search(r'^\s*gtk-icon-theme-name\s*=\s*(.*)\s*$', content, flags=re.MULTILINE)
+            if match:
+                return match.group(1).strip()
+            
+    # Return None if no theme found
+    return None
+
+def find_icon(entry):
+    appicon = entry.getIcon()
+    icon = ""
+    if os.path.isfile(appicon):
+        icon = appicon
+    else:
+        if icon_theme.lookup_icon(appicon, icon_size, 0) and not no_gtk:
+            icon_info = icon_theme.lookup_icon(appicon, icon_size, 0)
+            icon = icon_info.get_filename()
+        else:
+            for i, item in enumerate(icon_file_list):
+                if re.search(appicon, item):
+                    icon = item;
+                    #Note: removing search for default icon size as preffered and immediately breaking after first matching instance can speed up script.
+                    if re.search(str(icon_size), item):
+                        break
+    if not icon:
+        icon = missing_icon
+
+    icon = re.sub(r' ',' ', icon)
+    return icon
+    
+def get_order(order, name, gname, cname):
+    if not gname or gname.lower() in name.lower():
+        order=re.sub(r'g', '', order);
+        gname="";
+    if not name or name.lower() in gname.lower():
+        order=re.sub(r'n', '', order);
+        name="";
+    if not cname or cname.lower() in name.lower() or cname.lower() in gname.lower():
+        order=re.sub(r'c', '', order);
+        cname="";
+        
+    order_dict={
+        'ngc':  name    +" "+ separator_left + gname    + separator_right +" "+ separator_left + cname   + separator_right,
+        'ncg':  name    +" "+ separator_left + cname    + separator_right +" "+ separator_left + gname   + separator_right,
+        'cng':  cname   +" "+ separator_left + name     + separator_right +" "+ separator_left + gname   + separator_right,
+        'cgn':  cname   +" "+ separator_left + gname    + separator_right +" "+ separator_left + name    + separator_right,
+        'gnc':  gname   +" "+ separator_left + name     + separator_right +" "+ separator_left + cname   + separator_right,
+        'gcn':  gname   +" "+ separator_left + cname    + separator_right +" "+ separator_left + name    + separator_right,
+        'ng':   name    +" "+ separator_left + gname    + separator_right,
+        'nc':   name    +" "+ separator_left + cname    + separator_right,
+        'cn':   cname   +" "+ separator_left + name     + separator_right,
+        'cg':   cname   +" "+ separator_left + gname    + separator_right,
+        'gn':   gname   +" "+ separator_left + name     + separator_right,
+        'gc':   gname   +" "+ separator_left + cname    + separator_right
+    } 
+    return order_dict.get(order, name + gname + cname)
+
+def process_menu(menu,currentfile):
+  name="";  gname=""; cname="";
+  
+  for entry in menu.getEntries():
+    #Check if menu item is a separator
+    if isinstance(entry, xdg.Menu.Separator):
+      if write_out:
+        write_to_file(Var.Separator,currentfile)
+      else:
+        print(Var.Separator)
+        
+    #Check if menu item is a another menu
+    elif isinstance(entry, xdg.Menu.Menu):
+      if program_names and not icons_only and "n" in category_filter:
+          name = entry.getName() or entry.DesktopFileID
+          if DESKTOP == 'fluxbox':
+              name = name.replace(')',r'\)')
+      
+      if generic_names and not icons_only and "g" in category_filter:
+          gname = entry.getGenericName()
+          if DESKTOP == 'fluxbox':
+              gname = gname.replace(')',r'\)')
+      
+      if comments and not icons_only and "c" in category_filter:
+          cname = entry.getComment()
+          if DESKTOP == 'fluxbox':
+              cname = cname.replace(')',r'\)')
+      
+      if icons_only:
+          ordered_text = ""
+      else:
+          ordered_text = get_order(order,name,gname,cname)
+      
+      if not no_icons:
+          icon = find_icon(entry) or default_folder_icon
+
+      if menu_programs:
+        print ((Var.Menu_Program % (ordered_text, icon, sys.argv[0])) +
+          (" --root-folder \"%s\"" % entry.getPath(org=True)) +
+          (" --terminal \"%s\"" % terminal)).encode(encoding),
+        if not no_icons:
+          print ((" --default-folder-icon \"%s\"" % default_folder_icon) +
+          (" --default-entry-icon \"%s\"" % default_entry_icon) +
+          (" --theme \"%s\"" % xdg.Config.icon_theme) +
+          (" --icon-size \"%d\"" % icon_size) +
+          (with_theme_paths and " --with-theme-paths" or "")).encode(encoding),
+        if locale_str:
+          print (" --locale \"%s\"" % locale_str).encode(encoding),
+        print()
+      else:
+        if no_icons:
+          SUB_ORDER('menu',ordered_text,'','')
+        else:
+          SUB_ORDER('menu',ordered_text,icon,'')
+        if write_out:
+          if Var.Menu_ID == '1':
+            write_to_file(Var.Menu_Start % (SUB_ORDER.sub0, SUB_ORDER.sub1, SUB_ORDER.sub2),currentfile)
+          else:
+            write_to_file(Var.Menu_Start % (SUB_ORDER.sub0, SUB_ORDER.sub1),currentfile)
+        else:
+          if Var.Menu_ID == '1':
+            print (Var.Menu_Start % (SUB_ORDER.sub0, SUB_ORDER.sub1, SUB_ORDER.sub2))
+          else:
+            print (Var.Menu_Start % (SUB_ORDER.sub0, SUB_ORDER.sub1))
+        process_menu(entry,currentfile)
+        if write_out:
+          write_to_file(Var.Menu_End,currentfile)
+        else:
+          print (Var.Menu_End)
+    
+    #Check if menu item is an application
+    elif isinstance(entry, xdg.Menu.MenuEntry):
+      de = entry.DesktopEntry
+      desktopFile=str(entry)
+      OnlyShowIn = de.getOnlyShowIn()
+      if not os.path.isfile("/usr/share/applications/antix/"+desktopFile) and not OnlyShowIn:
+        
+        if program_names and not icons_only:
+            name = de.getName() or entry.DesktopFileID
+            if DESKTOP == 'fluxbox':
+                name = name.replace(')',r'\)')
+        
+        if generic_names and not icons_only:
+            gname = de.getGenericName()
+            if DESKTOP == 'fluxbox':
+                gname = gname.replace(')',r'\)')
+        
+        if comments and not icons_only:
+            cname = de.getComment()
+            if DESKTOP == 'fluxbox':
+                cname = cname.replace(')',r'\)')
+        
+        if icons_only:
+            ordered_text = " "
+        else:
+            ordered_text = get_order(order,name,gname,cname)
+
+        execute = exec_clean2_re.sub('%', exec_clean1_re.sub('', de.getExec()))
+        if de.getTerminal(): execute = terminal % execute      
+        if no_icons:
+          SUB_ORDER('prog',ordered_text,'',execute)
+        else:
+          icon = find_icon(de) or default_entry_icon
+          SUB_ORDER('prog',ordered_text,icon,execute)
+        if write_out:
+          write_to_file(Var.Program % (SUB_ORDER.sub0, SUB_ORDER.sub1, SUB_ORDER.sub2),currentfile)
+        else:
+          print (Var.Program % (SUB_ORDER.sub0, SUB_ORDER.sub1, SUB_ORDER.sub2),currentfile)
+
+def pretty_errors(e,typ,details):
+    print(f"An error occurred: {e}")
+    match typ:
+        case 'permission':
+            print(f"Processing menu file {details} has failed.")
+        case 'link':
+            print(f"Processing symlink creation for {details} has failed.")
+        case 'diversion':
+            print(f"Processing diversion for {details} has failed.")
+        case 'divert_removal':
+            print(f"Processing diversion removal for {details} has failed.")
+        case 'link_removal':
+            print(f"Processing symlink removal for {details} has failed.")
+        case _:
+            print("Unknown error.")
+    print("Can't proceed.")
+    sys.exit(1)
+
+def chrooted():
+# retuns true if script is run in chroot, otherwise false. Needed for antiX ISO building. Only call as root.
+    if os.lstat('/').st_ino == os.stat('/proc/1/root').st_ino and os.lstat('/').st_dev == os.stat('/proc/1/root').st_dev:
+        # the devicenumber/inode pair of / is the same as that of /sbin/init's
+        # root, so we're *not* in a chroot and hence return false.
+        return False
+    return True
+
+def build_menu():
+    Var().read()
+    currentfile = USER_HOME+"/"+Var.Conf_Dir+"/"+Var.App_File
+    if write_out_file:
+        Var.App_File = write_out_file
+        currentfile = USER_HOME+"/"+Var.Conf_Dir+"/"+Var.App_File
+    if write_out:
+        # make sure we can write the file
+        if os.geteuid() != 0:
+            # check proper permission and ownership, change if needed.
+            if not oct(os.stat(currentfile).st_mode & 0o777) == '0o664' or not os.stat(currentfile).st_uid == 0 or not grp.getgrgid(os.stat(currentfile).st_gid).gr_name == "users":
+                # use gksu to gain permissions
+                try:
+                    subprocess.run(['gksu','--sudo-mode','--','chown','root:users',currentfile], check=True, encoding='utf-8')
+                except subprocess.CalledProcessError as e:
+                    pretty_errors(e,'permission',currentfile)
+                try:
+                    subprocess.run(['gksu','--sudo-mode','--','chmod','664',currentfile], check=True, encoding='utf-8')
+                except subprocess.CalledProcessError as e:
+                    pretty_errors(e,'permission',currentfile)
+
+        if not os.path.isdir(USER_HOME+"/"+Var.Conf_Dir+"/"):
+            os.system("mkdir -p %s" % (USER_HOME+"/"+Var.Conf_Dir+"/"))
+            os.system("touch %s" % (currentfile))
+        else:
+            #open((USER_HOME+"/"+Var.Conf_Dir+"/"+Var.App_File), 'w').close()  
+            text = open((currentfile), "w")
+            text.write("")
+            text.close()
+        
+
+    menu = xdg.Menu.parse(menu_file)
+    #menu = xdg.Menu.parse("/etc/xdg/menus/TCM-MENU.menu")
+    if root_folder: menu = menu.getMenu(root_folder)
+  
+    if write_out:
+        write_to_file(Var.File_Start,currentfile)
+    else:
+        print(Var.File_Start)
+  
+    process_menu(menu,currentfile)
+  
+    if write_out:
+        write_to_file(Var.File_End,currentfile)
+    else:
+        print (Var.File_End)
+
+    if write_out:
+        if not (os.path.getsize((currentfile)) > 50):
+            SUB_ORDER('prog',"Retry",'',"desktop-menu --write-out")
+            write_to_file(Var.Program % (SUB_ORDER.sub0, SUB_ORDER.sub1, SUB_ORDER.sub2),currentfile)
+
+        if os.geteuid() == 0:
+            # make sure the file is writable for respective user even when script was called by root.
+            #os.chown(currentfile, 0, grp.getgrnam(username).gr_gid)
+            os.chown(currentfile, 0, grp.getgrnam('users').gr_gid) # in antiX this follows a symlink to a file which must be accessible to all users. 
+            os.chmod(currentfile, 0o664)
+ 
+        if Var.Restart_Command and 'DISPLAY' in os.environ:
+            os.system("%s" % (Var.Restart_Command))
+
+def antix_desktop_files():
+# Processing for antiX specific .desktop file replacements
+    desktop_files_package = 'antix23-desktop-files'
+    # check whether desktop-files package is installed on the system
+    aptcache = apt.Cache()
+    try:
+        if not aptcache[desktop_files_package].is_installed:
+            return
+    except KeyError:
+        return
+    # Add diversions for .desktop files of recently installed programs
+    # read .desktop filenames present in /usr/share/applications into a dictionary/list
+    programs = [i for i in os.listdir('/usr/share/applications') if i.endswith('.desktop')]
+    antix = [i for i in os.listdir('/usr/local/lib/antiX/{0}/reservoir'.format(desktop_files_package))]
+    originals = [i for i in os.listdir('/usr/local/lib/antiX/{0}/originale'.format(desktop_files_package))]
+    diversions = []
+    env = os.environ.copy(); env['LANG'] = 'C' # Set LANG to C for consistent output of dpkg-divert in localised systems
+    divlist = subprocess.run(['dpkg-divert','--list'], stdout=subprocess.PIPE,check=True,encoding='utf-8',env=env).stdout.splitlines() # fetch all current diversions
+    # list comprehension for extraction of antiX diversions
+    diversions = [match.group(1) for line in divlist if (match := re.match(rf'^diversion of /usr/share/applications/(..*) to .* by {re.escape(desktop_files_package)}', line))]
+    # list comprehension for extraction of new .desktop files
+    divert_now = [i for i in programs if i in antix if i not in originals if i not in diversions]
+    # gksu throws an error if called by root, causing trouble here, so separate treatment needed
+    if os.geteuid() == 0:
+        # create new diversions from the listing and create symlinks
+        for desktopfile in divert_now:
+            try:
+                subprocess.run(['dpkg-divert','--package',f'{desktop_files_package}','--divert',f'/usr/local/lib/antiX/{desktop_files_package}/originale/{desktopfile}','--rename',f'/usr/share/applications/{desktopfile}'], check=True, encoding='utf-8')
+            except subprocess.CalledProcessError as e:
+                pretty_errors(e,'diversion',desktopfile)
+            try:
+                subprocess.run(['ln','-s',f'/usr/local/lib/antiX/{desktop_files_package}/reservoir/{desktopfile}',f'/usr/share/applications/{desktopfile}'],check=True,encoding='utf-8')
+            except subprocess.CalledProcessError as e:
+                pretty_errors(e,'link',desktopfile)
+    else:
+        # create new diversions from the listing and create symlinks
+        for desktopfile in divert_now:
+            try:
+                subprocess.run(['gksu','--sudo-mode','--','dpkg-divert','--package',f'{desktop_files_package}','--divert',f'/usr/local/lib/antiX/{desktop_files_package}/originale/{desktopfile}','--rename',f'/usr/share/applications/{desktopfile}'], check=True, encoding='utf-8')
+            except subprocess.CalledProcessError as e:
+                pretty_errors(e,'diversion',desktopfile)
+            try:
+                subprocess.run(['gksu','--sudo-mode','--','ln','-s',f'/usr/local/lib/antiX/{desktop_files_package}/reservoir/{desktopfile}',f'/usr/share/applications/{desktopfile}'],check=True,encoding='utf-8')
+            except subprocess.CalledProcessError as e:
+                pretty_errors(e,'link',desktopfile)
+    # Remove diversions for .desktop files from currently uninstalled programs
+    # read in updated originals folder and updated diversions
+    originals = [i for i in os.listdir('/usr/local/lib/antiX/{0}/originale'.format(desktop_files_package))]
+    divlist = subprocess.run(['dpkg-divert','--list'], stdout=subprocess.PIPE,check=True,encoding='utf-8',env=env).stdout.splitlines()
+    # list comprehension for extraction of antiX diversions
+    diversions = [match.group(1) for line in divlist if (match := re.match(rf'^diversion of /usr/share/applications/(..*) to .* by {re.escape(desktop_files_package)}', line))]
+    remove_diversion = [i for i in diversions if i not in originals]
+    if os.geteuid() == 0:
+        # delete diversions for recently uninstalled programs, root
+        for desktopfile in remove_diversion:
+            try:
+                subprocess.run(['dpkg-divert','--package',f'{desktop_files_package}','--rename','--remove',f'/usr/share/applications/{desktopfile}'], check=True, encoding='utf-8')
+            except subprocess.CalledProcessError as e:
+                pretty_errors(e,'divert_removal',desktopfile)
+            try:
+                subprocess.run(['rm','-f',f'/usr/share/applications/{desktopfile}'], check=True, encoding='utf-8')
+            except subprocess.CalledProcessError as e:
+                pretty_errors(e,'link_removal',desktopfile)
+    else:
+        # remove diversions for recently uninstalled programs, users
+        for desktopfile in remove_diversion:
+            try:
+                subprocess.run(['gksu','--sudo-mode','--','dpkg-divert','--package',f'{desktop_files_package}','--rename','--remove',f'/usr/share/applications/{desktopfile}'], check=True, encoding='utf-8')
+            except subprocess.CalledProcessError as e:
+                pretty_errors(e,'divert_removal',desktopfile)
+            try:
+                subprocess.run(['gksu','--sudo-mode','--','rm','-f',f'/usr/share/applications/{desktopfile}'], check=True, encoding='utf-8')
+            except subprocess.CalledProcessError as e:
+                pretty_errors(e,'link_removal',desktopfile)
+
+class Var: 
+  def read(self):
+    var = Var
+    for line in open("/usr/share/desktop-menu/templates/"+DESKTOP+".template", "r"):
+      if "#" not in line:
+        if re.search(r'^.*=', line):
+          pieces = line.split(' = ')
+          var.VARIABLE=(pieces[0])
+          var.VARIABLE = re.sub(r'\n', '', var.VARIABLE)
+          OBJECT=(pieces[1])
+          OBJECT = re.sub(r'\n', '', OBJECT)
+          setattr(var, var.VARIABLE, OBJECT)
+          
+class SUB_ORDER: 
+  def __init__(self,menuORprog,NAME,ICON,EXECUTE):
+    var = SUB_ORDER
+    count=0
+    if menuORprog == "menu":
+      SUB = Var.Menu_Sub_Order.split(',')
+    elif menuORprog == "prog":
+      SUB = Var.Program_Sub_Order.split(',')
+      
+    for value in SUB:
+      str_count=str(count)
+      var.VARIABLE="sub"+str_count
+      if re.search(r'icon', value):
+        setattr(var, var.VARIABLE, ICON)
+      elif re.search(r'execute', value):
+        setattr(var, var.VARIABLE, EXECUTE)
+      elif re.search(r'name', value):
+        setattr(var, var.VARIABLE, NAME)
+      count=count+1
+      
+      
+root_folder = ""
+username = get_true_user()
+userhome = "/home/" + username
+config_folder = "/home/" + username + "/.config/desktop-menu"
+config_file = "settings"
+users_list = []
+menu_file = "/etc/xdg/menus/applications.menu"
+terminal = "desktop-defaults-run -t %s"
+default_folder_icon = "folder"
+default_entry_icon = "-"
+menu_programs = False
+with_theme_paths = False
+write_out = False
+write_out_global = False
+write_out_file = ""
+no_gtk = False
+no_icons = False
+icons_only = False
+icon_size = 48
+icon_dirs = ['/usr/share/icons', '/usr/share/pixmaps']
+icon_file_list = []
+theme_only = False
+missing_icon = "gtk-missing-image"
+DESKTOP_CODE = ""
+program_names = False
+generic_names = False
+comments = False
+order = ""
+theme = ""
+separator_left = "["
+separator_right = "]"
+category_filter = "n"
+
+exec_clean1_re = re.compile(r'%[a-zA-Z]')
+exec_clean2_re = re.compile(r'%%')
+encoding = None
+locale_str = None
+
+try: opts, args = getopt.getopt(sys.argv[1:], "", 
+  ("help", "version", "locale=",
+   "root-folder=", "terminal=", "default-folder-icon=", 
+   "default-entry-icon=", "menu-programs", "theme=", "with-theme-paths",
+   "icon-size=", "write-out", "write-out-global", "write-out-file=", 
+   "desktop-code=", "no-gtk","no-icons", "menu-file=", "names", 
+   "generic-names", "comments", "order=", "theme-only", "pattern=",
+   "icons-only", "category-filter="))
+except getopt.GetoptError: print_usage()
+
+locale.setlocale(locale.LC_ALL, "")
+
+for o, v in opts:
+  if o == "--locale":
+    locale_str = v
+    locale.setlocale(locale.LC_ALL, locale_str)
+  if o == "--root-folder": root_folder = v
+  elif o == "--menu-file": menu_file = v
+  elif o == "--terminal": terminal = v
+  elif o == "--default-folder-icon": default_folder_icon = v
+  elif o == "--default-entry-icon": default_entry_icon = v
+  elif o == "--menu-programs" : menu_programs = True
+  elif o == "--write-out" : write_out = True
+  elif o == "--write-out-global" : write_out = True; write_out_global = True; 
+  elif o == "--write-out-file" : write_out_file = v
+  elif o == "--with-theme-paths" : with_theme_paths = True
+  elif o == "--no-gtk" : no_gtk = True
+  elif o == "--no-icons" : no_icons = True; no_gtk = True;
+  elif o == "--icons-only" : icons_only = True;
+  elif o == "--icon-size": icon_size = int(v)
+  elif o == "--theme" :  xdg.Config.setIconTheme(v); theme = v;
+  elif o == "--desktop-code" : DESKTOP_CODE = v
+  elif o == "--names" : program_names = True;
+  elif o == "--generic-names" : generic_names = True
+  elif o == "--comments" : comments = True
+  elif o == "--order" : order = v ;
+  elif o == "--theme-only" : icon_dirs = ['/usr/share/icons/hicolor', '/usr/share/pixmaps']
+  elif o == "--pattern" : separator_left = v[:1]; separator_right = v[1:2];
+  elif o == "--category-filter" : category_filter = v
+  elif o in ("-h", "-?", "--help"): print_usage(0)
+  elif o in ("-v", "--version"): print_version()
+
+# Manage antiX specific desktop files
+if os.geteuid() != 0: # make sure not to bother default users with a password request just for the chroot test.
+    antix_desktop_files()
+else:
+    if not chrooted():
+        antix_desktop_files()
+
+encoding = locale.getlocale()[1] or 'UTF-8'
+#Make sure name is turned on if no text option is specified
+if not program_names and not generic_names and not comments: 
+    program_names = True;
+
+#Build Icon Location Array
+for path in icon_dirs:
+    for (dirpath, dirnames, filenames) in os.walk(path):
+        for filename in filenames:
+            if filename.endswith(( '.png', '.svg', '.xpm')):
+                icon_file_list.append(dirpath+"/"+filename)
+
+#Set GTK Icon Theme
+if not no_gtk:
+    if not theme:
+        theme = get_icon_theme(userhome)
+        xdg.Config.setIconTheme(theme)
+    
+    icon_theme = Gtk.IconTheme.new()
+    
+    try:
+        icon_theme.set_custom_theme(theme)
+    except:
+        print ('Could not set gtk icon theme %s. Trying to fetch the default theme' % theme)
+        icon_theme = Gtk.IconTheme.get_default()
+else:
+    icon_theme = Gtk.IconTheme.get_default()
+
+# Build menus without icons if everything else fails
+if icon_theme is None:
+    print ('The icon theme could not be set. Building menus without icons')
+    no_icons = True
+    no_gtk = True
+
+if write_out_global:
+    USER_HOME="/usr/share/desktop-menu"
+    for i in os.listdir('/usr/share/desktop-menu/templates'):
+        if i.endswith(".template"):
+            checkwmname = "which " + i.split('.',1)[0]
+            myprocess = Popen( shlex.split(checkwmname), stdout=PIPE)
+            mystdout = myprocess.communicate()[0]
+            ### if the corresponding wm is not currently installed, skip this template
+            ###  (to avoid logspam e.g. "Writing Menu: jwm... sh: 1: jwm: not found")
+            if mystdout and mystdout[0] != '':
+                i = re.sub(r'\..*', '', i)
+                print ('Writing Menu: %s' % i)
+                DESKTOP = i
+                build_menu()
+else:
+    if os.path.exists(userhome):
+        USER_HOME = userhome.rstrip('/')
+    else:
+        USER_HOME = os.environ['HOME'].rstrip('/')
+    if not DESKTOP_CODE:
+        for name in ('DESKTOP_SESSION_CODE', 'DESKTOP_SESSION_WM', 'XDG_CURRENT_DESKTOP'):
+            DESKTOP_CODE = os.environ.get(name)
+            if DESKTOP_CODE:
+                break
+    if not DESKTOP_CODE and 'DISPLAY' in os.environ:
+        DISPLAY = os.environ['DISPLAY']
+        DISPLAY = re.sub(r':', '', DISPLAY)
+        DISPLAY_SPLIT = DISPLAY.split('.')
+        DISPLAY = DISPLAY_SPLIT[0]
+        DESKTOP_CODE_FILE = os.path.join(USER_HOME, ".desktop-session/desktop-code." + DISPLAY)
+        if os.path.exists(DESKTOP_CODE_FILE):
+            with open(DESKTOP_CODE_FILE, "r") as f:
+                DESKTOP_CODE = f.readline()
+                DESKTOP_CODE = re.sub(r'\n', '', DESKTOP_CODE)
+            
+    if not DESKTOP_CODE:
+        print ('No Desktop Code. Please specify a desktop code with --desktop-code')
+        exit
+    else:  
+        DESKTOP = re.sub(r'.*-', '', DESKTOP_CODE)
+        # Check if there is a valid template for this DESKTOP_CODE
+        TEMPLATE_PATH="/usr/share/desktop-menu/templates/"+DESKTOP+".template"
+        if os.path.exists(TEMPLATE_PATH):
+            build_menu()
+        else:
+            print ('%s is not supported. Please specify a correct desktop code with --desktop-code' % DESKTOP)
+            exit

@@ -4,12 +4,30 @@ https://github.com/linuxserver/docker-webtop
 
 docker run -d \
   --name=webtop \
-  -e PUID=1000 \
-  -e PGID=1000 \
+  --restart=always \
+  --privileged `#for flatpak` \
+  --cap-add=SYS_ADMIN \
+  --cap-add=SYS_NICE \
+  --cap-add=SYS_PTRACE \
+  --cap-add=SETUID \
+  --cap-add=SETGID \
+  --security-opt apparmor=unconfined \
+  --security-opt seccomp=unconfined \
+  --shm-size="1gb" `#optional` \
+  --device /dev/fuse:/dev/fuse `#optional` \
+  --device /dev/dri:/dev/dri `#optional` \
+  --device /dev/kvm:/dev/kvm `#optional` \
+  --device /dev/uinput:/dev/uinput \
+  -p 7070:7070 `#optional anydesk`\
+  -p 47984-47990:47984-47990/tcp `#sunshine`\
+  -p 48010:48010 `#sunshine`\
+  -p 47998-48000:47998-48000/udp `#sunshine`\
+  -v /sys/fs/cgroup:/sys/fs/cgroup:ro \
+  -e PIXELFLUX_WAYLAND=true \
+  -e PUID=2000 \
+  -e PGID=2000 \
   -e TZ=Etc/UTC \
   -p 3000:3000 \
   -p 3001:3001 \
   -v /data/webtop-config:/config \
-  --shm-size="1gb" \
-  --restart unless-stopped \
-  lscr.io/linuxserver/webtop:ubuntu-i3
+  slpcat/docker-ubuntu-xfce:24.04-webtop

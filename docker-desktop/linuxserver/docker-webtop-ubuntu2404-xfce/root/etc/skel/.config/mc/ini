@@ -1,0 +1,7 @@
+[Midnight-Commander]
+pause_after_run=2
+use_internal_edit=1
+safe_delete=1
+
+[Panels]
+navigate_with_arrows=true
