@@ -24,6 +24,8 @@ docker run -d \
   -p 47998-48000:47998-48000/udp `#sunshine`\
   -v /sys/fs/cgroup:/sys/fs/cgroup:ro \
   -e PIXELFLUX_WAYLAND=true \
+  -e LANG=zh_CN.UTF-8 \
+  -e LC_ALL=zh_CN.UTF-8 \
   -e PUID=2000 \
   -e PGID=2000 \
   -e TZ=Etc/UTC \

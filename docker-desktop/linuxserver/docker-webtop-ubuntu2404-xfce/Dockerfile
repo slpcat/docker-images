@@ -60,7 +60,7 @@ RUN \
     fcitx5-frontend-gtk4 \
     fcitx5-frontend-gtk3 \
     fcitx5-frontend-gtk2 \
-    language-selector-gnome \
+    #language-selector-gnome \
     chromium \
     mousepad \
     xfce4-terminal \
