@@ -1,14 +1,10 @@
 FROM ghcr.io/linuxserver/baseimage-selkies:ubuntunoble
 
 # set version label
-ARG BUILD_DATE
-ARG VERSION
-LABEL build_version="Linuxserver.io version:- ${VERSION} Build-date:- ${BUILD_DATE}"
 LABEL maintainer="thelamer"
 
 # title
-ENV TITLE="Ubuntu lxqt" \
-    SELKIES_WAYLAND_SOCKET_INDEX=2
+ENV TITLE="Ubuntu XFCE"
 
 RUN \
   echo "**** add icon ****" && \
@@ -19,29 +15,28 @@ RUN \
   add-apt-repository ppa:xtradeb/apps && \
   apt-get update && \
   DEBIAN_FRONTEND=noninteractive \
-  apt-get install -y --no-install-recommends \
-    #chromium \
-    i3 \
-    i3-wm \
-    #stterm \
-    lxqt-core \
-    #lxpanel can not work
-    icewm \
-    gexec \
-    lxterminal \
-    xfe \
-    sway \
-    sway-backgrounds \
-    swaybg && \
-    apt-get remove --purge -y xscreensaver* network-manager && \
-    apt-get autoremove --purge -y && \
-  echo "**** application tweaks ****" && \
-  #update-alternatives --set \
-  #  x-terminal-emulator \
-  #  /usr/bin/st && \
-  #mv \
-  #  /usr/bin/chromium \
-  #  /usr/bin/chromium-browser && \
+  apt-get install --no-install-recommends -y \
+    chromium \
+    mousepad \
+    xfce4-terminal \
+    xfce4 \
+    xubuntu-default-settings \
+    xubuntu-icon-theme && \
+  echo "**** xfce tweaks ****" && \
+  sed -i \
+    's#^Exec=.*#Exec=/usr/local/bin/wrapped-chromium#g' \
+    /usr/share/applications/chromium.desktop && \
+  mv \
+    /usr/bin/exo-open \
+    /usr/bin/exo-open-real && \
+  mv \
+    /usr/bin/thunar \
+    /usr/bin/thunar-real && \
+  mv \
+    /usr/bin/chromium \
+    /usr/bin/chromium-browser && \
+  rm -f \
+    /etc/xdg/autostart/xscreensaver.desktop && \
   echo "**** cleanup ****" && \
   apt-get autoclean && \
   rm -rf \
