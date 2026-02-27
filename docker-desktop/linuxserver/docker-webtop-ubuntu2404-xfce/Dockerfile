@@ -6,6 +6,34 @@ LABEL maintainer="thelamer"
 # title
 ENV TITLE="Ubuntu XFCE"
 
+# Deploy ubuntu container without minimized packages
+RUN yes | unminimize
+
+ENV \
+    TERM="xterm-256color" \
+    LANG="en_US.UTF-8" \
+    LANGUAGE="en_US:en" \
+    LC_ALL="en_US.UTF-8"
+
+RUN \
+    apt-get update && apt-get dist-upgrade -y \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y locales && rm -rf /var/lib/apt/lists/* \
+    && echo "LANG=$LANG" > /etc/locale.conf \
+    && echo "$LANG UTF-8" > /etc/locale.gen \
+    && localedef -i en_US -c -f UTF-8 en_US.UTF-8 \
+
+# Set timezone and locales
+#RUN \
+    && apt-get update -q \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -yq \
+      apt-utils \
+      dialog \
+      tzdata \
+      language-pack-zh-hans \
+      language-pack-zh-hans-base \
+    && update-locale LANG=$LANG \
+    && locale-gen $LANG zh_CN.UTF-8 \
+
 RUN \
   echo "**** add icon ****" && \
   curl -o \
@@ -16,6 +44,17 @@ RUN \
   apt-get update && \
   DEBIAN_FRONTEND=noninteractive \
   apt-get install --no-install-recommends -y \
+    vim-tiny \
+    wget     \
+    fonts-noto-cjk \
+    fonts-noto-color-emoji \
+    fonts-symbola \
+    ttf-ancient-fonts \
+    fcitx5 \
+    fcitx5-rime \
+    fcitx5-table-emoji \
+    fcitx5-chinese-addons \
+    fcitx5-material-color \
     chromium \
     mousepad \
     xfce4-terminal \
@@ -38,6 +77,8 @@ RUN \
   rm -f \
     /etc/xdg/autostart/xscreensaver.desktop && \
   echo "**** cleanup ****" && \
+  apt-get remove --purge -y xscreensaver* network-manager && \
+  apt-get autoremove --purge -y && \
   apt-get autoclean && \
   rm -rf \
     /config/.cache \
