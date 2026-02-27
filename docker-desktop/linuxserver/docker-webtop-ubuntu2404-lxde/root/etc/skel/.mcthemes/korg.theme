@@ -1,0 +1,22 @@
+# a theme by KORG aka Dmitry Korzhevin
+
+BASE_COLOR=,black
+NORMAL=,black
+MARKED=,black
+DIRECTORY=white,black
+LINK=gray,black
+DEVICE=,black
+SPECIAL=red,black
+EXECUTABLE=green,black
+VIEWUNDERLINE=,black
+EDITOR=yellow,black
+EDITNORMAL=lightgray,black
+VIEWNORMAL=white,black
+HIDDEN=gray,black
+TEMP=gray,black
+DOC=brown,black
+ARCHIVE=brightmagenta,black
+SOURCE=cyan,black
+MEDIA=green,black
+GRAPH=brightcyan,black
+DATABASE=brightred,black

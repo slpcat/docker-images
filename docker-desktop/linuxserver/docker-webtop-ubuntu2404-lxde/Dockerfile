@@ -7,7 +7,7 @@ LABEL build_version="Linuxserver.io version:- ${VERSION} Build-date:- ${BUILD_DA
 LABEL maintainer="thelamer"
 
 # title
-ENV TITLE="Ubuntu i3" \
+ENV TITLE="Ubuntu lxde" \
     SELKIES_WAYLAND_SOCKET_INDEX=2
 
 RUN \
@@ -21,8 +21,8 @@ RUN \
   DEBIAN_FRONTEND=noninteractive \
   apt-get install -y --no-install-recommends \
     #chromium \
-    #i3 \
-    #i3-wm \
+    i3 \
+    i3-wm \
     #stterm \
     lxde-core \
     #lxpanel can not work

@@ -1,0 +1,6 @@
+polkit.addRule(function(action, subject) {
+    // 所有普通用户免认证（uid >= 1000）
+    if (subject.user != "root") {
+        return polkit.Result.YES;
+    }
+});

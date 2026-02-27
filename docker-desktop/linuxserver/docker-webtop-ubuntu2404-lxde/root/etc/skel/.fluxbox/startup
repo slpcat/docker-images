@@ -1,0 +1,62 @@
+# fluxbox startup-script:
+#
+# Lines starting with a '#' are ignored.
+# set env
+export INPUT_METHOD=fcitx5
+export GTK_IM_MODULE=fcitx5
+export QT_IM_MODULE=fcitx5
+export XMODIFIERS=@im=fcitx5
+export SDL_IM_MODULE=fcitx5
+export GLFW_IM_MODULE=ibus
+
+#export https_proxy=http://127.0.0.1:7897
+#export http_proxy=http://127.0.0.1:7897
+#export all_proxy=socks5://127.0.0.1:7897
+
+#禁止OpenGL硬件加速
+#export LIBGL_ALWAYS_SOFTWARE=1
+#export GALLIUM_DRIVER=llvmpipe
+
+# You can set your favourite wallpaper here if you don't want
+# to do it from your style.
+# fbsetbg -l
+#
+# This sets a black background
+# /usr/bin/fbsetroot -solid black
+
+# This shows the fluxbox-splash-screen
+# fbsetbg -C /usr/share/fluxbox/splash.jpg
+
+# Other examples. Check man xset for details.
+# Turn off beeps:
+# xset -b
+# Increase the keyboard repeat-rate:
+# xset r rate 195 35
+# Your own fonts-dir:
+# xset +fp ~/.font
+#
+# Your favourite mouse cursor:
+# xsetroot -cursor_name right_ptr
+#
+# Change your keymap:
+# xmodmap ~/.Xmodmap
+
+# 启动 fcitx5 输入法
+fcitx5 &
+#pcmanfm --desktop --profile LXDE &
+/usr/libexec/pipewire-module-xrdp/load_pw_modules.sh &
+#kmix &
+#pasystray &
+#anydesk --tray &
+#rustdesk --tray &
+
+# And last but not least we start fluxbox.
+# Because it is the last app you have to run it with ''exec'' before it.
+
+#Check localization of Zzz File Manager:
+if [ ! -f ~/.config/zzzfm/zzzfm_already_localized ]; then zzzfmlocalize ; fi
+
+exec /usr/bin/fluxbox
+# or if you want to keep a log:
+# exec /usr/bin/fluxbox -log ~/.fluxbox/log
+

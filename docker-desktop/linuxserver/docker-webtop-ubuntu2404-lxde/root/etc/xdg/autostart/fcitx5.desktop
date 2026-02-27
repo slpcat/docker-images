@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=Fcitx5
+GenericName=Input Method Framework
+Exec=fcitx5 -d
+Icon=fcitx
+Terminal=false
+Type=Application
+Categories=System;Utility;
+X-GNOME-Autostart-Phase=Applications
+X-KDE-autostart-after=panel
+X-MATE-Autostart-enabled=true

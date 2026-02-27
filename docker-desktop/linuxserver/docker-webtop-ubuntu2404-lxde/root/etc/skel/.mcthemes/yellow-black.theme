@@ -1,0 +1,19 @@
+#mc colors from http://themes.freshmeat.net/projects/mctheme/
+
+BASE_COLOR=gray,black
+NORMAL=yellow,black
+MENU=yellow,gray
+VIEWUNDERLINE=black,green
+EDITNORMAL=white,black
+EDITMARKED=black,white
+MENUHOT=red,gray
+DIRECTORY=brightred,gray
+EXECUTABLE=brightgreen,gray
+DEVICE=white,gray
+INPUT=yellow,gray
+LINK=brightcyan,gray
+STALLEDLINK=white,gray
+REVERSE=brightmagenta,black
+SELECTED=black,yellow
+MARKED=yellow,brown
+MARKSELECT=black,magenta
