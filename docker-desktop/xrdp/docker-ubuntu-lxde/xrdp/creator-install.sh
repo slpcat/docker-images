@@ -1,6 +1,15 @@
 #!/bin/bash
 set -x -e
 
+#https://github.com/linuxserver/proot-apps
+#PRoot Apps is a simple platform to install and use applications without any privileges in Linux userspace using PRoot
+#Install or update
+rm -f $HOME/.local/bin/{ncat,proot-apps,proot,jq}
+mkdir -p $HOME/.local/bin
+curl -L https://github.com/linuxserver/proot-apps/releases/download/$(curl -sX GET "https://api.github.com/repos/linuxserver/proot-apps/releases/latest" | awk '/tag_name/{print $4;exit}' FS='[""]')/proot-apps-$(uname -m).tar.gz | tar -xzf - -C $HOME/.local/bin/
+export PATH="$HOME/.local/bin:$PATH"
+
+
 # nvidia OpenGL for flatpak
 #flatpak install -y flathub org.freedesktop.Platform.GL.nvidia-580-119-02
 # OpenGL强制使用 NVIDIA
@@ -85,6 +94,14 @@ set -x -e
 #Kitsu is a collaboration platform for animation and VFX productions..
 #https://github.com/cgwire/kitsu
 
+#AI视频画质提升/增强工具
+#Video2X
+#Real-ESRGAN
+#Waifu2x Extension GUI
+#Anime4K
+#REAL Video Enhancer
+#https://github.com/TNTwise/REAL-Video-Enhancer
+#flatpak install -y flathub io.github.tntwise.REAL-Video-Enhancer
 
 ############################################################
 

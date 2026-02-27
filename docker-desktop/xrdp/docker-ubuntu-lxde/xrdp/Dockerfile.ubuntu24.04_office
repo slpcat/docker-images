@@ -1,5 +1,21 @@
 FROM slpcat/docker-ubuntu-lxde:24.04-xrdp_media
 
+# enable i386 support
+RUN \
+    dpkg --add-architecture i386 \
+    && apt-get update && apt-get install -y \
+    libc6:i386 \
+    libstdc++6:i386 \
+    lib32z1 \
+    libbz2-1.0:i386 \
+    libegl1:i386 \
+    libgbm1:i386 \
+    libgl1:i386 \
+    libgl1-mesa-dri:i386 \
+    mesa-libgallium:i386 \
+    mesa-va-drivers:i386 \
+    mesa-vulkan-drivers:i386
+
 RUN apt-get update -y             \
     && apt-get upgrade -y         \
     && apt-get install -y         \
@@ -538,6 +554,7 @@ RUN --security=insecure \
 RUN \
     flatpak install -y flathub com.moonlight_stream.Moonlight \
 # wget https://github.com/moonlight-stream/moonlight-qt/releases/download/v6.1.0/Moonlight-6.1.0-x86_64.AppImage
+#    curl -1sLf 'https://dl.cloudsmith.io/public/moonlight-game-streaming/moonlight-qt/setup.deb.sh' | bash \
 
 #Parsec Simple, low-latency game streaming
 #flatpak install -y flathub com.parsecgaming.parsec
@@ -557,8 +574,15 @@ RUN \
 # anydesk
 # flatpak install -y flathub com.anydesk.Anydesk
 #RUN \
-    && wget https://download.anydesk.com/linux/anydesk_7.1.4-1_amd64.deb \
-    && apt-get install -y ./anydesk_7.1.4-1_amd64.deb  && rm -f anydesk_7.1.4-1_amd64.deb \
+#    && wget https://download.anydesk.com/linux/anydesk_7.1.4-1_amd64.deb \
+#    && apt-get install -y ./anydesk_7.1.4-1_amd64.deb  && rm -f anydesk_7.1.4-1_amd64.deb \
+# Add AnyDesk GPG key and repository
+    && curl -fsSL https://keys.anydesk.com/repos/DEB-GPG-KEY | gpg --dearmor | tee /usr/share/keyrings/anydesk.gpg > /dev/null \
+    && echo 'deb [signed-by=/usr/share/keyrings/anydesk.gpg] http://deb.anydesk.com/ all main' > /etc/apt/sources.list.d/anydesk.list \
+
+# Install AnyDesk
+    &&  apt-get update && apt-get install -y anydesk \
+
 
 # USB Redirector
 # usbip

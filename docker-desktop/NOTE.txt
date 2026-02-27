@@ -28,6 +28,8 @@ https://github.com/linuxserver
 https://github.com/linuxserver/docker-rdesktop
 https://github.com/jumanjihouse/devenv
 https://github.com/BlackArch/blackarch-docker/blob/master/blackarch-novnc
+https://github.com/selkies-project/selkies
+https://github.com/hemashushu/docker-archlinux-gui
 
 MacOS
 https://github.com/sickcodes/Docker-OSX
