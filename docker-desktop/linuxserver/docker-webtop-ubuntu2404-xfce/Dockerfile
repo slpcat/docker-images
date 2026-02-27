@@ -32,7 +32,7 @@ RUN \
       language-pack-zh-hans \
       language-pack-zh-hans-base \
     && update-locale LANG=$LANG \
-    && locale-gen $LANG zh_CN.UTF-8 \
+    && locale-gen $LANG zh_CN.UTF-8
 
 RUN \
   echo "**** add icon ****" && \
