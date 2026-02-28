@@ -85,7 +85,7 @@ RUN \
     /etc/xdg/autostart/xscreensaver.desktop && \
   echo "**** cleanup ****" && \
   # 移除 MTP 和 GPhoto2 支持
-  apt-get remove --purge -y gvfs-backend xscreensaver* network-manager && \
+  apt-get remove --purge -y gvfs-backends xscreensaver* network-manager && \
   apt-get autoremove --purge -y && \
   apt-get autoclean && \
   rm -rf \
