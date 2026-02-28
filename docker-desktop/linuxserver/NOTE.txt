@@ -32,4 +32,8 @@ docker run -d \
   -p 3000:3000 \
   -p 3001:3001 \
   -v /data/webtop-config:/config \
+  slpcat/docker-ubuntu-xfce:24.04-webtop_ai_workspace
   slpcat/docker-ubuntu-xfce:24.04-webtop
+  slpcat/docker-ubuntu-xfce:24.04-webtop_media
+  slpcat/docker-ubuntu-xfce:24.04-webtop_office
+  slpcat/docker-ubuntu-xfce:24.04-webtop_developer
