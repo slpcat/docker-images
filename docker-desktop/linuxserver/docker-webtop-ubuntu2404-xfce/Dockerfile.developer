@@ -1,7 +1,5 @@
 FROM slpcat/docker-ubuntu-xfce:24.04-webtop_office
 
-COPY developer-install.sh /etc/skel/
-
 RUN apt-get update -y             \
     && apt-get upgrade -y         \
     && apt-get install -y         \
