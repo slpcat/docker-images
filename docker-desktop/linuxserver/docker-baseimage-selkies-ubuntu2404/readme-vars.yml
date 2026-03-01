@@ -1,0 +1,8 @@
+---
+
+# project information
+project_name: baseimage-selkies
+full_custom_readme: |
+  {% raw -%}
+  Up to date documentation is available [here](https://github.com/linuxserver/docker-baseimage-selkies/blob/master/README.md).
+  {%- endraw %}

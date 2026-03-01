@@ -22,7 +22,10 @@ docker run -d \
   -p 47984-47990:47984-47990/tcp `#sunshine`\
   -p 48010:48010 `#sunshine`\
   -p 47998-48000:47998-48000/udp `#sunshine`\
-  -v /sys/fs/cgroup:/sys/fs/cgroup:ro \
+  -v /sys/fs/cgroup:/sys/fs/cgroup \
+  -e CUSTOM_USER=user01 \
+  -e PASSWORD=mypassword \
+  -e START_DOCKER=true \
   -e PIXELFLUX_WAYLAND=true \
   -e LANG=zh_CN.UTF-8 \
   -e LC_ALL=zh_CN.UTF-8 \
@@ -32,6 +35,7 @@ docker run -d \
   -p 3000:3000 \
   -p 3001:3001 \
   -v /data/webtop-config:/config \
+  -v /data/webtop-docker:/var/lib/docker \
   slpcat/docker-ubuntu-xfce:24.04-webtop_ai_workspace
   slpcat/docker-ubuntu-xfce:24.04-webtop
   slpcat/docker-ubuntu-xfce:24.04-webtop_media

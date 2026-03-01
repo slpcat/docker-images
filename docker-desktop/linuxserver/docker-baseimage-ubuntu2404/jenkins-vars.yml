@@ -1,0 +1,27 @@
+---
+
+# jenkins variables
+project_name: docker-baseimage-ubuntu
+external_type: os
+release_type: stable
+release_tag: noble
+ls_branch: noble
+build_riscv64: true
+repo_vars:
+  - BUILD_VERSION_ARG = 'OS'
+  - LS_USER = 'linuxserver'
+  - LS_REPO = 'docker-baseimage-ubuntu'
+  - CONTAINER_NAME = 'baseimage-ubuntu'
+  - DOCKERHUB_IMAGE = 'lsiobase/ubuntu'
+  - DEV_DOCKERHUB_IMAGE = 'lsiodev/ubuntu'
+  - PR_DOCKERHUB_IMAGE = 'lspipepr/ubuntu'
+  - DIST_IMAGE = 'ubuntu'
+  - MULTIARCH='true'
+  - CI='true'
+  - CI_WEB='false'
+  - CI_PORT='80'
+  - CI_SSL='true'
+  - CI_DELAY='30'
+  - CI_DOCKERENV='LSIO_FIRST_PARTY=true'
+  - CI_AUTH=''
+  - CI_WEBPATH=''

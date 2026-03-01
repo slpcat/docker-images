@@ -1,4 +1,4 @@
-FROM ghcr.io/linuxserver/baseimage-selkies:ubuntunoble
+FROM slpcat/linuxserver-baseimage-selkies:ubuntunoble
 
 # set version label
 LABEL maintainer="thelamer"
