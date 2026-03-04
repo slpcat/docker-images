@@ -302,11 +302,11 @@ RUN /usr/local/bin/install-plugins.sh       \
   maven-plugin:latest            \
   #maven-deploy-plugin:latest     \
   #maven-release-plugin:latest    \
-  mcp-server                     \
+  #mcp-server                     \
   #mercurial:latest              \
   #mesos:latest                  \
   metrics:latest                 \
-  miniorange-two-factor          \
+  #miniorange-two-factor          \
   #momentjs:latest                \
   monitoring:latest              \
   #msbuild:latest                 \
