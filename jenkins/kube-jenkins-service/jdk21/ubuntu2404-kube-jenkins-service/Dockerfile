@@ -35,10 +35,11 @@ RUN \
     apt-get install -y binutils ethtool vim-tiny net-tools iproute2 procps curl wget telnet less && \
     rm -rf /var/lib/apt/lists/
 
+ARG SNOOPY_SKIP_CONFIG=1
 ARG TARGETARCH
 RUN apt-get update \
     && apt-get upgrade -y \
-    && apt-get install -y git curl wget openssh-client unzip jq groff python3 fonts-wqy-microhei snoopy
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y git curl wget openssh-client unzip jq groff python3 fonts-wqy-microhei snoopy
 
 COPY pip.conf ld.so.preload snoopy.ini /etc/
 
