@@ -243,6 +243,13 @@ RUN \
 #   && mv linux-bcecmd-0.3.1/bcecmd /usr/local/bin/ \
 #   && rm -rf linux-bcecmd*
 
+RUN \
+    wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-7.3.0.5189-linux-x64.zip \
+    && unzip sonar-scanner-cli-*-linux-x64.zip \
+    && mv sonar-scanner-*-linux-x64 /opt/sonar-scanner \
+    && ln -s /opt/sonar-scanner/bin/sonar-scanner /usr/local/bin/sonar-scanner \
+    && rm -rf sonar-scanner-cli-*-linux-x64.zip
+
 #dependency-check
 RUN \
     wget https://github.com/jeremylong/DependencyCheck/releases/download/v12.1.0/dependency-check-12.1.0-release.zip \

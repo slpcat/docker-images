@@ -1,1 +1,2 @@
 https://docs.gitlab.com/runner/install/kubernetes.html
+https://operatorhub.io/operator/gitlab-runner-operator
