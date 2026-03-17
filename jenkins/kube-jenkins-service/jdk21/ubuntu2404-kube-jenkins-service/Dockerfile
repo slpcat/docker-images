@@ -325,7 +325,7 @@ RUN /usr/local/bin/install-plugins.sh       \
   parallel-test-executor         \
   parameterized-trigger:latest   \
   performance:latest             \
-  periodicbackup:latest          \
+  #periodicbackup:latest          \
   pipeline-aws:latest            \
   pipeline-build-step:latest     \
   pipeline-github-lib:latest     \

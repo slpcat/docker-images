@@ -1,0 +1,64 @@
+FROM slpcat/docker-ubuntu-lxde:24.04-xrdp
+
+RUN apt-get update -y             \
+    && apt-get upgrade -y         \
+    && apt-get install -y         \
+       apt-transport-https        \
+       hwdata                     \
+       binutils                   \
+       lsof                       \
+       pciutils                   \
+       anacron                    \
+       cron                       \
+       ethtool                    \
+       htop                       \
+       iotop                      \
+       iftop                      \
+       btop                       \
+       ethtool                    \
+       vim-tiny                   \
+       iproute2                   \
+       wget                       \
+       telnet                     \
+       less                       \
+       bison                      \
+       ca-certificates            \
+       net-tools                  \
+       procps                     \
+       curl                       \
+       rsync                      \
+       gnupg-agent                \
+       software-properties-common \
+       bzip2                \
+       sudo                 \
+       git                  \
+       iptables             \
+       vim                  \
+       tmux                 \
+       jq                   \
+       yq                   \
+       openssh-client       \
+       unzip                \
+       unrar                \
+       zip                  \
+       groff                \
+       #snoopy               \
+       ttf-wqy-microhei     \
+       ttf-wqy-zenhei       \
+       xfonts-wqy           \
+       python3              \
+       python3-pip          \
+       python3-all-venv     \
+       pipx                 \
+       xvfb
+
+# Install Chromium and driver from xtradeb
+RUN \
+    add-apt-repository ppa:xtradeb/apps -y \
+#    apt-get update && apt-get install -y chromium chromium-l10n chromium-shell chromium-driver \
+
+# Ungoogled Chromium
+# flatpak install -y flathub io.github.ungoogled_software.ungoogled_chromium
+#RUN \
+    && apt-get install -y ungoogled-chromium ungoogled-chromium-l10n ungoogled-chromium-shell ungoogled-chromium-driver \
+

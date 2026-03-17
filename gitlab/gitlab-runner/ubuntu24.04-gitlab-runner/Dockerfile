@@ -1,0 +1,297 @@
+#upstream https://github.com/jenkinsci/docker-inbound-agent
+FROM gitlab/gitlab-runner:ubuntu-v18.8.0
+
+LABEL org.opencontainers.image.authors="slpcat@qq.com"
+
+RUN apt-get update -y             \
+    && apt-get upgrade -y         \
+    && apt-get install -y         \
+       apt-transport-https        \
+       binutils                   \
+       ethtool                    \
+       vim-tiny                   \
+       iproute2                   \
+       wget                       \
+       telnet                     \
+       less                       \
+       bison                      \
+       ca-certificates            \
+       net-tools                  \
+       procps                     \
+       curl                       \
+       rsync                      \
+       gnupg-agent                \
+       software-properties-common \
+       bzip2                \
+       sudo                 \
+       git                  \
+       iptables             \
+       vim                  \
+       tmux                 \
+       jq                   \
+       yq                   \
+       openssh-client       \
+       unzip                \
+       zip                  \
+       groff                \
+       snoopy               \
+       ttf-wqy-microhei     \
+       ttf-wqy-zenhei       \
+       xfonts-wqy           \
+       clamav               \
+       clamav-freshclam     \
+       python3              \
+       python3-pip          \
+       python3-all-venv     \
+       python3-pytest       \
+       pipx                 \
+       xvfb
+       
+COPY ld.so.preload snoopy.ini /etc/
+
+#install docker-ce
+#RUN \    
+#    curl -fsSL http://mirrors.aliyun.com/docker-ce/linux/debian/gpg | apt-key add - && \
+#    echo 'deb [arch=amd64] http://mirrors.aliyun.com/docker-ce/linux/debian bullseye stable' > /etc/apt/sources.list.d/docker-ce.list && \
+#    apt-get update -y &&\
+#    apt-get install -y docker-ce 
+
+# Add Docker's official GPG key:
+RUN \
+    apt-get update && \
+    apt-get install -y ca-certificates curl gnupg && \
+    install -m 0755 -d /etc/apt/keyrings && \
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg && \
+    chmod a+r /etc/apt/keyrings/docker.gpg && \
+
+# Add the repository to Apt sources:
+    echo \
+      "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+      "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
+       tee /etc/apt/sources.list.d/docker.list > /dev/null && \
+    apt-get update && \
+    apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+# Install Chromium and driver from xtradeb
+RUN \
+    add-apt-repository ppa:xtradeb/apps -y && \
+    apt-get update && apt-get install -y chromium chromium-l10n chromium-shell chromium-driver \
+
+# Ungoogled Chromium
+# flatpak install -y flathub io.github.ungoogled_software.ungoogled_chromium
+#RUN \
+#    && apt-get install -y ungoogled-chromium ungoogled-chromium-l10n ungoogled-chromium-shell ungoogled-chromium-driver \
+
+# Install Google Chrome and driver
+#RUN \
+    && wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | gpg --dearmour -o /usr/share/keyrings/chrome-keyring.gpg && \
+    sh -c 'echo "deb [arch=amd64 signed-by=/usr/share/keyrings/chrome-keyring.gpg] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list' && \
+    apt-get update && apt-get install -y google-chrome-stable && \
+    wget https://storage.googleapis.com/chrome-for-testing-public/144.0.7559.96/linux64/chromedriver-linux64.zip && \
+    unzip chromedriver-linux64.zip && \
+    mv chromedriver-linux64/chromedriver /usr/local/bin && \
+    chmod +x /usr/local/bin/chromedriver && \
+    wget https://storage.googleapis.com/chrome-for-testing-public/144.0.7559.96/linux64/chrome-headless-shell-linux64.zip && \
+    unzip chrome-headless-shell-linux64.zip && \
+    mv chrome-headless-shell-linux64 /opt/google/ && \
+    ln -s /opt/google/chrome-headless-shell-linux64/chrome-headless-shell /usr/local/bin/chrome-headless-shell && \
+    rm -rf chromedriver* chrome-headless-shell* \
+
+# Install Mozilla Firefox and driver from xtradeb
+#RUN \
+    && apt-get update && apt-get  install -y firefox firefox-locale-zh-hans firefox-geckodriver \
+
+# Install Microsoft Edge and driver
+#RUN \
+    && curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > /etc/apt/trusted.gpg.d/microsoft.gpg && \
+    echo "deb [arch=amd64] https://packages.microsoft.com/repos/edge stable main" > /etc/apt/sources.list.d/microsoft-edge.list && \
+    apt-get update && apt-get install -y microsoft-edge-stable && \
+    wget https://msedgedriver.microsoft.com/145.0.3800.70/edgedriver_linux64.zip && \
+    unzip edgedriver_linux64.zip && \
+    mv msedgedriver /usr/local/bin && \
+    rm -rf edgedriver* Driver_Notes
+
+# Install nodejs lts
+RUN \
+    curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -  && \
+    apt-get update && apt-get install -y nodejs
+
+# Install selenium-side-runner
+# Install AI coding/Vibe coding tools 
+# Claude Code , Cursor CLI, CodeX,Gemini CLI,cline
+    #curl https://cursor.com/install -fsS | bash \
+    #mv $HOME/.local/bin/cursor-agent /usr/local/bin/ \
+#RUN \
+#    npm install -g selenium-side-runner && \
+#    npm install -g @anthropic-ai/claude-code && \
+#    npm install -g @openai/codex && \
+#    npm install -g @google/gemini-cli && \
+#    npm install -g cline
+
+#install ansible
+RUN \
+    apt-get install -y ansible ansible-mitogen
+
+# Environment variables substitution for Go
+RUN \
+    curl -L https://github.com/a8m/envsubst/releases/download/v1.4.3/envsubst-`uname -s`-`uname -m` -o envsubst && \
+    chmod +x envsubst && \
+    mv envsubst /usr/local/bin
+
+#Robot Framework is a generic open source automation framework.
+RUN \
+    pip3 install --break-system-packages robotframework
+
+#kubectl
+RUN \
+    curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" \
+    && chmod +x kubectl \
+    && mv kubectl /usr/local/bin/
+
+#helm
+ARG VERIFY_CHECKSUM=false
+#RUN \
+#    curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 \
+#    && bash get_helm.sh \
+#    && rm get_helm.sh
+RUN \
+    curl -fsSL https://packages.buildkite.com/helm-linux/helm-debian/gpgkey | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null && \
+    echo "deb [signed-by=/usr/share/keyrings/helm.gpg] https://packages.buildkite.com/helm-linux/helm-debian/any/ any main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list &&\
+    apt-get update && \
+    apt-get install -y helm
+
+#istioctl
+ARG ISTIO_VERSION=1.24.0
+RUN \
+    curl -L https://istio.io/downloadIstio | sh - \
+    && mv istio-${ISTIO_VERSION}/bin/istioctl /usr/local/bin \
+    && rm -rf  istio-${ISTIO_VERSION}
+
+#Datree prevents Kubernetes misconfigurations from reaching production.
+RUN curl https://get.datree.io | /bin/bash
+
+#Terrascan is a static code analyzer for Infrastructure as Code.
+RUN \
+    curl -L "$(curl -s https://api.github.com/repos/tenable/terrascan/releases/latest | grep -o -E "https://.+?_Darwin_x86_64.tar.gz")" > terrascan.tar.gz \
+    && tar -xf terrascan.tar.gz terrascan && rm terrascan.tar.gz \
+    && install terrascan /usr/local/bin && rm terrascan
+
+#Kubescape is a K8s open-source tool providing a multi-cloud K8s single pane of glass, including risk analysis, security compliance, RBAC visualizer and image vulnerabilities scanning. 
+RUN curl -s https://raw.githubusercontent.com/armosec/kubescape/master/install.sh | /bin/bash
+
+#dapr  Distributed Application Runtime
+RUN \
+    wget -q https://raw.githubusercontent.com/dapr/cli/master/install/install.sh -O - | /bin/bash
+
+#karmada Open, Multi-Cloud, Multi-Cluster Kubernetes Orchestration.
+RUN \
+    wget https://github.com/karmada-io/karmada/releases/download/v1.0.1/kubectl-karmada-linux-amd64.tgz \
+    && tar -zxf kubectl-karmada-linux-amd64.tgz \
+    && mv kubectl-karmada /usr/local/bin/karmada \
+    && rm kubectl-karmada-linux-amd64.tgz
+
+#packer
+#ARG PACKER_VERSION=1.7.8
+#RUN \
+#    wget https://releases.hashicorp.com/packer/${PACKER_VERSION}/packer_${PACKER_VERSION}_linux_amd64.zip \
+#    && unzip packer_${PACKER_VERSION}_linux_amd64.zip \
+#    && mv packer /usr/local/bin/ \
+#    && rm packer_${PACKER_VERSION}_linux_amd64.zip
+
+#terraform
+#ARG TERRAFORM_VERSION=1.1.2
+#RUN \
+#   wget https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip \
+#   && unzip terraform_${TERRAFORM_VERSION}_linux_amd64.zip \
+#   && mv terraform /usr/local/bin/ \
+#   && rm terraform_${TERRAFORM_VERSION}_linux_amd64.zip
+
+RUN \
+    wget -O - https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg \
+    && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(grep -oP '(?<=UBUNTU_CODENAME=).*' /etc/os-release || lsb_release -cs) main" | tee /etc/apt/sources.list.d/hashicorp.list \
+    && apt-get update && apt-get install -y packer terraform consul
+
+#aliyun-cli
+ARG ALIYUN_CLI_VERSION=3.0.60
+RUN \
+    wget https://aliyuncli.alicdn.com/aliyun-cli-linux-${ALIYUN_CLI_VERSION}-amd64.tgz \
+    && tar -zxvf aliyun-cli-linux-${ALIYUN_CLI_VERSION}-amd64.tgz \
+    && mv aliyun /usr/local/bin \
+    && rm aliyun-cli-linux-${ALIYUN_CLI_VERSION}-amd64.tgz
+
+#awscli
+RUN \
+    wget https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip \
+    && unzip awscli-exe-linux-x86_64.zip \
+    && ./aws/install \
+    && rm -rf aws*
+
+#tccli 
+#RUN pip3 install tccli
+
+#COPY daemon.json /etc/docker/daemon.json
+#COPY rootfs /
+
+#tencent cloud COSCMD
+#RUN \
+#    pip3 install coscmd -U --break-system-packages
+
+#baidu cloud BCE CMD
+#RUN \
+#   wget https://bce-doc-on.bj.bcebos.com/bce-documentation/BOS/linux-bcecmd-0.3.1.zip \
+#   && unzip linux-bcecmd-0.3.1.zip \
+#   && mv linux-bcecmd-0.3.1/bcecmd /usr/local/bin/ \
+#   && rm -rf linux-bcecmd*
+
+#dependency-check
+RUN \
+    wget https://github.com/jeremylong/DependencyCheck/releases/download/v12.1.0/dependency-check-12.1.0-release.zip \
+    && unzip dependency-check-12.1.0-release.zip \
+    && mv dependency-check /usr/local/ \
+    && ln -sf /usr/local/dependency-check/bin/dependency-check.sh  /usr/local/bin/dependency-check \
+    && rm -rf dependency-check*
+
+#Cosign
+RUN \
+    curl -O -L "https://github.com/sigstore/cosign/releases/latest/download/cosign-linux-amd64" && \
+    mv cosign-linux-amd64 /usr/local/bin/cosign && \
+    chmod +x /usr/local/bin/cosign
+
+#https://github.com/notaryproject/notary
+
+#SBOM syft
+RUN \
+    curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
+
+#grype scanner
+RUN \
+    curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b /usr/local/bin
+
+#draft: A tool for developers to create cloud-native applications on Kubernetes
+
+#Knative client 
+
+RUN \
+    wget https://github.com/knative/client/releases/download/knative-v1.2.0/kn-linux-amd64 \
+    && chmod +x kn-linux-amd64 \
+    && mv kn-linux-amd64 /usr/local/bin/kn
+
+#sealer
+
+#RUN \
+#    wget -c http://sealer.oss-cn-beijing.aliyuncs.com/sealers/sealer-v0.6.1-linux-amd64.tar.gz \
+#    && tar -xvf sealer-v0.6.1-linux-amd64.tar.gz -C /usr/local/bin \
+#    && rm sealer-v0.6.1-linux-amd64.tar.gz
+
+#allure report depends on java8-runtime
+#RUN \
+#    wget https://github.com/allure-framework/allure2/releases/download/2.17.2/allure_2.17.2-1_all.deb \
+#    &&dpkg -i allure_2.17.2-1_all.deb \
+#    && rm allure_2.17.2-1_all.deb
+
+RUN \
+    wget https://github.com/allure-framework/allure2/releases/download/2.33.0/allure-2.33.0.tgz \
+    && tar zxf allure-2.33.0.tgz -C /usr/local/ \
+    &&  ln -s /usr/local/allure-2.33.0/bin/allure  /usr/local/bin/allure \
+    && rm allure-2.33.0.tgz
+

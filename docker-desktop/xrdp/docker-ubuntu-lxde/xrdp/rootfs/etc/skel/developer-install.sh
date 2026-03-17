@@ -1,6 +1,8 @@
 #!/bin/bash
 set -x -e
 
+#linuxbrew
+
 # jenkins agent
 # /usr/share/jenkins/agent.jar
 # $HOME/.icewm/startup
