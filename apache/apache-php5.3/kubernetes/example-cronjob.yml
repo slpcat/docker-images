@@ -1,4 +1,4 @@
-apiVersion: batch/v1beta1
+apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: hello
@@ -6,6 +6,7 @@ metadata:
 spec:
   #https://kubernetes.io/docs/tasks/job/automated-tasks-with-cron-jobs/
   #注意时区 UTC
+  timeZone: "Asia/Shanghai"
   #时间格式 m h dom mon dow 
   schedule: "*/1 * * * *"
   #startingDeadlineSeconds: 180

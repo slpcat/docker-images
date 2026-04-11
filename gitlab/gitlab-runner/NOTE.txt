@@ -1,2 +1,20 @@
 https://docs.gitlab.com/runner/install/kubernetes.html
 https://operatorhub.io/operator/gitlab-runner-operator
+
+docker run -d --name gitlab-runner-nodejs --restart always \
+  -v /data/gitlab-runner-nodejs/config:/etc/gitlab-runner \
+  -v /data/gitlab-runner-nodejs/home:/home/gitlab-runner \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  slpcat/gitlab-runner:ubuntu-v18.8.0
+
+docker run -d --name gitlab-runner-java --restart always \
+  -v /data/gitlab-runner-java/config:/etc/gitlab-runner \
+  -v /data/gitlab-runner-java/home:/home/gitlab-runner \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  slpcat/gitlab-runner:ubuntu-v18.8.0
+
+docker run -d --name gitlab-runner-python3 --restart always \
+  -v /data/gitlab-runner-python3/config:/etc/gitlab-runner \
+  -v /data/gitlab-runner-python3/home:/home/gitlab-runner \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  slpcat/gitlab-runner:ubuntu-v18.8.0
