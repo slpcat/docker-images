@@ -1,0 +1,3 @@
+#!/bin/execlineb -P
+
+sudo /usr/bin/dockerd

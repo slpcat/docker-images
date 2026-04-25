@@ -1,5 +1,5 @@
 #upstream https://github.com/jenkinsci/docker-inbound-agent
-FROM eclipse-temurin:21.0.9_10-jdk-noble
+FROM eclipse-temurin:21.0.9_10-jdk-jammy
 
 LABEL org.opencontainers.image.authors="slpcat@qq.com"
 
