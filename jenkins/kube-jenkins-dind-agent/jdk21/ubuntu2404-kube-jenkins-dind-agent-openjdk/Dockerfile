@@ -45,6 +45,7 @@ RUN apt-get update -y             \
        python3-all-venv     \
        python3-pytest       \
        pipx                 \
+       dotnet-sdk-8.0       \
        xvfb
        
 COPY pip.conf ld.so.preload snoopy.ini /etc/
