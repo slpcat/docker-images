@@ -144,8 +144,8 @@ RUN \
     mv envsubst /usr/local/bin
 
 #Robot Framework is a generic open source automation framework.
-RUN \
-    pip3 install --break-system-packages robotframework
+#RUN \
+#    pip3 install --break-system-packages robotframework
 
 #kubectl
 RUN \
