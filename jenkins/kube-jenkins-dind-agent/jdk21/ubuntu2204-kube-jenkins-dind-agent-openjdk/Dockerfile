@@ -245,7 +245,12 @@ RUN \
     && unzip dependency-check-12.1.0-release.zip \
     && mv dependency-check /usr/local/ \
     && ln -sf /usr/local/dependency-check/bin/dependency-check.sh  /usr/local/bin/dependency-check \
-    && rm -rf dependency-check*
+    && rm -rf dependency-check* \
+
+#Installing Trivy
+    && wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | gpg --dearmor | sudo tee /usr/share/keyrings/trivy.gpg > /dev/null \
+    && echo "deb [signed-by=/usr/share/keyrings/trivy.gpg] https://aquasecurity.github.io/trivy-repo/deb generic main" | tee -a /etc/apt/sources.list.d/trivy.list \
+    && apt-get update && apt-get install -y trivy
 
 #Cosign
 RUN \

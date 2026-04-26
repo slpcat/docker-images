@@ -26,6 +26,7 @@ RUN apt-get update -y             \
        sudo                 \
        git                  \
        iptables             \
+       libicu74             \
        vim                  \
        tmux                 \
        jq                   \
@@ -110,7 +111,7 @@ RUN \
 # Install nodejs lts
 RUN \
     curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -  && \
-    apt-get update && apt-get install -y nodejs
+    apt-get update && apt-get install -y nodejs \
 
 # Install selenium-side-runner
 # Install AI coding/Vibe coding tools 
@@ -124,13 +125,21 @@ RUN \
 #    npm install -g @google/gemini-cli && \
 #    npm install -g cline
 
+#install dotnet-install
+    && wget https://github.com/WeihanLi/dotnet-install/releases/download/v0.2.0/dotnet-install-0.2.0-linux-x64 \
+    && mv dotnet-install-0.2.0-linux-x64 /usr/local/bin/dotnet-install \
+    && chmod 755 /usr/local/bin/dotnet-install \
+    #&& dotnet-install --version 6.0.428 \
+    #&& dotnet-install --version 8.0.126 \
+    #&& dotnet-install --version 10.0.203 \
+
 #install ansible
-RUN \
-    apt-get install -y ansible ansible-mitogen
+#RUN \
+    && apt-get install -y ansible ansible-mitogen \
 
 # Environment variables substitution for Go
-RUN \
-    curl -L https://github.com/a8m/envsubst/releases/download/v1.4.3/envsubst-`uname -s`-`uname -m` -o envsubst && \
+#RUN \
+    && curl -L https://github.com/a8m/envsubst/releases/download/v1.4.3/envsubst-`uname -s`-`uname -m` -o envsubst && \
     chmod +x envsubst && \
     mv envsubst /usr/local/bin
 
@@ -245,7 +254,12 @@ RUN \
     && unzip dependency-check-12.1.0-release.zip \
     && mv dependency-check /usr/local/ \
     && ln -sf /usr/local/dependency-check/bin/dependency-check.sh  /usr/local/bin/dependency-check \
-    && rm -rf dependency-check*
+    && rm -rf dependency-check* \
+
+#Installing Trivy
+    && wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | gpg --dearmor | sudo tee /usr/share/keyrings/trivy.gpg > /dev/null \
+    && echo "deb [signed-by=/usr/share/keyrings/trivy.gpg] https://aquasecurity.github.io/trivy-repo/deb generic main" | tee -a /etc/apt/sources.list.d/trivy.list \
+    && apt-get update && apt-get install -y trivy
 
 #Cosign
 RUN \
