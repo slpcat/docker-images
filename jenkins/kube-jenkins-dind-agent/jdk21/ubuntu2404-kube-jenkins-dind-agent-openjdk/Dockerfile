@@ -5,7 +5,7 @@ LABEL org.opencontainers.image.authors="slpcat@qq.com"
 
 RUN apt-get update -y             \
     && apt-get upgrade -y         \
-    && apt-get install -y         \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y         \
        apt-transport-https        \
        binutils                   \
        ethtool                    \
