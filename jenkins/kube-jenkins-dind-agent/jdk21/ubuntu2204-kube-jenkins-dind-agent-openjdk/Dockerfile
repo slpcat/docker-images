@@ -128,7 +128,7 @@ RUN \
 #install dotnet-install
     && wget https://github.com/WeihanLi/dotnet-install/releases/download/v0.2.0/dotnet-install-0.2.0-linux-x64 \
     && mv dotnet-install-0.2.0-linux-x64 /usr/local/bin/dotnet-install \
-    && chmod 755 /usr/local/bin/dotnet-install \
+    && chmod +x /usr/local/bin/dotnet-install
     #&& dotnet-install --version 6.0.428 \
     #&& dotnet-install --version 8.0.126 \
     #&& dotnet-install --version 10.0.203 \
