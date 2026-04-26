@@ -29,7 +29,7 @@ RUN apt-get update -y             \
        vim                  \
        tmux                 \
        jq                   \
-       yq                   \
+       #yq                   \
        openssh-client       \
        unzip                \
        zip                  \
@@ -42,7 +42,7 @@ RUN apt-get update -y             \
        clamav-freshclam     \
        python3              \
        python3-pip          \
-       python3-all-venv     \
+       #python3-all-venv     \
        python3-pytest       \
        pipx                 \
        dotnet-sdk-6.0       \
