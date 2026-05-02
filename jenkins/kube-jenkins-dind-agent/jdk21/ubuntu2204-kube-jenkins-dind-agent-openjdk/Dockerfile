@@ -146,7 +146,7 @@ RUN \
     && tar xzf envsubst-v2.2.0-linux-x64.tar.gz \
     && mv envsubst-v2.2.0-linux-x64/envsubst /usr/local/bin/ \
     && chmod +x /usr/local/bin/envsubst \
-    && rm -f envsubst-*
+    && rm -rf envsubst-*
 
 #Robot Framework is a generic open source automation framework.
 #RUN \
