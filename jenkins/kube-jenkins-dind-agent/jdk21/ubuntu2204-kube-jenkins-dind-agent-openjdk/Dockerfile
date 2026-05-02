@@ -135,13 +135,18 @@ RUN \
 
 #install ansible
 RUN \
-    apt-get install -y ansible ansible-mitogen
+    apt-get install -y ansible ansible-mitogen \
 
 # Environment variables substitution for Go
-RUN \
-    curl -L https://github.com/a8m/envsubst/releases/download/v1.4.3/envsubst-`uname -s`-`uname -m` -o envsubst && \
-    chmod +x envsubst && \
-    mv envsubst /usr/local/bin
+#RUN \
+    #&& curl -L https://github.com/a8m/envsubst/releases/download/v1.4.3/envsubst-`uname -s`-`uname -m` -o envsubst \
+    #&& chmod +x envsubst \
+    #&& mv envsubst /usr/local/bin
+    && wget https://github.com/tekintian/envsubst/releases/download/v2.2.0/envsubst-v2.2.0-linux-x64.tar.gz \
+    && tar xzf envsubst-v2.2.0-linux-x64.tar.gz \
+    && mv envsubst-v2.2.0-linux-x64/envsubst /usr/local/bin/ \
+    && chmod +x /usr/local/bin/envsubst \
+    && rm -f envsubst-*
 
 #Robot Framework is a generic open source automation framework.
 #RUN \
