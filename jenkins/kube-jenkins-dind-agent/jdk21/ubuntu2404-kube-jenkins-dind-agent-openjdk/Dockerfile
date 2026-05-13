@@ -6,6 +6,13 @@ LABEL org.opencontainers.image.authors="slpcat@qq.com"
 RUN apt-get update -y             \
     && apt-get upgrade -y         \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y         \
+       netcat-openbsd             \
+       tcpdump                    \
+       lsof                       \
+       htop                       \
+       iftop                      \
+       iputils-ping               \
+       dnsutils                   \
        apt-transport-https        \
        binutils                   \
        ethtool                    \
