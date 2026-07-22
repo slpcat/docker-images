@@ -36,6 +36,7 @@ RUN apt-get update -y             \
        libicu74             \
        vim                  \
        tmux                 \
+       jsonnet              \
        jq                   \
        yq                   \
        openssh-client       \
