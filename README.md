@@ -298,6 +298,7 @@ pulsar-operator
 tensorflow-operator
 tidb-operator
 zookeeper-operator
+https://github.com/stackabletech/zookeeper-operator
 
 cassandra-operator
 
