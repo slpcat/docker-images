@@ -304,7 +304,7 @@ RUN \
 
 #jenkins-x
 RUN \
-    wget https://github.com/jenkins-x/jx/releases/download/v3.2.248/jx-linux-amd64.tar.gz \
+    wget https://github.com/jenkins-x/jx/releases/download/v3.17.74/jx-linux-amd64.tar.gz \
     && tar zxf jx-linux-amd64.tar.gz \
     && mv jx /usr/local/bin/ \
     && rm jx-linux-amd64.tar.gz
