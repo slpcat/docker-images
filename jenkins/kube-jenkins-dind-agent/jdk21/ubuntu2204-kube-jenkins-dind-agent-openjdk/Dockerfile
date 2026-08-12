@@ -58,6 +58,11 @@ RUN apt-get update -y             \
        
 COPY pip.conf ld.so.preload snoopy.ini /etc/
 
+# install yq
+RUN \
+    wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 && \
+    chmod +x /usr/local/bin/yq
+
 #install docker-ce
 #RUN \    
 #    curl -fsSL http://mirrors.aliyun.com/docker-ce/linux/debian/gpg | apt-key add - && \
@@ -178,7 +183,7 @@ RUN \
     apt-get install -y helm
 
 #istioctl
-ARG ISTIO_VERSION=1.24.0
+ARG ISTIO_VERSION=1.30.2
 RUN \
     curl -L https://istio.io/downloadIstio | sh - \
     && mv istio-${ISTIO_VERSION}/bin/istioctl /usr/local/bin \
@@ -236,12 +241,18 @@ RUN \
     && mv aliyun /usr/local/bin \
     && rm aliyun-cli-linux-${ALIYUN_CLI_VERSION}-amd64.tgz
 
-#awscli
+#awscli 
 RUN \
     wget https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip \
     && unzip awscli-exe-linux-x86_64.zip \
     && ./aws/install \
-    && rm -rf aws*
+    && rm -rf aws* \
+    # for ARM systems, set ARCH to: `arm64`, `armv6` or `armv7`
+    && ARCH=$(uname -m | sed 's/x86_64/amd64/' | sed 's/aarch64/arm64/') \
+    && PLATFORM=$(uname -s)_$ARCH \
+    && curl -sLO "https://github.com/eksctl-io/eksctl/releases/latest/download/eksctl_$PLATFORM.tar.gz" \
+    && tar -xzf eksctl_$PLATFORM.tar.gz -C /tmp && rm eksctl_$PLATFORM.tar.gz \
+    && install -m 0755 /tmp/eksctl /usr/local/bin && rm /tmp/eksctl
 
 #tccli 
 #RUN pip3 install tccli
