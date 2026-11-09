@@ -447,5 +447,6 @@ payititi帕衣提提开源数据集
 
 链接：https://www.heywhale.com/home/dataset
 
-
+https://github.com/libracoder/kiri
+Kiri is a lightweight replacement for Docker Desktop and OrbStack, written in Rust. It runs containers in one small Linux VM (or straight on the kernel on Linux) and speaks the Docker Engine API, so your tools just work.
 
