@@ -77,6 +77,8 @@ MPP DataBase: Teradata,Greenplum,Vertica,Impala,GPDB
 数据可视化: Superset,SQLPad,MetaBase,Franchise,Redash,ECharts,mapd-charting,highchart,d3.js,google chart,gephi,Sigma.js,Keylines,VivaGraph,ngraph,Linkurious,immerse,Mapv,deck.gl,DbVisualizer
 NoSQL数据库/缓存/存储: memcache,rethinkdb,redis,ssdb,leveldb,mongodb,cassandra,ScyllaDB,LucidDB,boltdb,ArangoDB,Azure DocumentDB,DynamoDB,Hazelcast,Infinispan,MarkLogic,OrientDB,OnceDB,TerarkDB
 redis GUI: redisInsight,RedisPlus,AnotherRedisDesktopManager,medis,redis desktop manager,Tiny RDM（Tiny Redis Desktop Manager）
+https://github.com/t8y2/dbx
+dbx is a lightweight sql editor and database client built for forward-looking developers
 分布式kv存储: 小米Pegasus,Zeppelin,京东JIMDB，淘宝Tair，tikv
 列式数据库: clickhouse(荐),Vertica,MonetDB,InfiniDB,ParAccel,EventQL,HadoopDB,Postgres-XL,RecDB,Stado,Yahoo Everest,DorisDB,Apache Doris
 图数据库: AgensGraph,Titan/JanusGraph,neo4j,OrientDB,FlockDB,Arangodb,GunDB,TigerGraph,LightGraphs,PandaGraph,Cayley,Orly,DGraph,SparkGraphX,InfiniteGraph,
